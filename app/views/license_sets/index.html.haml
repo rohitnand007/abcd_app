@@ -1,0 +1,120 @@
+= stylesheet_link_tag "license_sets"
+= javascript_include_tag "license_sets"
+#allLicenseSets
+  %ul
+    %li
+      %a{href:"#pastLicenseSets"} Past Licenses
+    %li
+      %a{href:"#licenseSets"} Current Licenses
+    %li
+      %a{href:"#futureLicenseSets"} Future Licenses
+  #pastLicenseSets
+    - if @past_license_sets.blank?
+      There were no licenses utilized in the past
+    - else
+      %table.supportingLicenseListTable
+        %tr.darkgrayize.headerize
+          %th Id
+          %th Collection
+          %th Publisher
+          %th No. of books
+          %th Starts
+          %th Ends
+          %th Availability
+          %th
+        - @past_license_sets.each do |license_set|
+          %tr.leadRow
+            %td= license_set.id
+            %td= license_set.ipack.name
+            %td= license_set.publisher.name
+            %td= license_set.ipack.ibooks.count
+            %td= license_set.start_date
+            %td= license_set.end_date
+            %td Not Applicable
+            %td
+  #licenseSets
+    %table#licenseList
+      %tr#licenseListHeader
+        %th Id
+        %th Collection
+        %th Publisher
+        %th No. of books
+        %th Starts
+        %th Ends
+        %th Availability
+        %th
+          .paginator
+            .displayinfo= page_entries_info_modified @license_sets
+            = paginate @license_sets, :window => 0
+      - @license_sets.each do |license_set|
+        %tr.leadRow
+          %td= license_set.id
+          %td= license_set.ipack.name
+          %td= license_set.publisher.name
+          %td
+            = license_set.ipack.ibooks.count
+            %i= link_to 'details', ipack_path(id: license_set.ipack.id),class:'show_books', remote:true
+            = image_tag "small_loading.gif", style:"display:none", class:'small_loading'
+          %td= license_set.start_date
+          %td= license_set.end_date
+          %td
+            %span{id:"availablity_#{license_set.id}"}
+              = license_set.available
+            out of
+            = license_set.licences
+            - if ["EA","ECP"].include? current_user.rc
+              = link_to 'Edit', edit_license_set_path(license_set)
+              = link_to 'Destroy', license_set, :confirm => 'Are you sure?', :method => :delete
+          %td= button_tag "Manage Licenses",type:"button",class:"detailToggleButton button"
+        %tr.detailsRow
+          %td{colspan:"100%"}
+            .allDetails
+              .toggleBooksLicenses
+                %label
+                  = radio_button_tag "toggleBooksLicenses"+license_set.id.to_s,"assign_new",true,class:"groundedRadio"
+                  Assign New
+                %label
+                  = radio_button_tag "toggleBooksLicenses"+license_set.id.to_s,"license_info",false,class:"groundedRadio"
+                  Assigned Licences
+                = image_tag "open_triangle.png",style:"float: right;position: relative;top: -17px;right: 70px;"
+              .assignNew
+                .find_students
+                  .assign_to Assign to:
+                  .searchStudentsFormWrapper{id:"search_form_wrapper_#{license_set.id.to_s}"}
+                    = render :partial => 'searchStudentsForm',locals:{license_set_id:license_set.id}
+                %div{id:"form_wrapper_#{license_set.id.to_s}",class:"studentsListForm"}
+              .showStudents
+                = render :partial => 'just_listing_all_students',locals:{license_set:license_set}
+
+  #futureLicenseSets
+    - if @future_license_sets.blank?
+      There are no licenses starting in future. Contact Admin.
+    - else
+      %table.supportingLicenseListTable
+        %tr.darkgrayize.headerize
+          %th Id
+          %th Collection
+          %th Publisher
+          %th No. of books
+          %th Starts
+          %th Ends
+          %th Availability
+          %th
+        - @future_license_sets.each do |license_set|
+          %tr.leadRow
+            %td= license_set.id
+            %td= license_set.ipack.name
+            %td= license_set.publisher.name
+            %td= license_set.ipack.ibooks.count
+            %td= license_set.start_date
+            %td= license_set.end_date
+            %td= license_set.licences.to_i
+            %td
+:javascript
+  prettifyLicensesIndex();
+  dynamicallyPopulateFilters();
+  toggleStudentsOfCenters();
+  $("#allLicenseSets").tabs().tabs("select",1).removeClass("ui-widget-content");
+  $(".show_books").css({color:"#62C6CC"});
+  $(".show_books").click(function(){ $(this).closest('td').find('.small_loading').show();});
+  $(".searchStudentsSubmit").click(function(){ $(this).closest("tr").find(".small_loading").show(); });

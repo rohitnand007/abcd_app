@@ -1,0 +1,470 @@
+
+<link href="/assets/web-app-theme/base.css.scss" media="screen" rel="stylesheet" type="text/css" />
+<style>
+
+    #mask{
+        width :100%;
+        height:100%;
+        left:0px;
+        top:0px;
+        background-color:black;
+        opacity:0.3;
+        position:fixed;
+        z-index:150;
+    }
+    #loader_anim{
+        left:47%;
+        top:46%;
+        background-color:black;
+        position:absolute;
+        overflow:auto;
+    }
+
+    #test_header{
+        position:relative;
+        left:0px;
+        top:0px;
+    }
+    #results_header{
+        position:relative;
+        left:0px;
+        top:0px;
+        height:4%;
+        width:100%;padding-top:0.5em;
+        background-color:#16b9d5;
+        font-size:1em;
+        color:white;
+    }
+    #questions_header{
+        position:relative;
+        left:0px;
+        top:0px;
+        height:4%;
+        width:100%;padding-top:0.5em;
+        background-color:#16b9d5;
+        font-size:1em;
+        color:white;
+    }
+     #questions_body{
+         position:relative;
+
+         height: 88%;overflow: auto;
+         width:100%;
+     }
+
+    #results_body{
+        position:relative;
+
+        height: 88%;overflow: auto;
+        width:100%;
+
+    }
+</style>
+<% maxscore_div_ids="**" %>
+<% maxwrong_div_ids="**" %>
+<script>
+
+    function goBack()
+    {
+        window.history.back()
+    }
+</script>
+<script src="/assets/jquery.js" type="text/javascript"></script>
+
+<div id="mask" style="display:none;">
+  <div id="loader_anim'">
+    <img src="/assets/progress-indicator.gif"/>
+  </div>
+</div>
+
+<div id="_body" style="font-family:colabrate;">
+  <div style="position:absolute;height:3em;width:40%;left:0px;top:0px;background-color:white;z-index: 2;">
+    <div style="font-size: 1.3em;position:relative;color:#989898;line-height:2.5em;text-align: center;">
+      Test Results
+    </div>
+    <div id="back_button" style="position:absolute;left:0px;top:0px;padding-top:1%;padding-left:1%;" onclick="goBack()">
+      <%= image_tag 'back_btn.png',:style=>'height:3em;width:auto;' %>
+    </div>
+  </div>
+<div id='test_info' style="position:absolute;height:92%;top:8%;width:40%;display:inline;overflow:auto;">
+
+ <div style="position:relative;width:99%;height:auto;background-color:white;margin-top:1px;margin-bottom:1px;box-shadow: 0px 5px 5px #ccc, 0 5px 5px #eee inset;">
+  <div style="position:relative;padding-left:1.5em;">
+    <label style="font-size: 1.2em;line-height:2.5em;">
+      Test Name: <%= @quiz.name%>
+    </label>
+    </br>
+    <label style="font-size: 1.2em;line-height:2.5em;">
+    Class: <%= @publish_class.name%>
+  </label>
+    </br>
+	  <label style="line-height:2em;font-size: 0.8em;color:#989898;">
+		<%= (@quiz.context.chapter.nil?) ? '' : 'Chapter: '+@quiz.context.chapter.name%><%= (@quiz.context.topic.nil?) ? '' : ' , Topic: '+@quiz.context.topic.name%>
+	  </label>
+  </div>
+ </div>
+</br>
+<div style="position:relative;width:99%;height:auto;background-color:white;padding-top:0.5em;">
+	<label style="font-size: 1.2em;position:relative;color:#989898;padding-left:1.5em;line-height: 1.5em">
+		Test Score Statistics
+	</label>
+</div>
+<div style="position:relative;width:99%;height:auto;background-color:white;margin-top:1px;box-shadow: 0px 5px 5px #ccc, 0 5px 5px #eee inset;">
+ <div style="position:relative;padding-left:1.5em;padding-top: 1em;padding-bottom: 5px;">
+
+	 <canvas id="bchart1" height="5px" width="50px" style="background-color:#16b9d5;display:inline;margin-left:2em;">aa</canvas>
+	 <canvas id="bchart2" height="5px" width="50px" style="background-color:#f17736;display:inline;margin-left:2em;">bb</canvas>
+	 <canvas id="bchart3" height="5px" width="50px" style="background-color:#1dbaa6;display:inline;margin-left:2em;">vv</canvas>
+
+	<table style='padding:0px;'>
+	<tr style='padding:0px;'>
+	<td><p id="bchart1_desc" style='width:63px;margin-left:0.8em;text-align:center;color:#16b9d5;font-size: 0.9em;line-height: 0.8em;' >Lowest score</p></td>
+	<td><p id="bchart2_desc" style='width:63px;margin-left:0.8em;text-align:center;color:#f17736;font-size: 0.9em;line-height: 0.8em;' >Class Average</p></td>
+	<td><p id="bchart3_desc" style='width:63px;margin-left:0.8em;text-align:center;color:#1dbaa6;font-size: 0.9em;line-height: 0.8em;'>Topper's score</p></td>
+	</tr>
+	</table>
+   <label id="total_score" style="font-size: 1.2em;position:relative;color:black;padding-left:1.5em;">
+     Total Score:80
+   </label>
+  </div>
+
+ </div>
+</br>
+  <div style="position:relative;width:99%;height:auto;background-color:white;padding-top:0.5em;">
+    <label style="font-size: 1.2em;position:relative;color:#989898;padding-left:1.5em;line-height: 1.5em">
+      Publish Details
+    </label>
+  </div>
+<div style="position:relative;width:99%;height:auto;background-color:white;margin-top:1px;box-shadow: 0px 5px 5px #ccc, 0 5px 5px #eee inset;">
+    <div style="position:relative;padding-left:1.5em;padding-bottom:0.5em">   </br>
+          <table >
+            <!--tr style='line-height:1em'>
+              <td><label style="font-size: 0.9em;color:#989898;">
+                Created by:
+              </label></td>
+              <td><label style="font-size: 1.1em;">
+                <%= @quiz.user.profile.firstname%> <%= @quiz.user.profile.surname%>
+              </label></td>
+            </tr-->
+            <tr style='line-height:1em'>
+              <td><label style="font-size: 0.9em;color:#989898;">
+                Published by:
+              </label></td>
+              <td><label style="font-size: 1.1em;">
+                <%= @quiz.user.profile.firstname%> <%= @quiz.user.profile.surname%>
+              </label></td>
+            </tr>
+            <tr style='line-height:1em'>
+              <td> <label style="font-size: 0.9em;color:#989898;">
+                Published on:
+              </label></td>
+              <td><label style="font-size: 1.1em;">
+                <%= display_date_time(@publish.published_on)%>
+              </label></td>
+            </tr>
+          </table>
+        </div>
+    </div>
+  </br>
+  <div style="position:relative;width:99%;height:auto;background-color:white;padding-top:0.5em;">
+    <label style="font-size: 1.2em;position:relative;color:#989898;padding-left:1.5em;line-height: 1.5em">
+      Student Statistics
+    </label>
+  </div>
+<div style="position:relative;width:99%;height:auto;background-color:white;margin-top:1px;box-shadow: 0px 5px 5px #ccc, 0 5px 5px #eee inset;">
+    <div style="position:relative;padding-left:1.5em">
+      </br>
+      <canvas id="bchart4" height="20px" width="100px" style="background-color:#16b9d5;display:inline;"></canvas>
+      <label style="display:inline;padding-left:1.5em;top:-6px;position:relative;color:#16b9d5">Total Students<% if UserGroup.joins(:user).where(:group_id=>@publish.group_id).count < 6 %> (<%= UserGroup.joins(:user).where(:group_id=>@publish.group_id).count%>)<%end%></label>
+      </br>
+      </br>
+      <!--canvas id="bchart5" height="20px" width="80px" style="background-color:#f17736;display:inline;"></canvas-->
+      <!--label style="display:inline;padding-left:1.5em;top:-6px;position:relative;color:#f17736;">Downloaded
+        <%#if @publish.message_quiz_targeted_group and @publish.message_quiz_targeted_group.message %>
+            <%# if MessageQuizTargetedGroup.where(:quiz_targeted_group_id=>@publish.id).first.message.message_acknowledgs.count < 6 %> (<%#= MessageQuizTargetedGroup.where(:quiz_targeted_group_id=>@publish.id).first.message.message_acknowledgs.count%>)<%#end%></label></br>
+        <%#else%>
+            0
+        <%#end%>
+        </br-->
+        <canvas id="bchart6" height="20px" width="60px" style="background-color:#1dbaa6;display:inline;"></canvas>
+        <label style="display:inline;margin-left:1em;top:-6px;position:relative;color:#1dbaa6;">Submited <% if @first_attempts.count < 6 %> (<%= @first_attempts.count%>)<%end%></label>
+
+    </div>
+</div>
+
+</div>
+<div id="test_header"  style="position:relative;left:40.5%;height:6%;width:59%;margin-top: 3px;border-radius:8px 8px 0 0;border-left:1px solid #c2d1d8;border-right:1px solid #c2d1d8;">
+<div id="q_info" style="position:absolute;text-align:center;width:49.6%;height:100%;background-color:#16b9d5;border-radius:8px 8px 0 0;" onclick="showQuestions()"><p style="font-size:1.2em;line-height: 5%">Question Info</p></div>
+<div id="stu_info" style="text-align:center;width:49.6%;left:50.4%;position:absolute;height:100%;background-color:#1dbaa6;border-radius:8px 8px 0 0;" onclick="showStudents()"><p style="font-size:1.2em;line-height: 5%">Student Info</p></div>
+</div>
+<div id='question_info'  style="position:relative;left:40.5%;height:auto;width:59%;border-left:1px solid #c2d1d8;border-right:1px solid #c2d1d8;">
+
+
+			<div id="questions_header">
+				<div style="position:absolute;font-size:1.2em;font-weight:bold;text-align:center;width:60%;">Question</div>
+				<div style="left:60%;position:absolute;text-align:center;width:15%;font-size:1.2em;font-weight:bold;">Correct</div>
+				<div style="left:75%;position:absolute;text-align:center;width:15%;font-size:1.2em;font-weight:bold;">Wrong</div>
+				<div style="left:90%;position:absolute;text-align:center;width:10%;font-size:1.2em;font-weight:bold;">Marks</div>
+			</div>
+			<div id="questions_body">
+		<%i=0%>
+              <% totalquestions=0 %>
+              <% totalquestion_marks=0 %>
+        <% @temp_attempt_ids = @first_attempts.map(&:id)%>
+        <% max_wrong_ans=0 %>
+        <% max_wrong_question_div="" %>
+              <% delim = "-" %>
+        <%  @quiz.questions.each do |q| %>
+		<% totalquestions += 1 %>
+          <div id='q_list<%= totalquestions%>' style='min-height:3em;height:auto;width:100%;padding-top:0.6em;padding-left:0px;border-bottom:1px solid #c2d1d8;background-color:white;padding-bottom:5px;margin-bottom:2px;overflow:auto'>
+			<div style="text-align:center;width:3%;left:0%;position:absolute;padding-top:1em;"><%= (i+1) %></div>
+			<div style="position:absolute;width:57%;height:3em;overflow:auto;left:3%;text-align:left;z-index:1;color:black;font-family:colabrate;font-size:1em;padding-left:1em;line-height: 1em;">
+              <% if q.questiontext_format.to_s!="" %>
+                <%=q.questiontext_format.gsub(/<\/?[^>]*>/, "")%>
+              <% else %>
+                <div onclick="openPDF(<%=@quiz.id%>)" style="margin-left:25%;position: relative; background-color:#1b5992;border-radius: 5px; color:white; line-height:2.5em;height: 80%;width:50%; text-align: center"> View Question Paper(.pdf)</div>
+              <% end %>
+            </div>
+            <% no_of_wrong = QuizQuestionAttempt.where(:quiz_attempt_id=>@temp_attempt_ids,:question_id=>q.id,:correct=>false).count%>
+			<% if max_wrong_ans < no_of_wrong %>
+                <% max_wrong_ans = no_of_wrong %>
+                 <% maxwrong_div_ids = totalquestions.to_s %>
+            <%elsif max_wrong_ans > 0 && max_wrong_ans == no_of_wrong %>
+                <%maxwrong_div_ids = "#{maxwrong_div_ids}"+"#{delim.to_s}"+"#{totalquestions.to_s}"%>
+            <% end %>
+              <div style="left:60%;position:absolute;text-align:center;width:15%;padding-top:0.6em;'"><p style='display:inline;color:green;font-weight:bold;font-size:12px;top:-15px;'><%= QuizQuestionAttempt.where(:quiz_attempt_id=>@temp_attempt_ids,:question_id=>q.id,:correct=>true).count%>&nbsp;&nbsp;&nbsp;</p><%= image_tag('correct_icon.png') %></div>
+			<div style="left:75%;position:absolute;text-align:center;width:15%;padding-top:0.6em;"><p style='display:inline;color:#f67729;font-weight:bold;font-size:12px;top:-15px;'><%= no_of_wrong %>&nbsp;&nbsp;&nbsp;</p><%= image_tag('incorrect_icon.png') %></div>
+             <%marks = @quiz.quiz_question_instances.where(:question_id=>q.id).first.grade%>
+            <% totalquestion_marks = totalquestion_marks+marks %>
+			<div style="left:90%;position:absolute;text-align:center;width:10%;padding-top:1em;"><p style='display:inline;;color:black;font-weight:bold;font-size:12px;top:-5px;'><%=marks.to_i%></div>
+		  </div>
+
+                  <%i = i+1%>
+                <%end%>
+			</div>
+</div>
+<div id='student_info'  style="position:relative;left:40.5%;height:auto;width:59%;border-left:1px solid #c2d1d8;border-right:1px solid #c2d1d8;display:none;">
+
+
+			<div id="results_header">
+				<div style="position:absolute;text-align:center;width:40%;font-size:1.2em;font-weight:bold;">Name</div>
+				<div style="text-align:center;width:14%;left:40%;position:absolute;font-size:1.2em;font-weight:bold;">Percentage</div>
+				<div style="left:54%;position:absolute;text-align:center;width:14%;font-size:1.2em;font-weight:bold;">Score</div>
+				<div style="left:68%;position:absolute;text-align:center;width:14%;font-size:1.2em;font-weight:bold;">Correct</div>
+				<div style="left:82%;position:absolute;text-align:center;width:14%;font-size:1.2em;font-weight:bold;">Wrong</div>
+				<div style="left:96%;position:absolute;text-align:center;width:4%;font-size:1.2em;font-weight:bold;">NA</div>
+			</div>
+			<div id="results_body">
+		<%i=0%>
+		<% minscore=1000 %>
+		<% maxscore=-1 %>
+        <% maxscore_div= "" %>
+        <% delim = "-" %>
+		<% totalscore=0 %>
+        <%  @first_attempts.each do |t| %>
+	        <% if minscore > t.sumgrades.to_i %>
+			    <% minscore = t.sumgrades.to_i %>
+            <%end%>
+            <% if maxscore < t.sumgrades.to_i %>
+              <% maxscore = t.sumgrades.to_i %>
+                       <%maxscore_div_ids = i.to_s %>
+            <%elsif maxscore > 0 && maxscore == t.sumgrades.to_i %>
+                      <%maxscore_div_ids = "#{maxscore_div_ids.to_s}"+"#{delim.to_s}"+"#{i.to_s}" %>
+            <%end%>
+
+		<% totalscore += t.sumgrades.to_i %>
+            <div id='s_list<%= i%>' style='min-height:3em;height:auto;width:100%;padding-top:1em;padding-left:0px;border-bottom:1px solid #c2d1d8;background-color:white;margin-bottom:2px;overflow:auto'>
+			<div style="text-align:center;width:3%;left:0%;position:absolute;padding-top:0.5em;"><%= (i+1) %></div>
+			<div style="position:absolute;text-align:left;width:37%;left:3%;padding-left:1em;padding-top:-10px;line-height: 1.1em;"><%= User.find(t.user_id).name%> </br><%=User.find(t.user_id).edutorid%></div>
+			<div style="text-align:center;width:14%;left:40%;position:absolute;padding-top:0.5em;"><%= (t.sumgrades*100/@total_marks).round(1) %>%</div>
+			<div style="left:54%;position:absolute;text-align:center;width:14%;padding-top:0.5em;"><%= t.sumgrades.to_i%>/<%=@total_marks.to_i%></div>
+			<div style="left:68%;position:absolute;text-align:center;width:14%;"><p style='display:inline;color:green;font-weight:bold;font-size:12px;top:-15px;'><%= t.quiz_question_attempts.where(:correct=>true).count%></p>&nbsp;&nbsp;&nbsp;<%= image_tag('correct_icon.png') %></div>
+			<div style="left:82%;position:absolute;text-align:center;width:14%;"><p style='display:inline;;color:#f67729;font-weight:bold;font-size:12px;top:-5px;'><%= t.quiz_question_attempts.where(:correct=>false).count%></p>&nbsp;&nbsp;&nbsp;<%= image_tag('incorrect_icon.png') %></div>
+			<div style="left:96%;position:absolute;text-align:center;width:4%;padding-top:0.5em;"><%= (@quiz.questions.count -  t.quiz_question_attempts.where(:correct=>false).count.to_i- t.quiz_question_attempts.where(:correct=>true).count.to_i) %></div>
+		  </div>
+
+                  <%i = i+1%>
+                <%end%>
+			</div>
+
+	</div>
+              </div>
+<div id='maxscroe_divids' style="display:none"><%= maxscore_div_ids %></div>
+<div id='maxwrong_divids' style="display:none"><%= maxwrong_div_ids %></div>
+<script type="text/javascript">
+  function openPDF(_id){
+      try{
+          if(window.webviewhandler){
+              window.webviewhandler.loadPdf('http://www.myedutor.com/quizzes/download_catchall/'+_id+'.pdf')
+          }
+          else{
+              window.open('/quizzes/download_catchall/'+_id+'.pdf',"_blank")
+              //this.document.location.href='/quizzes/download_catchall/'+_id+'.pdf';
+
+          }
+      }   catch(er){
+          alert("pdf load er:"+er);
+      }
+
+  }
+ function showQuestions(){
+		try{
+		document.getElementById("q_info").style.backgroundColor = "#16b9d5";
+		document.getElementById("stu_info").style.backgroundColor = "#1dbaa6";
+		if(!document.getElementById("student_info").style.display || document.getElementById("student_info").style.display == "none"){
+			document.getElementById("question_info").style.display = "";
+			document.getElementById("student_info").style.display = "none";
+		}
+		}catch(er){
+			alert('er1'+er);
+		}
+	}
+	function showStudents(){
+
+		try{
+		document.getElementById("q_info").style.backgroundColor = "#1dbaa6";
+		document.getElementById("stu_info").style.backgroundColor = "#16b9d5";
+		if(!document.getElementById("question_info").style.display || document.getElementById("question_info").style.display == "none"){
+			document.getElementById("question_info").style.display = "none";
+			document.getElementById("student_info").style.display = "";
+		}
+		}catch(er){
+			alert('er2'+er);
+		}
+	} $(document).ready(function() {
+
+	function wrapText(context, text, x, y, maxWidth, lineHeight)
+	{
+		var words = text.split(' ');
+		var line = '';
+
+		for(var n = 0; n < words.length; n++) {
+		  var testLine = line + words[n] + ' ';
+		  var metrics = context.measureText(testLine);
+		  var testWidth = metrics.width;
+		  if(testWidth > maxWidth) {
+		    context.fillText(line, x, y);
+		    line = words[n] + ' ';
+		    y += lineHeight;
+		  }
+		  else {
+		    line = testLine;
+		  }
+		}
+		context.fillText(line, x, y);
+	}
+	try{
+
+        document.getElementById('total_score').innerHTML = "Max Score: "+<%=totalquestion_marks%>
+	var canvas = document.getElementById('bchart1');
+<% minscore= (minscore == 0 || minscore == 1000 )? 0:minscore%>
+<% maxscore= (maxscore == 0 || maxscore == -1)? 0:maxscore%>
+    <% if totalscore!=0 %>
+    <% avgscore = (totalscore/i)%>
+
+    <%else%>
+    <% avgscore=0 %>
+    <%end%>
+	var context = canvas.getContext('2d');
+    <% if minscore!=0 %>
+        <% minavg = (minscore*100)/maxscore%>
+    <%else%>
+        <% minavg=0 %>
+    <%end%>
+		canvas.height = <%=(minavg+15)%>
+	      context.font = 'normal 12pt Calibri';
+		context.fillStyle = 'white';
+	      context.fillText(<%=minscore%>, 15, 15);
+document.getElementById('bchart1_desc').textContent = "Low Score";
+
+        canvas = document.getElementById('bchart2');
+    <% if (avgscore!=0) %>
+    <% avgavg = (avgscore*100)/maxscore%>
+    <%else%>
+    <% avgavg = 0%>
+    <%end%>
+        canvas.height = <%=avgavg+15%>
+	      context = canvas.getContext('2d');
+
+	      context.font = 'normal 12pt Calibri';
+		context.fillStyle = 'white';
+	     //wrapText(context, "60", 15, 5,10,10);
+	      context.fillText(<%=avgscore%>, 15, 15);
+document.getElementById('bchart2_desc').textContent = "Class Average";
+
+
+canvas = document.getElementById('bchart3');
+		canvas.height = <%=(100+15)%>;
+	      context = canvas.getContext('2d');
+	      context.fillStyle = 'white';
+	      context.font = 'normal 12pt Calibri';
+	      context.fillText(<%=maxscore%>, 15, 15);
+document.getElementById('bchart3_desc').textContent = "Topper's score";
+
+	      //context.fillText();
+canvas = document.getElementById('bchart4');
+<% total_students= (UserGroup.joins(:user).where(:group_id=>@publish.group_id).count.to_i == 0 )? 1:UserGroup.joins(:user).where(:group_id=>@publish.group_id).count.to_i%>
+		canvas.width = <%=15+((total_students*100)/total_students)%>;
+
+	      context = canvas.getContext('2d');
+	      context.font = 'normal 8pt Calibri';
+		  context.fillStyle = 'white';
+	      context.fillText(<%= UserGroup.joins(:user).where(:group_id=>@publish.group_id).count.to_i%>, 5, 15);
+//canvas = document.getElementById('bchart5');
+		  <!--<%#if @publish.message_quiz_targeted_group and @publish.message_quiz_targeted_group.message %>-->
+            <%#_temp= (MessageQuizTargetedGroup.where(:quiz_targeted_group_id=>@publish.id).first.message.message_acknowledgs.count.to_i == 0 )? 1:MessageQuizTargetedGroup.where(:quiz_targeted_group_id=>@publish.id).first.message.message_acknowledgs.count%>;
+	     <!--<%#else%>-->
+           <!--<%#_temp= 1 %>-->
+          <!--<%#end%>-->
+//        canvas.width = <%#=15+((_temp*100)/total_students)%>;
+//        context = canvas.getContext('2d');
+//	      context.font = 'normal 8pt Calibri';
+//		context.fillStyle = 'white';
+//	      context.fillText(<%#=_temp%>, 5, 15);
+canvas = document.getElementById('bchart6');
+		canvas.width = <%= (@first_attempts.count.to_i == 0 )? 15:(15+((@first_attempts.count.to_i*100)/total_students))%>;
+	      context = canvas.getContext('2d');
+	      context.font = 'normal 8pt Calibri';
+		context.fillStyle = 'white';
+	      context.fillText(<%=@first_attempts.count.to_i%>, 5, 15);
+        try{
+            var temp_obj1 = document.getElementById('maxscroe_divids').innerHTML;
+            var obj_ids = temp_obj1.toString().split("-");
+            for(var i = 0; i<obj_ids.length; i++){
+                var _obj = document.getElementById('s_list'+obj_ids[i]*1);
+                _obj.style.backgroundColor="#1aa006"
+            }
+        }catch(er){
+            alert('er1'+er)
+        }
+        try{
+            var temp_obj = document.getElementById('maxwrong_divids').innerHTML;
+            var obj_ids = temp_obj.toString().split("-");
+            for(var i = 0; i<obj_ids.length; i++){
+                var _obj = document.getElementById('q_list'+obj_ids[i]*1);
+                _obj.style.backgroundColor="#ffa400"
+            }
+                //temp_obj.style.backgroundColor="#1aa006"
+        }catch(er){
+            alert('er2'+er)
+
+        }
+	}catch(er){
+		alert('er1'+er);
+	}
+
+
+   });
+window.setTimeout(function(){
+
+	try{
+	//document.getElementById("footer_bg").style.position = "relative";
+
+		document.getElementById("mask").style.display = "none";
+var innerHeight = $('#test_info').height();
+//document.getElementById("student_info").style.minHeight= innerHeight+120+"px";
+	}catch(er){
+		alert('er footer:'+er);
+	}
+	},100);
+</script>

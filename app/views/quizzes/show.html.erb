@@ -1,0 +1,425 @@
+<div id="content_header">
+  <h1 id="main_heading">Assessment Details</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <%if @quiz.publish_access(current_user.id)%>
+      <li><%=link_to "Publish Assessment", :controller => "quizzes", :action => "publish_to",:id=>@quiz.id %></li>
+    <%end%>
+    <%if @quiz.edit_access(current_user.id) and @quiz.quiz_targeted_groups.empty? %>
+      <li><%=link_to "Add/Remove Questions", :controller => "quizzes", :action => "edit_questions",:id=>@quiz.id %></li>
+    <%end%>
+    <li><%=link_to "Browse Assessments", :controller => "quizzes", :action => "index" %></li>
+  </ul>
+</div>
+<div id="data">
+  <div id='application-list'>
+    <table align='center' class='details' width='700px'>
+      <tbody>
+        <tr class='odd left'>
+          <td>Assessment Name</td>
+          <td class='right'><%= @quiz.name%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Assessment Institute Id</td>
+          <td class='right'><%= @quiz.institute_test_id%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Description</td>
+          <td class='right'><%= @quiz.intro.gsub(/<\/?[^>]*>/, "")%></td>
+        </tr>
+        <!--<tr class='even left'>
+          <td>Available From</td>
+          <td class='right'><%= display_date_time(@quiz.timeopen)%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Available Till</td>
+          <td class='right'><%= display_date_time(@quiz.timeclose)%></td>
+        </tr>-->
+        <tr class='even left'>
+          <td>Board</td>
+          <td class='right'><%= @quiz.context.board.try(:name) rescue "" %></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Class</td>
+          <td class='right'><%= @quiz.context.content_year.try(:name) rescue ""%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Subject</td>
+          <td class='right'><%= @quiz.context.subject.try(:name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Chapter</td>
+          <td class='right'><%= ((@quiz.context.chapter.nil?) ? '' : @quiz.context.chapter.name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Topic</td>
+          <td class='right'><%= ((@quiz.context.topic.nil?) ? '' : @quiz.context.topic.name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Created By</td>
+          <td class='right'><%= @quiz.user.profile.firstname%> <%= @quiz.user.profile.surname%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Center Name</td>
+          <td class='right'>
+            <%if @quiz.user.id==1%>
+                <%= "Edutor"%>
+            <%elsif @quiz.user.is? 'IA'%>
+                <%= ''%>
+            <%else%>
+                <%=@quiz.user.center.name  %>
+            <%end%>
+            <%#= @quiz.user.id==1?'Edutor':(@quiz.user.center_id ?  @quiz.user.center.name : '')%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Date Created</td>
+          <td class='right'><%= display_date_time(@quiz.timecreated)%></td>
+        </tr>
+        <!--<tr class='odd left'>
+          <td>Shuffle Questions</td>
+          <td class='right'><% if @quiz.shufflequestions ==1 %>
+          <%='Yes'%>
+        <% else %>
+          <%='No'%>
+        <% end %></td>
+        </tr>-->
+        <tr class='even left'>
+          <td>Duration (minutes)</td>
+          <td class='right'><%= (@quiz.timelimit <= 0) ? "Unlimited" : @quiz.timelimit%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Total Questions</td>
+          <td class='right'><%= @quiz.questions.count%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Total Marks</td>
+          <td class='right'><%= @quiz.quiz_question_instances.sum(:grade)%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Status</td>
+          <%count = @quiz.quiz_targeted_groups.count %>
+          <%if count > 0%>
+            <td class='right'><span>Published (<%=count%> times)</span></td>
+          <%else%>
+            <td class='right'><span style="color:red">Not yet published</span></td>
+          <%end%>
+        </tr>
+        <tr class='even left'>
+          <td>Total Attempts</td>
+          <td class='right'><span><%=@quiz.attempts%></span></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Difficulty Level</td>
+          <%difficulty = 'Easy'%>
+          <%if @quiz.difficulty ==2%>
+            <% difficulty = 'Medium' %>
+          <%end%>
+          <%if @quiz.difficulty ==3%>
+            <% difficulty = 'Hard' %>
+          <%end%>
+          <td class='right'><%= difficulty%></td>
+        </tr>
+        <tr class='tr-blank'></tr>
+      </tbody>
+    </table>
+    <% if (@quiz.accessible(current_user.id, current_user.institution_id)) %>
+      <div class="group">
+        <div align="center" class="field">
+          <a href="/quizzes/copy/<%=@quiz.id%>" class="button big primary">Copy Assessment</a>
+          <%if @quiz.edit_access(current_user.id)%>
+            <a href="/quizzes/<%=@quiz.id%>/edit" class="button big primary">Edit Assessment Settings</a>
+            <% if current_user.id == 1 %>
+              <a href="/quizzes/destroy/<%=@quiz.id%>" class="button big primary">Delete</a>
+            <%end%>
+          <%end%>
+        </div>
+      </div>
+    <%end%>
+  </div>
+  <div class='label heading hr'>
+  </div>
+  <div>
+    <h1>Publish History</h1>
+  </div>
+  <div>
+    <table width='100%'>
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='publish-history' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th>Class Name</th>
+                  <th>Section</th>
+                  <th>Test Id</th>
+                  <th>Assessment Location</th>
+                  <th>Assessment Type</th>
+                  <th>Targeted Recipients</th>
+                  <!--<th>Unique Downloads(approx.)</th>-->
+                  <th>Total Attempts (including multiple)</th>
+                  <th>Published On</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Published By</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <% @quiz.quiz_targeted_groups.each do |t| %>
+                  <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                    <% else %>
+                    <tr class="tr-odd odd">
+                    <% end %>
+                      <td class='col'>
+                        <% if t.group_id %>
+                        <a href="/academic_classes/<%=t.group_id%>"><%=User.find(t.group_id).try(:academic_class).try(:name)%></a>
+                        <%elsif t.recipient_id %>
+                            <% user = User.find(t.recipient_id)%>
+                          <%= user.try(:academic_class).try(:name)%>/<a href="/users/<%=t.recipient_id%>"><%= user.edutorid%></a>/<%= user.try(:name)%>
+                        <%end%>
+                    </td>
+                    <td class='col'>
+                      <% if t.group_id %>
+                          <a href="/sections/<%=t.group_id%>"><%=User.find(t.group_id).try(:name)%></a>
+                      <%elsif t.recipient_id %>
+                          <a href="/users/<%=t.recipient_id%>"><%= User.find(t.recipient_id).try(:section).try(:name)%></a>
+                      <%end%>
+                    </td>
+                    <td class='col'>  
+                      <%=t.id%>
+                    </td>
+                    <td class="col"><%=t.extras%></td>
+                    <% types={1=>"Quiz",2=>"Practice-Test",3=>"Institute-Test",4=>"Assignment",5=>"Inclass",6=>"Regular",7=>"HOT/IIT",8=>"Olympiad",9=>"insti-tests"} %>
+                    <td class='col'><%=types[t.assessment_type]%></td>
+                    <% c = MessageQuizTargetedGroup.find_by_sql("SELECT count(DISTINCT(mu.user_id)) as c FROM message_user_downloads mu INNER JOIN message_quiz_targeted_groups mt ON mt.message_id=mu.message_id WHERE mt.quiz_targeted_group_id= #{t.id} limit 1")
+                    downloads = c.first.c
+                    if t.id <= 3599
+                      downloads = t.total_attempts
+                    end
+                  %>
+                    <td class="col">
+                     <% if t.to_group %>
+                      <%= UserGroup.find_by_sql("SELECT DISTINCT ug.user_id as c FROM user_groups ug INNER JOIN users u on u.id=ug.user_id WHERE ug.group_id=#{t.group_id} AND edutorid LIKE 'ES-%'").count %>
+                      <%else%>
+                         1
+                      <%end%>
+                    </td>
+                    <!--<td class="col"><%#=downloads%></td>-->
+                    <td class="col"><%=t.total_attempts%></td>
+                    <td class="col"><%= display_date_time(t.published_on)%></td>
+                    <td class="col"><%= display_date_time(t.timeopen)%></td>
+                    <td class="col"><%= display_date_time(t.timeclose)%></td>
+                    <%p = User.find(t.published_by).profile %>
+                    <td class="col"><%= p.firstname%> <%=p.surname%></td>
+                    <td><%=link_to "Publish Details", :controller => "quizzes", :action => "publish_details",:id=>t.id %>
+                      <br/><br/>
+                      <%=link_to "View Results", :controller => "quizzes", :action => "show_attempts",:id=>t.id %><br/><br/>
+                  <br/>
+                  <% if t.to_group %>
+                    <%= link_to "Publish to #{User.find(t.group_id).try(:name)}/#{ User.find(t.group_id).try(:section).try(:name)} users",:controller =>"quizzes",:action=>"publish_to_individual",:id=>t.id  %></td>
+                  <%end%>
+                  </tr>
+                  <%i = i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+          <br/>
+          <%if @quiz.publish_access(current_user.id)%>
+            <div class="group">
+              <div align="center" class="field">
+                <% if @quiz.questions.count > 0 %>
+                  <a href="/quizzes/publish_to/<%=@quiz.id%>" class="button big primary"><%=(@quiz.quiz_targeted_groups.count >0) ? "Publish Again" : "Publish"%></a>
+                <%end%>
+              </div>
+            </div>
+          <%end%>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class='label heading hr'>
+  </div>
+  <div>
+    <h1>Questions</h1>
+  </div>
+  <div>
+    <%if @quiz.format_type == 0 or @quiz.format_type == 4 or @quiz.format_type == 8 %>
+      <table width='100%'>
+        <tr>
+          <td id='questions_list' valign='top'>
+            <form id="add_questions_form" method="POST" action="/quizzes/update_question_instance">
+              <table cellpadding='1' cellspacing='1'>
+                <% unless @quiz.quiz_sections.empty?  %>
+                   <% @quiz.quiz_sections.each do |section|%>
+                      <tr><td><%= section.name %></td></tr>
+                      <tr>
+                        <td>
+                          <%= render "quizzes/questions" ,:questions =>section.questions%>
+                        </td>
+                      </tr>
+
+                   <%end%>
+                    <br/><br/>
+                 <%else%>
+                    <tr>
+                      <td>
+                        <%= render "quizzes/questions" ,:questions =>@quiz.questions%>
+                      </td>
+                    </tr>
+                <%end%>
+                <div class='pagination_info'>
+                </div>
+              </table>
+              <%if @quiz.edit_access(current_user.id) and @quiz.quiz_targeted_groups.empty?%>
+                <div class="group">
+                  <div align="center" class="field">
+                    <% if @quiz.questions.count > 0  %>
+                      <input class="button small primary" data-disable-with="Updating..." name="update_question_instance" type="submit" value="Update Marks/Penalty"/>
+                    <%else%>
+                      <a href="/quizzes/edit_questions/<%=@quiz.id%>" class="button big primary">Add Questions</a>
+                    <%end%>
+                  </div>
+                </div>
+              <%end%>
+            </form>
+          </td>
+        </tr>
+      </table>
+
+        <%=  link_to "Download Questions",url_for(quiz_questions_download_path(@quiz,:format=>:pdf))%>
+    </div>
+  <%else%>
+    <table width='100%'>
+      <tr>
+        <td id='questions_list' valign='top'>
+          <form id="add_questions_form" method="POST" action="/quizzes/update_question_instance">
+            <table cellpadding='1' cellspacing='1'>
+
+              <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='users' width='100%'>
+                <thead>
+                  <tr class='tr-head'>
+                    <th></th>
+                    <th></th>
+                    <th>Section</th>
+                    <th>Question Tag</th>
+                    <th>Question Format</th>
+                    <th>Difficulty</th>
+                    <th>Skills</th>
+                    <th>Marks</th>
+                    <th>Penalty (positive)</th>
+                    <th>Options</th>
+                    <th>Answer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%i=0%>
+                  <% total_marks = 0 %>
+                  <% @quiz.questions.each do |q| %>
+                    <% if i%2 == 0 %>
+                      <tr class="tr-even even">
+                      <% else %>
+                      <tr class="tr-odd odd">
+                      <% end %>
+                     <td class='col'><%= i+1%></td>
+                      <td class='col'>
+                        <%if @quiz.edit_access(current_user.id) and @quiz.quiz_targeted_groups.empty? %>
+                        <a href="/quizzes/remove_catchall_question/<%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.id%>">Remove</a>
+                        <%end%>
+                      </td>
+                      <td class='col'>
+                        <%q.section%>
+                        <input name="quiz[quiz_question_instances_attributes][<%=i%>][section]" type="text" value="<%= q.section %>" size="4"/>
+                      </td>
+                      <td class='col'>
+                        <%q.tag%>
+                        <input name="quiz[quiz_question_instances_attributes][<%=i%>][tag]" type="text" value="<%= q.tag %>" size="4"/>
+                      </td>
+                      <td class='col'>
+                        <input name="quiz[quiz_question_instances_attributes][<%=i%>][inpage_location]" type="text" value="<%= q.inpage_location %>" size="4"/>
+                      </td>
+                      <td class='col'>
+                        <%s = q.difficulty%>
+                        <select name="quiz[quiz_question_instances_attributes][<%=i%>][difficulty]"><option <%=(s.to_i == 1) ? "selected" : ""%> value="1">Easy</option><option <%=(s.to_i == 2) ? "selected" : ""%> value="2">Medium</option><option <%=(s.to_i == 3) ? "selected" : ""%> value="3">Hard</option></select>
+                      </td>
+                      <td class='col'>
+                        <input name="quiz[quiz_question_instances_attributes][<%=i%>][page_no]" type="text" value="<%= q.page_no %>" size="4"/>
+                      </td>
+                      <%marks = @quiz.quiz_question_instances.where(:question_id=>q.id).first.grade%>
+                  <input name="quiz[quiz_question_instances_attributes][<%=i%>][id]" type="hidden" value="<%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.id%>" size="4"/>
+                  <%if @quiz.edit_access(current_user.id)%>
+                    <td class='col'>
+                      <input name="quiz[quiz_question_instances_attributes][<%=i%>][grade]" type="text" value="<%= marks %>" size="4"/>
+                    </td>
+                    <td class='col'>
+                      <input name="quiz[quiz_question_instances_attributes][<%=i%>][penalty]" type="text" value="<%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.penalty%>" size="4"/>
+                    </td>
+                    <td class='col'>
+                      <input name="quiz[quiz_question_instances_attributes][<%=i%>][options]" type="text" value="<%=q.question_answers.map(&:tag).join(",") %>" size="10"/>
+                    </td>
+                    <td class='col'>
+                      <input name="quiz[quiz_question_instances_attributes][<%=i%>][answer]" type="text" value="<%=(q.question_answers.collect{|i| i.tag if i.fraction == 1} - [nil]).join(",") %>" size="4"/>
+                    </td>
+                  <%else%>
+                    <td class='col'><%=marks%></td>
+                    <td class='col'><%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.penalty%></td>
+                    <td class='col'><%=q.question_answers.map(&:tag).join(",")%></td>
+                    <td class='col'><%=(q.question_answers.collect{|i| i.tag if i.fraction == 1} - [nil]).join(",") %></td>
+                  <%end%>
+                  </tr>
+                  <%i= i+1%>
+                  <%total_marks = total_marks+ marks%>
+                <% end %>
+                <tr class="tr-odd odd">
+                  <td class='col'></td>
+                  <td class='col'><b>Total Questions: <%= @quiz.questions.count%></b></td>
+                  <td class='col'></td>
+                  <td class='col'></td>
+                  <td class='col'></td>
+                  <td class='col'></td>
+                  <td class='col'><b>Total Marks: <%=total_marks%></b></td>
+                  <td class='col'></td>
+                  <td class='col'></td>
+                  <td class='col'></td>
+                </tr>
+                </tbody>
+              </table>
+              <div class='pagination_info'>
+              </div>
+            </table>
+            <%if @quiz.edit_access(current_user.id) and @quiz.quiz_targeted_groups.empty?%>
+              <div class="group">
+                <div align="center" class="field">
+                  <% if @quiz.questions.count > 0  %>
+                    <input class="button small primary" data-disable-with="Updating..." name="update_question_instance" type="submit" value="Update"/>
+                  <%else%>
+                    <a href="/quizzes/edit_questions/<%=@quiz.id%>" class="button big primary">Add Questions</a>
+                  <%end%>
+                </div>
+              </div>
+            <%end%>
+          </form>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <%= link_to "View Test Paper", download_catchall_testpaper_path(@quiz,{:format => :pdf}) %>
+<%end%>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#publish-history").dataTable({
+      //"aaSorting": [[ 4, "desc" ]],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+        null,null,null,null,null,null,null,null,null,null,null,
+        {"bSortable": false }
+      ]
+    });
+    addtipTip();// on ajax update recall
+  });
+</script>

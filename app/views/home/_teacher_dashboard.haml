@@ -1,0 +1,65 @@
+#teacher_dashboard
+  #page-wrapper
+  .section_details
+    .col-sm-12
+      .panel.panel-green
+        .panel-heading
+          .panel-title
+            %h3 Assigned Sections
+        .panel-body
+          =link_to "#{@assigned_sections}",'/sections'
+
+
+  .row
+    .col-lg-4
+      .panel.panel-primary
+        .panel-heading
+          .row
+            .col-xs-3
+              .assessments_available_image
+                =image_tag "assessments_available.png"
+            .col-xs-9.text-right
+              .huge
+                = @num_of_assessments
+              Assessments Available
+        .panel-footer
+          .pull-left
+            =link_to "Create Assessment",'/assessment_tool/new'
+
+    .col-lg-4
+      .panel.panel-green
+        .panel-heading
+          .row
+            .col-xs-3
+              .files_uploaded_image
+                =image_tag "files_uploaded.png"
+            .col-xs-9.text-right
+              .huge
+                = @num_of_assets
+              Files Uploaded
+        .panel-footer
+          .pull-left
+            =link_to "Content catalogue", user_assets_path
+
+    .col-lg-4
+      .panel.panel-red
+        .panel-heading
+          .row
+            .col-xs-3
+              .assessments_published_image
+                =image_tag "assessments_published.png"
+            .col-xs-9.text-right
+              .huge
+                = @num_of_published_assessments
+              Published Assessments
+        .panel-footer
+          .pull-left
+            =link_to "Published Assessments", '/assessment_tool/my_assessments'
+            
+-#rest of css is available in dashboard_test.css file
+:css
+  a:hover, a:visited, a:link, a:active
+  {
+    text-decoration: none !important;
+  }
+

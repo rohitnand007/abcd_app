@@ -1,0 +1,104 @@
+
+.tags
+  %h2 Package Details
+  %table.table-hover.listing.sort_table{:align => "center", :package_id => "#{@vdo_upload.id}", :width => "100%"}
+    %thead
+      %tr.tr-head
+        %th S.No
+        %th File Name
+        %th Name
+        %th Academic Class
+        %th Subject
+        %th Concept
+        %th Status
+        %th Action
+    %tbody
+      - @package_files.each do |asset|
+        %tr{asset_name: "#{asset['asset_name']}", asset_status: "#{asset['status']}", class: "#{asset['status']}"}
+          %td
+            = asset["s_no"]
+          %td
+            = asset["file_name"]
+          %td
+            = asset["asset_name"]
+          %td
+            = asset["academic_class"]
+          %td
+            = asset["subject"]
+          %td
+            = asset["concept"]
+          %td
+            = asset["status"] #file_status
+          %td
+            %input.button.tablebutton.approve_asset.btn.btn-info.pull-right{:name => "approve", :type => "submit", :value => "Approve", :disabled => true}/
+            %input.button.tablebutton.editdata.edit_asset.btn.pull-right{:name => "edit", :type => "submit", :value => "Edit"}/
+.asset_info
+  = form_tag "/user_assets/update_package_details/#{@vdo_upload.id}", :method => 'post', :multipart => true do 
+    %table
+      %tr.field
+        %td= label_tag :asset_name
+        %td= text_field_tag :asset_name, nil, required: "required", :placeholder => "Enter Asset Name", :readonly => true
+      %tr.field
+        %td= label_tag :academic_class
+        %td.styled-select
+          = collection_select :tags, :academic_class_id, @class_tags, :id, :value, {}, {:class => 'drop_down'}
+      %tr.field
+        %td= label_tag :subject_name
+        %td.styled-select
+          = collection_select :tags, :subject_id, @subject_tags, :id, :value, {}, {:class => 'drop_down'}
+      %tr.field
+        %td= label_tag :concept_name
+        %td.styled-select
+          = collection_select :tags, :concept_id, @concept_tags, :id, :value, {}, {:class => 'drop_down'}
+    .actions
+      = submit_tag "Update", disable_with: "Updating...", class: 'button tablebutton'
+
+:css
+  .asset_info{
+    display: none;
+  }
+  .asset_info .field{
+    margin: 5px;
+    padding: 5px;
+  }
+  .asset_info .field td{
+    margin: 5px;
+    padding: 5px;
+  }
+  .edit_asset, .approve_asset{
+    margin: 5px;
+  }
+
+:javascript
+  var package_id = "#{@vdo_upload.id}";
+  $(".edit_asset").click(function(){
+    //get asset name
+    var asset_name = $(this).parent().parent().attr("asset_name");
+    //set asset name
+    $("#asset_name").val(asset_name);
+    $(".asset_info").dialog({title: "Update asset info",
+      dialogClass: 'createNewAsset',
+      width: "auto",
+      height: "auto",
+      resizable: false,
+      draggable: false,
+      modal: true
+    });
+  });
+  $(".approve_asset").click(function(){
+    var asset_name = $(this).parent().parent().attr("asset_name");
+    $("#loading_overlay").css("display", "");
+    $.get("/user_assets/approve_asset/"+package_id +".json",{"asset_name" : asset_name}, function(data, status){
+      $("#loading_overlay").css("display", "none");
+      alert("Asset Approved Successfully");
+      $("#loading_overlay").css("display", "");
+      window.location.reload();
+    });
+  });
+  $("tr.OK").each(function(){
+    $(this).find(".approve_asset").attr("disabled", false);
+  });
+  $("tr.Approved").each(function(){
+    $(this).find(".edit_asset").attr("disabled", true);
+    $(this).find(".approve_asset").attr("disabled", true);
+  });

@@ -1,0 +1,38 @@
+:javascript
+  $(document).ready(function() {
+    $("#content_years").dataTable({
+        "aoColumns": [
+                    null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+%div
+  %table#content_years.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.content_year.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th Code
+        %th Board
+        %th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @content_years.each do |content_year|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"content_year_#{content_year.id}"}
+          %td.col= link_to content_year.name, content_year_path(content_year)
+          %td.col= content_year.code
+          %td.col= link_to content_year.board.name  ,board_path(content_year.board)
+          %td.col= display_date_time(content_year.created_at)
+          %td.col
+            = link_to_show(content_year_path(content_year))
+.pagination_info= paginate @content_years unless @content_years.blank?

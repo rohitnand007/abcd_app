@@ -1,0 +1,102 @@
+<div id="content_header">
+  <h1 id="main_heading">Publish conceptmap</h1>
+</div>
+<div id="data">
+  <%= simple_form_for @message,:url=>publish_concept_message_path,:html => { :class => :form } do |c| %>
+      <%= c.error_messages %>
+      <div class="group">
+        <div class="field">
+          <%= c.input :Assessment_to,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} do %>
+              <%= radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual" %>
+              <%= 'Individual' %>
+              <%= radio_button_tag :message_to, 'group',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Group" %>
+              <%= 'Group' %>
+          <%end%>
+        </div>
+      </div>
+      <div class="group" id="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Select Group
+            </label>
+            <select name="quiz_targeted_group[group_id]" id="quiz_targeted_group" >
+                  <option value="">Select</option>
+              <% asign_groups(current_user).each do |g|%>
+                  <option value="<%=g.user_id%>"><%=g.try(:section_name)%></option>
+              <%end%>
+            </select>
+          </div>
+        </div>
+      </div>
+      <input name="quiz_targeted_group[to_group]" type="hidden" value="1" id="to_group"/>
+      <div class="group"id="recipient">
+        <div class="field">
+          <div class="input string required">
+            <label class="string required label" for="">
+              Individual
+            </label>
+            <%= text_field :message, :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:" %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div align="center" class="field">
+          <input class="button big primary" data-disable-with="Publishing..." name="commit" type="submit" value="Publish" id='submit_form'/>
+          <a href="/quizzes" class="button danger icon remove">Cancel</a>
+        </div>
+      </div>
+  <% end %>
+</div>
+<script>
+    $(document).ready(function(){
+        $("input[name$='message_to']").click(function(){
+
+
+
+            var radio_value = $(this).val();
+            if(radio_value=='individual') {
+                $("#quiz_targeted_group").get(0).selectedIndex = 0;
+                $("#to_group").val("0");
+                $("#recipient").show("slow");
+                $("#group").hide();
+            }
+            else if(radio_value=='group') {
+                $("#to_group").val("1");
+                $("#message_multiple_recipient_ids").tokenInput('clear');
+                $(".token-input-dropdown").remove();
+                $(".token-input-list").remove();
+                $("#token-input-multiple_recipient_ids").remove();
+                $(function() {
+                    $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+                        queryParam: 'term',
+                        minChars: '3',
+                        hintText: 'Type first 3-letters of users surname/firstname/roll number',
+                        crossDomain: false,
+                        preventDuplicates:true,
+                        prePopulate: $("#message_multiple_ids").data("pre"),
+                        theme: ""
+                    });
+                });
+                $("#group").show("slow");
+                $("#recipient").hide();
+            }
+        });
+        $("#recipient").hide();
+        $("#group").show();
+
+        $(function() {
+            $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+                queryParam: 'term',
+                minChars: '3',
+                hintText: 'Type first 3-letters of users surname/firstname/roll number',
+                crossDomain: false,
+                preventDuplicates:true,
+                prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+                theme: ""
+            });
+        });
+
+    });
+</script>

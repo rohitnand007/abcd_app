@@ -1,0 +1,126 @@
+= stylesheet_link_tag "quick_test"
+= javascript_include_tag "jquery.circliful"
+#quicktest_block
+  %br
+  .quicktest_menu
+    .quicktest_menubutton_dull
+      = link_to "Create New Quick Test",action:"new"
+    .quicktest_menubutton_blank
+    .quicktest_menubutton_active
+      Manage Quick Tests
+    .quicktest_menubutton_info
+  .q_body_block
+
+    - quicktests = @quick_tests
+    - #quicktests = Quiz.where(id:12512)
+    - quicktests.each do |quicktest|
+      - @quicktest_taken_user_count = quicktest_taken_user_count(quicktest)
+      - @quicktest_downloaded_user_count = quicktest_downloaded_user_count(quicktest)
+      - @quicktest_downloaded_user_count = @quicktest_taken_user_count if (@quicktest_taken_user_count > @quicktest_downloaded_user_count)
+      %br
+      .q_item{id:"qid_#{quicktest.id}"}
+        = render :partial => 'summary_header', locals: {quicktest: quicktest}
+        - if published?(quicktest)
+          = image_tag "loading_image.gif"  , class: "loading_icon"  , :style=>"display: none ;"
+          .analysis_fetcher
+            = link_to "View Analytics &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;".html_safe, quick_test_update_quick_test_info_path(quicktest), remote:true
+
+    .pagination_info
+      = paginate @quick_tests
+      %br
+      = (page_entries_info @quick_tests).html_safe
+    %br
+    %br
+    %br
+
+:javascript
+
+
+  $(document).ready(function(){
+  $(".analysis_fetcher").click(function(){
+   $(this).prev(".loading_icon").show();
+  });
+   })
+  function graph_builder(parent_div_id) {
+        //$('#myStat1').attr("data-text","herei'm");
+            $(".reportgraph_info p:first-child").css("font-size","2em");
+            $("#"+parent_div_id+' .myStat1').circliful();
+            $("#"+parent_div_id+' .myStat2').circliful();
+            $(".nav_icon_block").click(function () {
+                $(".nav_icon_block").css("background-color", "white");
+                $(".nav_icon_block").css("border-bottom", "0");
+                $(".nav_icon_block").children(".nav_menuarrow").css("visibility", "hidden");
+                $(this).css("background-color", "#E5F4FB");
+                $(this).css("border-bottom", "2px inset #0090d4");
+                  $(this).children(".nav_menuarrow").css("visibility", "visible");
+            });
+
+            //adding toggle functionality to analysis box
+            $("#"+parent_div_id+' .analysis_box_toggler').click(function(){
+                  $(this).closest(".q_item").find(".analysis_box").toggle();
+                  $(this).closest(".q_item").find(".summary_message").toggle();
+                  $(this).toggleClass("analysis_box_hide analysis_box_show");
+                  if ($(this).hasClass("analysis_box_show")){
+                   $(this).find(".margin_creator").text("View Analytics");
+                   }
+                  else{
+                   $(this).find(".margin_creator").text("Hide Analytics");
+                  }
+                  }
+                  );
+
+            // adding toggle functionality to extra toggle
+            $("#"+parent_div_id+' .extra_toggle').click(function(){
+                    $(this).prev().children().eq(1).toggle();
+                    $(this).toggleClass("extra_toggle_hide extra_toggle_show");
+                    }
+                    );
+
+            // Adding toggle functionality to question graph button
+            $("#"+parent_div_id+" .question_graph_button").click(function(){
+                    $(this).toggleClass("quicktest_menubutton_dull quicktest_menubutton_active");
+                    $(this).prev().prev().toggleClass("quicktest_menubutton_dull quicktest_menubutton_active");
+                    $(this).closest(".analysis_box").find(".question_graph_box").show();
+                    $(this).closest(".analysis_box").find(".student_response_box").hide();
+                    }
+                    );
+
+            // Adding toggle functionality to student response button
+            $("#"+parent_div_id+" .student_response_button").click(function(){
+                $(this).toggleClass("quicktest_menubutton_dull quicktest_menubutton_active");
+                $(this).next().next().toggleClass("quicktest_menubutton_dull quicktest_menubutton_active");
+                $(this).closest(".analysis_box").find(".question_graph_box").hide();
+                $(this).closest(".analysis_box").find(".student_response_box").show();
+                }
+                );
+
+            // Adding preloader to refresh button for this summary item
+            $("#"+parent_div_id+" .refresh_button").click(function(){
+                $(this).find(".image_div img").first().hide();
+                $(this).find(".image_div img").last().show();
+              });
+
+            // Populating the graphs for average, lowest, highest marks students dynamically.
+            $("#"+parent_div_id+" .green_div").each(function(){
+                        var marks = +($(this).closest("td").next().text());
+                        var total_marks = +($(this).closest(".big_table").find(".total_marks").text());
+                        var width = (marks*20)/total_marks+"em";
+                        if (width=="0em"){width="0.2em";};
+                        $(this).animate({'width': width},1000);
+                      }
+                      );
+
+
+          // Adding height to vertical charts dynamically
+          $("#bars li .bar").each( function( key, bar ) {
+           var percentage = $(this).data('percentage');
+           $(this).css("height",percentage+"%");
+           $(this).css("top",100-percentage+"%");
+           $(this).next().css("bottom",percentage-103+"%");
+          //$(this).animate({
+             //  'height' : percentage + '%','top' : (100-percentage) + '%'
+              //    }, 1000);
+    });
+
+
+    }

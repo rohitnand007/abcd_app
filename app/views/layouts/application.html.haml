@@ -1,0 +1,50 @@
+%html
+  %head
+    %title My Edutor
+    = csrf_meta_tags
+    = stylesheet_link_tag 'default','application'
+    = javascript_include_tag 'application'
+  %body
+    #container
+      #header_bg
+        #header
+          %h1
+            -if user_signed_in? && current_user.is?('EA')
+              = link_to (image_tag "edutorlogo.jpg"),root_path
+            -elsif user_signed_in? && current_user.is?('IA')
+              = image_tag current_user.institution.profile.photo.url(:thumb)
+              = link_to current_user.institution.name,root_path
+            -elsif user_signed_in? && current_user.is?('CR')
+              = image_tag current_user.institution.profile.photo.url(:thumb)
+              =link_to current_user.institution.name,root_path
+          #user-navigation
+            %ul.wat-cf
+              %li= link_to 'Home',root_path
+              %li
+                = link_to "Profile", profile_path(current_user.profile)
+              %li
+                = link_to "Messages",messages_path+user_path(current_user)
+              %li
+                = link_to "Change Password",change_password_path
+              %li
+                = link_to  "Logout", destroy_user_session_path, :method => :delete
+          #main-navigation
+            %ul.wat-cf
+      #wrapper.wat-cf
+        .flash
+          - flash.each do |type, message|
+            %div{:class => "message #{type}"}
+              %p= message
+        #main
+          = yield
+        #sidebar
+          = render 'shared/search_form' if current_user.is? 'EA' or current_user.is? 'IA' or current_user.is?'CR'
+          %br
+          %br
+          %br
+          = yield :sidebar
+      #footer_bg
+        #footer
+          .block
+            %p
+            Copyright &copy; #{Time.now.year} Edutor Technologies.

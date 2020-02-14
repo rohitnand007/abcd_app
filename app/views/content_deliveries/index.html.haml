@@ -1,0 +1,63 @@
+.tabcontents
+  #view1
+    %h2 Listing User Assets
+    %table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+      %tr
+        %th User Assets
+        %th Id
+        %th
+        %th
+        %th
+      -@user_assets = UserAsset.all
+      - @user_assets.each do |user_asset|
+        %tr
+          %td= user_asset.asset_name
+          %td= user_asset.user.edutorid
+          %td= link_to 'Show', user_asset
+          %td= link_to 'Edit', edit_user_asset_path(user_asset)
+          %td= link_to 'Destroy', user_asset, :confirm => 'Are you sure?', :method => :delete
+    %h1 Listing content_deliveries
+
+    %table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+      %tr
+        %th Id
+        %th User Asset
+        %th Ibook
+        %th Uri
+        %th Message
+        %th Published as
+      - @content_deliveries.each do |content_delivery|
+        %tr
+          %td= content_delivery.user.edutorid
+          %td= content_delivery.user_asset.attachment_file_name if content_delivery.user_asset.present?
+          %td= content_delivery.ibook.ibook_id
+          %td= content_delivery.uri
+          %td= content_delivery.message.subject if content_delivery.message
+          %td= content_delivery.published_as
+        -#%td= link_to 'Show', content_delivery
+        -#%td= link_to 'Edit', edit_content_delivery_path(content_delivery)
+        -#%td= link_to 'Destroy', content_delivery, :confirm => 'Are you sure?', :method => :delete
+
+
+    %br
+
+    = link_to 'New User asset', new_user_asset_path
+  #view2
+    %h1 Listing Books Assigned
+    %table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+      %tr
+        %th Book Title
+        %th Book Id
+        %th Link_to add books
+        -#%th
+        -#%th
+        -#%th
+      - @ibooks.each do |book|
+        %tr
+          %td= book.title
+          %td= book.ibook_id
+          %td= link_to "Add assets", new_content_delivery_path(id: book.id)
+
+  #view3
+    %h1
+%br

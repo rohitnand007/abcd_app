@@ -1,0 +1,14 @@
+%h1 Listing User Device Configurations
+
+%table
+  %tr
+    %th Deviceid
+    %th
+    %th
+
+  - @user_device_configurations.each do |user_device_configuration|
+    %tr
+      %td= user_device_configuration.deviceid
+      %td= link_to 'Show', user_device_configuration
+      %td= link_to 'Destroy', user_device_configuration, :confirm => 'Are you sure?', :method => :delete
+

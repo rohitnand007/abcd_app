@@ -1,0 +1,15 @@
+= simple_form_for(@device_response) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :edutor_id
+    = f.input :device_id
+    = f.input :url
+    = f.input :request_type
+    = f.input :valid
+    = f.input :data
+    = f.input :session_id
+    = f.input :ip
+
+  .actions
+    = f.button :submit,:class=>'big primary'

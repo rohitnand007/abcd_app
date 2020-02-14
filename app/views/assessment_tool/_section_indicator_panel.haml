@@ -1,0 +1,4 @@
+.section_indicator_panel
+  %label{for: "subjectAddQuestionsButton"} You are adding questions to
+  .styled-select
+    = select_tag(:section_id,options_for_select(assessment_divisions.map{|assessment_division| [name(assessment_division),assessment_division.id] }),id:"section_selector",class:"drop_down",style:"padding:7px")

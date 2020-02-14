@@ -1,0 +1,78 @@
+= stylesheet_link_tag 'ibooks'
+= javascript_include_tag 'publisher'
+= javascript_include_tag 'instafilta'
+= render partial:"form",locals:{edit:false}
+%br
+%table#booksHeader
+  %tbody
+    %tr
+      %td Book Catalogue
+      %td
+        No. of books (
+        = @ibooks.count
+        )
+      %td
+        = text_field_tag 'search_books',"", placeholder:"Type to filter..."
+      %td{style:"padding:10px"}
+        %div{style:"float:right;padding-left:10px"}
+          .toggleAll
+            Select all
+            %input#master_select{ :type => "checkbox",:name=> "selectall"}
+        %div{style:"float:right;padding-left:10px"}= link_to "Assign to collection", "#", id:"assignToCollection"
+        %div{style:"float:right"}= link_to "+Add Books", "#", id:"createNewBooks"
+%br
+
+#booksList
+  - if (@ibooks.empty?||@ibooks.nil?)
+    No books uploaded. Please add books.
+  - else
+    - @ibooks.each do |ibook|
+      = render :partial => 'full_detail_area', locals: {ibook:ibook}
+
+
+%br
+#dialogForm
+  = form_tag "ipacks/update_ipacks"do
+    %h1 Create a new collection
+    .eachCollection.ui-corner-all
+      = check_box_tag "create_new",false
+      = text_field_tag "newIpack","",style:"height:40px;width:200px;",placeholder:"Eg. '9th Class Mathematics' "
+    %h1 Assign to collections
+    = hidden_field_tag "ibook_ids"
+    #existingCollections
+      - @ipacks.select{|i| !i.assigned?}.each do |ipack|
+        %label
+          .eachCollection.ui-corner-all
+            = check_box_tag "ipacks[]", ipack.id
+            = ipack.name
+    %br
+    = submit_tag "Assign to Collections", class:"normalButton",id:"assign_to_collection"
+    = image_tag "small_loading.gif",class:"loading",style:"visibility:hidden"
+
+= javascript_include_tag 'ibooks'
+
+:javascript
+  activateIndexPage();
+  $("#assign_to_collection").click(function(){
+  if ($("#create_new").is(':checked')){$("#create_new").val(true)}
+  })
+  // Uses a jquery based plugin called instafilta to create useful filter functionality
+  $('#search_books').instaFilta({
+    targets: 'td[data-type=displayName],td[data-type=subject],\
+    td[data-type=class],td[data-type=author],td[data-type=type],td[data-type=collections]',
+
+    sections: '.fullDetailArea'
+  });
+  $("#booksList").find(":checkbox").removeAttr('checked');
+  $(".toggleAll").click(function(e){
+    if (document.getElementById('master_select').checked === true){
+      $("#booksList").find(":checkbox").attr('checked','checked');}
+    else
+    {$("#booksList").find(":checkbox").removeAttr('checked');};
+  });
+
+
+
+
+
+

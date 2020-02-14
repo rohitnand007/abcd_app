@@ -1,0 +1,138 @@
+= form_for :tag_list,:url=> '/assessment_tool/get_questions_by_live_tags',:html => {:id => 'live_tags_selector'},:remote=>true do  |f|
+  - live_tags = get_live_tags(publisher_question_bank.id)
+  - if @quiz.nil?
+    = hidden_field_tag :outside_assessment, true
+  -else
+    =# If there is no quiz, that means you are editing, searching questions from outside the assessment.
+    = hidden_field_tag :outside_assessment, @quiz.new_record? ? true : false
+  = hidden_field_tag :quiz_id, @quiz.nil? ? "": @quiz.id
+  = hidden_field_tag :publisher_question_bank_id, publisher_question_bank.nil? ? "" : publisher_question_bank.id
+  #searchOptions
+    %h3 Search by Filters
+    .searchFilterContainer
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "form".humanize.titleize   #C should be caps
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'ac', Tag.where(id:live_tags[:ac_tg_ids]).sort_by { |a| a.value.to_i } , :id, :value,{:prompt=>'Select', :selected=> {}},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "subject".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'su', Tag.where(id:live_tags[:su_tg_ids]).sort_by(&:value), :id, :value, {:prompt=>"Select"},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "chapter".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'ch',Tag.where(id:live_tags[:ch_tg_ids]).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "concept names".humanize.titleize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'co',Tag.where(id:live_tags[:co_tg_ids]).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: ' drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "difficulty level".humanize.titleize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'dl',Tag.where(id:live_tags[:dl_tg_ids]).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "revised bloom's taxonomy".humanize.titleize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'bl',Tag.where(id:live_tags[:bl_tg_ids]).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "special category".humanize.titleize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'sc',Tag.where(id:live_tags[:sc_tg_ids]).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %b= "question type".humanize.titleize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'ty',Tag.where(id:live_tags[:ty_tg_ids]).sort_by(&:value), :id, :value_text,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+
+
+    %h3 Search by IDs
+    .searchIdBoxContainer
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td
+            =f.text_field "search_by_id",{placeholder:"Seperate IDs by commas (,)"}
+
+  %table
+    %tr
+      %td{style: "height: 10px;"}
+        %br
+        /%button#questionBankSearch{style: "background-color:#60c8cd; color: white;"}
+        = f.submit 'Search' ,id: "search_for_questions"
+        = image_tag "small_loading.gif",class:"loading",style:"vertical-align: middle"
+
+:javascript
+
+  add_accordion_to_searches();
+  $("#search_for_questions").button();
+  $('#tag_list_ac,#tag_list_su,#tag_list_ch,#tag_list_co,#tag_list_dl,#tag_list_bl,#tag_list_sc,#tag_list_ty').val("");
+  $("#tag_list_ac,#tag_list_su,#tag_list_ch,#tag_list_co").change(function() {
+      var ac_tg_id = $('select#tag_list_ac :selected').val();
+      var su_tg_id = $('select#tag_list_su :selected').val();
+      var ch_tg_id = $('select#tag_list_ch :selected').val();
+      var co_tg_id = $('select#tag_list_co :selected').val();
+      var qb_id = $('#search_db').val();
+      if ($(this).attr('id')=='tag_list_ac'){
+      selected_values = {'qb_id':qb_id,'ac_tg_id':ac_tg_id}
+      }
+      else if ($(this).attr('id')=='tag_list_su'){
+      selected_values = {'qb_id':qb_id,'ac_tg_id':ac_tg_id,'su_tg_id':su_tg_id}
+      }
+      else if ($(this).attr('id')=='tag_list_ch'){
+      selected_values = {'qb_id':qb_id,'ac_tg_id':ac_tg_id,'su_tg_id':su_tg_id,'ch_tg_id':ch_tg_id}
+      }
+      else{
+      selected_values = {'qb_id':qb_id,'ac_tg_id':ac_tg_id,'su_tg_id':su_tg_id,'ch_tg_id':ch_tg_id,'co_tg_id':co_tg_id}
+      }
+      var ac_object = $("#tag_list_ac");
+      var su_object = $("#tag_list_su");
+      var ch_object = $("#tag_list_ch");
+      var co_object = $("#tag_list_co");
+      var bl_object = $("#tag_list_bl");
+      var dl_object = $("#tag_list_dl");
+      var sc_object = $("#tag_list_sc");
+      var ty_object = $("#tag_list_ty");
+      var url = "/assessment_tool/get_live_tags/"
+      var output_mapping ={'ac_tgs':ac_object,'su_tgs':su_object,
+      'ch_tgs':ch_object,'co_tgs':co_object,'bl_tgs':bl_object,
+      'dl_tgs':dl_object,'sc_tgs':sc_object,'ty_tgs':ty_object}
+
+      dynamicallyPopulateCorrespondingDropdowns(url,selected_values,output_mapping)
+      // selected_values={identifier1:value,identifier2:value}
+      // output_mapping = {expected_output_key1: $element_to_populate1,expected_output_key2: $element_to_populate2}
+  });
+  $("#search_for_questions").click(function(){
+     $(".loading").show();
+     empty_question_array();
+     return true;
+  });
+    jQuery(function($) {
+        $('form').bind('submit', function() {
+            $(this).find(':input').removeAttr('disabled');
+        });
+
+    });
+    //code ends here

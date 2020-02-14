@@ -1,0 +1,85 @@
+:javascript
+  $(document).ready(function() {
+    $("#devices").dataTable({
+                "aoColumnDefs" : [
+                                    //{"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]},
+                                    //{"bSortable":false, "aTargets":[3]},
+                                    //{"bSortable":false, "aTargets":[4]},
+                                    {"bSortable":false, "aTargets":[5]},
+                                    //{"bSortable":false, "aTargets":[6]},
+                                    {"bSortable":false, "aTargets":[6]},
+                                    {"bSortable":false, "aTargets":[7]},
+                                    {"bSortable":false, "aTargets":[8]},
+                                    {"bSortable":false, "aTargets":[9]},
+                                    {"bSortable":false, "aTargets":[10]}                                  
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bInfo": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#devices").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Device :   " },
+                "fnServerParams": function(aoData){
+                    aoData.push({name: 'search_term', value : search_term});
+                },
+                "fnPreDrawCallback": function( oSettings ) {
+                  $("#devices").css("opacity", "0.4");
+                  $("#overlay").show();
+                },
+                "fnDrawCallback": function( oSettings ) {
+                  $("#devices").css("opacity", "1");
+                  $("#overlay").hide();
+                }
+    });
+    
+    var viewportHeight = $(window).height();
+    $("#devices_processing").css("font-size", 50);
+    $("#devices_processing").css("top", viewportHeight/2);
+    $("#devices_processing").css("width", 300);
+    $("#devices_processing").css("height", 70);
+    $("#devices_processing").css("color","rgb(100,0,0");
+    $("#devices_processing").css("top","430px");
+  });
+#content_header
+  %h1#main_heading Devices
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}",devices_path
+    -if current_user.is? 'EA' or current_user.is? 'IA'
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_device_path
+      %li= link_to "#{t("web-app-theme.move_devices", :default => "Move devices")}", move_devices_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#devices.listing.sort_table{data: devices_path(format: :json) ,align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Device-Id
+                %th Mac-Id
+                %th= t("activerecord.attributes.device.model", :default => t("activerecord.labels.model", :default => "Model"))
+                %th= t("activerecord.attributes.device.institution", :default => t("activerecord.labels.institution", :default => "Institution"))
+                %th= t("activerecord.attributes.device.center", :default => t("activerecord.labels.center", :default => "Center"))
+                %th= t("activerecord.attributes.device.status", :default => t("activerecord.labels.status", :default => "Status"))
+                / %th= t("activerecord.attributes.device.device_type", :default => t("activerecord.labels.device_type", :default => "Device Type"))
+                %th= t("activerecord.attributes.device.device_users", :default => t("activerecord.labels.device_users", :default => "Assigned To"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th{style: 'border-right: 1px solid #62c6cc'} &nbsp
+                %th{style: 'border-color: #62c6cc'}
+                %th{style: 'border-color: #62c6cc'}
+            %tbody
+#overlay{:style => "position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; opacity:0.2; background: #000;"}
+:javascript
+  var search_term = "#{@search_term}" ;
+
+

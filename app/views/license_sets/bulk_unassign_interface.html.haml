@@ -1,0 +1,10 @@
+= form_tag "bulk_unassign", multipart: true do
+  %div{style:"margin:auto; background-color:#f9f9f9;width:50%;padding:30px;"}
+    %h3 Bulk unassigning Licenses--Interface
+    %br
+    %label
+      CSV File
+      = file_field_tag :csv_file
+    %br
+    %br
+      = submit_tag "Bulk Unassign Licenses", class: "button"

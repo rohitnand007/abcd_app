@@ -1,0 +1,7 @@
+#content_header
+  %h1#main_heading Migrate Users
+= form_tag user_migrate_path, :multipart => true do
+  %label{:for => "file"} Upload CSV file with updated class and section
+  %br
+  = file_field_tag "file"
+  = submit_tag 'Migrate'

@@ -1,0 +1,26 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+
+ *=require web-app-theme/base
+ *=require web-app-theme/themes/default/style
+ *=require gh-buttons
+ *=require jquery-ui
+ *=require tablesorter
+ *=require token-input
+ *=require jquery.checkboxtree
+ *=require tipTip
+ *=require searchstyles
+ *=require app
+ *=require sticky.min
+ *=require new
+ *=require jquery.tagit
+ *=require tagit.ui-zendesk
+ *=require dashboard_test
+ *=require abcd/abcd_top_menu_inner
+ *=require_self
+*/
+
+/* Write here your css for overriding rules  */
+

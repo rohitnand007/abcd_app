@@ -1,0 +1,29 @@
+%table{width: '100%'}
+  %tr
+    %td
+      %div
+        - if @teacher.teacher_class_rooms
+          %table#listing.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Class/Group Name
+                %th Subject
+                %th Section
+                %th Period
+            %tbody
+              -#%tr.tr-blank
+              - @teacher.teacher_class_rooms.each do |class_room|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  -#%td.col= class_room.section.nil? ? (link_to class_room.student_group.name,my_students_path(@teacher,class_room.student_group)) : (link_to class_room.section.academic_class.name,my_students_path(@teacher,class_room.section.academic_class)     )
+                  %td.col= class_room.class_room_group.try(:name)
+                  %td.col
+                    - if class_room.content.try(:type).eql?('Board')
+                      = link_to_unless(current_et,"PLEASE ASSIGN SUBJECTS", edit_teacher_path(@teacher),{:style=>"color:red"})
+                    -else
+                      = class_room.content.try(:name)
+                  %td.col= class_room.section.nil? ? (link_to class_room.student_group.name,my_students_path(@teacher,class_room.student_group)) : (link_to class_room.section.name,my_students_path(@teacher,class_room.section))
+                  %td.col= class_room.period
+
+        -else
+          No Classes Found
+

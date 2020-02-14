@@ -1,0 +1,171 @@
+<% if @question.generalfeedback.present? %>
+    <div class="block" style="margin:2%;">
+      <div class="content" style="margin:0;">
+        <div class="inner"><h3> Explanation: </h3><%= @question.generalfeedback_format.html_safe %></div>
+      </div>
+    </div>
+<% end %>
+<div id="itags">
+  <table align='center' class='details' width='700px'>
+    <tbody>
+    <% if @question.itags%>
+        <%@question.tags.each do |tag|%>
+            <% if @listed_tags.include? tag.name%>
+            <tr class=<%= cycle('odd left', 'even left') %>>
+              <% if tag.name=='qsubtype'%>
+                <td class="left">Question Type</td>
+              <% elsif tag.name=='specialCategory'%>
+                <td class="left">Special Category</td>
+              <%else%>
+                <td class="left"><%=tag.name.humanize.titleize %></td>
+              <%end%>
+                <td class='right'><%= tag.value_text %></td>
+            </tr>
+            <%end%>
+        <%end%>
+    <%end%>
+    </tbody>
+  </table>
+</div>
+<div id='application-list'>
+  <table align='center' class='details' width='700px'>
+    <tbody>
+    <%if @question.itags.nil?%>
+        <%if !@question.context.nil? %>
+            <tr class='odd left'>
+              <td>Board</td>
+              <td class='right'><%= @question.context.board.try(:name) %></td>
+            </tr>
+            <tr class='even left'>
+              <td>Class</td>
+              <td class='right'><%= @question.context.content_year.try(:name)%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Subject</td>
+              <td class='right'><%= @question.context.subject.try(:name)%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Chapter</td>
+              <td class='right'><%= (@question.context.chapter.nil?) ? '' : @question.context.chapter.name%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Topic</td>
+              <td class='right'><%= (@question.context.topic.nil?) ? '' : @question.context.topic.name%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Question Format</td>
+              <td class='right'><%= @question.qtype%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Created By</td>
+              <td class='right'><%= @question.user.profile.firstname%> <%= @question.user.profile.surname%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Center Name</td>
+              <td class='right'>
+                <%if @question.user.id==1%>
+                    <%= "Edutor"%>
+                <%elsif @question.user.is? 'IA'%>
+                    <%= ''%>
+                <%elsif @question.user.is? 'ECP'%>
+                    <%= ''%>
+                <%else%>
+                    <%= @question.user.center.try(:name) %>
+                <%end%>
+                <%#= @question.user.id==1?'Edutor':@question.user.center.name%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Date Created</td>
+              <td class='right'><%= display_date_time(@question.timecreated)%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Default Marks</td>
+              <td class='right'><%= @question.defaultmark%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Default Penalty</td>
+              <td class='right'><%= @question.penalty%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Difficulty Level</td>
+              <td class='right'><%= @question.difficulty_text%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Course</td>
+              <td class='right'><%= @question.course_text%></td>
+            </tr>
+            <tr class='even left'>
+              <td colspan="2" style="text-align: left">Skills:</td>
+            </tr>
+            <tr class='odd left'>
+              <td>Problem Solving</td>
+              <td class='right'><%= (@question.prob_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Data Interpretation</td>
+              <td class='right'><%= (@question.data_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Use Skill</td>
+              <td class='right'><%= (@question.useofit_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Creativity</td>
+              <td class='right'><%= (@question.creativity_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Listening</td>
+              <td class='right'><%= (@question.listening_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Speaking</td>
+              <td class='right'><%= (@question.speaking_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Grammer</td>
+              <td class='right'><%= (@question.grammer_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Vocabulary</td>
+              <td class='right'><%= (@question.vocab_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Formulae</td>
+              <td class='right'><%= (@question.formulae_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Comprehension</td>
+              <td class='right'><%= (@question.comprehension_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='odd left'>
+              <td>Knowledge</td>
+              <td class='right'><%= (@question.knowledge_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='even left'>
+              <td>Application</td>
+              <td class='right'><%= (@question.application_skill) ? 'Yes' : 'No'%></td>
+            </tr>
+            <tr class='tr-blank'></tr>
+        <%else%>
+
+        <%end%>
+    <%end%>
+    </tbody>
+  </table>
+</div>
+ <script type="text/javascript">
+
+ $(document).ready(function() {
+//   converter = new Markdown.getSanitizingConverter();
+//   Markdown.Extra.init(converter,{table_class: "table table-striped"});
+//   question = $("#question_text").text();
+//   question_html  = converter.makeHtml(question);
+//   $("#question_text").html(question_html);
+//   $("[class='question_option']").each(function(){
+//     var option_text = $(this).text();
+//     option_html  = converter.makeHtml(option_text);
+//     $(this).html(option_html);
+//   });
+   MathJax.Hub.Queue(["Typeset",MathJax.Hub,"content"])
+ }); 
+ </script>

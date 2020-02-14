@@ -1,0 +1,18 @@
+
+#content_header
+  %h1#main_heading Upload Content
+  -#%h3#sub_heading List
+#inner-tab-menu
+  %ul
+    -unless current_user.is?'EST'
+      %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "List")}", teacher_contents_path
+      %li=link_to 'Manage', '/content/manage'
+    -else
+      %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "List")}", contents_path(:status=>5)
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "upload_form"

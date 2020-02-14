@@ -1,0 +1,29 @@
+#content_header
+  %h1#maend_heading HomeWork
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}",assessment_home_works_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_home_work_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_home_work_path(@assessment_home_work)
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_home_work_path(@assessment_home_work)
+#data
+  #application-list
+    .heading= @assessment_home_work.name
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.assessment_home_work.rb.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @assessment_home_work.name
+        %tr.even.left
+          %td
+          - if current_user.role.name.eql?('Support Team')
+            %td.right= link_to "Download", est_download_content_path(@assessment_home_work) ,:title=>'Download Attachement',:class=>'tipTipRight'
+          - else
+            %td.right= link_to "Download", download_zip_content_path(@assessment_home_work) ,:title=>'Download Attachement',:class=>'tipTipRight'
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to 'Edit',edit_assessment_home_work_path(@assessment_home_work), :class => "button icon edit"
+            = link_to 'Delete',assessment_home_work_path(@assessment_home_work), :method => "delete",
+              :class => "button danger icon remove", :confirm => "Are you sure?"

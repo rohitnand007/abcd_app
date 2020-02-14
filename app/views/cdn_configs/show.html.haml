@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Cdn name:
+  = @cdn_config.cdn_name
+%p
+  %b Description:
+  = @cdn_config.description
+%p
+  %b Support emails:
+  = @cdn_config.support_emails
+%p
+  %b User:
+  = @cdn_config.user_id
+
+= link_to 'Edit', edit_cdn_config_path(@cdn_config)
+\|
+= link_to 'Back', cdn_configs_path

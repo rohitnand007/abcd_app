@@ -1,0 +1,41 @@
+#content_header
+  %h1#main_heading Centers
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", centers_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_center_path
+    - unless current_user.is? 'EO'
+      %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_center_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", center_path(@center)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.center.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @center.name
+        %tr.even.left
+          %td= t("activerecord.attributes.center.address", :default => t("activerecord.labels.address", :default => "Address"))
+          %td.right= @center.profile.address
+        %tr.odd.left
+          %td= t("activerecord.attributes.center.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+          %td.right= @center.profile.phone
+        %tr.even.left
+          %td= t("activerecord.attributes.center.institution_id", :default => t("activerecord.labels.institution_id", :default => "Institution"))
+          %td.right= @center.institution.name
+        %tr.odd.left
+          %td Center Admins
+          %td.right= center_admins_with_links(@center.center_admins)
+        -#%tr.even.left
+        -#  %td Assigned Boards
+        -#  %td.right=  display_boards(@center)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to 'Edit',edit_center_path(@center), :class => "button icon edit"
+    .heading.hr
+      Classes
+      - unless current_user.is? 'EO'
+        .right
+          = link_to "Add Class" ,new_academic_class_path(institution_id: @center.institution.try(:id),center_id: @center.id),:class=>'button icon add'
+    = render 'academic_classes/academic_classes'

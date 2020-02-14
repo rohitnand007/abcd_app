@@ -1,0 +1,215 @@
+//
+////
+////  /* The main container */
+////  .sticky-list  {
+////    height: 500px;
+////    width: 100%;
+////    overflow: hidden;
+////    position: relative;
+////    /* The main list */
+////    >ul {
+////      height: 100%;
+////      overflow: auto;
+////      list-style: none;
+////      margin: 0;
+////      padding: 0;
+////    }
+////  }
+////
+////
+////  /* Section headers, defined through "headlineSelector" */
+////  .sticky-list > ul > li .bucket-header {
+////    display: block;
+////  }
+////
+////  /* Section headers when "sticky", defined through "stickyClass" */
+////  .sticky-list{
+////    .bucket-header {
+////      padding: 10px 20px;
+////      z-index: 1;
+////      color: #fff;
+////    }
+////    .bucket-body{
+////      padding: 20px;
+////    }
+////    > ul > li.sticky {
+////    .bucket-header {
+////      position: absolute;
+////      top: 0;
+////  }}
+////  }
+///* Reset some list defaults for all lists */
+//  ul {
+//    list-style: none;
+//    margin: 0;
+//    padding: 0;
+//  }
+//
+//  /* The main container */
+//  #sticky-list  {
+//    height: 500px;
+//    overflow: hidden;
+//    position: relative;
+//  }
+//
+//  /* The main list */
+//  #sticky-list > ul {
+//    height: 100%;
+//    overflow: auto;
+//  }
+//
+//  /* Section headers, defined through "headlineSelector" */
+//  #sticky-list > ul > li .bucket-header {
+//    display: block;
+//  }
+//
+//  /* Section headers when "sticky", defined through "stickyClass" */
+//  #sticky-list > ul > li.sticky .bucket-header {
+//    position: absolute;
+//    top: 0;
+//  }
+//  .bucket-body{
+//    padding: 20px;
+//  }
+//  .bucket-header{
+//    padding: 10px 20px;
+//    z-index: 1;
+//    color: #fff;
+//
+//  }
+//  #followMeBar1 {
+//  width: 100%;
+//  position: absolute;
+//  background: #FFF;
+//  position: fixed;
+//  padding: 20px 20px;
+//  z-index: 1;
+//  color: #000;
+//  top:-41px;
+//  border-bottom: 2px solid #999;
+//
+//  transform: translate(0px,-41px);
+//  transition: 300ms ease-in;
+//  &.fixed {
+//    box-sizing: border-box;
+//    z-index: 0;
+//
+//    transform: translate(0px,41px);
+//    transition: 300ms ease-out;
+//  }
+//  }
+//.inline_header{
+//  display: inline-block;
+//  width: 30%;
+//  text-align: center;
+//  color: #767676;
+//}
+//.row-bottom-margin{
+//  margin-bottom:0px !important;
+//}
+//.panel-heading{
+//  height: 45px;
+//}
+//.first_img > img{
+//  position: relative;
+//  height: 50px;
+//  top: -13px;
+//  left: -12px;
+//}
+//.first_header{
+//  color:white;
+//  vertical-align: middle;
+//  position: relative;
+//  top:-10px;
+//}
+//.second_img > img{
+//  position: relative;
+//  top: -13px;
+//  left: 75px;
+//  height: 50px;
+//  vertical-align: middle;
+//}
+//.nav_icons > img {
+//  height: 30px;
+//  position: relative;
+//  bottom: 10px;
+//}
+//.circles_container{
+//  padding: 5% 5% 5% 25%;
+//  background-color: white;
+//  column-rule: #767676;
+//}
+//.graphs_container{
+//  padding: 5% 5% 5% 5%;
+//  background-color: white;
+//}
+//.inline_graph{
+//  display: inline-block;
+//  width: 30%
+//}
+//.circle{
+//  text-align: center ;
+//  line-height: 100px;
+//  display:inline-block;
+//  padding: 10px 30px 0px 0px;
+//  color: #767676;
+//}
+//.count{
+//  font-size: 18px;
+//}
+//
+//#circle1 {
+//  width: 100px;
+//  height: 100px;
+//  -webkit-border-radius: 50px;
+//  -moz-border-radius: 50px;
+//  border-radius: 50px;
+//  background: #ef466d;
+//  color:white;
+//  /*background: radial-gradient(circle at 100px 100px, #c50fc3, navajowhite)*/
+//
+//}
+//#circle2 {
+//  width: 100px;
+//  height: 100px;
+//  -webkit-border-radius: 50px;
+//  -moz-border-radius: 50px;
+//  border-radius: 50px;
+//  background: #3f6cad;
+//  display:inline-block;
+//  color:white;
+//  /*background: radial-gradient(circle at 100px 100px, #194f90, navajowhite)*/
+//}
+//#circle3 {
+//  width: 100px;
+//  height: 100px;
+//  -webkit-border-radius: 50px;
+//  -moz-border-radius: 50px;
+//  border-radius: 50px;
+//  background: #f37e3b;
+//  display:inline-block;
+//  color:white;
+//  /*background: radial-gradient(circle at 100px 100px, #c12f05, #c12f05)*/
+//}
+//#circle4 {
+//  width: 100px;
+//  height: 100px;
+//  -webkit-border-radius: 50px;
+//  -moz-border-radius: 50px;
+//  border-radius: 50px;
+//  background: #0e934d;
+//  display:inline-block;
+//  color:white;
+//  /*background: radial-gradient(circle at 100px 100px, #0e934d, navajowhite)*/
+//}
+///*graph related css here below  */
+//#teachers_graph.c3 .tick, #books_graph.c3 .tick, .c3-axis-y .tick, .c3-axis-y2 .tick {
+//  display:none;
+//}
+//.c3-axis-x text{
+//  font-size:12px;
+//  fill: #767676;
+//}
+//::-webkit-scrollbar {
+//  display: none;
+//}

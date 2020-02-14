@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Concept Map</title>		
+	</head>
+
+	<body style="background-color:#cccccc;">
+	<div id="completePage" style="float:left;width:95%;height:100%;">	
+		<div class="Buttons" align="center" style="left:5%;position:fixed;">
+		    <button id="AddChild" onClick="add()">Add Child </button> &nbsp;
+		    <button id="showCompleteTree" onClick="drawCompleteTree()">ShowComplete </button> &nbsp;
+		    <button id="preview" onClick="preview()">Preview</button>&nbsp;
+		    <button id="delete" onClick="deleteNode()"> Delete Element </button>&nbsp;
+		    <button id="exit" >Exit </button>&nbsp;
+	    </div>
+		<div id="conceptMap" style="width:100%; height:100%;">
+			<div id="graphical" style="float:left;top:10%;width:70%;height:100%;position:fixed;">
+				<canvas id="canvas_1" width="1400" height="900" style='background-color:#cccccc;'/>
+		    </div>
+		    <div id="Note" style="top:90%;position:fixed">Note: Concept Map is saved automatically </div>
+		   <!--  <div id="concept_data" data-concept= <%= @concept_id %> </div> -->
+			<%= tinymce_assets %>
+			<%= javascript_include_tag 'jquery' %>
+			<%= javascript_include_tag 'showingConceptMap' %>
+		    <%= javascript_include_tag 'concept' %>
+		    <%= javascript_include_tag 'savingConceptMap' %>
+			<script type="text/javascript">
+				var concept_id = <%= @concept_id %>;
+			     tinymceEditor();
+			</script>
+		</div>		
+		<div id="tinymceEditor" style="position:relative;float:right;width:20%;height:100%;z-index:5;">
+			  Selected Element: <input type="text" id="selectedNodeName" name="selectedNode" onmouseout="updateNodeName()" value = " Node" /><br/><br/>
+			  <button id="updateNodeData" onClick="updateNodeData()">Update Notes</button> &nbsp;<br/><br/>
+			  	<div id= "ElementContent" style="overflow:scroll;width:300px; height: 600px; word-wrap: break-word;">
+				    <div id="editor" style="height:100%;">
+					  
+					  
+					  <div id="NodeData" >
+						  <%= text_area_tag :content, "", :class => "tinymceEditor",:rows => 40 , :cols => 40, :onmouseout => "updateNodeData()" %>
+						  <% tinymce %>
+					  </div> 
+				    </div>
+				    <div id= "showingData" hidden="true" >
+				    		<div id="data"> </div>
+				    </div>
+				</div>
+		</div>
+	 </div>
+
+  </body>
+ </html>

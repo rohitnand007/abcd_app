@@ -1,0 +1,35 @@
+#content_header
+  %h1#main_heading Content years
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", content_years_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_content_year_path(@content_year)
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_content_year_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", content_year_path(@content_year)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.chapter.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @content_year.name
+        %tr.odd.left
+          %td Board
+          %td.right= link_to @content_year.board.name,board_path(@content_year.board)
+        %tr.even.left
+          %td Code
+          %td.right=  @content_year.code
+        %tr.odd.left
+          %td=t("web-app-theme.created_at", :default => "Created at")
+          %td.right=  display_date_time @content_year.created_at
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to 'Edit',edit_content_year_path(@content_year), :class => "button icon edit"
+            = link_to 'Delete',content_year_path(@content_year), :method => "delete",
+               :class => "button danger icon remove", :confirm => "Are you sure?"
+    .heading.hr
+      Subjects
+      .right
+        = link_to "Add Subject" ,new_subject_path(board_id: @content_year.board.try(:id),content_year_id: @content_year.id),:class=>'button icon add'
+    = render 'subjects/subjects'

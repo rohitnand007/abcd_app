@@ -1,0 +1,28 @@
+#content_header
+  %h1#main_heading Usage
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}", usages_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", usage_path
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td Content Name
+          %td.right= @usage.uri.split('/').last rescue ''
+        %tr.even.left
+          %td User
+          %td.right= @usage.try(:user).try(:profile).try(:display_name)
+        %tr.odd.left
+          %td Duration
+          %td.right= @usage.duration
+        %tr.even.left
+          %td Usage Count
+          %td.right= @usage.count
+        %tr.odd.left
+          %td Last used duration
+          %td.right= @usage.last_used_duration
+        %tr.even.left
+          %td Last used time
+          %td.right= display_date_time(@usage.last_used_time)

@@ -1,0 +1,50 @@
+:javascript
+  $(document).ready(function() {
+    $("#messages_list").dataTable({
+        "aoColumns": [
+                    null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  #breadcrumbs
+    = bread_crumb_message_page
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "Inbox")}",messages_path+user_path(current_user)
+    %li= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#messages_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.message.sender_id", :default => t("activerecord.labels.sender_id", :default => "Sender"))
+                %th Type
+                %th Subject
+                %th= t("web-app-theme.created_at", :default => "Received at")
+                %th.last &nbsp
+            %tbody
+              - @messages.each do |message|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col= link_to message.sender.fullname, message_path(message)
+                  %td.col= message.message_type
+                  %td.col= message.subject
+                  %td.col= display_date_time(message.created_at)
+                  %td.col
+                    =link_to_show(message_path(message))
+        -unless @messages.blank?
+          .pagination_info
+            = paginate @messages

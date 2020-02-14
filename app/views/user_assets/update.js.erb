@@ -1,0 +1,5 @@
+var text1 = "<span><%=@user_asset.asset_name%></span>" + "<a href=\"/user_assets?p=1\" style=\"font-size: 12px; font-style: italic;color: red;\">" + "X" + "</a>";
+var text2 = "<input type=\"hidden\" name=\"asset_id\" value=\"" + <%=@user_asset.id%> + "\">";
+$(".selected_book").html(text1);
+$("#asset").html(text2);
+$('.ui-dialog-content').dialog('close');

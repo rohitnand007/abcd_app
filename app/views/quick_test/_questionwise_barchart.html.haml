@@ -1,0 +1,28 @@
+.report_box
+  #chart
+    %ul#numbers
+      - (0..100).step(10) do |i|
+        %li
+          %span= 100-i
+
+    %ul#bars
+      - better_percentage = 80
+      - worse_percentage = 5
+      -question_stats = first_attempt_average_correctness_per_10_questions(quicktest) #includes hashmap for first 10 questions
+      -total_attempts = students_first_attempt_set(quicktest).length
+      - question_stats.each_with_index do |(question_id,count),i|
+        - percentage = (count*100)/total_attempts
+        - @percentages << percentage
+        %li
+          - background_color = "#9170b2"
+          - background_color = "#c30684" if percentage < worse_percentage
+          - background_color = "#4d937b" if percentage > better_percentage
+          .bar{"data-percentage" => percentage, :style => "background-color:#{background_color}"}
+            .bar_info= percentage
+            - if percentage < worse_percentage
+              = image_tag "sad_smiley.png", class:"bar_img"
+            - elsif percentage > better_percentage
+              = image_tag "happy_smiley.png", class:"bar_img"
+          %span
+            Q
+            = i+1

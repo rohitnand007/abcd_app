@@ -1,0 +1,92 @@
+= form_for @students,:url=> '/users/user_data_update',:html => {:id => 'live_students_selector', :method=>:post},:remote=>true do  |f|
+  %table.studentTable
+    %tr
+      %td{colspan:"100%"}
+        %table.studentTableInfo
+          %tr
+            %td
+              = "Number of Students: #{students.size}"
+            %br
+            %td.rightAligner
+              %input#select_all{:type => "checkbox"}Select all/deselect_all
+    - students.each_slice(6) do |students|
+      %tr
+        -students.each do |student|
+          %td.studentCheckbox
+            = check_box_tag "students_update[user_ids][]",student.id, false, class:"students_checkbox"
+          %td.studentName
+            = student.name
+            = link_to student.edutorid,student, target:"_blank" if student.edutorid.present?
+  %br
+  %br
+  .class_migration_checkbox
+    %label Migrate Students
+    =check_box_tag "migrate_students","students_migration",false, id:"migration_checkbox"
+  .new_academic_class_and_section_info
+    %td
+      .group
+        .field
+          #academic_class
+            = f.label :academic_class_id, "Academic Class", :class=>'label'
+            %br
+            .styled-select
+              = f.collection_select :academic_class_id,current_user.academic_classes,:id,:name,{:include_blank=>"select"},{:class=>"drop_down academic_class_id", :disabled=>true}
+    %td
+      .group
+        .field
+          #sections
+            = f.label :section_id, "Section", :class=>'label'
+            %br
+            .styled-select
+              = f.collection_select :section_id, current_user.sections,:id,:name,{:include_blank=>"select"},{:class=>"drop_down section_id",:disabled=>true}
+
+
+  .delete_user_messages
+    %label Delete_user_messages
+    = check_box_tag "delete_user_messages", "message_delete_function"
+  .deactivate_students
+    %label Deactivate_students
+    = check_box_tag "deactivate_students", "user_deactivate_status"
+  .reactivate_users
+    %label Reactivate_users
+    = check_box_tag "reactivate_students", "user_reactivate_status"
+  = f.submit "Perform Actions", class:"button", confirm:"Are you sure you want to perform selected_tasks to these users?"
+
+:javascript
+  $(".new_academic_class_and_section_info").hide();
+  // for sectall/ deselect all students
+      $('#select_all').on('click',function(){
+        if(this.checked){
+            $('.students_checkbox').each(function(){
+                this.checked = true;
+            });
+        }else{
+             $('.students_checkbox').each(function(){
+                this.checked = false;
+            });
+        }
+    });
+
+    $('.students_checkbox').on('click',function(){
+        if($('.students_checkbox:checked').length == $('.students_checkbox').length){
+            $('#select_all').prop('checked',true);
+        }else{
+            $('#select_all').prop('checked',false);
+        }
+    });
+
+  // enables academic_class and section collection select
+  $("#migration_checkbox").on('click', function(){
+    if(this.checked){
+      $(".new_academic_class_and_section_info").show()
+      $(".styled-select > select#user_academic_class_id").removeAttr("disabled");
+      $(".styled-select > select#user_section_id").removeAttr("disabled");
+      //$("#user_section_id").prop("disabled",false)
+      }
+    else
+    {
+      //$(".new_academic_class_and_section_info").hide()
+      $(".styled-select > select#user_academic_class_id").attr("disabled",true);
+      $(".styled-select > select#user_section_id").attr("disabled",true);
+      }
+  })

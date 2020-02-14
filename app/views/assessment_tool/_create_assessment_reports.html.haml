@@ -1,0 +1,130 @@
+#tabs-3.ui-tabs-panel.ui-widget-content.ui-corner-bottom{"aria-expanded" => "false", "aria-hidden" => "true", "aria-labelledby" => "ui-id-4", role: "tabpanel", style: "display: none;"}
+  %div
+    #createAssessmentTabs
+      = form_tag assessment_tool_generate_assessment_analytics_reports_path do
+        = hidden_field_tag "quizTargetedGroupscompareIds"
+        #accordion.ui-accordion.ui-widget.ui-helper-reset{role: "tablist"}
+          %h3#selectAssessmentAccordion.ui-accordion-header.ui-helper-reset.ui-accordion-header-active.ui-corner-top.ui-accordion-icons{"aria-controls" => "selectAssessmentAccordionContent", "aria-selected" => "true", role: "tab", tabindex: "0"}
+            %span.ui-accordion-header-icon.ui-icon.ui-icon-triangle-1-s
+            %span#select-assessment.step_active_new
+              Step 01       &nbsp;&nbsp;&nbsp;Select An Assessment
+              %img#selectAssessmentStep{src: "/assets/check_box.png", style: "float: right; padding-top: 2px; padding-right: 2px;"}/
+          #selectAssessmentAccordionContent.ui-accordion-content.ui-helper-reset.ui-corner-bottom.ui-accordion-content-active{"aria-expanded" => "true", "aria-hidden" => "false", "aria-labelledby" => "selectAssessmentAccordion", role: "tabpanel", style: "display: block;"}
+            %div{style: "background:url('/assets/pattern.png'); height: 36px; text-align: center; vertical-align: top; color: #60c8cd;"}
+              %span#selectionText Please select an assessment
+              %img#selectedAssessmentBucket{src: "/assets/bucket_icon.png"}
+            #selectedAssessment{style: "background-color: #EEEEEE;"}
+            %br
+            %hr
+            %br
+            %div
+              -if !@assessment
+                -#= render :partial => 'filter_form'
+              %br
+              %br
+              #gtg-filter-partial
+                = render :partial => 'gtg_create_reports_partial'
+            %br
+            %br
+            %div{style: "text-align: center; vertical-align: middle; height: 50px;"}
+              %button#nextComparisonAssessments.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only{type:"button","aria-disabled" => "false", onclick: "document.getElementById('selectAssessmentStep').src='/assets/check_box_checked.png'; openNextAccordionPanel();", role: "button", style: "background-color:#60c8cd; color: white;"}
+                %span.ui-button-text Next
+          %h3#comparisonAssessmentAccordion.ui-accordion-header.ui-helper-reset.ui-corner-all.ui-accordion-icons{"aria-controls" => "comparisonAssessmentAccordionContent", "aria-selected" => "false", role: "tab", tabindex: "-1"}
+            %span.ui-accordion-header-icon.ui-icon.ui-icon-triangle-1-e
+            %span#comparison-assessments.step_active_new
+              Step 02       &nbsp;&nbsp;&nbsp;Comparison Assessments
+              %img#selectComparisonAssessmentsStep{src: "/assets/check_box.png", style: "float: right; padding-top: 2px; padding-right: 2px;"}/
+          #comparisonAssessmentAccordionContent.ui-accordion-content.ui-helper-reset.ui-corner-bottom{"aria-expanded" => "false", "aria-hidden" => "true", "aria-labelledby" => "comparisonAssessmentAccordion", role: "tabpanel", style: "display: none;"}
+            %div{style: "background:url('/assets/pattern.png'); height: 36px; text-align: center; vertical-align: top;"}
+              %span#selectionText2 Selected assessment
+              %img#selectedAssessmentBucket2{src: "/assets/bucket_icon.png"}/
+            #selectedAssessment2{style: "background-color: #EEEEEE;"}
+            %br
+            %hr
+            %br
+            %div{style: "text-align: center;"}
+              %b Compare with
+            %br
+            %div{style: "background:url('/assets/pattern.png'); height: 36px; text-align: center; vertical-align: center; color: #60c8cd;"}
+              %span#comparisonSelectionText Assessments selected for comparison
+              %img#selectedComparisonBucket{src: "/assets/bucket_icon.png"}/
+              %span#comparisonSelectionNumberText{style: "float: right; vertical-align: bottom; color: #000000;"}
+            %table{id:'selectedComparisonAssessments',style: "background-color: #EEEEEE;",cellpadding:"0", cellspacing:"0"}
+              %tbody
+            %br
+            %hr
+            %br
+            %div
+              -#%select#classComboBox
+              -#  %option{value: ""} Class XI
+              -#  %option{value: ""} Class X
+              -#  %option{value: ""} Class XII
+              -#%select#classComboBox
+              -#  %option{value: ""} Assessment Type
+              -#%select#classComboBox
+              -#  %option{value: ""} Subject
+              %br
+              %br
+              #qtg-filter-partial
+                = render :partial => "qtg_create_reports_compare_partial"
+            %br/
+            %br/
+            %br/
+            %div{style: "text-align: center; vertical-align: middle; height: 50px;"}
+              %button#nextConfigurationParameters.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only{type:"button" ,"aria-disabled" => "false", onclick: "$('#selectComparisonAssessmentsStep').src='/assets/check_box_checked.png'; openNextAccordionPanel();", role: "button", style: "background-color:#60c8cd; color: white;"}
+                %span.ui-button-text Next
+          %h3#configurationParametersAccordion.ui-accordion-header.ui-helper-reset.ui-corner-all.ui-accordion-icons{"aria-controls" => "configurationParametersAccordionContent", "aria-selected" => "false", role: "tab", tabindex: "-1"}
+            %span.ui-accordion-header-icon.ui-icon.ui-icon-triangle-1-e
+            %span#configuration-parameters.step_active_new
+              Step 03       &nbsp;&nbsp;&nbsp;Configuration Parameters
+              %img#configurationParametersStep{src: "/assets/check_box.png", style: "float: right; padding-top: 2px; padding-right: 2px;"}/
+          #configurationParametersAccordionContent.ui-accordion-content.ui-helper-reset.ui-corner-bottom{"aria-expanded" => "false", "aria-hidden" => "true", "aria-labelledby" => "configurationParametersAccordion", role: "tabpanel", style: "display: none;"}
+            %div{style: "background:url('/assets/pattern.png'); height: 36px; text-align: center; vertical-align: top;"}
+              %span#selectionText3 Selected assessment
+              \
+              %img#selectedAssessmentBucket3{src: "/assets/bucket_icon.png"}/
+            #selectedAssessment3{style: "background-color: #EEEEEE;"}
+            %br/
+            %hr/
+            %br/
+            %div#comparisonSelectionNumberTextForConfiguration{style: "text-align: center;"}
+            %br/
+            %hr/
+            %br/
+            %br/
+            %center
+              %div{style: "text-align: center; width: 400px;"}
+                %div{style: "color: #60c8cd;"} Let's set the configuration parameters
+                %hr{style: "color: #CCCCCC; background-color: #CCCCCC;"}/
+                %div
+                  Generate Reports
+                  = succeed "Yes" do
+                    %input#configStudents{type: "radio", onclick: "$('#nextGenerateReport').button('option', 'disabled', false); $('#generateReport').button('option', 'disabled', false); document.getElementById('configurationParametersStep').src='/assets/check_box_checked.png'; document.getElementById('configParents').checked = false; document.getElementById('configBoth').checked = false;", style: "padding-right: 2px;"}/
+                  -#Publish to
+                  -#= succeed "Students" do
+                  -#  %input#configStudents{type: "radio", onclick: "$('#nextGenerateReport').button('option', 'disabled', false); $('#generateReport').button('option', 'disabled', false); document.getElementById('configurationParametersStep').src='/assets/check_box_checked.png'; document.getElementById('configParents').checked = false; document.getElementById('configBoth').checked = false;", style: "padding-right: 2px;"}/
+                  -#= succeed "Parents" do
+                  -#  %input#configParents{type: "radio", onclick: "$('#nextGenerateReport').button('option', 'disabled', false); $('#generateReport').button('option', 'disabled', false); document.getElementById('configurationParametersStep').src='/assets/check_box_checked.png'; document.getElementById('configStudents').checked = false; document.getElementById('configBoth').checked = false;", style: "padding-right: 2px;"}/
+                  -#= succeed "Both" do
+                  -#  %input#configBoth{type: "radio", onclick: "$('#nextGenerateReport').button('option', 'disabled', false); $('#generateReport').button('option', 'disabled', false); document.getElementById('configurationParametersStep').src='/assets/check_box_checked.png'; document.getElementById('configStudents').checked = false; document.getElementById('configParents').checked = false;", style: "padding-right: 2px;"}/
+                  %br/
+                  %br/
+                  -#You don't have any configuration parameters
+                  /%input#configPublish{type: "checkbox", onclick: "if (this.checked || document.getElementById('configStudents').checked || document.getElementById('configParents').checked || document.getElementById('configBoth').checked) {$('#nextGenerateReport').button('option', 'disabled', false); $('#generateReport').button('option', 'disabled', false); document.getElementById('configurationParametersStep').src='/assets/check_box_checked.png';} else {$('#nextGenerateReport').button('option', 'disabled', true); $('#generateReport').button('option', 'disabled', true); document.getElementById('configurationParametersStep').src='/assets/check_box.png';};", style: "padding-right: 8px;"}
+                  /&nbsp;Publish
+            %br/
+            %br/
+            %div{style: "text-align: center; vertical-align: middle; height: 50px;"}
+              %button#nextGenerateReport.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only{type:"button","aria-disabled" => "false", onclick: "$('#configurationParametersStep').src='/assets/check_box_checked.png'; openNextAccordionPanel();", role: "button", style: "background-color:#60c8cd; color: white;"}
+                %span.ui-button-text Next
+          %h3#generateReportAccordion.ui-accordion-header.ui-helper-reset.ui-corner-all.ui-accordion-icons{"aria-controls" => "generateReportAccordionContent", "aria-selected" => "false", role: "tab", tabindex: "-1"}
+            %span.ui-accordion-header-icon.ui-icon.ui-icon-triangle-1-e
+            %span#generate-report.step_active_new
+              Step 04       &nbsp;&nbsp;&nbsp;Generate Report
+              %img#generateReportStep{src: "/assets/check_box.png", style: "float: right; padding-top: 2px; padding-right: 2px;"}/
+          #generateReportAccordionContent.ui-accordion-content.ui-helper-reset.ui-corner-bottom{"aria-expanded" => "false", "aria-hidden" => "true", "aria-labelledby" => "generateReportAccordion", role: "tabpanel", style: "display: none;"}
+            %br/
+            %br
+            %div{style: "text-align: center; vertical-align: middle; height: 50px;"}
+              %button#generateReport.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only{"aria-disabled" => "false",type: "submit", role: "button", style: "background-color:#60c8cd; color: white;"}
+                %span.ui-button-text Generate Report

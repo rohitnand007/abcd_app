@@ -1,0 +1,30 @@
+%table
+  %thead
+    %tr
+      %th
+  %tbody
+    %tr
+      %td Name
+      %td= @user_asset.asset_name
+    %tr
+      %td Class
+      %td= @user_asset.academic_class
+    %tr
+      %td Subject
+      %td= @user_asset.subject
+    %tr
+      %td Concept
+      %td= @user_asset.concept_name
+    %tr
+      %td guid
+      %td= @user_asset.guid
+    -if @user_asset.vdocipher_id.present?
+      %tr
+        %td vdo_cipher_id
+        %td= @user_asset.vdocipher_id
+      %tr
+        %td vdo_cipher_status
+        %td= @user_asset.get_vdo_cipher_details['statusText']
+    %tr
+      %td Download Link
+      %td= link_to "Download", "/user_assets/#{@user_asset.id}/download_asset"

@@ -1,0 +1,22 @@
+= simple_form_for(@powerchip) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :masterchip_id
+    = f.input :csd
+    = f.input :cid
+    = f.input :name
+    = f.input :manfid
+    = f.input :type
+    = f.input :oemid
+    = f.input :serial
+    = f.input :uevent
+    = f.input :scr
+    = f.input :date
+    = f.input :erase_size
+    = f.input :fwrev
+    = f.input :hwrev
+    = f.input :preferred_erase_size
+
+  .actions
+    = f.button :submit,:class=>'big primary'

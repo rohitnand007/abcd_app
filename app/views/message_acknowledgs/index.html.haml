@@ -1,0 +1,34 @@
+:javascript
+  $(document).ready(function() {
+    $("#message_acks").dataTable({
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Message Acknowledgments
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#message_acks.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Subject
+                %th= t("activerecord.attributes.message.user_id", :default => t("activerecord.labels.sender_id", :default => "student"))
+                %th= t("web-app-theme.created_at", :default => "status")
+            %tbody
+              - @messageAcks.each do |message|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"message_#{message.id}"}
+                  %td.col= message.message.subject
+                  %td.col= link_to message.user.profile.surname, user_path(message.user)
+                  %td.col= message.status
+        .pagination_info
+          = paginate @messageAcks unless @messageAcks.blank?

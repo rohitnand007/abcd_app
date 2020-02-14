@@ -1,0 +1,36 @@
+%p#notice= notice
+
+%p
+  %b Institution:
+  = @ip_table.institution_id
+%p
+  %b Center:
+  = @ip_table.center_id
+%p
+  %b Role:
+  = @ip_table.role_id
+%p
+  %b Domain:
+  = @ip_table.domain
+%p
+  %b Ip address:
+  = @ip_table.ip_address
+%p
+  %b Status:
+  = @ip_table.status
+%p
+  %b Added at:
+  = @ip_table.added_at
+%p
+  %b Modified at:
+  = @ip_table.modified_at
+%p
+  %b Added by:
+  = @ip_table.added_by
+%p
+  %b Modified by:
+  = @ip_table.modified_by
+
+= link_to 'Edit', edit_ip_table_path(@ip_table)
+\|
+= link_to 'Back', ip_tables_path

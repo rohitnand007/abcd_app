@@ -1,0 +1,54 @@
+:javascript
+  $(document).ready(function() {
+    $("#institutions").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Institute Admins
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", institute_admins_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_institute_admin_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#institutions.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.institution.profile.firstname", :default => t("activerecord.labels.profile.firstname", :default => "Institute Name"))
+                %th= t("activerecord.attributes.institution.profile.website", :default => t("activerecord.labels.profile.website", :default => "Website"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @institute_admins.each do |admin|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"admin_#{admin.id}"}
+                  %td.col= link_to admin.profile.firstname, institute_admin_path(admin) if admin.profile
+                  %td.col= admin.profile.website  if admin.profile
+                  %td.col= display_date_time(admin.created_at)
+                  %td.col
+                    = link_to_show(institute_admin_path(admin))
+                    &nbsp
+                    = link_to_edit(edit_institute_admin_path(admin))
+                    =# link_to (institution.is_activated ? "#{t("web-app-theme.delete", :default => "Deactivate")}":"#{t("web-app-theme.delete", :default => "Activate")}"),  institution_path(institution), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}",:style=>institution.is_activated ? "":"color:red;"*/
+
+        - unless @institute_admins.blank?
+          .pagination_info
+            = paginate @institute_admins
+
+
+

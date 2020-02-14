@@ -1,0 +1,166 @@
+<div id="content_header">
+  <h1 id="main_heading"><%= @qtype %></h1>
+</div>
+<%= render partial: "content_header" %>
+<div id="data">
+  <table style="width: 100%">
+    <tr>
+      <td>
+        <div id='main' style="width: 100%">
+
+          <div class='block' id='block-text' style="min-width:900px;width:96%;margin:2%">
+            <div class='content'>
+              <div class='inner question_style' >
+                <p class='first' style="min-width: 900px;overflow-x: auto">
+                  <strong><%= @question.questiontext_format.html_safe %></strong>
+                  <span class='hightlight'></span>
+                </p>
+                <table align='center' class='details' width='700px'>
+                  <tbody>
+                    <%@question.question_match_subs.each do |c| %>
+                      <tr>
+                        <td><%= c.questiontext.html_safe %></td>
+                        <td class='right'><select><%@question.question_match_subs.each do |cd| %>
+                              <option <%=(cd.answertext==c.answertext)? 'selected':''%>><%=  cd.answertext.html_safe %></option>
+                            <% end %>
+                          </select>
+                        </td></tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div id='application-list'>
+            <table align='center' class='details' width='700px'>
+              <tbody>
+                <tr class='odd left'>
+                  <td>Board</td>
+                  <td class='right'><%= @question.context.board.name%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Class</td>
+                  <td class='right'><%= @question.context.content_year.name%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Subject</td>
+                  <td class='right'><%= @question.context.subject.name%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Chapter</td>
+                  <td class='right'><%= @question.context.chapter.name%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Topic</td>
+                  <td class='right'><%= (@question.context.topic.nil?) ? '' : @question.context.topic.name%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Question Format</td>
+                  <td class='right'><%= @question.qtype%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Created By</td>
+                  <td class='right'><%= @question.user.profile.firstname%> <%= @question.user.profile.surname%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Center Name</td>
+                  <td class='right'>
+                    <%if @question.user.id==1%>
+                        <%= "Edutor"%>
+                    <%elsif @question.user.is? 'IA'%>
+                        <%= ''%>
+                    <%else%>
+                        <%= @question.user.center.try(:name) %>
+                    <%end%>
+                  <%#= @question.user.id==1?'Edutor':@question.user.center.name%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Date Created</td>
+                  <td class='right'><%= display_date_time(@question.timecreated)%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Default Marks</td>
+                  <td class='right'><%= @question.defaultmark%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Default Penalty</td>
+                  <td class='right'><%= @question.penalty%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Difficulty Level</td>
+                  <td class='right'><%= @question.difficulty_text%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Course</td>
+                  <td class='right'><%= @question.course_text%></td>
+                </tr>
+                <tr class='even left'>
+                  <td colspan="2" style="text-align: left">Skills:</td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Problem Solving</td>
+                  <td class='right'><%= (@question.prob_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Data Interpretation</td>
+                  <td class='right'><%= (@question.data_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Use Skill</td>
+                  <td class='right'><%= (@question.useofit_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Creativity</td>
+                  <td class='right'><%= (@question.creativity_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Listening</td>
+                  <td class='right'><%= (@question.listening_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Speaking</td>
+                  <td class='right'><%= (@question.speaking_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Grammer</td>
+                  <td class='right'><%= (@question.grammer_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Vocabulary</td>
+                  <td class='right'><%= (@question.vocab_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Formulae</td>
+                  <td class='right'><%= (@question.formulae_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Comprehension</td>
+                  <td class='right'><%= (@question.comprehension_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='odd left'>
+                  <td>Knowledge</td>
+                  <td class='right'><%= (@question.knowledge_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='even left'>
+                  <td>Application</td>
+                  <td class='right'><%= (@question.application_skill) ? 'Yes' : 'No'%></td>
+                </tr>
+                <tr class='tr-blank'></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div class="group">
+    <div align="center" class="field">
+      <%if !@question.edit_access(current_user.id)%>
+      <a href="/questions/copy/<%=@question.id%>" class="button big primary">Copy</a>
+      <% else %>
+      <a href="/questions/copy/<%=@question.id%>" class="button big primary">Copy</a>
+      <a href="/questions/<%=@question.id%>/edit" class="button big primary">Edit</a>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+#content_header
+#inner-tab-menu
+  %ul
+    -#%li=  link_to "#{t("web-app-theme.list", :default => "Inbox")}", messages_path+user_path(current_user)
+    -#%li= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+    -#%li.inner_tab_selected= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for :question ,:url=>quiz_show_questions_path(@quiz),:html => { :class => :form,:multipart => true } do |f|
+              .inputs
+                .group#recipient
+                  .field
+                    = f.input :multiple_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Add Question Numbers"
+                .group
+                  .field{:align=>'center'}
+                    = f.button :submit,'Add Questions',:class=>'big primary' ,:disable_with=>'Adding..'
+                    = link_to t("web-app-theme.cancel", :default => "Cancel"), quiz_show_questions_path(@quiz),:class=>'button danger icon remove'
+
+  - unless @questions.nil?
+    %table{width:'100%'}
+      %tr
+        %td
+          %div
+            %table#questions_list.listing.sort_table{align:'center', width:'100%', cellpadding:1, cellspacing:1}
+              %thead
+                %tr.tr-head
+                  %th Question
+                  %th
+              %tbody
+                - @questions.each do |q|
+                  %tr{:class => cycle("tr-odd odd", "tr-even even")}
+                    %td.col= q.questiontext_format.gsub(/<\/?[^>]*>/, "")
+                    %td.col
+                      = link_to_show(q)
+
+
+:javascript
+  $(document).ready(function(){
+    $(function() {
+        $("#question_multiple_ids").tokenInput("/question_ids.json", {
+        queryParam: 'term',
+        minChars: '3',
+        hintText: 'Type Question Number',
+        crossDomain: false,
+        preventDuplicates:true,
+        prePopulate: $("#question_multiple_ids").data("pre"),
+        theme: ""
+        });
+    });
+
+  });

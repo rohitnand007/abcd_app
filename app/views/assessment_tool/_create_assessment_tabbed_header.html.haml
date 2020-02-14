@@ -1,0 +1,9 @@
+%ul#tabsul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-corner-all{role: "tablist"}
+  %li{style: "width: 4px;"}   
+  %li.ui-state-default.ui-corner-top
+    =link_to "My Assessments" , assessment_tool_my_assessments_path
+  -unless (current_user.is? "ET")
+    %li.ui-state-default.ui-corner-top
+      =link_to "All Assessments" , assessment_tool_all_assessments_path
+  %li.ui-state-default.ui-corner-top.ui-state-active
+    %a{href: "#"} Create Assessment

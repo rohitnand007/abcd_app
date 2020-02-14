@@ -1,0 +1,18 @@
+%h1 Listing etx_files
+
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - @etx_files.each do |etx_file|
+    %tr
+      %td= etx_file.ques_no
+      %td= link_to 'Show', etx_file
+      %td= link_to 'Edit', edit_etx_file_path(etx_file)
+      %td= link_to 'Destroy', etx_file, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Etx file', new_etx_file_path

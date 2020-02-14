@@ -1,0 +1,61 @@
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js">
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    },
+    TeX: {extensions: ["mhchem.js"]}
+  });
+</script>
+<div id="content_header">
+  <h1 id="main_heading"><%= @qtype %></h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <%#if @question.edit_access(current_user.id)%>
+    <!--<li><%#link_to "Edit Question", :controller => "questions", :action => "edit",:id=>@question.id %></li>-->
+    <%#end%>
+    <% if current_user.is?("EA")%>
+        <li><%= link_to 'Delete',question_path(@question),:method => :delete,:confirm=>'Are you sure?' %></li>
+    <%end%>
+    <% if current_user.is?("ECP") and !@question.hidden%>
+        <li><%= link_to 'Remove',remove_question_path(@question),:confirm=>'Are you sure you want to remove this question from all your question banks?  Note: The question will still be visible in the assessments it is added' %></li>
+    <%end%>
+    <% if current_user.is?("IA") and !@question.hidden %>
+        <li><%= link_to 'Remove', remove_question_path(@question), :confirm => 'Are you sure you want to remove this question from all your question banks?  Note: The question will still be visible in the assessments it is added' %></li>
+    <% end %>
+    <div id="marksTable">
+      <table>
+        <tr>
+          Marks:
+          <%= @question.defaultmark%>
+        </tr>
+        <br>
+        <tr>
+          Negative Marks:
+          <%= @question.penalty%>
+        </tr>
+
+      </table>
+
+    </div>
+
+    <!--<li><%=link_to "Question Bank", :controller => "questions", :action => "index" %></li>-->
+    <!--<li><%=link_to "My Questions", :controller => "questions", :action => "myquestions" %></li>-->
+    <!--<li><%=link_to "My Draft Questions", :controller => "questions", :action => "mydraftedquestions" %></li>-->
+  </ul>
+</div>
+<style>
+    #marksTable {
+        position: absolute;
+        font-size: 15px;
+        top: 80px;
+        right: 35px;
+        color:#808080;
+
+
+    }
+
+</style>

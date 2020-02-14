@@ -1,0 +1,22 @@
+<div class="nobreak">
+  <table>
+    <tbody>
+    <tr>
+      <td style="text-align: left; width:25px; vertical-align: top;">
+        <%= i %>.&nbsp;&nbsp;
+      </td>
+      <td style="width:700px;">
+        <%= raw question.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %>
+      </td>
+      <td style="width:50px;text-align: right;"></td>
+    </tr>
+    </tbody>
+  </table>
+  <br/>
+  <% if question.answer_lines !=0 %>
+      <% question.answer_lines.times do %>
+          <br/>
+          <hr>
+      <% end %>
+  <% end %>
+</div>

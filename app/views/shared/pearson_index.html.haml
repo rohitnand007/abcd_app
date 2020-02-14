@@ -1,0 +1,37 @@
+-if current_user.role.name == "Teacher"
+  = render 'teacher_index'
+-elsif current_user.role.name == "Student"
+  = render 'student2_index'
+-elsif current_user.role.name == "Parent"
+  = render 'parent_index'
+-else
+  #content_header
+    %h1{id: 'main_heading'} Dashboard
+    %h3{id: 'sub_heading'}
+  #data
+    %table
+      %tr
+        %td
+          #main
+            #block-text.block
+              .content
+                .inner
+                  %p.first
+                    Welcome to Edutor portal!
+                    = succeed "," do
+                      %span.hightlight
+                  %p
+                    %span.small 1. Create Books: Create a book by following the link provided, keep the book details (isbn, book name, etc..), book cover, generated book keys file before hand.
+                  %p
+                    %span.gray 2. Create Collections: Create a Collection of books to be assigned to a group of students.
+                  -#%p
+                  -#  %span.gray 3. Send Alerts: You may send alerts to a particular individual or to a group. Have you tried sending the time table as a CSV file?
+                  -#%p
+                  -#  %span.gray 4. Upload Tests: Create a Test Configuration and set the time limits. Publish the test to a group. At this point of time rank calculation is manual and so is the sending of the center reports. Center Reports have to be sent as PDF files.
+                  -#%p
+                  -#  %span.gray 5. Message Acknowledgements: Check if the Center reports have been seen by the parents, who might have acknowledged them.
+                  -#%hr/
+                  %p
+                    Contact the site administrator by sending a message to EA-001, in case of any issues
+                    = succeed "," do
+                      %span.hightlight

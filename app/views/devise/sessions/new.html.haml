@@ -1,0 +1,70 @@
+= simple_form_for(resource, :as => resource_name, :url => users_session_path, :html => { :autocomplete=>"off",:class => "form login span12",style:"max-width: 100%; min-width:100px" }) do |f|
+  .container
+    .row.vertical-center-row
+      .text-center.col-md-7.col-md-offset-6
+        .panel.panel-default
+          .panel-heading#panel_heading
+            .title_bar
+              .title2 Sign in
+          .panel-body
+            %br
+            .login-form
+              %form#login-form.form-signin{:method => "post", :role => "form"}
+                %input#login.form-control{:autofocus => "", :name => "user[login]", :placeholder => "ABCDE ID", :type => "text"}
+                %br
+                %br
+                %input#password.form-control.disable{:name => "user[password]", :placeholder => "Password", :type => "password"}
+                %br
+                %br
+                %button.btn.btn-default{:type => "submit"} Login
+
+  
+
+
+
+
+
+:css
+  .btn{
+  font-size: 22px;
+  font-family: 'Roboto';
+  background-color: #f0476e;
+  color: white;
+  border: none;
+  }
+  input {
+  font-size: 55px;
+  }
+  .panel{
+  position: relative;
+  top: 180px;
+  width:350px;
+  height: 340px;
+  margin: 5% auto;
+  padding: 15px;
+  background-color: white;
+  border-radius: 10px;
+  }
+  .login_panel{
+
+  }
+  #panel_heading{
+  background-color: white;
+  }
+  .title_bar{
+  position: relative;
+  top: -15px;
+  font-family: 'Roboto';
+  font-size: 35px;
+  color: #777777;
+  }
+  .panel-heading{
+  height: 50px;
+  }
+  .form-control{
+  height: 45px;
+  background-color: white;
+  border: none;
+  border-bottom: 2px solid #c0bcbb ;
+  }
+

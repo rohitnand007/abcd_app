@@ -1,0 +1,372 @@
+= stylesheet_link_tag "assessment_tool"
+= stylesheet_link_tag "assessment_report"
+= render 'my_reports_list'
+= render 'download_reports'
+:javascript
+    var assesment_compare_array = []
+
+    $("#backButton").button();
+    function resetSelectionRadioGroup(selectedRadio) {
+        var g = document.getElementsByName("selectionRadioGroup");
+        for (var i=0; i<g.length; i++) {
+            if (g[i] !== selectedRadio) {
+                g[i].checked = false;
+            }
+        }
+    }
+    
+    function clickComparisonCheckbox(newComparison, comparisonItemId) {
+        var g = document.getElementsByName("quizTargetedGroupsIds[]");
+        var selectedComparisons = 0;
+        var selectedComparisonsHtml = '<table cellpadding="0" cellspacing="0">';
+        for (var i=0; i<g.length; i++) {
+            if (g[i].checked) {
+                selectedComparisons++;
+                selectedComparisonsHtml += '<tr><td>' + $('#comparisonList' + g[i].value).html() + '</td></tr>';
+            }
+        }
+        $('#comparisonSelectionNumberText').html('Selected ' + selectedComparisons + ' out of 10');
+        $('#comparisonSelectionNumberTextForConfiguration').html('Comparing with ' + selectedComparisons + ' assessments');
+        $('#nextConfigurationParameters').button('option', 'disabled', false);
+        if (0 < selectedComparisons) {
+            document.getElementById('selectedComparisonBucket').src='/assets/bucket_full_icon.png';
+            document.getElementById('selectComparisonAssessmentsStep').src='/assets/check_box_checked.png';
+        } else {
+            document.getElementById('selectedComparisonBucket').src='/assets/bucket_icon.png';
+            document.getElementById('selectComparisonAssessmentsStep').src='/assets/check_box.png';
+        }
+        selectedComparisonsHtml += '</table>';
+        $('#selectedComparisonAssessments').html(selectedComparisonsHtml);
+        if (10 < selectedComparisons) {
+            newComparison.checked = false;
+            alert('Maximum number of comparisons is 10');
+        }
+    }
+
+
+    function clickComparisonCheckboxs(comparisonItemId) {
+            var selectedComparisons = assesment_compare_array.length ;
+            var selectedComparisonsHtml = '<tr'+' id=remove'+comparisonItemId+'>'+'<td>' + $('#comparisonList' + comparisonItemId).html() + '</td></tr>';
+            $('#comparisonSelectionNumberText').html('Selected ' + selectedComparisons + ' out of 10');
+            $('#comparisonSelectionNumberTextForConfiguration').html('Comparing with ' + selectedComparisons + ' assessments');
+            $('#nextConfigurationParameters').button('option', 'disabled', false);
+
+            if (0 < selectedComparisons) {
+                document.getElementById('selectedComparisonBucket').src='/assets/bucket_full_icon.png';
+                document.getElementById('selectComparisonAssessmentsStep').src='/assets/check_box_checked.png';
+            } else {
+                document.getElementById('selectedComparisonBucket').src='/assets/bucket_icon.png';
+                document.getElementById('selectComparisonAssessmentsStep').src='/assets/check_box.png';
+            }
+            $('#selectedComparisonAssessments > tbody:last').append(selectedComparisonsHtml);
+            if (10 < selectedComparisons) {
+                newComparison.checked = false;
+                alert('Maximum number of comparisons is 10');
+            }
+        }
+
+    function unclickComparisonCheckboxs(comparisonItemId) {
+                var selectedComparisons = assesment_compare_array.length ;
+                $("#remove"+comparisonItemId).remove();
+                $('#comparisonSelectionNumberText').html('Selected ' + selectedComparisons + ' out of 10');
+                $('#comparisonSelectionNumberTextForConfiguration').html('Comparing with ' + selectedComparisons + ' assessments');
+                $('#nextConfigurationParameters').button('option', 'disabled', false);
+
+                if (0 < selectedComparisons) {
+                    document.getElementById('selectedComparisonBucket').src='/assets/bucket_full_icon.png';
+                    document.getElementById('selectComparisonAssessmentsStep').src='/assets/check_box_checked.png';
+                } else {
+                    document.getElementById('selectedComparisonBucket').src='/assets/bucket_icon.png';
+                    document.getElementById('selectComparisonAssessmentsStep').src='/assets/check_box.png';
+                }
+
+                if (10 < selectedComparisons) {
+                    newComparison.checked = false;
+                    alert('Maximum number of comparisons is 10');
+                }
+            }
+
+    $("#generateReport").click(function(){
+    if (assesment_compare_array.lenght !=0){
+      $("#quizTargetedGroupscompareIds").val(assesment_compare_array);
+     }
+     return true
+    });
+
+    function resetComparisonCheckboxes() {
+        var g = document.getElementsByName("quizTargetedGroupsIds[]");
+        for (var i=0; i<g.length; i++) {
+            g[i].checked = false;
+        }
+    }
+
+    function checkUncheckAll() {
+        alert("hi");
+        var isSelected = document.getElementById('viewReportStudentAll').checked;
+        var g = document.getElementsByName("viewReportStudent");
+        for (var i=0; i<g.length; i++) {
+            g[i].checked = isSelected;
+        }
+        setNumberOfCheckboxesText();
+    }
+
+    function setNumberOfCheckboxesText() {
+        var number = 0;
+        var g = document.getElementsByName("viewReportStudent");
+        for (var i=0; i<g.length; i++) {
+            if (g[i].checked) {
+              number++;
+            }
+        }
+        $('#selectedNumberText').html('&nbsp;* Selected ' + number + ' out of ' + g.length);
+    }
+
+    function openNextAccordionPanel() {
+        var $accordion = $("#accordion").accordion();
+        var current = $accordion.accordion("option", "active");
+        //var maximum = $accordion.find("h3").length;
+        //var next = ((current+1 === maximum) ? 0 : current+1);
+        var next = current+1; // Since we don't have next button on the last accordion
+        // $accordion.accordion("activate", next); // pre jQuery UI 1.10
+        $accordion.accordion("option", "active", next);
+        $accordion.find('span').removeClass("ui-accordion-header-icon ui-icon ui-icon-triangle-1-e ui-icon-triangle-1-s");
+    }
+		    
+    $(document).ready(
+        function() {
+            $(".report_buttons").css("font-size","1em").button();
+            $(".publish_reports").button("disable")
+            $("#body_content_2").hide();
+            $("#body_content_3").hide();
+            $("#body_content_3").dialog({modal: true, autoOpen: false,
+                width: 204, height: 80, minWidth: 204, minHeight: 80, maxWidth: 204, maxHeight: 80,
+                show: {effect: "blind", duration: 1000},
+                hide: {effect: "explode", duration: 1000}
+            });
+            $("#body_content_3").dialog( "option", "dialogClass", "noTitle" );
+            $("#body_content_3").parent().css("background-color", "transparent");
+
+            /** Closes modal dialog if clicked elsewhere. */
+            $(document.body).on("click", ".ui-widget-overlay", function() {
+                $.each($(".ui-dialog"), function() {
+                    var $dialog = $(this).children(".ui-dialog-content");
+                    if ($dialog.dialog("option", "modal")) {
+                        $dialog.dialog("close");
+                    }
+                });
+            });
+
+            $( "#tabs" ).tabs(
+                    /*{
+                     show: {
+                     effect: "blind",
+                     duration: 1000
+                     },
+                     hide: {
+                     effect: "explode",
+                     duration: 1000
+                     }
+                     }*/
+            );
+            $( "#addQuestionTabs" ).tabs(
+                    /*{
+                     show: {
+                     effect: "blind",
+                     duration: 1000
+                     },
+                     hide: {
+                     effect: "explode",
+                     duration: 1000
+                     }
+                     }*/
+            );
+
+            /* Fixing Tabs CSS issues */
+            $("#tabsul").removeClass('ui-widget-header');
+            $("#tabs").removeClass('ui-widget-content');
+            $("#addQuestionTabsul").removeClass('ui-widget-header');
+            $("#addQuestionTabs").removeClass('ui-widget-content');
+
+            /* Buttons */
+            /*$( "#classComboBox" ).button({
+             icons: {
+             secondary: "ui-icon-triangle-1-s"
+             }
+             });*/
+            $( "#assessmentType" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+            $( "#subjectButton" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+            $( "#publishedButton" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+            $( "#subjectAddQuestionsButton" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+
+            $( "#class2Button" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+            $( "#assessmentType2Button" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+            $( "#subject2Button" ).button({
+                icons: {
+                    secondary: "ui-icon-triangle-1-s"
+                }
+            });
+
+
+            $( "#saveAssessment1" ).button();
+            $( "#saveAssessment2" ).button();
+            $( "#saveAssessment3" ).button();
+            $( "#leftOK" ).button();
+            $( "#middleOK" ).button();
+            $( "#questionBankSearch" ).button();
+            $( "#addQuestions" ).button();
+            $( "#goToEditSection" ).button().click(function(e) {
+                e.preventDefault();
+                $("#addQuestionTabs-1").hide();
+                $("#addQuestionTabs-3").show();
+            });
+
+            /* Assessment tabs */
+            $("#create-assessment-create-template").click(function(e) {
+                e.preventDefault();
+                $(".step_active").removeClass("step_active").addClass("step_normal");
+                $("#create-assessment-create-template").removeClass("step_normal").addClass("step_active");
+                $("#createAssessmentTabs-1").show();
+                $("#createAssessmentTabs-2").hide();
+                $("#createAssessmentTabs-3").hide();
+                $("#createAssessmentTabs-4").hide();
+            });
+            /*$("#create-assessment-add-questions").click(function() {*/
+            $("#addQuestionsToAssessment").button().click(function(e) {
+                e.preventDefault();
+                $(".step_active").removeClass("step_active").addClass("step_normal");
+                $("#create-assessment-add-questions").removeClass("step_normal").addClass("step_active");
+                $("#createAssessmentTabs-1").hide();
+                $("#createAssessmentTabs-2").show();
+                $("#createAssessmentTabs-3").hide();
+                $("#createAssessmentTabs-4").hide();
+            });
+            /*$("#create-assessment-preview").click(function() {*/
+            $("#goToAssessmentPreview").button().click(function(e) {
+                e.preventDefault();
+                $(".step_active").removeClass("step_active").addClass("step_normal");
+                $("#create-assessment-preview").removeClass("step_normal").addClass("step_active");
+                $("#createAssessmentTabs-1").hide();
+                $("#createAssessmentTabs-2").hide();
+                $("#createAssessmentTabs-3").show();
+                $("#createAssessmentTabs-4").hide();
+            });
+            /*$("#create-assessment-publish").click(function() {*/
+            $("#downloadAssessmentPDF").button().click(function(e) {
+                e.preventDefault();
+                $(".step_active").not(this).removeClass("step_active").addClass("step_normal");
+                $(this).removeClass("step_normal").addClass("step_active");
+                $("#createAssessmentTabs-1").hide();
+                $("#createAssessmentTabs-2").hide();
+                $("#createAssessmentTabs-3").hide();
+                $("#createAssessmentTabs-4").show();
+            });
+
+            $(".view-analytics").on('ajax:beforeSend',function(){
+                $('.spinner-gif').show();
+
+            });
+            //$(".view-analytics").button().click(function(e) {
+                //$("#body_content_1").hide("slide", 500);
+                //var html = $(this).closest(".assessment-section").find(".hidden-section").html();
+                //$("#dynamic_content").html(html);
+                //$("#body_content_2").show();
+            //});
+
+            $(".publish-test").button().click(function(e) {
+                $("#body_content_3").dialog( "option", "appendTo", "#publishTest" );
+                /*$("#body_content_3").dialog( "option", "position", {
+                 my: "center top",      //  Horizontal then vertical, missing values default to center
+                 at: "center bottom",   //  Horizontal then vertical, missing values default to center
+                 of: $('#publishTest'), //  Element to position against
+                 offset: "-100 0"         //  Pixel values for offset, Horizontal then vertical, negative values OK
+                 });*/
+                $("#body_content_3").dialog("open");
+            });
+            $("#downloadAssessment").button();
+            //$("#viewAnalytics2").button().click(function(e) {
+            //    $("#body_content_1").hide("slide", 500);
+            //    $("#body_content_2").show();
+            //});
+            //$("#publishTest2").button().click(function(e) {
+            //    $("#body_content_3").dialog( "option", "appendTo", "#publishTest2" );
+            //    $("#body_content_3").dialog("open");
+            //});
+            $("#downloadAssessment2").button();
+            //$("#viewAnalytics3").button().click(function(e) {
+            //    $("#body_content_1").hide("slide", 500);
+            //    $("#body_content_2").show();
+            //});
+
+            //$("#publishTest3").button().click(function(e) {
+            //  $("#body_content_3").dialog( "option", "appendTo", "#publishTest3" );
+            //  $("#body_content_3").dialog("open");
+            //});
+
+            $("#downloadAssessment3").button();
+            $("#generateReport").button();
+            $("#nextComparisonAssessments").button({ disabled: true });
+            $("#nextConfigurationParameters").button({ disabled: true });
+            $("#nextGenerateReport").button({ disabled: true });
+
+            $("#backButton").button().click(function(e) {
+              $("#body_content_2").hide();
+              $("#body_content_1").show("slide", 500);
+            });
+            $("#publishStudentReports").button();
+
+            $("#publishStudentReports2").button().click(function(e) {
+              $("#body_content_3").dialog("close");
+            });
+
+
+            $("#accordion").accordion({heightStyle: "content", hover: false, hoverable: false});
+            $("#selectAssessmentAccordion").removeClass("ui-state-active").removeClass("ui-widget-content ui-state-active").removeClass("ui-widget-header ui-state-active").removeClass("ui-state-default").removeClass("ui-widget-content ui-state-default").removeClass("ui-widget-header ui-state-default");
+            $("#selectAssessmentAccordionContent").removeClass("ui-widget-content");
+            $("#comparisonAssessmentAccordion").removeClass("ui-state-active").removeClass("ui-widget-content ui-state-active").removeClass("ui-widget-header ui-state-active").removeClass("ui-state-default").removeClass("ui-widget-content ui-state-default").removeClass("ui-widget-header ui-state-default");
+            $("#comparisonAssessmentAccordionContent").removeClass("ui-widget-content");
+            $("#configurationParametersAccordion").removeClass("ui-state-active").removeClass("ui-widget-content ui-state-active").removeClass("ui-widget-header ui-state-active").removeClass("ui-state-default").removeClass("ui-widget-content ui-state-default").removeClass("ui-widget-header ui-state-default");
+            $("#configurationParametersAccordionContent").removeClass("ui-widget-content");
+            $("#generateReportAccordion").removeClass("ui-state-active").removeClass("ui-widget-content ui-state-active").removeClass("ui-widget-header ui-state-active").removeClass("ui-state-default").removeClass("ui-widget-content ui-state-default").removeClass("ui-widget-header ui-state-default");
+            $("#generateReportAccordionContent").removeClass("ui-widget-content");
+            $("#accordion").find('span').removeClass("ui-accordion-header-icon ui-icon ui-icon-triangle-1-e ui-icon-triangle-1-s");
+            $("#comparisonAssessmentAccordion").bind("click", function (event) {
+              event.stopImmediatePropagation();
+            });
+            $("#configurationParametersAccordion").bind("click", function (event) {
+              event.stopImmediatePropagation();
+            });
+            $("#generateReportAccordion").bind("click", function (event) {
+              event.stopImmediatePropagation();
+            });
+
+            // Reset radio buttons and checkboxes since Firefox is caching them when opened next time
+            resetSelectionRadioGroup(null);
+            resetComparisonCheckboxes();
+            document.getElementById('viewReportStudentAll').checked = false;
+            checkUncheckAll();
+        }
+    );

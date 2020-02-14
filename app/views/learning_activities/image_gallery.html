@@ -1,0 +1,202 @@
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Ignitor - Image Gallery</title>
+
+    <!--  Stylesheets -->
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css" >
+    <link rel="stylesheet"	href="/assets/activities/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/assets/activities/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery.loader.css">
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="/assets/activities/image-gallery.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_image_gallery.css" />
+    <!-- Javascript libraries -->
+    <script type="text/javascript" src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/assets/activities/jquery-ui.js"></script>
+    <script	src="/assets/activities/bootstrap.min.js"></script>
+    <script src="/assets/activities/jquery.loader.js"></script>
+    <script src="/assets/activities/jquery-confirm.js"></script>
+</head>
+<body>
+<div class="container">
+    <div id="wrapper">
+
+        <div class="gallery-group">
+            <div class="gallery-title">Image Gallery</div>
+
+            <div class="gallery-group" id="image-gallery-tab-panel">
+                <div class="tab-has-next">
+                    <button id="tab-create-template" class="btn col-sm-2 image-gallery-tab image-gallery-tab-active" role="button">01 Create Template</button>
+                </div>
+                <div class='col-sm-1 tabs-separator'>
+                    <i class="fa fa-angle-right next-tab-icon"></i>
+                </div>
+                <div>
+                    <button id="tab-create-gallery" class="btn col-sm-2 image-gallery-tab" role="button">02	Create Gallery</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-create-template">
+
+            <div class='col-xs-12 gallery-header gallery-header-template gallery-group'>
+                <p class="col-xs-5 information-text">Let's create the template before adding the question</p>
+                <button id='save-and-continue-template' class='btn btn-custom continue-gallery-template continue-gallery-template pull-right'>Save & Continue</button>
+            </div>
+
+            <form class="form-horizontal row" role="form" method="POST" style="padding-top:20px;padding-bottom:50px">
+                <div class="col-xs-8">
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding" style="margin-bottom:0px">
+                        <label for="contentName" class="col-xs-4">Name of the Activity</label>
+                        <div class="col-xs-8">
+                            <input type="text" name="contentName" id="contentName" class="form-control">
+                            <p class="text-warning">Please name the activity carefully, this name will be shown to the student</p>
+                        </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding" style="margin-bottom:0px" >
+                        <label for="description" class="col-xs-4">Description</label>
+                        <div class="col-xs-8">
+                            <input type="text" name="description" id="description" class="form-control" maxlength="350">
+                            <p class="text-warning">Maximum character limit is 350</p>
+                        </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                        <label for="class" class="col-xs-4">Class</label>
+                        <div class="col-xs-8 select-wrap ">
+                            <%= collection_select :tag, :class_id, @class_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"className"} %>
+                        </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                        <label for="subject" class="col-xs-4">Subject</label>
+                        <div class="col-xs-8 select-wrap">
+                            <%= collection_select :tag, :class_id, @subject_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"subject"} %>                                </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                        <label for="chapter/topicTags" class="col-xs-4">Chapter/Topic tags</label>
+                        <div class="col-xs-8 select-wrap">
+                            <%= collection_select :tag, :class_id, @concept_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"chapter"} %>                                </div>
+                    </div>
+                    <input type="hidden" name="learning_activity_type" id="learning_activity_type" value="image_gallery">
+                </div>
+            </form>
+        </div>
+
+
+        <div id="content-create-gallery">
+            <div class='col-xs-12 gallery-header gallery-header-gallery gallery-group'>
+                <div class="image-gallery-back">
+                    <img class="pull-left " alt="Back" src="/assets/activities/back.png">
+                </div>
+                <button type="button" class=" btn " id="DescriptionModal"><span class="glyphicon glyphicon-plus" style="margin-right:5px"></span>Add Instructions</button>
+                <button id="preview-gallery" data-toggle="modal" data-target="#previewModal" class='btn btn-custom preview-gallery-template gallery-template'>Preview</button>
+                <button class="btn btn-custom logo-btn"><img src="/assets/activities/ignitor_logo.png" style="width:20px;height:20px;"><span  style="margin-left:8px">Edit Logo</span> </button>
+
+                <input  name="Select File" type="file" accept=".jpg, .jpeg, .png" class="logo-upload" style="display:none"/>
+
+                <button class='btn btn-custom continue-gallery-template save pull-right'>Save & Continue</button>
+            </div>
+            <div>
+                <div class="col-sm-4 create-gallery-grid create-gallery-grid-header">
+                    Upload a Picture</div>
+                <div class="col-sm-8 create-gallery-grid create-gallery-grid-header">
+                </div>
+            </div>
+            <div>
+                <div
+                        class="col-sm-4 create-gallery-grid create-gallery-grid-content">
+                    <div class='align-center'>
+                        <div id="dropUpload">
+                            <img id="output" alt="Upload Image"
+                                 src="/assets/activities/upload_image_icon.png">
+                        </div>
+                        <div class="gallery-group">
+                            <span>Drag and drop files onto this window</span>
+                        </div>
+
+                        <div class="choose-file">
+                            <input id="uploadFileInput" type="file" multiple
+                                   accept="image/*" onchange="uploadFileInput(event)"> <span>Upload
+									from Computer</span> <span id='upload-image-icon'><img
+                                src='/assets/activities/upload.png'></span>
+                        </div>
+                    </div>
+                </div>
+                <div
+                        class="col-sm-8 create-gallery-grid create-gallery-grid-content create-gallery-grid-content-preview">
+                    <p>Maximum number of images that can be uploaded are 10</p>
+                    <div id="no-image-in-gallery">
+                        <div class="no-image">
+                            <img src="/assets/activities/empty_icon.png">
+                        </div>
+                        <div>
+                            <span class="gallery-group">No Pictures added yet.</span>
+                        </div>
+                    </div>
+                    <div id="image-gallery">
+                        <div id='image-gallery-grid' class='image-gallery-grid'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade " id="previewModal" role="dialog">
+        <div class="modal-dialog modal-dialog-preview">
+            <!-- Modal content for tag box answers-->
+            <div class="modal-content preview-in-modal">
+                <div>
+                    <span class="glyphicon glyphicon-remove gallery-preview-remove pull-right" style="cursor:pointer" data-dismiss="modal"></span>
+                    <p class="preview-header preview-header-strip">Preview the Image Gallery. Best view in 1024x600 px</p>
+                </div>
+                <!-- <div class="preview-header preview-header-inner">
+                    Name of the template
+                </div>-->
+                <div class="modal-body previewBody" id="preview-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="imageViewer" role="dialog">
+        <div class="modal-dialog modal-dialog-image-viewer">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <img id="image-viewer-content" >
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-description" id="instruction_modal" role="dialog" data-backdrop="false">
+        <div class="modal-dialog modal-dialog-description">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h4 class="modal-title">Add Instructions below for students.</h4>
+                    <textarea class="form-control" rows="5" id="textarea-description" placeholder="Instructions for students"></textarea>
+                </div>
+                <p class="text-warning col-xs-4">Maximum character limit is 350</p>
+                <div class="col-xs-offset-9">
+                    <button type="button" class="btn  modal_btns" data-dismiss="modal" id="AddDescription" style="margin-left:15%">Add</button>
+                    <button type="button" class="btn  modal_btns" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+<!-- Custom JS here -->
+<script type="text/javascript" src="/assets/activities/jquery.shapeshift.js"></script>
+<script type="text/javascript" src="/assets/activities/app.js"></script>
+<script type="text/javascript" src="/assets/activities/play_image_gallery.js"></script>
+<script type="text/javascript" src="/assets/activities/image-gallery.js"></script>
+
+</body>
+</html>

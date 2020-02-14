@@ -1,0 +1,131 @@
+#content_header
+  #breadcrumbs
+    = bread_crumb_message_page
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "Inbox")}", messages_path+user_path(current_user)
+    %li= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", message_path(@message)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.message.sender_id", :default => t("activerecord.labels.sender_id", :default => "Sender"))
+          %td.right= @message.sender.fullname
+        - if !@message.recipient_id.nil? or !@message.group_id.nil?
+          %tr.even.left
+            %td= t("activerecord.attributes.message.recipient_id", :default => t("activerecord.labels.recipient_id", :default => "Recipient"))
+            %td.right= @message.recipient_id ? @message.recipient.name  : @message.group.name
+        %tr.odd.left
+          %td= t("activerecord.attributes.message.body", :default => t("activerecord.labels.body", :default => "Body"))
+          %td.right= @message.body.html_safe if @message.body
+        %tr.even.left
+          %td= t("activerecord.attributes.message.type", :default => t("activerecord.labels.type", :default => "Type"))
+          %td.right= @message.message_type
+        %tr.odd.left
+          -#%td= t("activerecord.attributes.message.severity", :default => t("activerecord.labels.severity", :default => "Severity"))
+          -#%td.right= @message.severity
+        %tr.even.left
+          %td= t("activerecord.attributes.message.label", :default => t("activerecord.labels.label", :default => "Label"))
+          %td.right= @message.label
+        - if !@message.assets.empty?
+          %tr.odd.left
+            %td Attachments
+            %td.right
+              - @message.assets.each do |asset|
+                = link_to asset.name,asset.url
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2',:align=>'right'}
+
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "Inbox")}", messages_path+user_path(current_user)
+      %li= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+      %li.active= link_to "#{t("web-app-theme.show", :default => "Show")}", message_path
+  .content
+    .inner
+      %p
+        %b
+          = t("activerecord.attributes.message.sender_id", :default => t("activerecord.labels.sender_id", :default => "Sender"))
+          \:
+        = @message.sender.fullname
+      %p
+        %b
+          = t("activerecord.attributes.message.recipient_id", :default => t("activerecord.labels.recipient_id", :default => "Recipient"))
+          \:
+        = @message.recipient.fullname  if @message.recipient
+      %p
+        %b
+          = t("activerecord.attributes.message.subject", :default => t("activerecord.labels.subject", :default => "Subject"))
+          \:
+        = @message.subject
+      %p
+        %b
+          = t("activerecord.attributes.message.body", :default => t("activerecord.labels.body", :default => "Body"))
+          \:
+        = @message.body
+      %p
+        %b
+          = t("activerecord.attributes.message.type", :default => t("activerecord.labels.type", :default => "Type"))
+          \:
+        = @message.message_type
+      %p
+        %b
+          = t("activerecord.attributes.message.severity", :default => t("activerecord.labels.severity", :default => "Severity"))
+          \:
+        = @message.severity
+      %p
+        %b
+          = t("activerecord.attributes.message.label", :default => t("activerecord.labels.label", :default => "Label"))
+          \:
+        = @message.label
+      - if @message.assets  
+        %p
+          %b
+            = "Attachment"
+            \:
+          - @message.assets.each do |asset|
+            =   link_to asset.name,asset.url
+      .wat-cf
+        = link_to "Edit", edit_message_path(@message), :class => "button"
+        = link_to "Delete", message_path(@message), :method => "delete", :class => "button", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+:javascript
+  $(document).ready(function() {
+    $("#message_acknowledgs").dataTable({
+        "aoColumns": [
+                    null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+%div
+  - if !@message.message_acknowledgs.empty?
+    %table#message_acknowledgs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+      %thead
+        %tr.tr-head
+          %th=  t("activerecord.attributes.academic_class.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %th=  t("activerecord.attributes.academic_class.center", :default => t("activerecord.labels.center", :default => "Acknowledged at"))
+          %th=  t("activerecord.attributes.academic_class.center", :default => t("activerecord.labels.center", :default => "Status"))
+      %tbody
+        - @message.message_acknowledgs.each do |ack|
+          %tr{:class => cycle("tr-odd", "tr-even")}
+            %td.col= link_to ack.user.name, user_path(ack.user)
+            %td.col= display_date_time(ack.created_at)
+            %td.col= message_status(ack.status)
+
+- content_for :sidebar, render(:partial => 'shared/sidebar')

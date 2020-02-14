@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Match the Item Play Test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <script type='application/javascript' src='/assets/activities/fastclick.js'></script>
+    <script type="text/javascript" src="/assets/activities/konva.js"></script>
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/assets/activities/app.js"></script>
+    <script src="/assets/activities/jquery-confirm.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_match_the_item.css">
+</head>
+<body>
+<div class="container preview-container">
+
+    <div class="for-preview"></div>
+</div>
+<script type="text/javascript" src="/assets/activities/play_match_the_item.js"></script>
+<script>
+    $(document).ready(function(){
+//		var editable = window.location.href.split('value=')[1];
+//		if(editable){
+//			var urlJson=JSON.parse(decodeURIComponent(editable));
+//			$(".for-preview").playMatchtheItem(urlJson,"download/");
+//		}
+        var jsonData = "";
+        $.ajax({
+            url: "/learning_activities/<%=@learning_activity.id%>/get_activity_data",
+            type: 'GET',
+            cache: false,
+            success: function(data, textStatus, jqXHR)
+            {
+                jsonData = JSON.stringify(data);
+                var finaljson = JSON.parse(decodeURIComponent(jsonData));
+                $(".for-preview").playMatchtheItem(finaljson,"/learning_activities/download/");
+                /* $(".for-preview").find(".preview-content").css({"border":" 1px solid #39b18d"}); */
+                $(".for-preview").find(".preview-row").css({"margin":"0px","width":"100%"});
+                /* $(".for-preview").find("#preview-container").css({"width": "1020px"}); */
+                $("body").css({"overflow-y":"hidden"});
+
+
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                alert("error in playing");
+            }
+        });
+
+    })</script>
+</body>
+</html>

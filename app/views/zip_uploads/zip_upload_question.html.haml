@@ -1,0 +1,43 @@
+#content_header
+  %h1#main_heading Uploading Zip
+  %br
+  %h3 This tool should be used only to bulk upload ETX based questions.
+- 5.times do 
+  %br
+#data
+  - unless @publisher_question_banks.empty?
+    %form#new_zip_upload.form{"accept-charset" => "UTF-8", :action => "/post_zip_upload_question", "data-validate" => "true", :enctype => "multipart/form-data", :method => "post", :novalidate => "novalidate"}
+      .group
+        .field
+          %label.select.required.label{:for => ""}
+            Select Questions zip file :
+          %input#zip_upload_asset{:name => "zip_upload[asset]", :type => "file"}
+      .group
+        .field
+          %label.select.required.label Select Question Bank
+          .styled-select:
+            = select_tag :publisher_question_bank_id , options_from_collection_for_select(@publisher_question_banks, :id , :question_bank_name ), class:"drop_down"
+      .group
+        .field{:align => "center"}
+          %button.green_bg{:name => "commit", :type => "submit", :value => "Submit"}
+            Submit
+  -else
+    You don't have any question banks attached to your role !
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

@@ -1,0 +1,10 @@
+%h1 listing centers under this cdn
+
+%table{border: 1}
+  %tr
+    %th Center Name
+    %th Books List
+  - @centers.each do |center|
+    %tr
+      %td= center.name
+      %td= link_to "List All Books", cdn_center_books_cdn_config_path(center_id: center.id, cdn_user: @cdn_user.id)

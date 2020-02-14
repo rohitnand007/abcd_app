@@ -1,0 +1,60 @@
+.nav_icon_block
+  .nav_icon_image
+    = image_tag "home.png"
+  .nav_text
+    %label
+      Home
+.nav_icon_block
+  .nav_icon_image
+    = link_to (image_tag "manage_users.png"),"#"
+  .nav_text.drop
+    %label
+      Manage Users
+  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+    %li= link_to "Users", users_path
+    %li= link_to "Upload Students", pearson_user_upload_csv_path
+    %li= link_to "Centers", centers_path
+    %li= link_to "Classes", academic_classes_path
+    %li= link_to "Sections", sections_path
+  .nav_menuarrow
+    = image_tag "menu_arrow.png"
+.nav_icon_block
+  .nav_icon_image
+    = image_tag "books.png"
+  .nav_text.drop
+    %label
+      Books
+  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+    %li= link_to "Books List",books_path
+    %li= link_to "New Book", new_book_path
+  .nav_menuarrow
+    = image_tag "menu_arrow.png"
+.nav_icon_block
+  .nav_icon_image
+    = image_tag "books_collections.png"
+  .nav_text.drop
+    %label
+      Collection
+  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+    %li= link_to "Collections List", collections_path
+    %li= link_to "New Collection", new_collection_path
+    %li= link_to "Assign Collection", assign_collection_path
+  .nav_menuarrow
+    = image_tag "menu_arrow.png"
+.nav_icon_block
+  .nav_icon_image
+    = image_tag "assessments.png"
+  .nav_text.drop
+    %label
+      Assessments
+  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+    %li= link_to "Quick Test", controller:"quick_test",action:"new"
+  .nav_menuarrow
+    = image_tag "menu_arrow.png"
+
+.nav_icon_block
+  .nav_icon_image
+    = link_to (image_tag "devices.png"),"#"
+  .nav_text
+    %label
+      Devices

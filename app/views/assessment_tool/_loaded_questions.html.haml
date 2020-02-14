@@ -1,0 +1,20 @@
+%table{class:"questions_loaded",cellpadding: "0", cellspacing: "0", width: "100%"}
+  - questions.each do |question|
+    %tr
+      %td{style: "width: 30px; margin: 0px; padding: 4px; border: 1px solid #CCC; vertical-align: top; text-align: center;"}
+        \ AB-110
+      %td{style: "width: 80%; margin: 0px; padding: 8px; border: 1px solid #CCC; vertical-align: top; text-align: left;"}
+        %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+          %tr
+            %td{style: "width: 10px; padding: 8px; border: 1px solid #CCC; vertical-align: top; text-align: center;"}
+               03
+            %td{style: "width: 80%; padding: 8px; border: 1px solid #CCC; vertical-align: top; text-align: left;"}
+              = question.questiontext
+            %td{style: "width: 20px; padding: 8px; border: 1px solid #CCC; vertical-align: top; text-align: center;"}
+              %center
+                Marks
+                %br/
+                %input{disabled: "true", size: "1", style: "margin-left:1em;margin-top:1em;", value: question.defaultmark}/
+      %td{style: "width: 20px; margin: 0px; padding: 4px; border: 1px solid #CCC; vertical-align: top; text-align: center;"}
+        %center
+          = check_box_tag "question_select",question.id, false, style: "margin-left:1em;margin-top:1em;"

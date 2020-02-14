@@ -1,0 +1,81 @@
+:css
+  #assessment_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#main_heading Assessment Categories
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_categories_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_category_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              -  @assessment_categories.each do |assessment|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"#{assessment.id}"}
+                  -#%td.col=  assessment.id
+                  %td.col
+                    = assessment.asset.user.name if assessment.asset
+                  %td.col
+                    = assessment.board.name if assessment.board
+                  %td.col
+                    = assessment.content_year.name if assessment.content_year
+                  %td.col
+                    = assessment.subject.name  if assessment.subject
+                  %td.col
+                    = link_to assessment.chapter.name, chapter_path(assessment.chapter)  if assessment.chapter
+                  %td.col
+                    = link_to assessment.topic.name, topic_path(assessment.topic)  if assessment.topic
+                  %td.col
+                    = link_to assessment.name , test_configurations_assessment_path(assessment),remote: true
+                  %td.col
+                    = display_date_time(assessment.created_at)
+                  %td.col
+                    = link_to_show(assessment_category_path(assessment))
+                    &nbsp
+                    = link_to_edit(edit_assessment_category_path(assessment))
+                    &nbsp;
+                    = link_to(image_tag('icons/configure.png'),  assessment_category_test_configuration_path(assessment),:title=>'Configure',:class=>'tipTipTop')if assessment.status == 4 or assessment.status == 2
+                    &nbsp;
+                    = link_to_delete(assessment_category_path(assessment))
+
+        .pagination_info
+          = paginate  @assessment_categories unless  @assessment_categories.blank?
+        #assessment_configuration

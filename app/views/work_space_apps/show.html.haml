@@ -1,0 +1,19 @@
+%p#notice= notice
+
+%p
+  %b User:
+  = @work_space_app.user_id
+%p
+  %b Package name:
+  = @work_space_app.package_name
+
+%p
+  %b Work space:
+  = @work_space_app.work_space
+%p
+  %b App location:
+  = @work_space_app.app_location
+
+= link_to 'Edit', edit_work_space_app_path(@work_space_app)
+\|
+= link_to 'Back', work_space_apps_path

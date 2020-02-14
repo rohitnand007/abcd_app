@@ -1,0 +1,37 @@
+:javascript
+  $(document).ready(function() {
+    $("#sections").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+%div
+  %table#sections.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.section.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th= t("activerecord.attributes.section.class", :default => t("activerecord.labels.class", :default => "Form"))
+        %th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @sections.each do |section|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"section_#{section.id}"}
+          %td.col= link_to section.name, section_path(section)
+          %td.col= section.academic_class.try(:name)
+          %td.col= display_date_time(section.created_at)
+          %td.col
+            = link_to_show(section_path(section))
+            -#= link_to_edit(edit_section_path(section))
+            -#= link_to (section.is_activated ? "#{t("web-app-theme.delete", :default => "Deactivate")}":"#{t("web-app-theme.delete", :default => "Activate")}"),  section_path(section), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}",:style=>section.is_activated ? "":"color:red;"*/
+.pagination_info= paginate @sections  unless @sections.blank?

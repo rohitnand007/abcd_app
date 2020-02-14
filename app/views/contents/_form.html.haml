@@ -1,0 +1,24 @@
+= simple_form_for @content, :html => { :class => :form } do |f|
+  .inputs
+    .group
+      .field
+        = f.association :board,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.association :content_year,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.association :subject,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.association :chapter,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.association :topic,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+
+  .group
+    = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+    = link_to t("web-app-theme.cancel", :default => "Cancel"), contents_path,:class=>'button danger icon remove'

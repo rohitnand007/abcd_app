@@ -1,0 +1,22 @@
+
+
+.nested-fields.nested_attributes
+  -#.group
+  -#  .field
+  -#    = f.input :model,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :deviceid,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  -#.group
+  -#  .field
+  -#    = f.input :device_type,:as=>:select,:collection=>Device::DEVICE_TYPES,:include_blank => false,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+  .group.remove_field
+    .field
+      = link_to_remove_association "Remove", f
+
+:javascript
+  $(".remove_fields").click(function(e) {
+       $(".add_more").css('display','block'); //show the add more link if hides
+  });
+
+

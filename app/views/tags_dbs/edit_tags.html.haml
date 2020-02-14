@@ -1,0 +1,96 @@
+%table.meta_tags_table
+  %thead
+    %tr
+      %th ConceptName
+      %th Academic Class
+      %th Subject
+  %tbody
+  -@meta_tags.each do |m|
+    %tr.concept{id: "#{m['id']}"}
+      %td{title:"Enter an existing course, you can add at most one course. "}
+        %ul.concept{concept_id: "#{m['id']}", class: "tag tagit ui-widget ui-widget-content ui-corner-all"}
+          -if m['value'].nil?
+          -else
+            %li.value
+              =m['value']
+      %td 
+        %ul.tag.academic_class
+          -if m['academic_class'].nil?
+          -else
+            -m['academic_class'].each do |ac|
+              %li 
+                =ac
+      %td 
+        %ul.tag.subject
+          -if m['subject'].nil?
+          -else
+            -m['subject'].each do |su|
+              %li 
+                =su
+%button.button.update_meta_tags Update
+
+.pagination_info{style: "float:left;"}
+  = paginate @concept_tags
+  %br
+  = (page_entries_info @concept_tags).html_safe
+
+:javascript
+  var db_id = "#{@db_id}";
+  $(".academic_class").tagit({
+    requireAutocomplete: true,
+    allowSpaces: false,
+    fieldName:"academic_class",
+    availableTags: "#{@academic_class_tags.map(&:value).join(';')}".split(";"),
+    maxTags: 100,
+    beforeTagAdded: function(event, ui) {
+      if($.inArray(ui.tagLabel, availableTags)==-1) return false;
+    }
+  });
+  $(".subject").tagit({
+    requireAutocomplete: true,
+    allowSpaces: true,
+    fieldName:"academic_class",
+    availableTags: "#{@subject_tags.map(&:value).join(';')}".split(";"),
+    beforeTagAdded: function(event, ui) {
+      if($.inArray(ui.tagLabel, availableTags)==-1) return false;
+    }
+  });
+  $(".button").click(update_db);
+  function update_db(){
+    var concepts = [];
+    $("tr.concept").each(function(){
+      var concept = new Object();
+      concept['id'] = $(this).attr('id');
+      concept['academic_class'] = $(this).find('ul.academic_class').tagit("assignedTags");
+      concept['subject'] = $(this).find('ul.subject').tagit("assignedTags");
+      concepts.push(concept);
+    });
+    $.post("/tags_dbs/"+db_id+"/update_tags",{"tags_info" : concepts},
+      function(data, status){
+          if(status == "success"){
+            alert("Tags Updated");
+            //window.location.reload();
+            window.location.pathname = "/tags_dbs";
+          }
+      }
+    );
+    console.log(concepts);
+  }
+    
+:css
+  .tagit{
+    margin : 3px;
+  }
+  .concept .value{
+    margin : 5px;
+  }
+  .meta_tags_table td{
+    margin : 5px;
+  }
+  .update_meta_tags{
+    font-size: 20px;
+    width: 120px;
+    position: fixed;
+    top: 80%;
+    margin-left: 80%;
+  }

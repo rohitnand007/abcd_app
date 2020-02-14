@@ -1,0 +1,9 @@
+/**
+ * Created by harsha on 18/5/15.
+ */
+$("<%= escape_javascript(render partial:'ipack_book_list') %>").dialog({
+    width: 'auto',
+    title: "<%= @ipack.name %>",
+    modal: true
+});
+$(".small_loading").hide();

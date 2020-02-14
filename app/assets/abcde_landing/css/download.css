@@ -1,0 +1,61 @@
+/* Custom Stylesheet */
+
+
+.divDownlod {
+    
+    min-height: 800px;
+    background: #f5f5f5;
+    padding-top: 100px;
+}
+
+.divDownlod h3 {
+    
+    font-size: 3em;
+    text-align: center;
+    color: #666;
+}
+
+.divTd  {
+    margin-top: 100px;
+    text-align: center;
+}
+.divTd img  {
+    height:100px;
+    color: #009949;
+}
+.divTd button  {
+    font-size: 1.500em;
+    color:#fff;
+    border: none;
+    padding: 20px;
+    background: #009949;
+    width: 80%;
+    margin: 30px 10% !important;
+    text-align: left;
+    background: url('../images/download.svg') no-repeat #009949;
+    background-size: 32px;
+    background-position: right 20px top 15px;
+}
+
+.divSd  {
+    margin-top: 100px;
+    text-align: center;
+}
+.divSd img  {
+    height: 100px;
+    color: #2d66ab;
+}
+.divSd button  {
+    font-size: 1.500em;
+    color:#fff;
+    border: none;
+    padding: 20px;
+    background: #2d66ab;
+     width: 80%;
+    margin: 30px 10% !important;
+    text-align: left;
+    background: url('../images/download.svg') no-repeat #2d66ab;
+    background-size: 32px;
+    background-position: right 20px top 15px;
+}
+

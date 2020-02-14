@@ -1,0 +1,56 @@
+#content_header
+  %h1#main_heading Search cdn cache
+#data
+  %table{width: "100%"}
+    %tr
+      %td
+        %div
+          %form.simple_form.form{action: "/cdn_cache_status", method: "post"}
+            .inputs
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_start_date"} CdnId
+                    %input#cdnid.string.optional.text_field{maxlength: "255", name: "cdnid", size: "50", type: "text"}/
+              .group
+                .field{:align=>'center'}
+                  %input.button.big.primary{name: "submit", type: "submit", value: "Search"}/
+
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#cdn_logs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th CdnId
+                %th Assets
+                %th
+            %tbody
+              - @cdn_cache_status.each do |cdn_cache_status|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col= cdn_cache_status.cdnid
+                  %td.col= cdn_cache_status.assets
+                  %td.col
+                    
+        .pagination_info
+          = paginate @cdn_cache_status
+:javascript
+  $(document).ready(function() {
+    $("#cdn_logs").dataTable({
+        "aoColumns": [
+                    null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+

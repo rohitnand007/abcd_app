@@ -1,0 +1,30 @@
+#content_header
+  %h1#main_heading Groups
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "Back")}", groups_path
+    %li.inner_tab_selected=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_group_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for @group,:url=>groups_path, :html => { :class => :form },:validate=>true do |f|
+              = f.error_messages
+              = render "form" ,:f=>f,:button_name=>'Create Group'
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", groups_path
+      %li.active= link_to "#{t("web-app-theme.new", :default => "New")}", new_group_path
+  .content
+    %h2.title
+      = t("web-app-theme.new", :default => "New")
+      Group
+    .inner
+      = simple_form_for @group,:url=>groups_path, :html => { :class => :form } do |f|
+        = f.error_messages
+        = render "form" ,:f=>f,:button_name=>'Create Group'
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

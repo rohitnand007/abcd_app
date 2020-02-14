@@ -1,0 +1,39 @@
+.fullDetailArea
+  .firstLevelDetail
+    %table.firstDetailTable
+      %tbody
+        %tr
+          %td
+            -if @storebooks.present?
+              -@storebooks.each do |ibook|
+                %table.abridgedBookInfo
+                  - book_metadata = ibook.get_metadata
+                  %tr
+                    %td
+                      - if File.exist?(Rails.root.to_s+"/public/ibook_public/#{ibook.id}/"+"cover.png")
+                        = image_tag "/ibook_public/#{ibook.id}/"+"cover.png",width:"140px", height: "145px",title:"#{ibook.info_file.exists? ?   book_metadata["description"] : ''}"
+                      - else
+                        = image_tag "book_icon.png",width:"140px", height: "145px",title:"#{ibook.info_file.exists? ?   book_metadata["description"] : ''}"
+                    %td
+                      %table
+                        %tr
+                          %td Book:
+                          %td= ibook.info_file.exists? ?   book_metadata["displayName"] : ""
+                        %tr
+                          %td ISBN:
+                          %td= ibook.info_file.exists? ?   book_metadata["isbn"] : ""
+                        %tr
+                          %td Author:
+                          %td= ibook.info_file.exists? ?   book_metadata["author"] : ""
+                        %tr
+                          %td Subject:
+                          %td= ibook.info_file.exists? ?   book_metadata["subject"] : ""
+                        %tr
+                          %td Class:
+                          %td= ibook.info_file.exists? ?   book_metadata["academicClass"] : ""
+                        %tr
+                          %td Type:
+                          %td= ibook.info_file.exists? ?   book_metadata["bookType"] : ""
+            -else
+              %h1 No Books available to display
+

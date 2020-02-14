@@ -1,0 +1,97 @@
+:javascript
+  $(document).ready(function() {
+    $("#class_rooms").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Class Rooms
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", class_rooms_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_class_room_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#class_rooms.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.class_room.name", :default => t("activerecord.labels.name", :default => "Teacher"))
+                %th= t("activerecord.attributes.class_room.name", :default => t("activerecord.labels.name", :default => "Section Name"))
+                %th= t("activerecord.attributes.class_room.name", :default => t("activerecord.labels.name", :default => "Content Name"))
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @class_rooms.each do |class_room|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"class_room_#{class_room.id}"}
+                  -#%td.col= test_configuration.id
+                  %td.col= class_room.teacher.name if class_room.teacher
+                  %td.col= class_room.student_group.fullname if class_room.student_group
+                  %td.col= class_room.content.name
+                  %td.col
+                    = link_to_show(class_room_path(class_room))
+                    &nbsp
+                    = link_to_edit(edit_class_room_path(class_room))
+                    &nbsp;
+                    = link_to_delete(class_room_path(class_room))
+
+        - unless @class_rooms.blank?
+          .pagination_info
+            = paginate @class_rooms
+
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active= link_to "#{t("web-app-theme.list", :default => "List")}", class_rooms_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_class_room_path
+  .content
+    %h2.title
+      = t("web-app-theme.all", :default => "All")
+      Class Rooms
+    .inner
+      %table#mytable.sort_table
+        %thead
+          %tr
+            %th.first ID
+            %th
+              = t("activerecord.attributes.class_room.name", :default => t("activerecord.labels.name", :default => "Teacher"))
+            %th
+              = t("activerecord.attributes.class_room.name", :default => t("activerecord.labels.name", :default => "Section Name"))
+            %th
+              = t("activerecord.attributes.class_room.name", :default => t("activerecord.labels.name", :default => "Content Name"))
+            %th.last &nbsp;
+        %tbody
+          - @class_rooms.each do |class_room|
+            %tr{:class => cycle("odd", "even")}
+              %td
+                = class_room.id
+              %td
+                = class_room.teacher.name if class_room.teacher
+              %td
+                = class_room.student_group.fullname if class_room.student_group
+              %td
+                =  class_room.content.name
+              %td.last
+                = link_to "#{t("web-app-theme.show", :default => "Show")}", class_room_path(class_room)
+                |
+                \#{link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_class_room_path(class_room)} |
+                \#{link_to "#{t("web-app-theme.delete", :default => "Delete")}", class_room_path(class_room), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"}
+      .actions-bar.wat-cf
+        .actions
+        = paginate @class_rooms
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')
+

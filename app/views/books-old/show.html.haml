@@ -1,0 +1,37 @@
+#content_header
+  %h1#main_heading Chapters
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}",books_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_book_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_book_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", book_path(@book)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.book.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @book.name
+        %tr.odd.left
+          %td Book publisher:
+          %td.right= @book.book_publisher_id
+        %tr.even.left
+          %td ISBN
+          %td.right= @book.isbn
+        %tr.odd.left
+          %td Uid
+          %td.right= @book.uid
+        %tr.even.left
+          %td Version
+          %td.right= @book.version
+        %tr.odd.left
+          %td Status
+          %td.right= @book.status 
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_book_path(@book), :class => "button icon delete"
+            = link_to "Delete", book_path(@book), :method => "delete", :class => "button danger icon remove", :confirm => "Are you sure?"              
+
+

@@ -1,0 +1,16 @@
+#content_header
+  -#%h1#main_heading View Contents
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "Content",'#',{:class=>'current'}
+#user_options
+  .button-box
+    = link_to '',teacher_contents_path(@teacher),:id=>'upload_content_button',:class => "option_buttons",:title=>'Upload Content'
+  .button-box
+    =# link_to '',content_manage_path,:id=>'content_manage_button',:class => "option_buttons",:title=>'View Content'
+= content_for :right_side_bar do
+  #sidebar.right_side_bar
+    = render(:partial => 'shared/sidebar')

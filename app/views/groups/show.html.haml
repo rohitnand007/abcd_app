@@ -1,0 +1,52 @@
+#content_header
+  %h1#main_heading Groups
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "Back")}", groups_path
+    -#%li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_group_path
+    -#%li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_group_path
+    -#%li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", group_path(@group)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        -#%tr.odd.left
+        -#  %td=t("activerecord.attributes.user.email", :default => t("activerecord.labels.email", :default => "Email"))
+        -#  %td.right=  @group.email
+        %tr.even.left
+          %td= t("activerecord.attributes.user.edutorid", :default => t("activerecord.labels.edutorid", :default => "Group Id"))
+          %td.right=  @group.edutorid
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.institution_id", :default => t("activerecord.labels.institution_id", :default => "Institution"))
+          %td.right= @group.institution.try(:name)
+        %tr.even.left
+          %td= t("activerecord.attributes.user.center_id", :default => t("activerecord.labels.center_id", :default => "School"))
+          %td.right= @group.center.try(:name)
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.academic_class_id", :default => t("activerecord.labels.academic_class_id", :default => "Form"))
+          %td.right= @group.academic_class.try(:name)
+        %tr.even.left
+          %td=  t("activerecord.attributes.user.section_id", :default => t("activerecord.labels.section_id", :default => "Section"))
+          %td.right= @group.section.try(:name)
+        -#%tr.odd.left
+        -#  %td Build No.
+        -#  %td.right= @group.build_number
+        %tr.odd.left
+          %td Created At
+          %td.right= display_date_time(@group.created_at)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_group_path(@group), :class => "button icon edit"
+            -#= link_to "Delete", group_path(@group), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+  .heading.hr
+    Students
+    .right
+    -#= link_to "Add Teacher" ,new_teacher_path(params_hash) ,:class=>'button icon add'
+    = render 'users/users'
+
+    .heading.hr
+    Teachers
+    .right
+    -#= link_to "Add Teacher" ,new_teacher_path(params_hash) ,:class=>'button icon add'
+    = render 'teachers'

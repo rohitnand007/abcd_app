@@ -1,0 +1,10 @@
+- @quicktest_taken_user_count = quicktest_taken_user_count(quick)
+- @quicktest_downloaded_user_count = quicktest_downloaded_user_count(quick)
+- @quicktest_downloaded_user_count = @quicktest_taken_user_count if (@quicktest_taken_user_count > @quicktest_downloaded_user_count)
+= render :partial => 'summary_header', locals: {quicktest: quick}
+= render :partial => 'analysis_box', locals: {quicktest: quick}
+.analysis_box_toggler.analysis_box_hide
+  .margin_creator
+    Hide Analytics
+:javascript
+  $("#qid_#{quick.id}").find(".summary_message").hide();

@@ -1,0 +1,22 @@
+#content_header
+  -if (!@profile.nil? and @profile.user.is?'ECP')
+    %h1#main_heading Edit License Settings
+  -else
+    #breadcrumbs
+      =bread_crumb_for_profile_pages
+#inner-tab-menu
+  %ul
+    -#%li= link_to "#{t("web-app-theme.list", :default => "List")}", profiles_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_profile_path
+    -#%li= link_to "#{t("web-app-theme.new", :default => "New")}", new_profile_path
+
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"
+
+
+-

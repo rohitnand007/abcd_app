@@ -1,0 +1,15 @@
+#content_header
+  %h1#main_heading Assessment Categories
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_category_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_category_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_category_path
+    %li= link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_category_path(@assessment_category)
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"

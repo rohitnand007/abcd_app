@@ -1,0 +1,61 @@
+<% if @assessment_div.nil? %>
+$("#previewQuestions #status").append("<%= escape_javascript(render :partial => 'preview_question')%>");
+$("#manageQuestions").tabs( "select", 2 );
+empty_question_array();
+rearrange_as_nested();
+<% else %>
+$("#addQuestionTabs-3")
+        .html("<%= escape_javascript(render :partial => 'section_box', locals: {assessment_div: @assessment_div})%>");
+$("#test_details")
+        .html("<%= escape_javascript(render :partial => 'test_details', locals: {quiz: @quiz})%>");
+$("#addQuestionTabs").tabs( "select", 2 );
+
+$(".selected_section_cue").html($( "#section_selector" ).find(":selected").text());
+
+<% if controller.action_name == "delete_question_instance" %>
+$("#addQuestionTabs-1").each(function(){
+            $("#select_questions input[type=checkbox]").each(function() {
+                a = "<%= @deleted_question %>";
+                if ($(this).val() == a) {
+                    $(this).removeAttr("disabled");
+                    $(this).prop('checked', false);
+                } else {
+                }
+            });
+});
+<%else%>
+$("#addQuestionTabs-1").each(function(){
+    $("#select_questions input[type=checkbox]").each(function() {
+        if (this.checked) {
+            $(this).attr("disabled", true);
+
+        } else {
+            $(this).removeAttr("disabled");
+        }
+    })
+});
+<%end%>
+
+empty_question_array();
+// todo remove the next two functions as they are already accomodated in the other script. But the trouble is in preventing the loading of html again in update question instances functions. It should be done by writing a seperate action to only make changes to html instead of rerendering it.
+rearrange_as_nested();
+make_the_section_sortable();
+$("#saveAssessment2").click();
+//removed because of inconsistent performance
+$('.spinner-gif').hide();
+// breaking code is commented
+//$("#createQuestionTabs :input").attr("disabled", false);
+<%end%>
+try{
+    $("#reset_passage_question").click();
+    reset_question($("#individualQuestion .question_container"));
+}
+catch(err){
+    console.log(err.message)
+}
+
+
+
+
+
+

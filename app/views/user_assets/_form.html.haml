@@ -1,0 +1,30 @@
+= simple_form_for @user_asset,  html:{ :multipart => true,style: "width: 390px;border: 1px solid (171, 160, 160);" }, remote: true do |f|
+  = f.error_notification
+  = hidden_field_tag :controller, @controller
+  - if @ibook
+    = hidden_field_tag :id, @ibook.id
+  %table.upload_asset.listing
+    %tr{:class => 'tr-odd'}
+      %td.col.move_left= f.label :asset_name
+      %td.col= f.text_field :asset_name , :placeholder => "Name to identify the asset", class: "",required:""
+    %tr{:class => 'tr-odd'}
+      %td.col= f.label :asset_type
+      %td.col= f.select :asset_type,options_for_select(@class_type),{prompt: "Select an asset type"}, {class: "styled-select", id:"assetbox", required: true }
+    %tr{:class => 'tr-odd'}
+      %td.col
+      %td#weblink.col
+    %tr#attachment{:class => 'tr-odd'}
+      %td.col= f.label "Upload:"
+      %td.col= f.file_field :attachment
+  %div#error_div
+
+  %br
+  = f.submit "Create New Asset", class:"button right",id:"newassetbutton", disable_with: "Creating..."
+  - unless current_user.is? "ET"
+    %br
+    %a.italic{style:"color:#04B486"} Note: Only zip / swf / pdf / flv / mp4 / mp3 formats are supported
+
+:css
+  .italic{
+  font-style: italic;
+  }

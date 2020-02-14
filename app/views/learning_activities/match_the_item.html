@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery.loader.css">
+    <script type="text/javascript" src="/assets/activities/konva.js"></script>
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script src="/assets/activities/jquery.loader.js"></script>
+    <script type="text/javascript" src="/assets/activities/app.js"></script>
+    <script src="/assets/activities/jquery-confirm.js"></script>
+    <script type='application/javascript' src='/assets/activities/fastclick.js'></script>
+    <script type="text/javascript" src="/assets/activities/match_the_item.js"></script>
+    <script type="text/javascript" src="/assets/activities/play_match_the_item.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/activities/match_the_item.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_match_the_item.css">
+</head>
+<body>
+<div class="header">
+</div>
+<div class="maincontent">
+    <div class="container">
+        <p id="title-text">Match the Items</p>
+
+        <ul class="nav nav-pills nav-justified">
+            <li class="active"><a href="#"  class="tabs mytab">01 Create Template</a></li>
+            <li class="mynaming-tab"><a href="#" class="activity-tab">02 Create Activity</a></li>
+
+        </ul>
+
+        <div class="tab-content">
+            <div id="template" class="tab-pane fade in active">
+                <div  class="col-xs-12 template-head">
+                    <p class="information-text col-xs-5">Let's create the template before adding the question</p>
+                    <a href="#activity" data-toggle="pill" class="tabs"><button class="btn btn-custom continue_from_create next ">Save &amp; Continue</button></a>
+                </div>
+                <div class='naming_form col-xs-12'>
+                    <form class="form-horizontal row" role="form" method="POST" style="padding-top:20px;padding-bottom:50px">
+                        <div class="col-xs-9">
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding" style="margin-bottom:0px" >
+                                <label for="contentName" class="col-xs-4">Name of the Activity</label>
+                                <div class="col-xs-8" >
+                                    <input type="text" name="contentName" id="contentName" class="form-control">
+                                    <p class="text-warning">Please name the activity carefully, this name will be shown to the student</p>
+                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="description" class="col-xs-4">Description</label>
+                                <div class="col-xs-8">
+                                    <input type="text" name="description" id="description" class="form-control" maxlength="350">
+                                    <p class="text-warning">Maximum character limit is 350</p>
+                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="class" class="col-xs-4">Class</label>
+                                <div class="col-xs-8 select-wrap ">
+                                    <%= collection_select :tag, :class_id, @class_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"className"} %>
+                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="subject" class="col-xs-4">Subject</label>
+                                <div class="col-xs-8 select-wrap">
+                                    <%= collection_select :tag, :class_id, @subject_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"subject"} %>                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="chapter/topicTags" class="col-xs-4">Chapter/Topic tags</label>
+                                <div class="col-xs-8 select-wrap">
+                                    <%= collection_select :tag, :class_id, @concept_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"chapter"} %>                                </div>
+                            </div>
+                            <input type="hidden" name="learning_activity_type" id="learning_activity_type" value="match_the_item">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="activity" class="tab-pane fade">
+                <div  class="col-xs-12 template-head">
+                    <div class="back">
+                        <a href="#template" data-toggle="pill" class="tabs back-btn"> <img class="pull-left"  alt="Back" src="/assets/activities/back.png"></a>
+                    </div>
+                    <button class="btn btn-custom preview-btn" data-toggle="modal" data-target="#preview">Preview</button>
+                    <button class="btn btn-custom logo-btn"><img src="/assets/activities/ignitor_logo.png" style="width:20px;height:20px;"><span  style="margin-left:8px">Edit Logo</span> </button>
+                    <input  name="Select File" type="file" accept=".jpg, .jpeg, .png" class="logo-upload" style="display:none"/>
+                    <button class="btn btn-custom save-template">Save Template</button>
+                </div>
+                <table class="col-xs-12" id="activity-table">
+                    <tr>
+                        <th>>Add left side options below</th>
+                        <th class="pair-symbol">Pairing</th>
+                        <th>Add right side options below</th>
+                    </tr>
+                </table>
+
+            </div>
+            <div id="preview" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content modal-content-preview">
+                        <div class="modal-header modal-header-preview">
+
+								<span class="glyphicon glyphicon-remove pull-right remove-gly"
+                                      data-dismiss="modal"></span>
+                            <p class="modal-title modal-title-preview">Match the Items
+                                Preview</p>
+                        </div>
+                        <div class="modal-body preview-modal-body" id="modal-body-preview"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade fadeModal" id="myModal" role="dialog" data-backdrop="false">
+                <div class="modal-dialog description-modal-dialog">
+                    <!-- Modal content for description-->
+                    <div class="modal-content modal-description">
+                        <div class="modal-body description-modal-body">
+                            <h4 class="modal-title">Add Instructions below for the students.</h4>
+                            <textarea class="form-control" rows="5" id="textarea-description" maxlength="350" placeholder="Instructions for students"></textarea>
+                        </div>
+                        <p class="text-warning col-xs-4">Maximum character limit is 350</p>
+                        <div class="col-xs-offset-9">
+                            <button type="button" class="btn  modal_btns" data-dismiss="modal" id="AddDescription" style="margin-left:15%">Add</button>
+                            <button type="button" class="btn  modal_btns" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div id="previewfake" class="modal fade" role="dialog">
+
+            </div> -->
+        </div>
+    </div>
+</div>
+</body>
+</html>

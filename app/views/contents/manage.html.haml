@@ -1,0 +1,328 @@
+:css
+  #tree1{
+      margin: 10px;
+      padding: 10px;
+      width: auto;
+  }
+  .ui-widget-content{
+      background: #fff;
+  }
+  #tree1 ul li {
+      width: 800px;
+      font-size: 15px;
+      color: #000000;
+  }
+  #tree1 ul li ul li  {
+      width: 700px;
+      font-size: 14px;
+      color: #191919;
+      cursor: move;
+      min-height: 25px;
+  }
+  #tree1 ul li ul li ul li {
+      width: 600px;
+      height: 20px;
+      font-size: 13px;
+      color: #333333;
+      cursor: move;
+  }
+  .radio {
+   width:350px;
+   font-size:12px;
+   padding:0;
+  }
+  .radio span {
+   font-size:12px;
+   position:static;
+  }
+  .radio .ui-button-text {
+    padding:0;
+  }
+  .radio1 {
+     font-size:12px;
+     padding:0;
+     float:right;
+     cursor :hand;
+    }
+    .radio1 .ui-button-text {
+     font-size:12px;
+     position:static;
+    }
+    .radio1 .ui-button-text {
+      padding:0;
+    }
+:javascript
+  $(function() {
+  		$( ".radio" ).buttonset();
+  		$( ".radio1" ).buttonset();
+  });
+#content_header
+  %h1#main_heading Manage Content
+  %h3#sub_heading
+#inner-tab-menu
+  %uL
+    -#%li= link_to "#{t("web-app-theme.list", :default => "List")}", contents_path
+    -#%li.inner_tab_selected= link_to 'Manage', '/content/manage'
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}",my_subjects_teachers_path
+    %li.inner_tab_selected= link_to 'Manage', '#'
+#data
+  %table{:align => "center"}
+    %tr
+      %td
+        -#.radio
+        -#  %input#radio1{:name => "radio", :type => "radio"}/
+        -#  %label{:for => "radio1"} Choice 1
+        -#  %input#radio2{:checked => "checked", :name => "radio", :type => "radio"}/
+        -#  %label{:for => "radio2"} Choice 2
+        -#  %input#radio3{:name => "radio", :type => "radio"}/
+        -#  %label{:for => "radio3"} Choice 3
+        #tree1
+          = simple_form_for @subject,:url=>("/content/position_update"),:method=>:post,:html => { :class => :form } do  |s|
+            = hidden_field_tag :subject_id,@subject.id
+            %ul.ui-sortable
+              %li.ui-state-default
+                = check_box_tag "subject",'',true
+                = @subject.name
+                %ul.ui-sortable{:id => @subject.id,:class=>"sortable"}
+                  - if @layout
+                    - @layout.keys.each_with_index do |key,index|
+                      - chapter_id = @layout[key]["id"]
+                      - chapter_lock_status = @layout[key]["is_locked"]
+                      - chapter_name = content_name(chapter_id)
+                      - if chapter_name
+                        %li.ui-state-default{:id => chapter_id}
+                          %p{:style=>"margin:0;padding:0;float:left;width:400px;"}
+                            = chapter_name
+                          = radio_button "show",chapter_id,1,:id=>"show_"+chapter_id,:checked=>content_lock_status(1,chapter_lock_status)
+                          = "show"
+                          = radio_button "show",chapter_id,2,:id=>"lock_"+chapter_id,:checked=>content_lock_status(2,chapter_lock_status)
+                          = "lock"
+                          = radio_button "show",chapter_id,3,:id=>"hide_"+chapter_id,:checked=>content_lock_status(3,chapter_lock_status)
+                          = "hide"
+                          = hidden_field_tag "content[#{index}][id]",chapter_id
+                          = hidden_field_tag "content[#{index}][is_locked]",chapter_lock_status,:id=>"parent_lock_"+chapter_id
+
+
+                          %ul.ui-sortable
+                            - if @layout[key].has_key?"data"
+                              - @layout[key]["data"].keys.each_with_index do |k,i|
+                                - topic_id = @layout[key]['data'][k]["id"]
+                                - topic_lock_status = @layout[key]['data'][k]["is_locked"]
+                                - topic_name = content_name(topic_id)
+                                - if topic_name
+                                  %li.ui-state-default{:id => topic_id,:class=>chapter_id}
+                                    %p{:style=>"margin:0;padding:0;float:left;width:400px;"}
+                                      = topic_name
+                                    = radio_button "show",topic_id,1,:id=>"show_"+chapter_id+"_"+topic_id,:checked=>content_lock_status(1,topic_lock_status)
+                                    = "show"
+                                    = radio_button "show",topic_id,2,:id=>"lock_"+chapter_id+"_"+topic_id,:checked=>content_lock_status(2,topic_lock_status)
+                                    = "lock"
+                                    = radio_button "show",topic_id,3,:id=>"hide_"+chapter_id+"_"+topic_id,:checked=>content_lock_status(3,topic_lock_status)
+                                    = "hide"
+                                    = hidden_field_tag "content[#{index}][data][#{i}][id]",topic_id
+                                    %div{:class=>"lock_#{index}" ,:style=>"float:right;"}
+                                      = hidden_field_tag "content[#{index}][data][#{i}][is_locked]",topic_lock_status
+
+
+                  - else
+                    - @subject.chapters.order("play_order asc").each do |chapter|
+                      - chapter_id = chapter.id.to_s
+                      %li.ui-state-default{:id => chapter_id}
+                        %p{:style=>"margin:0;padding:0;float:left;width:400px;"}
+                          = chapter.name
+                        = radio_button "show",chapter_id,1,:id=>"show_"+chapter_id,:checked=>content_lock_status(1,chapter.is_locked)
+                        = "show"
+                        = radio_button "show",chapter_id,2,:id=>"lock_"+chapter_id,:checked=>content_lock_status(2,chapter.is_locked)
+                        = "lock"
+                        = radio_button "show",chapter_id,3,:id=>"hide_"+chapter_id,:checked=>content_lock_status(3,chapter.is_locked)
+                        = "hide"
+
+                        = hidden_field_tag "content[#{@subject.chapters.index(chapter)}][id]",chapter.id
+                        = hidden_field_tag "content[#{@subject.chapters.index(chapter)}][is_locked]",chapter.is_locked ,:id=>"parent_lock_"+chapter_id
+
+                        %ul.ui-sortable
+                          - chapter.topics.order("play_order asc").each do |topic|
+                            - topic_id = topic.id.to_s
+                            %li.ui-state-default{:id => topic_id,:class=>chapter_id}
+                              %p{:style=>"margin:0;padding:0;float:left;width:400px;"}
+                                = topic.name
+                              = radio_button "show",topic_id,1,:id=>"show_"+chapter_id+"_"+topic_id,:checked=>content_lock_status(1,topic.is_locked)
+                              = "show"
+                              = radio_button "show",topic_id,2,:id=>"lock_"+chapter_id+"_"+topic_id,:checked=>content_lock_status(2,topic.is_locked)
+                              = "lock"
+                              = radio_button "show",topic_id,3,:id=>"hide_"+chapter_id+"_"+topic_id,:checked=>content_lock_status(3,topic.is_locked)
+                              = "hide"
+
+                              = hidden_field_tag "content[#{@subject.chapters.index(chapter)}][data][#{chapter.topics.index(topic)}][id]",topic.id
+
+                              %div{:style=>'float:right;',:class=>"lock_#{@subject.chapters.index(chapter)}" }
+                                = hidden_field_tag "content[#{@subject.chapters.index(chapter)}][data][#{chapter.topics.index(topic)}][is_locked]",topic.is_locked
+
+            .group{:style=>"padding-left:52px;"}
+              .field
+                = collection_select :message, :group_id,asign_groups(current_user),:user_id,:firstname,{:include_blank => false,:prompt=>"select group"} ,{:class=>"drop_down"}
+            .group{:style=>"padding-left:52px;"}
+              .field
+                = s.button :submit,"post",:class=>'big primary',:disable_with=>'posting...',:id=>'submit_form'
+    %tr
+      %td{:style => "padding-left:10%;"}
+
+    %tr
+      %td{:height => "65px;"}
+        %div{:align => "center", :style => "padding-left: 10%;"}
+          #result.flash
+
+
+:javascript
+  //Applaying sortable
+  $('#tree1 ul').sortable({
+   placeholder: "ui-state-highlight"
+  });
+  $( "#tree1 li" ).disableSelection();
+
+  // Applaying checkbox to the #tree
+  $('#tree1').checkboxTree({
+      onCheck: { ancestors: 'uncheck', descendants: 'check' },
+      onUncheck: { ancestors: 'uncheck' },
+      initializeChecked: 'expanded',
+      initializeUnchecked: 'collapsed'
+  });
+
+  $('#tree1 ul li ul li span').click(function(){
+      items =  $(this).parent().siblings(); //get all li parallel to this
+      if($(this).parent().hasClass('expanded')== true) {
+          $.each(items, function() {
+              $('#tree1').checkboxTree('collapse',$(this));
+          });
+          $('#tree1').checkboxTree('collapse',$(this));
+      }else{
+          $.each(items, function() {
+              $('#tree1').checkboxTree('collapse',$(this));
+          });
+          $('#tree1').checkboxTree('expand',$(this).parent());
+      }
+  });
+
+
+  $(function(){
+    $('.sortable input[type="radio"]').change(function(){
+       var size = ($(this).attr('id').split('_').length);
+       var id = ($(this).attr('id').split('_')[size-1]);
+       var value = ($(this).attr('value'));
+       var parent = $(this).parent().attr('id')
+       var childs = $("."+id+" :radio[value="+value+"]");
+       if(childs.length  > 0){
+       $.each(childs,function(){
+        ($(this).attr('checked',true));
+       });
+       }
+       var lock =  $("#parent_lock_"+id);
+       $(lock).val(value);
+       //to update the lock/unlock/hide status for the ids
+       var locks = $("#"+parent+' div input[type="hidden"]');
+       $.each(locks, function() {
+         $(this).val(value);
+       });
+
+    });
+
+  });
+
+  $('#submit_form').click(function(){
+     value = $('#message_group_id').val();
+     if (value == ''){
+       alert("please select group")
+       return false
+     }
+     else{
+       return true
+     }
+
+  });
+
+  $(function(){
+      $(".parent_lock_text, .parent_unlock_text, .child_lock_text, .child_unlock_text").live("click", function(event) {
+          event.preventDefault();
+          var id = ($(this).attr('id'));
+          var parent = $(this).parent().attr('id')
+          var lock =  $("#content_"+id+"_is_locked");
+          var value = ($(this).attr("value"));
+          if (value == "lock"){
+             var update_value = 3
+          }
+          if (value == "unlock"){
+            var update_value = 2
+          }
+          $(lock).val(update_value);
+          //to update the lock/unlock status for the ids
+          var locks = $("#"+parent+' div input[type="hidden"]');
+          $.each(locks, function() {
+              $(this).val(update_value);
+          });
+
+          //updates to lock chapter and topics
+          if (update_value == 3 && id.split('_')[0]=='parent')  {
+
+            index = id.split('_')[3];
+            $("#image_unlock_"+index).hide("slow");
+            $("#image_lock_"+index).show("slow");
+            $("#"+id).hide("slow");
+            $("#parent_unlock_text_"+index).show('slow');
+
+            //text links updates
+            $("a[id*=child_lock_text_"+index+"_]").css('display','none');
+            $("a[id*=child_unlock_text_"+index+"_]").css('display','block');
+
+            //image updates
+            $("img[id*=image_lock_"+index+"_]").css('display','block');
+            $("img[id*=image_unlock_"+index+"_]").css('display','none');
+
+          }
+          //updates to lock only topics
+          else if (update_value == 3 && id.split('_')[0]=='child')  {
+            index = id.split('_')[3]  +"_"+ id.split('_')[4];
+            $("#image_unlock_"+index).hide("slow");
+            $("#image_lock_"+index).show("slow");
+            $("#"+id).hide("slow");
+            $("#child_unlock_text_"+index).show('slow');
+
+          }
+          //updates to unlock chapter and topics
+          if (update_value == 2 && id.split('_')[0]=='parent')  {
+             index = id.split('_')[3];
+            $("#image_unlock_"+index).show("slow");
+            $("#image_lock_"+index).hide("slow");
+            $("#"+id).hide("slow");
+            $("#parent_lock_text_"+index).show('slow');
+
+            //text link updates
+            $("a[id*=child_lock_text_"+index+"_]").css('display','block');
+            $("a[id*=child_unlock_text_"+index+"_]").css('display','none');
+
+            //image updates
+            $("img[id*=image_lock_"+index+"_]").css('display','none');
+            $("img[id*=image_unlock_"+index+"_]").css('display','block');
+             }
+             //updates to unlock topics
+             else if (update_value == 2 && id.split('_')[0]=='child')  {
+
+             index = id.split('_')[3]  +"_"+ id.split('_')[4];
+             $("#image_unlock_"+index).show("slow");
+             $("#image_lock_"+index).hide("slow");
+             $("#"+id).hide("slow");
+             $("#child_lock_text_"+index).show('slow');
+
+             }
+      });
+  });
+
+
+
+  /* $(document).ready(function() {
+   collapse first level li's (Chapters) on load
+   //getting all li's but not in deep(here topics)
+   items = $('#tree1 ul li ul li').not('ul li ul li ul li');
+   // then collapse all li's on load (collapsing a element not working in Chrome,using setTimepout it works)
+   var t = setTimeout ("$('#tree1').checkboxTree('collapse',items);", 10 );
+   });
+   */

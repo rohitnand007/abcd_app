@@ -1,0 +1,29 @@
+ <script type="text/javascript">
+            $(document).ready(function(){
+              $("#devices-table").dataTable({
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $('#devices-table').data('source'),
+                "oLanguage": {
+                  "sProcessing": "Loading Data"
+                }
+              })
+            });
+      </script>
+
+<div>
+<table id="devices-table", data-source="<%= devices_path(format: :json) %>">
+  <thead>
+    <tr>
+      <th>DeviceId</th>
+      <th>MacId</th>
+      <th>ModelId</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>

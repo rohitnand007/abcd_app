@@ -1,0 +1,79 @@
+= simple_form_for @institution, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Institution!",
+                        :message => "You'll need to fix the following fields:"
+  .inputs
+  .group
+    .field
+      =f.simple_fields_for :profile do |p|
+        .group
+          .field
+            = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Name'
+        .group
+          .field
+            = p.input :address,:input_html=>{:class=>"text_area", :rows=>5},:label_html=>{:class=>"label"}
+        -#.group
+        -#  .field
+        -#    = p.input :website,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :phone,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        -#.group
+        -#  .field
+        -#    = p.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Logo'
+    -#.group
+    -#  .field
+    -#    = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -#.group
+    -#  .field
+    -#    = f.input :password,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -#.group
+    -#  .field
+    -#    = f.input :password_confirmation,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -#.group
+    -#  .field
+    -#    =f.label :board_tokens, "Assign Boards", :class => "label"
+    -#    = f.input :board_tokens ,:as=>:text,:input_html=>{:rows=>4,:cols=>100 ,:class => 'text_field',"data-pre" =>f.object.boards.map(&:attributes).to_json},:label => false
+    .group
+      .field
+        = f.simple_fields_for :user_configuration do |c|
+          -#.group
+          -#  .field
+          -#    = c.input :is_retail,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Retail"
+          -#.group
+          -#  .field
+          -#    = c.input :is_admin_privilege,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Admin Privilege"
+          -#.group
+          -#  .field
+          -#    = c.label :deliver_reset_password_email, "Deliver Reset Password To CR", :class => "label"
+          -#    = c.input :deliver_reset_password_email,:input_html=>{:class=>"text_field"},:label=>"Email"
+          -#    = c.input :deliver_reset_password_message,:input_html=>{:class=>"text_field"},:label=>"Inbox"
+          .group
+            .field
+              = c.input :devices_per_user,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Devices Per User",:value =>1
+          -#.group
+          -#  .field
+          -#    = c.input :edutor_question_db,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Edutor Question Bank"
+
+          .group
+            .field
+              = c.input :use_tags,:as=>"hidden",:value=>true
+          .group
+            .field
+              = c.input :enable_key_change,:as=>"hidden",:value=>true
+          .group
+            .field
+              = c.input :print_option,:as=>"hidden",:value=>true
+
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), institutions_path,:class=>'button danger icon remove'
+  -#:javascript
+  -#  $(function() {
+  -#  $("#institution_board_tokens").tokenInput("/boards.json", {
+  -#  crossDomain: false,
+  -#  preventDuplicates:true,
+  -#  prePopulate: $("#institution_board_tokens").data("pre"),
+  -#  theme: ""
+  -#  });
+  -#  });

@@ -1,0 +1,11 @@
+= form_tag ngi_quiz_data_upload_path, :multipart => true do
+  %h4 The csv file should be in the following format
+  %div{style:"background-color: #f9f9f9; width: 400px;"}
+    %h4 Please generate the following in Excel like program and save it as CSV file type.
+    %b Date , Published_id
+    13-12-1990, 15391
+
+  %br/
+  %br/
+  = file_field_tag "file"
+  = submit_tag 'Upload'

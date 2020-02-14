@@ -1,0 +1,64 @@
+<div id='content_header'>
+</div>
+  <div id="inner-tab-menu">
+    <ul>
+      <li><%= link_to 'Create Concept Map', new_concept_path %></li>
+    </ul>
+  </div>
+
+  <div id="data">
+    <table width='100%'>
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='conceptmap-list' width='100%'>
+              <thead>
+              <tr class='tr-head'>
+                <th>Name</th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                <%@concepts.each do |concept|%>
+                    <tr class=<%=cycle("tr-odd", "tr-even")%>>
+                      <td class='col'><%= concept.name %></td>
+
+                      <% if @new_ids.include? concept.id %>
+                          <%# if !(@new_ids.index(concept.id).nil?) %>
+                          <% action1 = 'show_concept_map' %>
+                      <% else %>
+                          <% action1 = 'show' %>
+                      <% end %>
+                      <td class='col'><%= link_to 'Show', :controller => :concepts, :action => action1, :id => concept.id %></td>
+                      <td class='col'><%= link_to 'Delete', concept, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                      <td class='col'><%= link_to 'Publish',publish_concept_map_path(concept)%></td>
+                    </tr>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+        <td>
+      <tr>
+    </table>
+  </div>
+
+
+<br />
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#conceptmap-list").dataTable({
+            //"aaSorting": [[ 4, "desc" ]],
+            "bPaginate": false,
+            "bFilter": false,
+            "aoColumns": [
+                null,null,null,
+                {"bSortable": false }
+            ]
+        });
+        addtipTip();// on ajax update recall
+    });
+</script>

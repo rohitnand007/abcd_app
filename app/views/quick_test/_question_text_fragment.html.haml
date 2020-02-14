@@ -1,0 +1,11 @@
+.q_textblock
+  .q_label
+    Question
+  .q_textcell
+    - placeholder = "Enter your question here ..." if local_assigns[:placeholder].nil?
+    =f.text_area :questiontext, placeholder:placeholder,required:"required"
+    = f.fields_for :question_images do |b|
+      - if b.object.picture?
+        .nested-fields{style:"display: inline-block; position:relative;"}
+          = image_tag b.object.picture.url("medium"), style:"display: inline"
+          = link_to_remove_association image_tag("close_btn.png"), b , style:"display: inline; position:absolute; top:0px; right:0px;"

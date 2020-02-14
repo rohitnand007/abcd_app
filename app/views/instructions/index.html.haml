@@ -1,0 +1,21 @@
+%h1 Listing instructions
+%table(border="1px" )
+  %tr
+    %th Template Name
+    %th Template Content
+    %th is live?
+    %th user_id
+    %th
+    %th
+    %th
+  - @instructions.each do |instruction|
+    %tr
+      %td= instruction.template_name
+      %td= instruction.content
+      %td= instruction.is_live
+      %td= instruction.user_id
+      %td= link_to 'Show', instruction
+      %td= link_to 'Edit', edit_instruction_path(instruction)
+      %td= link_to 'Destroy', instruction, method: :delete, data: { confirm: 'Are you sure?' }
+%br/
+= link_to 'New Instruction', new_instruction_path

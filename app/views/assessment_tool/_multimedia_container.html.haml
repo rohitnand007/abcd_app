@@ -1,0 +1,19 @@
+.multimedia_container
+  %div{style: "background-color:#f9f9f9;text-align:center "}
+    %button.multimedia_button
+      Add Multimedia
+  .multimedia_layout
+    = image_tag "mm_tip_hover.png", style: "border-top:1px solid #62c6cc;display:block;margin-left:40px"
+    -#
+      .multimedia_icon.upload_image
+        = image_tag "img_upload.png", style: "vertical-align:middle"
+        %label Image
+    .multimedia_icon.upload_video
+      = image_tag "video.png", style: "vertical-align:middle"
+      %label Video
+    .multimedia_icon.upload_audio
+      = image_tag "speaker.png", style: "vertical-align:middle"
+      %label Audio
+    .multimedia_icon.google_search_image
+      = image_tag "google.png", style: "vertical-align:middle"
+      %label Google Image

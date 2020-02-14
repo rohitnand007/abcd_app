@@ -1,0 +1,286 @@
+%script{:src => "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js", :type => "text/javascript"}
+:javascript
+  MathJax.Hub.Config({
+      tex2jax: {
+         inlineMath: [['$','$'], ['\\(','\\)']],
+         processEscapes: true
+       },
+       TeX: {extensions: ["mhchem.js"]}
+      });
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+%div.random_test
+  -if @outside_assessment=="false" && @question_ids ==""
+    = link_to "Random test generator","#",class:"button",id:"random_test"
+%table{class:"questions_loaded",cellpadding: "0", cellspacing: "0", width: "100%"}
+  %tr
+    %td{colspan:3}
+      Displaying
+      = questions.length
+      questions out of
+      = questions.total_count
+      - current_page_no =  questions.current_page
+
+      -#= @all_questions_ids.length
+      -#= questions.total_ids
+      -#.right
+      -#  Total Questions in Database:
+      -#  = Question.count
+  - questions.each do |question|
+    %tr
+      %td.question_style{style: "width: 30px; margin: 0px; padding: 4px; border: 1px solid #CCC; text-align: center;"}
+        = link_to question.id, question_path(question.id), target:true
+        %br
+        - current_question = question
+        - if question_editable?(current_user,current_question) && @outside_assessment=="true"
+          =  link_to "Edit", assessment_tool_independently_edit_question_path({question_id:current_question.id,page_number:current_page_no}), remote:true , class:"question_editor"
+          %br
+          %br
+          %img{:src => "/assets/small_loading.gif", :class => "question_loading", :height => "25", :style => "visibility: hidden", :width => "25", :align => "middle"}
+
+
+      %td{style: "width: 80%; margin: 0px; padding: 8px; border: 1px solid #CCC; vertical-align: top; text-align: left;"}
+        %table.question_style{cellpadding: "0", cellspacing: "0", width: "100%"}
+          %tr
+            %td{style: "width: 80%; padding: 8px; border: 1px solid #CCC;overflow:hidden;max-width:12em; vertical-align: top; text-align: left;"}
+              = question.questiontext_format.html_safe
+            %td{style: "width: 20px; padding: 8px; border: 1px solid #CCC; vertical-align: top; text-align: center;"}
+              %center
+                Marks
+                %br
+                %input{disabled: "true", size: "2", style: "margin-top:1em;", value: question.defaultmark}
+                %br
+                %br
+                  = question.tags.select{|t| t.name=='qsubtype'}.last.value_text if question.tags.select{|t| t.name=='qsubtype'}.last.present?
+        -#= show_qtype(question.qtype)
+        -#= ("/ " + Tag.find(params[:tag_list][:qsubtype]).value_text) if params[:tag_list][:qsubtype].present?
+        %td{style: "width: 20px; margin: 0px; padding: 4px; border: 1px solid #CCC; text-align: center;"}
+          %center
+          - if @preference.nil?
+            = check_box_tag "question_select",question.id, false, style: "margin-left:1em;margin-top:1em;"
+          - elsif @preference.include? question.id
+            = check_box_tag "question_select", question.id, true, disabled: true, style: "margin-left:1em;margin-top:1em;"
+          - else
+            = check_box_tag "question_select",question.id, false, style: "margin-left:1em;margin-top:1em;"
+%br
+  .pagination_info
+    = paginate questions,:remote=>true
+
+-if @outside_assessment=="false" && @question_ids ==""
+  %div.all_random_test_info
+    %div.all_ids
+      = @all_questions_ids.to_s.gsub('[','').gsub(']','')
+    %div.rtg_info
+    - @seg_level_questions  = @final_hash_of_ques_ids
+    - @dl_level_names = @seg_level_questions.keys
+    - sections_count = @quiz.quiz_sections.count.to_s
+    - levels_count = @dl_level_names.count.to_s
+    %div.difficulty_levels
+      %table#dl_levels_table
+        -@dl_level_names.each_with_index do |level_set,index|
+          %tr
+            %td= @seg_level_questions[level_set].to_s.gsub('[','').gsub(']','')
+    %div.random_test_info
+      %table#nice_table
+        %tr
+          %td
+            %b Select From all Questions :
+          %td
+            %input{type:"checkbox",name:"all_rtg",value:"all_ques_rtg",id:"rtg_checkbox"}
+      %br
+      %table#first_rtg_table
+        %tr
+          %td No: of Questions:
+          %td
+            %input{size:2,type:"number", value:0,min:0, id:"questions_number_first"}
+          %td= "/ out of  #{questions.total_count} questions "
+      %div.rtggg
+        %table#rtg_table
+          -@dl_level_names.each_with_index do |level_set,index|
+            %tr
+              %td
+                %b= ("#{level_set} :").gsub('"','')
+              %td
+                %input{size:2,type:"number", value:0,min:0,max:@seg_level_questions[level_set].count ,id:"questions_number#{index}"}
+              %td / out of
+              %td= @seg_level_questions[level_set].count
+        %br
+      = link_to "Generate test","#",class:"button",id:"generate_test"
+
+:javascript
+  $("#select_questions input[name$=question_select]").click(function(){
+      var item = this.value.toString();
+     //alert(question_array);
+      if($(this).prop('checked') ){
+              question_array.push(item);
+
+       } else {
+            question_array.splice( $.inArray(item, question_array),1)
+                 }
+      //alert(question_array.length);
+      if (question_array.length == 0){
+         try{
+                             $( "#addQuestions" ).button( "disable" );
+                         }
+                         catch(err) {
+                             //nothing here
+                         }
+                         try{
+                             $( "#addQuestionsSimpleTest" ).button( "disable" );
+                         }
+                         catch(err) {
+                             //nothing here
+                         }
+
+      }
+      else {
+             try{
+                 $( "#addQuestions" ).button( "enable" );
+             }
+             catch(err) {
+                 //nothing here
+             }
+             try{
+                 $( "#addQuestionsSimpleTest" ).button( "enable" );
+             }
+             catch(err) {
+                 //nothing here
+             }
+      }
+   });
+   $(".question_editor").click(function(){$(this).closest("td").find(".question_loading").css("visibility", "visible");})
+
+  //The below code is written for ramdom_test_generating feature;
+  // variables are defined below
+
+  var section_count = parseInt("#{ sections_count }");
+  var dl_count = parseInt("#{ levels_count }");
+  var all_ids = $(".all_ids").html().split(',');
+  shuffleArray(all_ids);
+
+  //generalised functions are written below
+
+  function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+    }
+    function questionsAddArray(num_of_questions,array){
+      for (index = 0; index < num_of_questions; ++index) {
+      question_array.push(array[index]);
+    }
+    }
+    // dialog box attributes are below
+    $("#random_test").click(function(){
+        $(".random_test_info").dialog({title: "Questions Selection Cue",
+            dialogClass: 'GenerateRandomTest',
+            width: "auto",
+            height: "auto",
+            resizable: true,
+            draggable: true,
+            modal: true});
+
+        $('.rtggg > table:first tr').each(function() {
+        var lasttd =  $(this).find('td:last').text()
+        var last_tdd = $(this).find('input')
+        if (lasttd == 0){
+          last_tdd.prop( "disabled", true );
+          }
+      });
+  })
+
+
+
+  $("#select_questions input[name$=all_rtg]").click(function(){
+  if($(this).prop('checked') ){
+    $("#rtg_table").hide("slow");
+    $("#first_rtg_table").show("slow");
+   }
+     else { $("#first_rtg_table").hide("slow");
+     $("#rtg_table").show("slow");
+      }
+
+  })
+  //validations are written below
+
+
+
+
+  //final addition of questions are written here
+
+   $("#generate_test").click(function(){
+    $('.rtggg > table:first tr').each(function() {
+        var tabdata =  $(this).find('td:last').text()
+        var last_tab = $(this).find('input')
+        if (parseInt(last_tab.val()) > tabdata){
+          alert("Since the number entered exceedes available Questions, all questions of this level are added")
+           return false
+          }
+      });
+  //var number_of_questions = parseInt($("#questions_number").val())
+    var number_of_questions = 0;
+
+    if ($('#nice_table input[id=rtg_checkbox]').is(':checked')){
+          if(parseInt($("#questions_number_first").val()) > all_ids.length ){alert("Question number exceeds selected Questions");
+          return false
+          }
+        number_of_questions = parseInt($("#questions_number_first").val());
+        //alert(number_of_questions);
+        questionsAddArray(number_of_questions,all_ids);
+    }
+    else{
+    var quesCount = []
+    for (i = 0; i < dl_count; i++ ){
+      quesCount[i] = parseInt($("#questions_number"+i).val())
+     }
+
+      $('.difficulty_levels > table:first tr').each(function(index) {
+      var quesids =  $(this).find('td:last').text().split(",");
+      questionsAddArray(quesCount[index],quesids)
+      })
+    }
+  $(".random_test_info").dialog('close');
+  if(section_count == 0){
+  alert(question_array.length + "  " +"Questions are added to random test");
+  $( "#addQuestionsSimpleTest" ).button( "enable" );
+  $("#addQuestionsSimpleTest").trigger('click');
+  $("#search_for_questions").trigger('click');
+  $(".GenerateRandomTest").dialog("close");
+  }
+  else
+  {
+  $("#addQuestions").button("enable");
+  alert(question_array.length + "  " +"Questions are added to test with sections");
+  $("#addQuestions").trigger('click');
+  $("#search_for_questions").trigger('click');
+  $(".GenerateRandomTest").dialog("close");
+  }
+  })
+  // UI releated changes are written below
+
+  $('#search_for_questions').click(function(){
+    $('.random_test_info').remove();
+  })
+  $(".all_ids").hide();
+  $(".all_random_test_info").hide();
+  $("#first_rtg_table").hide();
+  $("#search_db").change(function(){
+    $('.random_test_info').remove();
+  })
+
+
+
+
+:css
+  #random_test{
+  float: right;
+  }
+  .all_ids{
+  visibility: visible;
+  }
+  #generate_test{
+  float: right;
+  }

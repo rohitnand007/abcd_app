@@ -1,0 +1,27 @@
+#file-upload-success {
+	display:none;
+	color:green;
+}
+#file-upload-error {
+	display:none;
+	color:red;
+}
+#url-upload-success {
+	display:none;
+	color:green;
+}
+#url-upload-error {
+	display:none;
+	color:red;
+}
+#image-upload-url{
+	margin-left: 65px;
+}
+#image-download{
+	margin-left: 65px;
+}
+#download-success{
+	width:200px;
+	height:auto;
+	display:none;
+}

@@ -1,0 +1,427 @@
+%ul.nav.navbar-nav.font-size-12
+  - if current_user.is? "EA"
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Users
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Institutions",institutions_path
+        %li.small
+          = link_to "Centers",centers_path
+        %li.small
+          = link_to "Forms", academic_classes_path
+        %li.small
+          = link_to "Sections", sections_path
+        %li.small
+          = link_to "Groups", groups_path
+        %li.small
+          = link_to "Teachers", teachers_path
+        %li.small
+          = link_to "Students", users_path
+        %li.small
+          = link_to "Cdn Users", cdn_configs_path
+        %li.small
+          = link_to "Student Search", student_search_path
+        %li.small
+          = link_to "Usage Statistics", "/usage_statistics"
+        %li.small
+          = link_to "Education Officers", education_officers_path
+        %li.small
+          = link_to "Publishers", publishers_path
+        %li.small
+          = link_to "Upload Students", upload_csv_file_path
+        %li.small
+          = link_to "Upload Teachers", bulk_teachers_upload_interface_path
+        %li.small
+          = link_to "Bulk Assign Licenses", bulk_assign_interface_license_sets_path
+        %li.small
+          = link_to "Bulk Unassign Licenses", bulk_unassign_interface_license_sets_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Devices
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Devices", devices_path
+        %li.small
+          = link_to "Device Messages", device_messages_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Question Bank
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          =  link_to "All Question Banks", publisher_question_banks_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Tags
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          =  link_to "Tags List", tags_path
+        %li.small
+          =  link_to "Tag DBS", tags_dbs_path
+        %li.small
+          =  link_to "Add Tags(CSV)", csv_upload_interface_tags_path
+  - elsif current_user.is? "IA"
+    %li
+      %a.btn-lg.no_rounded_corners{ :href => "/", :role => "button"}
+        Home
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Users
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Centers",centers_path
+        %li.large
+          = link_to "Forms", academic_classes_path
+        %li.large
+          = link_to "Sections", sections_path
+        %li.large
+          = link_to "Groups", groups_path
+        %li.large
+          = link_to "Teachers", teachers_path
+        %li.large
+          = link_to "Students", users_path
+        -#%li.large
+        -#  = link_to "Upload Students", upload_csv_file_path
+        -#%li.large
+        -#  = link_to "Usage Statistics", "/usage_statistics"
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Assessments
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        -#%li.large
+        -#  = link_to "Quick Test", controller:"quick_test",action:"new"
+        -#%li.large
+        -#  =  link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+        %li.large
+          =  link_to "Assessments",'/assessment_tool/my_assessments'
+        -#%li.large
+        -#  =  link_to "Zip Uploads[QB]", zip_upload_question_path
+      - unless current_user.is? "EO"
+        %li
+          %a.btn-lg.no_rounded_corners{ :href => "/devices", :role => "button"}
+            Devices
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Question Bank
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+        %li.large
+          = link_to "Search Questions", assessment_tool_manage_questions_path
+    -unless current_user.is? "EO"
+      %li.dropdown
+        %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+          Licenses
+          %span.caret
+        %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+          %li.large
+            = link_to "Licenses", license_sets_path
+          %li.large
+            = link_to "Download Booklist", get_csv_book_list_ibooks_path
+  - elsif current_user.is? "MOE"
+    -#%li
+    -#  %a.btn-lg.no_rounded_corners{ :href => "/", :role => "button"}
+    -#    Home
+    -#%li.dropdown
+    -#  %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#    Users
+    -#    %span.caret
+    -#  %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+    -#    %li.small
+    -#      = link_to "Centers",centers_path
+    -#    %li.small
+    -#      = link_to "Classes", academic_classes_path
+    -#    %li.small
+    -#      = link_to "Sections", sections_path
+    -#    -#%li.small
+    -#    -#  = link_to "Groups", groups_path
+    -#    %li.small
+    -#      = link_to "Teachers", teachers_path
+    -#    %li.small
+    -#      = link_to "Upload Students", upload_csv_file_path
+    -#    %li.small
+    -#      = link_to "Usage Statistics", "/usage_statistics"
+    -#%li.dropdown
+    -#  %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#    Assessments
+    -#    %span.caret
+    -#  %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+    -#    %li.small
+    -#      = link_to "Quick Test", controller:"quick_test",action:"new"
+    -#    %li.small
+    -#      =  link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+    -#    %li.small
+    -#      =  link_to "Assessments",'/assessment_tool/my_assessments'
+    -#    %li.small
+    -#      =  link_to "Zip Uploads[QB]", zip_upload_question_path
+    -#%li.dropdown
+    -#  %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#    Devices
+    -#    %span.caret
+    -#  %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+    -#    %li.small
+    -#      = link_to "Devices", devices_path
+    -#%li.dropdown
+    -#  %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#    Question Bank
+    -#    %span.caret
+    -#  %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+    -#    %li.small
+    -#      = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+    -#    %li.small
+    -#      = link_to "Search Questions", assessment_tool_manage_questions_path
+    -#%li.dropdown
+    -#  %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#    Licenses
+    -#    %span.caret
+    -#  %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+    -#    %li.small
+    -#      = link_to "Licenses", license_sets_path
+    -#    %li.small
+    -#      = link_to "Download Booklist", get_csv_book_list_ibooks_path
+  - elsif current_user.is? "EO"
+    %li
+      %a.btn-lg.no_rounded_corners{ :href => "/", :role => "button"}
+        Home
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Users
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Centers",centers_path
+        %li.large
+          = link_to "Forms", academic_classes_path
+        %li.large
+          = link_to "Sections", sections_path
+        %li.large
+          = link_to "Groups", groups_path
+        %li.large
+          = link_to "Teachers", teachers_path
+        %li.large
+          = link_to "Students", users_path
+    -#%li.large
+    -#  = link_to "Upload Students", upload_csv_file_path
+    -#%li.large
+    -#  = link_to "Usage Statistics", "/usage_statistics"
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Assessments
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        -#%li.large
+        -#  = link_to "Quick Test", controller:"quick_test",action:"new"
+        -#%li.large
+        -#  =  link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+        %li.large
+          =  link_to "Assessments",'/assessment_tool/my_assessments'
+      -#%li.large
+      -#  =  link_to "Zip Uploads[QB]", zip_upload_question_path
+      - unless current_user.is? "EO"
+        %li
+          %a.btn-lg.no_rounded_corners{ :href => "/devices", :role => "button"}
+            Devices
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Question Bank
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+        %li.large
+          = link_to "Search Questions", assessment_tool_manage_questions_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Content
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Content Catalogue", user_assets_path
+        %li.large
+          = link_to "Publish Content", user_assets_path(:p => 1)
+        %li.large
+          = link_to "Publish History", user_assets_path(:p => 2)
+        %li.large
+          = link_to "Publish Inbox", messages_path+user_path(current_user)
+    -#%li.dropdown
+    -#  %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#    Licenses
+    -#    %span.caret
+    -#  %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+    -#    %li.large
+    -#      = link_to "Licenses", license_sets_path
+    -#    %li.large
+    -#      = link_to "Download Booklist", get_csv_book_list_ibooks_path
+
+  - elsif current_user.is? "ECP"
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Question Bank
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+        %li.small
+          = link_to "Zip Uploads", zip_upload_question_path
+        %li.small
+          = link_to "Search Questions", assessment_tool_manage_questions_path
+        %li.small
+          = link_to "Create New Question Bank", new_publisher_question_bank_path
+        %li.small
+          = link_to "List", list_publisher_question_banks_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        My Books
+        %span.caret
+        %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+          %li.small
+            = link_to "Book Catalogue", ibooks_path
+          %li.small
+            = link_to "Add Book", new_ibook_path
+          %li.small
+            = link_to "Download Booklist", get_csv_book_list_ibooks_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        My Collections
+        %span.caret
+        %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+          %li.small
+            = link_to "Collection Catalogue", ipacks_path
+          %li.small
+            = link_to "Create Collection", new_ipack_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Assets
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          =  link_to "Upload Single Asset", single_asset_upload_interface_user_assets_path
+        %li.small
+          = link_to "Bulk Upload Assets", bulk_upload_assets_interface_user_assets_path
+        %li.small
+          = link_to "Asset Catalogue", my_assets_interface_user_assets_path
+        %li.small
+          = link_to "Assessments", assessment_tool_my_assessments_path
+        %li.small
+          = link_to "Learning Activities", learning_activities_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Licenses
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Licenses", license_sets_path
+        %li.small
+          = link_to "Schools", schools_publisher_path(current_user.id)
+  - elsif current_user.is? "CR"
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Users
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Forms", academic_classes_path
+        %li.small
+          = link_to "Sections", sections_path
+        %li.small
+          = link_to "Groups", groups_path
+        %li.small
+          = link_to "Teachers", teachers_path
+        %li.small
+          = link_to "Usage Statistics", "/usage_statistics"
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Assessments
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Quick Test", controller:"quick_test",action:"new"
+        %li.small
+          =  link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+        %li.small
+          =  link_to "Assessments",'/assessment_tool/my_assessments'
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Devices
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Devices", devices_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Question Bank
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+        %li.small
+          = link_to "Search Questions", assessment_tool_manage_questions_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Licenses
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.small
+          = link_to "Licenses", license_sets_path
+        %li.small
+          = link_to "Download Booklist", get_csv_book_list_ibooks_path
+  - elsif current_user.is? "ET"
+    %li
+      %a.btn-lg.no_rounded_corners{ :href => "/", :role => "button"}
+        Home
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Users
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Sections", sections_path
+        %li.large
+          = link_to "Groups", groups_path
+        %li.large
+          = link_to "Students", users_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Assessments
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        -#%li.large
+        -#  = link_to "Quick Test", controller:"quick_test",action:"new"
+        -#%li.large
+        -#  =  link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+        %li.large
+          =  link_to "Assessments",'/assessment_tool/my_assessments'
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Question Bank
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+        %li.large
+          = link_to "Search Questions", assessment_tool_manage_questions_path
+    %li.dropdown
+      %a.btn-lg.dropdown-toggle.no_rounded_corners{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Content
+        %span.caret
+      %ul.dropdown-menu{:role => "menu", :style=> "padding:0px;"}
+        %li.large
+          = link_to "Content Catalogue", user_assets_path
+        %li.large
+          = link_to "Publish Content", user_assets_path(:p => 1)
+        %li.large
+          = link_to "Publish History", user_assets_path(:p => 2)
+        %li.large
+          = link_to "Publish Inbox", messages_path+user_path(current_user)
+        -#%li.large
+        -#  = link_to "User Statistics", publish_stats_users_path
+
+
+

@@ -1,0 +1,45 @@
+<div id="content_header">
+  <h1 id="main_heading">Publish Assessment</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "All Assessments", :controller => "quizzes", :action => "index" %></li>
+    <li><%=link_to "My Published Assessments", :controller => "quizzes", :action => "myquizzes" %></li>
+    <li><%=link_to "My Unpublished Assessments", :controller => "quizzes", :action => "myunpublishedquizzes" %></li>
+  </ul>
+</div>
+<div id="data">
+    <%= form_for @target,:html => { :class => :form }, :url => { :action => "save_publish_individual",:id=>@target.id } do  %>
+      <div class="group">
+        <div class="field">
+          <div class="input string required">
+            <label class="string required label" for="">
+              Individual
+            </label>
+            <%= text_field :message, :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:" %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div align="center" class="field">
+          <input class="button big primary" data-disable-with="Publishing..." name="commit" type="submit" value="Publish" id='submit_form'/>
+          <a href="/quizzes" class="button danger icon remove">Cancel</a>
+        </div>
+      </div>
+    <%end %>
+</div>
+<script>
+    $(document).ready(function(){
+        $(function() {
+            $("#message_multiple_recipient_ids").tokenInput("/quiz_individual_user_group.json?group_id=<%=@target.group_id%>", {
+                queryParam: 'term',
+                minChars: '3',
+                hintText: 'Type first 3-letters of users surname/firstname/roll number',
+                crossDomain: false,
+                preventDuplicates:true,
+                prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+                theme: ""
+            });
+        });
+    });
+</script>

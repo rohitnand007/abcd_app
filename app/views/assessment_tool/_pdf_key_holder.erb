@@ -1,0 +1,321 @@
+<div class="key_holder">
+  <% if @key == true %>
+      <div class="page-break"></div>
+      <h1>Key</h1>
+      <table border="1px solid">
+        <thead>
+        <th>
+          Question No
+        </th>
+        <th>
+          Answer
+        </th>
+
+        </thead>
+        <% i = 1 %>
+        <% @question_array = [] %>
+        <% if !@quiz.quiz_sections.empty? %>
+            <% @quiz.quiz_sections.each do |section| %>
+                <% if !section.questions.empty? %>
+                    <tr>
+                      <td align="center" colspan="100%"><%= section.section_name %></td>
+                    </tr>
+                    <% section.questions.each do |q| %>
+                        <% if !@question_array.include? q.id %>
+
+                            <% if q.qtype == "fib" %>
+                                <tr>
+                                  <td align="center" style="width:100px;"><%= i %></td>
+                                  <td align="center" style="width:100px;"><%= q.question_fill_blanks.map { |ans| ans.answer.split(",").first }.join(',') %></td>
+
+                                </tr>
+                            <% elsif ['multichoice', 'truefalse'].include? q.qtype %>
+                                <tr>
+                                  <td align="center" style="width:100px;"><%= i %></td>
+                                  <% a = ("a".."z").to_a %>
+                                  <% n = 0 %>
+                                  <td align="center" style="width:100px;">
+                                  <% q.question_answers.each do |c| %>
+                                      <% if c.fraction==1 %>
+                                            <%= a[n] %>,
+
+                                      <% end %>
+                                      <% n = n+1 %>
+                                  <% end %>
+                                  </td>
+
+                                </tr>
+                            <% elsif q.qtype == "passage" %>
+                                <% x = 0 %>
+                                <% s = ("a".."z").to_a %>
+                                <% if !q.questions.empty? %>
+                                    <% q.questions.each do |question| %>
+                                        <% if !@question_array.include? question.id %>
+                                            <tr>
+                                              <td align="center" style="width:100px;"><%= i.to_s+'.'+(s[x]).to_s %></td>
+                                              <% if question.qtype == "fib" %>
+                                                  <td align="center" style="width:100px;"><%= question.question_fill_blanks.map { |ans| ans.answer.split(",").first }.join(',') %></td>
+
+                                              <% elsif ['multichoice', 'truefalse'].include? question.qtype %>
+                                                  <% a = ("a".."z").to_a %>
+                                                  <% n = 0 %>
+                                                  <td align="center" style="width:100px;">
+                                                  <% question.question_answers.each do |c| %>
+                                                      <% if c.fraction==1 %>
+                                                          <%= a[n] %>,
+                                                      <% end %>
+                                                      <% n = n+1 %>
+                                                  <% end %>
+                                                  </td>
+
+                                              <% else %>
+                                                  <% if question.generalfeedback.empty? %>
+                                                      <td align="left" style="font-style: italic;">Descriptive</td>
+                                                  <% else %>
+                                                      <td align="left"><%= raw question.feedback_format.html_safe %></td>
+                                                  <% end %>
+                                              <% end %>
+                                              <% @question_array << question.id %>
+                                            </tr>
+                                            <% x = x+1 %>
+                                        <% end %>
+                                    <% end %>
+                                <% end %>
+                            <% else %>
+                                <tr>
+                                  <td align="center" style="width:100px;"><%= i %></td>
+                                  <% if q.generalfeedback.empty? %>
+                                      <td align="left" style="font-style: italic;">Descriptive</td>
+                                  <% else %>
+                                      <td align="left"><%= raw q.feedback_format.html_safe %></td>
+                                  <% end %>
+                                </tr>
+                            <% end %>
+                            <% @question_array << q.id %>
+                            <% i = i+1 %>
+                        <% end %>
+                    <% end %>
+                <% end %>
+            <% end %>
+        <% else %>
+            <% @quiz.questions.each do |q| %>
+                <% if !@question_array.include? q.id %>
+                    <% if q.qtype == "fib" %>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+                          <td align="center" style="width:100px;"><%= q.question_fill_blanks.map { |ans| ans.answer.split(",").first }.join(",") %></td>
+                        </tr>
+                    <% elsif ['multichoice', 'truefalse'].include? q.qtype %>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+                          <% a = ("a".."z").to_a %>
+                          <% n = 0 %>
+                          <td align="center" style="width:100px;">
+                          <% q.question_answers.each do |c| %>
+                              <% if c.fraction==1 %>
+                                  <%= a[n] %>,
+                              <% end %>
+                              <% n = n+1 %>
+                          <% end %>
+                          </td>
+
+                        </tr>
+                    <% elsif q.qtype == "passage" %>
+                        <% x = 0 %>
+                        <% s = ("a".."z").to_a %>
+                        <% if !q.questions.empty? %>
+                            <% q.questions.each do |question| %>
+                                <% if !@question_array.include? question.id %>
+                                    <tr>
+                                      <td align="center" style="width:100px;"><%= i.to_s+'.'+(s[x]).to_s %></td>
+                                      <% if question.qtype == "fib" %>
+                                          <td align="center" style="width:100px;"><%= question.question_fill_blanks.map { |ans| ans.answer.split(",").first }.join(",") %></td>
+
+                                      <% elsif ['multichoice', 'truefalse'].include? question.qtype %>
+                                          <% a = ("a".."z").to_a %>
+                                          <% n = 0 %>
+                                          <td align="center" style="width:100px;">
+                                          <% question.question_answers.each do |c| %>
+                                              <% if c.fraction==1 %>
+                                                  <%= a[n] %>,
+                                              <% end %>
+                                              <% n = n+1 %>
+                                          <% end %>
+                                          </td>
+
+                                      <% else %>
+                                          <% if question.generalfeedback.empty? %>
+                                              <td align="left" style="font-style: italic;">Descriptive</td>
+                                          <% else %>
+                                              <td align="left"><%= raw question.feedback_format.html_safe %></td>
+                                          <% end %>
+
+                                      <% end %>
+                                    </tr>
+                                    <% @question_array << question.id %>
+                                    <% x = x+1 %>
+                                <% end %>
+                            <% end %>
+                        <% end %>
+                    <% else %>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+                          <% if q.generalfeedback.empty? %>
+                              <td align="left" style="font-style: italic;">Descriptive</td>
+                          <% else %>
+                              <td align="left"><%= raw q.feedback_format.html_safe %></td>
+                          <% end %></tr>
+                    <% end %>
+                    <% @question_array << q.id %>
+                    <% i = i+1 %>
+                <% end %>
+            <% end %>
+        <% end %>
+      </table>
+  <% end %>
+</div>
+<div class="Explanation" style="empty-cells: hide">
+  <script>
+      $( document ).ready(function() {
+          $('.EventDetail tr').filter(function(){
+              return $(this).find('td:eq(1):empty').length > 0;
+          }).hide();
+      });
+
+  </script>
+  <% if @key == true %>
+      <div class="page-break"></div>
+      <h1>Explanation</h1>
+      <table border="1px solid">
+        <thead>
+        <th>
+          Question No
+        </th>
+        <th>
+          Explanation
+        </th>
+        </thead>
+        <% i = 1 %>
+        <% @question_array = [] %>
+        <% if !@quiz.quiz_sections.empty? %>
+            <% @quiz.quiz_sections.each do |section| %>
+                <% if !section.questions.empty? %>
+                    <tr>
+                      <td align="center" colspan="100%"><%= section.section_name %></td>
+                    </tr>
+                    <% section.questions.each do |q| %>
+                        <% if !@question_array.include? q.id %>
+
+                            <% if q.qtype == "fib" %>
+                                <tr>
+                                  <td align="center" style="width:100px;"><%= i %></td>
+                                  <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= q.feedback_format.html_safe %> </td>
+                                </tr>
+                            <% elsif ['multichoice', 'truefalse'].include? q.qtype %>
+                                <tr>
+                                  <td align="center" style="width:100px;"><%= i %></td>
+                                  <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= q.feedback_format.html_safe %> </td>
+                                </tr>
+                            <% elsif q.qtype == "passage" %>
+                                <% x = 0 %>
+                                <% s = ("a".."z").to_a %>
+                                <% if !q.questions.empty? %>
+                                    <% q.questions.each do |question| %>
+                                        <% if !@question_array.include? question.id %>
+                                            <tr>
+                                              <td align="center" style="width:100px;"><%= i.to_s+'.'+(s[x]).to_s %></td>
+                                              <% if question.qtype == "fib" %>
+
+                                                  <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= question.feedback_format.html_safe %> </td>
+                                              <% elsif ['multichoice', 'truefalse'].include? question.qtype %>
+
+                                                  <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= question.feedback_format.html_safe %> </td>
+                                              <% else %>
+                                                  <% if question.generalfeedback.empty? %>
+                                                      <td align="left" style="font-style: italic;">Descriptive</td>
+                                                  <% else %>
+                                                      <td align="left"><%= raw question.feedback_format.html_safe %></td>
+                                                  <% end %>
+                                              <% end %>
+                                              <% @question_array << question.id %>
+                                            </tr>
+                                            <% x = x+1 %>
+                                        <% end %>
+                                    <% end %>
+                                <% end %>
+                            <% else %>
+                                <tr>
+                                  <td align="center" style="width:100px;"><%= i %></td>
+                                  <% if q.generalfeedback.empty? %>
+                                      <td align="left" style="font-style: italic;">Descriptive</td>
+                                  <% else %>
+                                      <td align="left"><%= raw q.feedback_format.html_safe %></td>
+                                  <% end %>
+                                </tr>
+                            <% end %>
+                            <% @question_array << q.id %>
+                            <% i = i+1 %>
+                        <% end %>
+                    <% end %>
+                <% end %>
+            <% end %>
+        <% else %>
+            <% @quiz.questions.each do |q| %>
+                <% if !@question_array.include? q.id %>
+                    <% if q.qtype == "fib" %>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+
+                          <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= q.feedback_format.html_safe %> </td>
+                        </tr>
+                    <% elsif ['multichoice', 'truefalse'].include? q.qtype %>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+
+                          <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= q.feedback_format.html_safe %> </td>
+                        </tr>
+                    <% elsif q.qtype == "passage" %>
+                        <% x = 0 %>
+                        <% s = ("a".."z").to_a %>
+                        <% if !q.questions.empty? %>
+                            <% q.questions.each do |question| %>
+                                <% if !@question_array.include? question.id %>
+                                    <tr>
+                                      <td align="center" style="width:100px;"><%= i.to_s+'.'+(s[x]).to_s %></td>
+                                      <% if question.qtype == "fib" %>
+
+                                          <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= question.feedback_format.html_safe %> </td>
+                                      <% elsif ['multichoice', 'truefalse'].include? question.qtype %>
+
+                                          <td style="width:85%; padding-top: 10px; padding-left: 10px;text-align: left"> <%= question.feedback_format.html_safe %> </td>
+                                      <% else %>
+                                          <% if question.generalfeedback.empty? %>
+                                              <td align="left" style="font-style: italic;">Descriptive</td>
+                                          <% else %>
+                                              <td align="left"><%= raw question.feedback_format.html_safe %></td>
+                                          <% end %>
+
+                                      <% end %>
+                                    </tr>
+                                    <% @question_array << question.id %>
+                                    <% x = x+1 %>
+                                <% end %>
+                            <% end %>
+                        <% end %>
+                    <% else %>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+                          <% if q.generalfeedback.empty? %>
+                              <td align="left" style="font-style: italic;">Descriptive</td>
+                          <% else %>
+                              <td align="left"><%= raw q.feedback_format.html_safe %></td>
+                          <% end %></tr>
+                    <% end %>
+                    <% @question_array << q.id %>
+                    <% i = i+1 %>
+                <% end %>
+            <% end %>
+        <% end %>
+      </table>
+  <% end %>
+</div>

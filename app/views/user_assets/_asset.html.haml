@@ -1,0 +1,115 @@
+%div.inception{style: "padding: 14px 55px 39px 60px;"}
+  %div.inception1{style: "width: 390px;border: 1px solid (171, 160, 160);"}
+    %b Select an Asset from here:
+    %div
+      %div.scrollbox
+        %br
+        - @user_assets.each_with_index do |asset, index|
+          = label_tag do
+            = radio_button_tag "asset_id", asset.id.to_s + "_" + asset.asset_name.to_s
+            = asset.asset_name
+      = link_to "Add Asset","#", class: "button disable",id:"assetbutton",onclick: "validateCheckbox();"
+      (or)
+      %br
+      %a{:href => "#",:id=>"tips"} Click here to Add a New Asset
+    %br
+  %div.inception2{style: "width: 390px;border: 1px solid (171, 160, 160);"}
+    %div#form_add
+    = simple_form_for @user_asset, html:{ :multipart => true, :class=>"incept"}, remote: true do |f|
+      = f.error_notification
+      = hidden_field_tag :controller, @controller
+      - if @ibook
+        = hidden_field_tag :id, @ibook.id
+      %table
+        %tr
+          %td= f.label :asset_name
+          %td= f.text_field :asset_name , :placeholder => "Name to identify the asset", class: "",required:""
+        %tr
+          %td= f.label :asset_type
+          %td= f.select :asset_type,options_for_select(@class_type),{prompt: "Select an asset type"}, {class: "styled-select", id:"assetbox", required: true}
+        %tr
+          %td
+          %td#weblink
+        %tr#attachment
+          %td= f.label "Upload:"
+          %td= f.file_field :attachment
+      = f.submit "Create Asset", class:"button disable",id:"newassetbutton", disabled:true, disable_with: "Creating.."
+      - unless current_user.is? "ET"
+        %br
+        %a.italic{style:"color:#04B486"} Note: Only zip files are accepted
+
+
+:css
+  .italic{
+  font-style: italic;
+  }
+  #newassetbutton{
+  float: right;}
+
+  #assetbutton{
+  top: 10px;
+  float: right;
+  }
+
+:javascript
+  $(".scrollbox :radio").click(function(){
+  $("#assetbutton").removeAttr('class')
+  $("#assetbutton").prop('class','button')
+  $(".inception2").hide();
+
+  })
+  $("#assetbutton").prop('disabled','disabled')
+
+  $(".inception2").hide();
+
+  $("#tips").click(function(){
+  $(".inception2").toggle();
+  $(".scrollbox :radio").removeAttr("checked");
+  $("#assetbutton").removeAttr('class');
+  $("#assetbutton").prop('class','button disable');
+  //$("#assetbutton").css({
+  //'position': 'absolute',
+  //'left': '361px',
+  //'top': '374px'});
+  });
+  $(document).ready(
+    function(){
+        $('input:file').change(
+            function(){
+                if ($(this).val()) {
+                    $('input:submit').attr('disabled',false);
+                    $('input:submit').attr('class','button');
+                    $(".scrollbox :radio").removeAttr("checked");
+                    $("#assetbutton").prop('class','button disable')
+                    $("#assetbutton").prop('disabled','disabled')
+                    //$(".inception1").hide();
+                    // or, as has been pointed out elsewhere:
+                    // $('input:submit').removeAttr('disabled');
+                }
+            }
+            );
+    });
+
+  $("#assetbutton").click(function(){
+     $(".scrollbox :radio").find("input:checked");
+
+  })
+  $("#newassetbutton").click(function(){
+      $(".scrollbox :radio").removeAttr("checked");
+    });
+   function validateCheckbox(){
+      if( $(".scrollbox").find("input:checked").length == 0){
+              alert("Choose one asset atleast!");
+              return false;
+            }
+            else{
+            var num = $(".scrollbox").find("input:checked")[0].value;
+            var text1 = "<span>" + num.split("_")[1] + "</span>" + "<a href=\"/content_deliveries/new?id=#{ @ibook.id}\" style=\"font-size: 12px; font-style: italic;color: red;\">" + "X" + "</a>";
+            var text2 = "<input type=\"hidden\" name=\"asset_id\" value=\"" + num.split("_")[0] + "\">";
+            $(".selected_book").html(text1);
+            $("#asset").html(text2);
+            $('.ui-dialog-content').dialog('close');
+            }
+    };
+
+

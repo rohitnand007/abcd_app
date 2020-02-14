@@ -1,0 +1,36 @@
+<h1>Listing tags</h1>
+
+<table style="border: 1px solid black;">
+  <tr >
+    <th>Tag name</th>
+    <th>Tag category</th>
+    <th>Edit/destroy links</th>
+    <th>No. of Questions linked to a particular tag</th>
+  </tr>
+
+  <% @question_tags.each do |tag| %>
+      <% tag[1].each do |i| %>
+          <tr style="border: 1px solid black;">
+            <td style="border: 1px solid black;"><%= tag[0] %></td>
+
+            <%# if tag[1].kind_of?(Array)%>
+
+            <td style="border: 1px solid black;">
+              <%= i[0] %> <%= i[1]%></td>
+
+            <td><%= link_to 'Edit', edit_tag_path(Tag.find(i[0])),target: "_blank"  %>
+              <%= link_to 'Destroy', destroy_tag_references_path(id: @publisher_question_bank_id,tag_refer_id: i[0] ), confirm: "Are you sure? #{pluralize(Tagging.where(tag_id: i[0]).count, "question")} are linked to this tag", method: :delete %>
+            </td>
+            <td><%= Tagging.where(tag_id: i[0]).count %></td>
+      <%end%>
+      <%# else%>
+      <%# tag[1] %>
+      <%#end%>
+
+      </tr>
+  <% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Tag', new_tag_path %>

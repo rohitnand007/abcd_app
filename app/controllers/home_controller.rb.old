@@ -1,0 +1,407 @@
+class HomeController < ApplicationController
+  require 'csv-mapper'
+  require 'mqtt'
+
+  skip_before_filter :authenticate_device_user , :only=>[:test_mqtt,:get_control_messages,:get_server_time,:initialize_forum_session,:message_download]
+  skip_before_filter :authenticate_user!, :only=>[:test_mqtt,:get_control_messages,:get_server_time,:initialize_forum_session,:message_download,:get_class_details,:get_time,:juniortabstats,:pearson_usage,:get_pearson_usage]
+  #caches_action :index
+
+  def index
+    if current_user.is?("ES")
+      #redirect_to "/store/tab"
+    elsif !current_user.institution_id.nil? and current_user.institution_id == 25607
+      render 'shared/pearson_index'
+    end
+    #puts current_user.inspect
+  end
+
+  #used for global search.
+  def search
+    if params[:mode]
+      term = "%#{params[:term]}%"
+      case params[:mode]
+        when "User"
+          case current_user.role.name
+            when 'Edutor Admin'
+              @users = params[:mode].constantize.students.by_profile_first_name_or_surname_or_roll_no_or_edutor_id(term).page(params[:page])
+            when 'Institute Admin'
+              @users = current_user.institution.students.by_profile_first_name_or_surname_or_roll_no_or_edutor_id(term).page(params[:page])
+            when 'Center Representative'
+              @users = current_user.center.students.by_profile_first_name_or_surname_or_roll_no_or_edutor_id(term).page(params[:page])
+          end
+          render 'users/index'
+        when "Institution"
+          case current_user.role.name
+            when 'Edutor Admin'
+              @institutions = params[:mode].constantize.by_profile_first_name(term).page(params[:page])
+          end
+          render 'institutions/index'
+        when "Center"
+          case current_user.role.name
+            when 'Edutor Admin'
+              @centers = params[:mode].constantize.by_profile_first_name(term).page(params[:page])
+            when 'Institute Admin'
+              @centers = current_user.centers.by_profile_first_name(term).page(params[:page])
+          end
+          render 'centers/index'
+        when "Device"
+          case current_user.role.name
+            when 'Edutor Admin'
+              @devices = Device.by_device_or_mac_or_android_id(term).page(params[:page])
+            when 'Center Representative'
+              @devices = current_user.center.center_devices.by_device_id(term).page(params[:page])
+            when 'Institute Admin'
+              @devices =  current_user.institution.institution_devices.by_device_id(term).page(params[:page])
+            else
+              @devices =  current_user.center.center_devices.by_device_id(term).page(params[:page])
+          end
+
+          render 'devices/index'
+      end
+    else
+      redirect_to :back
+    end
+  end
+
+
+  def result
+
+  end
+
+  #used for filter search by checkboxes in users list page.
+  def filter_search
+    case current_user.role.name
+      when 'Edutor Admin'
+        case params[:mode]
+          when "institution"
+            @centers = Center.includes(:profile).where(institution_id: params[:institution_ids])
+            @users = get_users({institution_id: params[:institution_ids]},params[:page])
+          when 'center'
+            @academic_classes = AcademicClass.includes(:profile).where(institution_id: params[:institution_ids],center_id: params[:center_ids])
+            @users = params[:center_ids].present? ? get_users({institution_id: params[:institution_ids],center_id: params[:center_ids]},params[:page]) : get_users({institution_id: params[:institution_ids]},params[:page])
+          when 'academic_class'
+            @sections = Section.includes(:profile).where(institution_id: params[:institution_ids],center_id: params[:center_ids],academic_class_id: params[:academic_class_ids])
+            @users = params[:academic_class_ids].present? ? get_users({institution_id: params[:institution_ids],center_id: params[:center_ids],academic_class_id: params[:academic_class_ids]},params[:page]) : get_users({institution_id: params[:institution_ids],center_id: params[:center_ids]},params[:page])
+          when 'section'
+            @users = params[:section_ids].present? ? get_users({institution_id: params[:institution_ids],center_id: params[:center_ids],academic_class_id: params[:academic_class_ids],section_id: params[:section_ids]},params[:page]) : get_users({institution_id: params[:institution_ids],center_id: params[:center_ids],academic_class_id: params[:academic_class_ids]},params[:page])
+        end
+      when 'Institute Admin'
+        case params[:mode]
+          when 'center'
+            @academic_classes = AcademicClass.includes(:profile).where(institution_id: current_user.institution,center_id: params[:center_ids])
+            @users = get_users({institution_id: current_user.institution,center_id: params[:center_ids]},params[:page])
+          when 'academic_class'
+            @sections = Section.includes(:profile).where(institution_id: current_user.institution,center_id: params[:center_ids],academic_class_id: params[:academic_class_ids])
+            @users = params[:academic_class_ids].present? ? get_users({institution_id: current_user.institution,center_id: params[:center_ids],academic_class_id: params[:academic_class_ids]},params[:page]) : get_users({institution_id: current_user.institution,center_id: params[:center_ids]},params[:page])
+          when 'section'
+            @users = params[:section_ids].present? ? get_users({institution_id: current_user.institution,center_id: params[:center_ids],academic_class_id: params[:academic_class_ids],section_id: params[:section_ids]},params[:page]) : get_users({institution_id: current_user.institution,center_id: params[:center_ids],academic_class_id: params[:academic_class_ids]},params[:page])
+        end
+      when 'Center Representative'
+        case params[:mode]
+          when 'academic_class'
+            @sections = Section.includes(:profile).where(institution_id: current_user.institution,center_id: current_user.center,academic_class_id: params[:academic_class_ids])
+            @users = get_users({institution_id: current_user.institution,center_id: current_user.center,academic_class_id: params[:academic_class_ids]},params[:page])
+          when 'section'
+            @users = params[:section_ids].present? ? get_users({institution_id: current_user.institution,center_id: current_user.center,academic_class_id: params[:academic_class_ids],section_id: params[:section_ids]},params[:page]): get_users({institution_id: current_user.institution,center_id: current_user.center,academic_class_id: params[:academic_class_ids]},params[:page])
+        end
+    end
+  end
+
+  def upload_users
+    if !(current_user.is?("EA") or current_user.is?("IA")) #!current_user.is?("EA")
+      redirect_to root_path
+    end
+  end
+
+  def csv_upload
+    if current_user.is?("EA") or current_user.is?("IA")
+      if params[:csv_file]
+        begin
+          User.transaction do
+            results = CsvMapper.import(params[:csv_file].tempfile, :type => :io) do
+              map_to User # Map to the Person ActiveRecord class (defined above) instead of the default OpenStruct.
+              after_row lambda{|row, user|
+                puts "in user====================="
+                user.date_of_birth = row[13].gsub(':','-') unless row[13].blank?
+                password =[672,14289].include?(row[0].to_i) ? row[13].split(':')[0].to_s+row[13].split(':')[1].to_s : '4123'
+                puts password
+                user.password = password
+                user.role_id=4
+                user.school_uid=row[14]
+                user.is_activated=1
+                user.is_enrolled = true
+                user.rollno = row[12] unless row[12].blank?
+                puts row[0]
+                user.plain_password = row[13].split(':')[0].to_s+row[13].split(':')[1].to_s unless row[13].blank?
+
+                if user.save!
+                  Message.create(sender_id: 1,recipient_id: user.id,subject: "Enroll",message_type: "Control Message") #sending ctrl message and enrolling the user automatically by callback
+                  user.update_email
+                  user.create_profile(:surname=>row[5],:middlename=>row[6],:firstname=>row[7],:gender=>row[8],:address=>row[9],:parent_email=>row[10],:parent_mobile=>row[11],:device_screen_name=>row[12])
+                end
+                puts"row[16]" ,row[15]
+                unless row[15].blank?
+                  deviceid = Device.find_by_deviceid(row[15])
+                  unless deviceid
+                    devise = Device.create(:deviceid=>row[15],:institution_id=>user.institution_id,:center_id=>user.center_id)
+                    user.device_ids = [devise.id]
+                  else
+                    user.device_ids = [deviceid.id]
+                  end
+                end
+              }  # Call this lambda and save each r
+              start_at_row 1
+              [institution_id,center_id,academic_class_id,section_id,email]
+            end
+          end
+          redirect_to users_path
+        rescue Exception => e
+          puts e.message
+          logger.info e.message
+          logger.info  e.backtrace
+          flash[:error] = "Something went wrong.Please check the CSV file.#{e.message}"
+          redirect_to :back
+        end
+      end
+    else
+      redirect_to :root_path
+    end
+  end
+
+  def get_users(params,page)
+    User.students.search_includes.where(params).search_select.page(page)
+  end
+
+  #used for assiging users to a particular group...used in groups form pages
+  def users_token_search
+    if params[:term].present?
+      term = "%#{params[:term]}%"
+      @users =case current_user.role.name
+                when 'Edutor Admin'
+                  User.where(:is_group=>false).by_profile_first_name_or_surname_or_roll_no_or_edutor_id(term).limit(20)
+                when 'Institute Admin'
+                  current_user.institution.users.where(:is_group=>false).by_profile_first_name_or_surname_or_roll_no_or_edutor_id(term).limit(20)
+                when 'Center Representative'
+                  current_user.center.users.where(:is_group=>false).by_profile_first_name_or_surname_or_roll_no_or_edutor_id(term).limit(20)
+              end
+    end
+    respond_to do |format|
+      format.json { render json: @users.map{|u| Hash[id: u.id, name: u.profile.autocomplete_display_name]} }
+    end
+  end
+
+  #Device specific control message form
+  def device_control_message
+    @message = Message.new
+    @message.assets.build
+  end
+
+
+
+  #Message download attempts
+  def message_download
+    @message  = Message.find(params[:id])
+    ext = request.url.split('.').last
+    respond_to do |f|
+      if @message
+        @message_download = MessageUserDownload.new
+        @message_download.message_id= @message.id
+        if current_user
+          @message_download.user_id= current_user.id
+        else
+          @message_download.user_id = 0
+        end
+        @message_download.save
+        url = "/messages/#{params[:sender_id]}/#{params[:time]}/#{params[:name]}.#{ext}"
+        redirect_to url
+      else
+        render :status=>404
+      end
+      return
+    end
+  end
+
+
+  def test_mqtt
+    MQTT::Client.connect('localhost:3000/test_mqtt') do |c|
+      # If you pass a block to the get method, then it will loop
+      #c.get('test') do |topic,message|
+      #  puts "#{topic}: #{message}"
+      #end
+      puts "=========",c
+    end
+  end
+
+
+
+  def user_communication
+    if request.post?
+      user_ids = params[:user_communication][:user_ids].split(',')
+      command_ids = params[:user_communication][:message_type]- [""]
+      user_ids.each do |i|
+        user =  User.find(i)
+        command_ids.each do |c|
+          command ="mosquitto_pub -p 3333 -t #{user.edutorid} -m #{c}  -i Edeployer -q 2 -h 173.255.254.228"
+          system(command)
+        end
+      end
+      flash[:notice] = "Communication sent successfully."
+      redirect_to user_communication_path
+    end
+  end
+
+
+  # TODO add column filepath and column for usages and use gem to show the duration
+
+  def user_activities
+    @activities = UserActivity.includes(:user).order('created_at DESC').page(params[:page])
+  end
+
+
+  def user_usages
+    @usages = UserUsage.includes(:user).order('end_time DESC').page(params[:page])
+  end
+
+
+  def get_user_usage
+    @usages = UserUsage.where(:user_id=>params[:id]).order('end_time DESC').page(params[:page])
+  end
+
+  def user_migrate
+    if request.post? && params[:file].present?
+      infile = params[:file].read
+      n, errs = 0, []
+      CSV.parse(infile) do |row|
+        n += 1
+        if n == 1 or row.join.blank?
+          @header = row
+          next
+        end
+        user = User.find_by_edutorid(row[0])
+        Device.where(:deviceid=>row[3]).update_all(:mac_id=>nil,:android_id=>nil)
+        DeviceMessage.where('deviceid=? OR group_id IN (?)',row[3],user.group_ids).destroy_all
+        #DeviceMessage.where(:deviceid=>row[3],:group_id=>user.group_ids).destroy_all
+        if user
+          user.academic_class_id = row[4]
+          user.section_id = row[5]
+          user.group_ids = nil
+          user.save
+        else
+          errs << row
+        end
+      end
+      if errs.any?
+        errFile ="errors_#{Date.today.strftime('%d%b%y')}.csv"
+        errs.insert(0, @header)
+        errCSV = CSV.generate do |csv|
+          errs.each {|row| csv << row}
+        end
+        send_data errCSV,
+                  :type => 'text/csv; charset=iso-8859-1; header=present',
+                  :disposition => "attachment; filename=#{errFile}.csv"
+      else
+        flash[:notice] = 'User Migrated Successfully'
+        redirect_to user_migrate_path
+      end
+    end
+  end
+
+  #Attendence app requesting the class and section details
+  def get_class_details
+    if params[:center_id]
+      @user = User.find_by_id(params[:center_id])
+    elsif params[:section_id]
+      @user = User.find_by_id(params[:section_id])
+    end
+    @data = nil
+    unless @user.nil?
+      if @user.type == 'Center'
+        #@center = Center.find(params[:center_id])
+        @data =  @user.academic_classes.collect{|i|{:id=>i.id,:name=>i.name,:sections=>i.sections.collect{|s|{:id=>s.id,:name=>s.name}}}}
+      elsif @user.type == 'Section'
+        @data =  @user.students.collect{|i|{:edutorid=>i.edutorid, :surname=>i.profile.surname, :middlename=>i.profile.middlename, :firstname=>i.profile.firstname, :email=>i.email, :parent_email=>i.profile.parent_email, :created_at=>i.profile.created_at, :updated_at=>i.profile.updated_at, :rollno=>i.rollno, :extras=>i.extras, :date_of_birth=>i.date_of_birth}}
+      end
+    end
+    respond_to do |format|
+      format.json{render json: @data}
+    end
+  end
+
+  #Junior Activity
+  def juniortabstats
+    activity_score =  params[:activityscore]
+    steps_record =  params[:stepsrecord]
+    activity_status = JSON.load(parms[:activityusagestats])
+
+    activityscore = []
+    stepsrecord = []
+    activityusagestats = []
+
+
+    logger.info "===#{activity_score}==#{steps_record}===#{activity_status}"
+
+    activity_score.each do |d|
+      d['client_id'] = d['id']
+      activity_score = JuniorActivityScore.find_by_user_id_and_label(d['user_id'],d['label'])
+      if activity_score.nil?
+        JuniorActivityScore.create(d)
+        activityscore << d['id']
+      else
+        activity_score.update_attributes(d)
+        activityscore << d['id']
+      end
+    end
+
+    steps_record.each do |s|
+      s['client_id'] = s['id']
+      JuniorRecordStep.create(s)
+      stepsrecord << s['id']
+    end
+
+    activity_status.each do |a|
+      a['client_id'] = a['id']
+      JuniorActivityUsage.create(a)
+      activityusagestats << a['id']
+    end
+
+    @response = {:activityscore=>activityscore,:stepsrecord=>stepsrecord,:activityscore=>activityusagestats}
+
+    respond_to do |format|
+      format.json { render json:@response }
+    end
+
+  end
+
+
+  def junior_activity_usages
+    result = []
+    @scores =  JuniorActivityScore.all
+    @scores.each do |s|
+      duration = JuniorActivityUsage.select('sum(end_time - start_time) as usage_duration').where(:user_id=>s.user_id,:activity_name=>s.activity_name)
+      success_true = JuniorRecordStep.where(:user_id=>s.user_id,:activity_name=>s.activity_name,:success=>'true').count
+      success_false = JuniorRecordStep.where(:user_id=>s.user_id,:activity_name=>s.activity_name,:success=>'false').count
+      result << [s.user_id,s.label,s.completion_rate,(success_true.to_f/(success_true.to_f+success_false.to_f))*100,duration.first.usage_duration.to_f/(60*1000)]
+     logger.info "===========#{result}"
+    end
+    csv_data = FasterCSV.generate do |csv|
+        csv << 'User Id,Label,Completion rate,Success rate,Duration'.split(',')
+        result.each do |c|
+          csv << c
+        end
+      end
+    file_name =  ("juniour_tab_usage_report_#{Time.now.to_i}.csv").gsub(" ","").to_s
+    send_data csv_data, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename=#{file_name}"
+  end
+
+
+  def pearson_usage
+    @users = User.includes(:user_usages).where(:institution_id=>1020,:role_id=>4).order('id desc').limit(10)
+  end
+
+
+  def get_pearson_usage
+    @usages = UserUsage.where(:user_id=>params[:user_id]).order('end_time DESC').page(params[:page])
+  end
+
+
+end

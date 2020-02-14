@@ -1,0 +1,46 @@
+= form_for(@publisher_question_bank) do |f|
+
+  %table
+    %tr
+      %td
+        = f.label :question_bank_name
+      %td
+        = f.text_field :question_bank_name
+    %tr
+      %td
+        = f.label :description
+      %td
+        = f.text_field :description
+  %h4 Fixed Tags
+  %table#hardTags.listing
+    %tr
+      %th
+        Tag Name
+      %th
+        Tag Value
+    -["blooms_taxonomy","difficulty","specialCategory","qsubtype"].each do |subtype_name|
+      %tr
+        %td= subtype_name.capitalize
+        %td
+      - @publisher_question_bank.tags.where(:name=>subtype_name).each_with_index do |tag,index|
+        %tr
+          %td= index+1
+          %td= tag.value
+
+  %h4 Add more tags
+  %ul
+    - @all_tags.each do |tag|
+      %li
+        = check_box_tag "publisher_question_bank[tag_ids][]", tag.id, @publisher_question_bank.tags.include?(tag)
+        = tag.name_value
+
+
+
+  %br
+  = f.submit
+
+  %br
+  %br
+
+:javascript
+  $(":submit").button();

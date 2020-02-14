@@ -1,0 +1,112 @@
+#content_header
+  -#%h1#main_heading User
+  #breadcrumbs
+    = bread_crumb_show_page
+#inner-tab-menu
+  %ul
+    =display_link("List", users_path,:index,User)
+    =display_edit_link_for_user(@user)
+    =display_link("New",new_user_path,:create,User)
+    =display_link("Show", user_path(@user),:read,User,"inner_tab_selected")
+    =display_link("Sync All",user_sync_path(@user),:read,User,'inner_tab_selected')
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.user.firstname", :default => t("activerecord.labels.firstname", :default => "Name"))
+          %td.right= @user.name
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.email", :default => t("activerecord.labels.email", :default => "Email"))
+          %td.right= @user.email
+        %tr.even.left
+          %td= t("activerecord.attributes.user.date_of_birth", :default => t("activerecord.labels.date_of_birth", :default => "Date of birth"))
+          %td.right= @user.date_of_birth
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.edutorid", :default => t("activerecord.labels.edutorid", :default => "Edutorid"))
+          %td.right= @user.edutorid
+        %tr.even.left
+          %td= t("activerecord.attributes.user.sign_in_count", :default => t("activerecord.labels.sign_in_count", :default => "Sign in count"))
+          %td.right= @user.sign_in_count
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.current_sign_in_at", :default => t("activerecord.labels.current_sign_in_at", :default => "Current sign in at"))
+          %td.right= display_date_time @user.current_sign_in_at
+        %tr.even.left
+          %td=  t("activerecord.attributes.user.last_sign_in_at", :default => t("activerecord.labels.last_sign_in_at", :default => "Last sign in at"))
+          %td.right= display_date_time @user.last_sign_in_at
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.device_id", :default => t("activerecord.labels.device_id", :default => "Device"))
+          %td.right= @user.devices.map(&:deviceid).join(',') if @user.devices
+        %tr.even.left
+          %td= t("activerecord.attributes.user.institution_id", :default => t("activerecord.labels.institution_id", :default => "Institution"))
+          %td.right= @user.institution.try(:name)
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.center_id", :default => t("activerecord.labels.center_id", :default => "Center"))
+          %td.right= @user.center.try(:name)
+        %tr.even.left
+          %td= t("activerecord.attributes.user.academic_class_id", :default => t("activerecord.labels.academic_class_id", :default => "Academic class"))
+          %td.right= @user.academic_class.try(:name)
+        %tr.odd.left
+          %td=  t("activerecord.attributes.user.section_id", :default => t("activerecord.labels.section_id", :default => "Section"))
+          %td.right= @user.section.try(:name)
+        %tr.even.left
+          %td= t("activerecord.attributes.user.activated", :default => t("activerecord.labels.activated", :default => "Activated"))
+          %td.right= @user.is_activated? ? 'Yes' : 'No'
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.role_id", :default => t("activerecord.labels.role_id", :default => "Role"))
+          %td.right= @user.rc
+        %tr.even.left
+          %td= t("activerecord.attributes.user.enrolled", :default => t("activerecord.labels.enrolled", :default => "Enrolled"))
+          %td.right= @user.is_enrolled? ? 'Yes' : 'No'
+        %tr.even.left
+          %td= t("activerecord.attributes.user.school_uid", :default => t("activerecord.labels.school_uid", :default => "School Tag"))
+          %td.right= @user.school_uid
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.rollno", :default => t("activerecord.labels.rollno", :default => "Rollno"))
+          %td.right= @user.rollno
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2',:align=>'right'}
+            =display_edit_button_for_user(@user)
+            -#if @user.type.eql?'InstituteAdmin'
+              = link_to "Edit",edit_institute_admin_path(@user), :class => "button icon edit"
+            -#elsif @user.type.eql?'CenterAdmin'
+              = link_to "Edit",edit_center_admin_path(@user), :class => "button danger icon remove"
+            -#else
+              = display_link("Edit",edit_user_path(@user),:update,User,"button icon edit")
+
+              -#= link_to "Delete", user_path(@user), :method => "delete", :class => "button", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+
+
+    - unless @user.user_book_collection.empty?
+      User Book Collection
+      %table#users.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+        %thead
+          %tr.tr-head
+            %th Collection
+            %th
+        %tbody
+          - @user.user_book_collection.each do |u|
+            %tr{:class => cycle("tr-odd", "tr-even")}
+              %td= u.collection.name
+              %td= link_to "Delete Collection",delete_user_collection_path(u.user_id,u.collection_id)
+
+
+:javascript
+  $(document).ready(function() {
+    $("#users").dataTable({
+        "aoColumns": [
+                   null,
+                   { "bSortable": false }
+                                        ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });

@@ -1,0 +1,895 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analytics Report</title>
+  <!--<link rel="stylesheet" type="text/css" href="/assets/c3.css">-->
+  <%= wicked_pdf_stylesheet_link_tag 'c3.css' %>
+  <%= wicked_pdf_stylesheet_link_tag 'assessment_report_pdf.css' %>
+  <%= wicked_pdf_stylesheet_link_tag "pdf" -%>
+  <%= wicked_pdf_javascript_include_tag 'd3.min.js' %>
+  <%= wicked_pdf_javascript_include_tag 'c3.min.js' %>
+  <%= wicked_pdf_javascript_include_tag 'jquery.js' %>
+  <%= wicked_pdf_javascript_include_tag 'underscore.js' %>
+
+  <style>
+      @font-face {
+          font-family: "krutidev";
+          src: url(<%="file://#{Rails.root.to_s}/public/assets/krutidev.ttf".html_safe %>);
+      }
+
+      @font-face {
+          font-family: "Mangal";
+          src: url(<%="file://#{Rails.root.to_s}/public/assets/mangal.ttf".html_safe %>);
+      }
+
+      @font-face {
+          font-family: 'robotomedium';
+          src: url(<%= get_roboto_medium.html_safe %>);
+
+      }
+      @font-face {
+          font-family: 'robotoregular';
+          src: url(<%= get_roboto_regular.html_safe %>);
+      }
+
+      #head_content h1{
+        color: #A0D568;
+        font-size: 20px;
+        font-weight: 300;
+      }
+      .gray_text{
+        font-size:11px;
+        font-weight: 300;
+      }
+      .lightGrayNames{
+          font-size:13px;
+          font-weight: 200;
+          color:#636363;
+      }
+      .yellowCircle{
+          text-align: center;
+          background-image: url('<%= "file://#{Rails.public_path.to_s}" + "/../app/assets/images/reports/tri_circles_yellow.svg" %>');
+          vertical-align: middle;
+          color: white;
+          width:15px;
+          height:15px;
+          background-color: transparent !important;
+          background-repeat: no-repeat;
+          padding: 0px;
+      }
+      body {
+          font-family: "robotoregular";
+          font-size: 12px;
+          color: #636363;
+          vertical-align: middle;
+          width:100%;
+          /*background-color: #fff;
+          line-height: 18px;*/
+      }
+
+      .sectionWiseQuestionAttemptsHeader{
+      background-color: #4FC1E9;
+      color: white;
+      font-size: 14px;
+      font-weight: 200;
+      }
+
+      .sectionHeading{
+          background-color: #A0D468;
+          color: #ffffff;
+          font-family: "robotoregular";
+          font-size: 14px;
+          font-weight: 200;
+          width: auto; min-width: 250px; padding:0 15px;
+
+      }
+      .ribbon-container h2{
+          font-size: 14px;
+          font-weight: 300;
+      }
+
+      .gpaText,.gpaText1{
+          font-size: 11px;
+          color: #636363;
+          font-weight: 200;
+      }
+      .gpaText tr:last-of-type {
+          font-family: "robotomedium" ;
+          font-weight: bold;
+      }
+      .ribbon-container h2 img:first-of-type{
+          width:25px;
+          margin-bottom: -4px;
+      }
+      #sixth-ribbon div img:not:first-of-type{
+          margin-bottom: -2px;
+      }
+      #fifth-ribbon div img:not:first-of-type{
+          margin-bottom: -2px;
+      }
+      .thincaps{
+          text-transform: uppercase;
+          font-size: 11px;
+      }
+  </style>
+
+  <!--<script src="/assets/d3.min.js" charset="utf-8"></script>-->
+  <!--<script src="/assets/c3.min.js"></script>-->
+  <!--<script src="js/jquery.js"></script>-->
+  <!--<script src="../c3-0.2.4/c3.js"></script>-->
+  <script>
+
+      // JSON Changes
+      // reportJSON.sectionWiseScore.sectionDetails[i].weightage
+
+      var reportJSON = <%= @json_data.to_json.html_safe %>
+      var assetPath = "<%= "file://#{Rails.public_path.to_s}" + "/../app/assets" %>"
+
+
+      function getPercentile(rank,total){
+          if (total===0){
+              return 0
+          }
+          return getTillOneDecimalPlace_old(((1 - (parseFloat(rank-1)/total))*100),2)
+      }
+
+      function getTillOneDecimalPlace_old(decimalnumber, digits) {
+              if (typeof(digits) === "undefined") { digits = 2; }
+      var rounder = Math.pow(10, digits);
+      return (Math.round(decimalnumber * rounder) / rounder).toFixed(digits);
+      };
+
+      function getFormattedQuestionType(qtype){
+          if (qtype === "multichoice")
+          {return "MCQ"}
+          else if (qtype === "truefalse")
+          {return "TF"}
+          else if (qtype === "fib")
+          {return "FIB"}
+          else
+          {return qtype}
+      }
+
+      function getTillOneDecimalPlace(decimalnumber, digits) {
+          if (typeof(digits) === "undefined") { digits = 1; }
+          var rounder = Math.pow(10, digits);
+          return Math.round(decimalnumber * rounder) / rounder;
+      }
+
+      function getTimeString(timeSeconds) {
+          timeSeconds = Math.round(timeSeconds);
+          var hrs = 0, mins = 0, secs = 0;
+          if (timeSeconds > 3600) {
+              hrs = Math.floor(timeSeconds/3600);
+              timeSeconds -= (hrs * 3600);
+          }
+          if (timeSeconds > 60) {
+              mins = Math.floor(timeSeconds/60);
+              timeSeconds -= (mins * 60);
+          }
+          secs = timeSeconds;
+          var timeString = '';
+          if (secs > 0 || !(hrs > 0 || mins > 0)) {
+            if (secs<0){
+          		secs=0;
+          	}
+              timeString = '' + secs + ' secs';
+          }
+          if (hrs > 0 || mins > 0) {
+              timeString = '' + mins + ' mins ' + timeString;
+          }
+          if (hrs > 0) {
+              timeString = '' + hrs + ' hrs ' + timeString;
+          }
+          //console.log('timeSeconds=' + timeSeconds + ', str=' + timeString);
+          return timeString;
+      }
+
+      function getDateString(l) {
+          var d = new Date(l*1000);
+          var dateStr = '';
+          if (d.getDate() < 10) {
+              dateStr += '0' + d.getDate();
+          }
+          else {
+              dateStr += d.getDate();
+          }
+          dateStr += '/' + months[d.getMonth()] + '/' + d.getFullYear();
+          dateStr += ' , ';
+          if (d.getHours() < 12) {
+              dateStr += d.getHours() + ':' + d.getMinutes() + ' AM';
+          }
+          else if (d.getHours() === 12) {
+              dateStr += d.getHours() + ':' + d.getMinutes() + ' PM';
+          }
+          else {
+              dateStr += (d.getHours() - 12) + ':' + d.getMinutes() + ' PM';
+          }
+
+          return dateStr;
+      }
+
+      function getLineChartXFormat(x) {
+          var testDate = new Date(x*1000);
+          return testDate.getDate() + '-' + months[testDate.getMonth()] + '\'' + (''+testDate.getFullYear()).substring(2);
+      }
+
+      function createDonut(donutId, color1, color2, correct, total, correctLabel, wrongLabel) {
+          var donut = c3.generate({
+              data: {
+                  columns: [
+                      [correctLabel, correct],
+                      [wrongLabel, (total-correct)]
+                  ],
+                  type : 'donut',
+                  onmouseover: function (d, i) { console.log("onmouseover", d, i, this); },
+                  onmouseout: function (d, i) { console.log("onmouseout", d, i, this); },
+                  onclick: function (d, i) { console.log("onclick", d, i, this); }
+              },
+              legend: {
+                  show: false
+              },
+              bindto: '#' + donutId,
+              axis: {
+                  x: {
+                      label: 'Sepal.Width'
+                  },
+                  y: {
+                      label: 'Petal.Width'
+                  }
+              },
+              donut: {
+                  label: {
+                      format: function (d, ratio) { return ""; }
+                  },
+                  title: "" + ((parseInt(total)===0) ? 0 : Math.round(correct * 100 / total)) + "%"
+              },
+              color: {
+                  pattern: [color1, color2]
+              },
+              zoom: {
+                  enabled: true
+              }
+          });
+      }
+
+
+      var months =['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      function createLineChart(lineChartId, categoriesArray, isPercentage, columnsArray, colorsArray, yLabel) {
+          //console.log('-------------- attemptedDateArray=' + JSON.stringify(columnsArray));
+          var categoryDates = [];
+          var categoryAssessmentNames = [];
+          for (var i=0; i<categoriesArray.length; i++) {
+              var idx = categoriesArray[i].indexOf(',');
+              categoryDates[categoryDates.length] = categoriesArray[i].substring(0, idx);
+              categoryAssessmentNames[categoryAssessmentNames.length] = categoriesArray[i].substring(idx+1, categoriesArray[i].length);
+          }
+          var line = c3.generate({
+              data: {
+                  columns: columnsArray
+              },
+              bindto: '#' + lineChartId,
+              point: {
+                  r: "10"
+              },
+              color: {
+                  pattern: colorsArray
+              },
+              axis : {
+                  y: {
+                      min: 0,
+                      max: ((isPercentage ? 100 : ((columnsArray[2])[columnsArray[2].length-1])) * 1.5),
+                      label: {
+                          text: yLabel,
+                          position: 'outer-middle'
+                      },
+                      tick: {
+                          format: function (y) { return (isPercentage ? ((y > 100) ? '' : getTillOneDecimalPlace(y, 1)) : ((y > ((columnsArray[2])[columnsArray[2].length-1])) ? '' : getTillOneDecimalPlace(y, 1))); }
+                      }
+                  },
+                  x : {
+                      type : 'category',
+                      categories: categoryDates,
+                      tick: {
+                          centered: true
+                      }
+                  }
+              },
+              zoom: {
+                  enabled: false
+              },
+              legend: {
+                  show: false
+              }
+          });
+
+          // Add x-axis 2nd label
+          var j = 0;
+          d3.select('#' + lineChartId).selectAll('.c3-axis-x').selectAll('.tick').each(
+                  function(d, i) {
+                      d3.select(this).append("text")
+                              .attr("x", -20)
+                              .attr("y", 26)
+                              .attr("fill", "#626262")
+                              .text(categoryAssessmentNames[j++]);
+
+                      // Add top legends
+                      var x = d3.transform(d3.select(this).attr("transform")).translate[0] + d3.transform(d3.select(this.parentNode).attr("transform")).translate[0] - 10;
+                      d3.select(this.parentNode.parentNode).append("image")
+                              .attr("xlink:href", (assetPath+"/images/reports/tri_color_tip.svg"))
+                              .attr("x", x)
+                              .attr("y", 0)
+                              .attr("width", 30)
+                              .attr("height", 60);
+                      d3.select(this.parentNode.parentNode).append("text")
+                              .attr("x", x+8)
+                              .attr("y", 12)
+                              .attr("font-size", "8")
+                              .attr("fill", "#FFFFFF")
+                              .text(getTillOneDecimalPlace(columnsArray[0][j]));
+                      d3.select(this.parentNode.parentNode).append("text")
+                              .attr("x", x+8)
+                              .attr("y", 31)
+                              .attr("font-size", "8")
+                              .attr("fill", "#FFFFFF")
+                              .text(getTillOneDecimalPlace(columnsArray[1][j]));
+                      d3.select(this.parentNode.parentNode).append("text")
+                              .attr("x", x+8)
+                              .attr("y", 50)
+                              .attr("font-size", "8")
+                              .attr("fill", "#FFFFFF")
+                              .text(getTillOneDecimalPlace(columnsArray[2][j]));
+                  });
+      }
+
+      function setHTML(elementID) {
+          //$("#" + elementID).html(eval("reportJSON." + elementID));
+          document.getElementById(elementID).innerHTML = eval("reportJSON." + elementID);
+          //console.log('value of reportJSON.' + elementID + ' = ' + eval("reportJSON." + elementID) + ', val=' + reportJSON.studentProfile.name);
+      }
+
+      function setHTMLValue(elementID, value) {
+          //$("#" + elementID).html(value);
+          document.getElementById(elementID).innerHTML = value;
+          //console.log('value of reportJSON.' + elementID + ' v= ' + value);
+      }
+      function createSummaryInfo(totalStudents,rank) {
+          var rank = parseInt(rank);
+          var totalStudents = parseInt(totalStudents);
+          var percentile = getPercentile(rank,totalStudents);
+          return '<table style="width:100%;"><tr><td><span class="gray_text">Students taken test:</span>'+totalStudents+'</td><td><span class="gray_text">My Rank:</span>'+rank+'</td><td><span class="gray_text">'+percentile+' Percentile ( *percentile is % position in rank )</span></td></tr></table><hr>'
+      }
+      function createSummary(summaryID, aggregateSummary, studentSummary, topperSummary, totalScore, numberOfQuestions, numberOfQuestionAttempts, numberOfTopperQuestionAttempts) {
+          var summaryHTML = '        <table border="0" cellspacing="0" cellpadding="0" style="width: 98%">'+
+                  '        <tr>'+
+                  '            <td><div style="width: 15%; height: 100px; text-align: center; vertical-align: middle;"><br/><%= wicked_pdf_image_tag "reports/score_icon.svg" %> <br/><span class="lightGrayNames">Score</span></div></td>'+
+                  '            <td style="border-left: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut1"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>My Score</td></tr><tr><td style="border-top: 1px solid #333;">' + getTillOneDecimalPlace(parseFloat(studentSummary.score)) + ' <i>out of</i> ' + totalScore + '</td></tr></table></td></tr></table></td>'+
+                  '            <td><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut2"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Topper\'s Score</td></tr><tr><td style="border-top: 1px solid #333;">' + getTillOneDecimalPlace(parseFloat(topperSummary.score)) + ' <i>out of</i> ' + totalScore + '</td></tr></table></td></table></div></td>'+
+                  '            <td><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut3"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Class Average Score</td></tr><tr><td style="border-top: 1px solid #333;">' + getTillOneDecimalPlace(parseFloat(aggregateSummary.averageScore)) + ' <i>out of</i> ' + totalScore + '</td></tr></table></td></tr></table></div></td>'+
+                  '        </tr>'+
+                  '        <tr style="border-top: 1px dashed #AFBDC5;">'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><div style="width: 15%; height: 100px; text-align: center; vertical-align: middle;"><br/><%= wicked_pdf_image_tag "reports/attempt_rate.svg" %> <br/><span class="lightGrayNames">Attempt Rate</span></div></td>'+
+                  '            <td style="border-left: 1px dashed #AFBDC5; border-top: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut4"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>My Attempt Rate</td></tr><tr><td style="border-top: 1px solid #333;">' + parseInt(studentSummary.questionAttempts) + ' <i>out of</i> ' + numberOfQuestions + '</td></tr></table></td></tr></table></td>'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut5"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Topper\'s Attempt Rate</td></tr><tr><td style="border-top: 1px solid #333;">' + parseInt(topperSummary.questionAttempts) + ' <i>out of</i> ' + numberOfQuestions + '</td></tr></table></td></table></td>'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut6"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Class Average Attempt Rate</td></tr><tr><td style="border-top: 1px solid #333;">' + getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)) + ' <i>out of</i> ' + numberOfQuestions + '</td></tr></table></td></tr></table></td>'+
+                  '        </tr>'+
+                  '        <tr>'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><div style="width: 15%; height: 100px; text-align: center; vertical-align: middle;"><br/><%= wicked_pdf_image_tag "reports/accuracy_icon.svg" %> <br/><span class="lightGrayNames">Accuracy</span></div></td>'+
+                  '            <td style="border-left: 1px dashed #AFBDC5; border-top: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut7"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>My Accuracy</td></tr><tr><td style="border-top: 1px solid #333;">' + parseInt(studentSummary.correctQuestionAttempts) + ' <i>out of</i> ' + parseInt(studentSummary.questionAttempts) + '</td></tr></table></td></tr></table></td>'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut8"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Topper\'s Accuracy</td></tr><tr><td style="border-top: 1px solid #333;">' + parseInt(topperSummary.correctQuestionAttempts) + ' <i>out of</i> ' + parseInt(topperSummary.questionAttempts) + '</td></tr></table></td></tr></table></td>'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><table border="0" cellspacing="0" cellpadding="0"><tr><td><div style="width: 100px; height: 100px;" id="' + summaryID + '_donut9"></div></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Class Average Accuracy</td></tr><tr><td style="border-top: 1px solid #333;">' + getTillOneDecimalPlace(parseFloat(aggregateSummary.averageCorrectQuestionAttempts)) + ' <i>out of</i> ' + getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)) + '</td></tr></table></td></tr></table></td>'+
+                  '        </tr>'+
+                  '        <tr>'+
+                  '            <td style="border-top: 1px dashed #AFBDC5;"><div style="width: 15%; height: 100px; text-align: center; vertical-align: middle;"><br/><%= wicked_pdf_image_tag "reports/speed_icon.svg" %> <br/><span class="lightGrayNames">Speed</span></div></td>'+
+                  '            <td colspan="3" style="border-left: 1px dashed #AFBDC5; border-top: 1px dashed #AFBDC5;">'+
+                  '                <table border="0" cellspacing="0" cellpadding="20">'+
+                  '										 <tr style="font-size: 12px;"><td></td><td style="padding-bottom: 0px;  ">Mine</td><td style="padding-bottom: 0px; ">Topper\'s</td><td  style="padding-bottom: 0px; ">Class Average</td></tr>'+
+                  '                    <tr><td rowspan="3"><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Total Time Allotted</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(maxDuration) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Time Spent</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(parseInt(studentSummary.timeSpent)) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Time Spent</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(parseInt(topperSummary.timeSpent)) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Time Spent</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(parseInt(aggregateSummary.averageTime)) + '</td></tr></table></td></tr>'+
+                  '                    <tr><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Time per Question</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(parseInt(studentSummary.timeSpent)/numberOfQuestions) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Time per Question</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(parseInt(topperSummary.timeSpent)/numberOfQuestions) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Time per Question</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(parseInt(aggregateSummary.averageTime)/numberOfQuestions) + '</td></tr></table></td></tr>'+
+                  '                    <tr><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Un-used Time</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(maxDuration-parseInt(studentSummary.timeSpent)) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Un-used Time</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(maxDuration-parseInt(topperSummary.timeSpent)) + '</td></tr></table></td><td><table class="gpaText" border="0" cellspacing="0" cellpadding="0"><tr><td>Un-used Time</td></tr><tr><td style="border-top: 1px solid #333;">' + getTimeString(maxDuration-parseInt(aggregateSummary.averageTime)) + '</td></tr></table></td></tr>'+
+                  '                </table>'+
+                  '            </td>'+
+                  '        </tr>'+
+                  '<tr><td colspan="4" style="text-align:right; font-size:8px;"> * Time taken may not have been captured in some cases</td></tr>'+
+                  '        </table>'+
+                  '';
+
+          return summaryHTML;
+      }
+
+      function createDonuts(summaryID, aggregateSummary, studentSummary, topperSummary, totalScore, numberOfQuestions) {
+          // dark color, light color
+          if (getTillOneDecimalPlace(parseFloat(studentSummary.score)) < 0){
+              createDonut(summaryID + '_donut1', '#3BAFDA', '#FF0000', getTillOneDecimalPlace(parseFloat(studentSummary.score)), totalScore, "correct", "wrong");
+              createDonut(summaryID + '_donut3', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageScore)), totalScore, "correct", "wrong");
+
+              if (getTillOneDecimalPlace(parseFloat(aggregateSummary.averageScore)) < 0){
+                  createDonut(summaryID + '_donut1', '#3BAFDA', '#FF0000', getTillOneDecimalPlace(parseFloat(studentSummary.score)), totalScore, "correct", "wrong");
+                  createDonut(summaryID + '_donut3', '#3BAFDA', '#FF0000', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageScore)), totalScore, "correct", "wrong");
+
+              }
+              createDonut(summaryID + '_donut2', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(topperSummary.score)), totalScore, "correct", "wrong");
+              createDonut(summaryID + '_donut4', '#3BAFDA', '#D0D2D3', parseInt(studentSummary.questionAttempts), numberOfQuestions, "attempted", "missed");
+              createDonut(summaryID + '_donut5', '#3BAFDA', '#D0D2D3', parseInt(topperSummary.questionAttempts), numberOfQuestions, "attempted", "missed");
+              createDonut(summaryID + '_donut6', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)), numberOfQuestions, "attempted", "missed");
+              createDonut(summaryID + '_donut7', '#3BAFDA', '#D0D2D3', parseInt(studentSummary.correctQuestionAttempts), parseInt(studentSummary.questionAttempts), "correct", "wrong");
+              createDonut(summaryID + '_donut8', '#3BAFDA', '#D0D2D3', parseInt(topperSummary.correctQuestionAttempts), parseInt(topperSummary.questionAttempts), "correct", "wrong");
+              createDonut(summaryID + '_donut9', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageCorrectQuestionAttempts)), getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)), "correct", "wrong");
+
+          }
+          else if (parseInt(studentSummary.correctQuestionAttempts) == 0 || parseInt(topperSummary.correctQuestionAttempts) == 0 || getTillOneDecimalPlace(parseFloat(aggregateSummary.averageCorrectQuestionAttempts)) == 0 ){
+              createDonut(summaryID + '_donut1', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(studentSummary.score)), totalScore, "correct", "wrong");
+              createDonut(summaryID + '_donut2', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(topperSummary.score)), totalScore, "correct", "wrong");
+              createDonut(summaryID + '_donut3', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageScore)), totalScore, "correct", "wrong");
+              createDonut(summaryID + '_donut4', '#3BAFDA', '#D0D2D3', parseInt(studentSummary.questionAttempts), numberOfQuestions, "attempted", "missed");
+              createDonut(summaryID + '_donut5', '#3BAFDA', '#D0D2D3', parseInt(topperSummary.questionAttempts), numberOfQuestions, "attempted", "missed");
+              createDonut(summaryID + '_donut6', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)), numberOfQuestions, "attempted", "missed");
+              createDonut(summaryID + '_donut7', '#3BAFDA', '#D0D2D3', parseInt(studentSummary.correctQuestionAttempts), numberOfQuestions, "correct", "wrong");
+              createDonut(summaryID + '_donut8', '#3BAFDA', '#D0D2D3', parseInt(topperSummary.correctQuestionAttempts), parseInt(topperSummary.questionAttempts), "correct", "wrong");
+              createDonut(summaryID + '_donut9', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageCorrectQuestionAttempts)), getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)), "correct", "wrong");
+
+
+          }
+          else{
+          createDonut(summaryID + '_donut1', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(studentSummary.score)), totalScore, "correct", "wrong");
+          createDonut(summaryID + '_donut2', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(topperSummary.score)), totalScore, "correct", "wrong");
+          createDonut(summaryID + '_donut3', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageScore)), totalScore, "correct", "wrong");
+          createDonut(summaryID + '_donut4', '#3BAFDA', '#D0D2D3', parseInt(studentSummary.questionAttempts), numberOfQuestions, "attempted", "missed");
+          createDonut(summaryID + '_donut5', '#3BAFDA', '#D0D2D3', parseInt(topperSummary.questionAttempts), numberOfQuestions, "attempted", "missed");
+          createDonut(summaryID + '_donut6', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)), numberOfQuestions, "attempted", "missed");
+          createDonut(summaryID + '_donut7', '#3BAFDA', '#D0D2D3', parseInt(studentSummary.correctQuestionAttempts), parseInt(studentSummary.questionAttempts), "correct", "wrong");
+          createDonut(summaryID + '_donut8', '#3BAFDA', '#D0D2D3', parseInt(topperSummary.correctQuestionAttempts), parseInt(topperSummary.questionAttempts), "correct", "wrong");
+          createDonut(summaryID + '_donut9', '#3BAFDA', '#D0D2D3', getTillOneDecimalPlace(parseFloat(aggregateSummary.averageCorrectQuestionAttempts)), getTillOneDecimalPlace(parseFloat(aggregateSummary.averageQuestionAttempts)), "correct", "wrong");
+      }}
+
+      var maxScore;
+      var maxDuration;
+      var numberOfQuestions;
+      var numberOfSections;
+  </script>
+</head>
+<body>
+
+<div id="head_content">
+  <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+      <td style="text-align: left; width: 20px;">&nbsp;</td>
+      <td style="text-align: left;"><%= wicked_pdf_image_tag 'abcde_logo.svg', id:'heading.ignitorLogoUrl', style:"height:6em;width:auto;"%></td>
+      <td style="text-align: center; vertical-align: bottom;"><h1>Assessment Report</h1></td>
+      <td style="text-align: right;"><img id="heading.instituteLogoUrl" src="" style="height:6em;width:auto;"/></td>
+      <td style="text-align: right; width: 20px;">&nbsp;</td>
+    </tr>
+  </table>
+</div>
+<hr/>
+
+<div id="first-ribbon" class="ribbon-container">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/student_profile_icon.svg" %> &nbsp;&nbsp;Student Profile</h2>
+  <table cellpadding="0" cellspacing="0" width="100%" class="gray_text">
+    <tr><td style="width: 33%; border-left: 0px; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Name</span><br/><div id="studentProfile.name"></div></td><td style="width: 33%; border-left: 1px solid #AFBDC5; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Student ID</span><br/><div id="studentProfile.studentID"></div></td><td style="width: 33%; border-left: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">School ID</span><br/><div id="studentProfile.schoolID"></div></td></tr>
+    <tr><td style="width: 33%; border-left: 0px; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Class</span><br/><div id="studentProfile.class"></div></td>
+      <!--<td style="width: 33%; border-left: 1px solid #AFBDC5; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><font color="#A6A8AB">Group</font><br/><div id="studentProfile.Group"></div></td>-->
+      <td style="width: 33%; border-left: 1px solid #AFBDC5; border-right: 1px solid #AFBDC5; padding-left: 40px;"><span class="thincaps">Edutor ID</span><br/><div id="studentProfile.edutorID"></div></td>
+      <td style="width: 33%; border-left: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Updated On</span><div id="studentProfile.updatedOn"></div></td></tr>
+    <tr><td style="width: 33%; border-left: 0px; border-right: 1px solid #AFBDC5; padding-left: 40px;"><span class="thincaps">Section</span><br/><div id="studentProfile.Section"></div></td><td style="width: 33%; border-left: 1px solid #AFBDC5; padding-left: 40px;">&nbsp;</td></tr>
+  </table>
+</div>
+
+<div id="second-ribbon" class="ribbon-container">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/assessment_details_icon.svg" %> &nbsp;&nbsp;Assessment Details</h2>
+  <table cellpadding="0" cellspacing="0" width="100%" class="gray_text">
+    <tr><td style="width: 33%; border-left: 0px; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Assessment Name</span><br/><div id="assessmentDetails.assessmentName"></div></td><td style="width: 33%; border-left: 1px solid #AFBDC5; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Duration</span><br/><div id="assessmentDetails.maximumDuration"></div></td></td><td style="width: 33%; border-left: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Number of Correct Attempts</span><br/><div id="studentQuizAttemptSummary.correctQuestionAttempts"></div></td></tr>
+    <tr><td style="width: 33%; border-left: 0px; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Subject</span><br/><div id="assessmentDetails.Subject"></div></td><td style="width: 33%; border-left: 1px solid #AFBDC5; border-right: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Number of Questions</span><br/><div id="assessmentDetails.numberOfQuestions"></div></td></td><td style="width: 33%; border-left: 1px solid #AFBDC5; padding-left: 40px; padding-bottom: 10px;"><span class="thincaps">Number of Wrong Attempts</span><br/><div id="studentQuizAttemptSummary.numberOfWrongAttempts"></div></td></tr>
+    <tr><td style="width: 33%; border-left: 0px; border-right: 1px solid #AFBDC5; padding-left: 40px;"><span class="thincaps">Attempted Date</span><br/><div id="studentQuizAttemptSummary.attemptedDate"></div></td><td style="width: 33%; border-left: 1px solid #AFBDC5; border-right: 1px solid #AFBDC5; padding-left: 40px;"><span class="thincaps">Total Marks</span><br/><div id="assessmentDetails.maximumMarks"></div></td></td><td style="width: 33%; border-left: 1px solid #AFBDC5; padding-left: 40px;"><span class="thincaps">Not Attempted</span><br/><div id="assessmentDetails.notAttempted"></div></td></tr>
+  </table>
+</div>
+
+
+<div id="third-ribbon" class="ribbon-container" style="page-break-before:always;">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/summary_report_icon.svg" %> &nbsp;&nbsp;Summary Report</h2>
+  <div id="summaryInfo"></div>
+  <div id="summaryReport" style="vertical-align: middle;">
+  </div>
+</div>
+
+<!-- ToDo: Add pdf page breaks? -->
+
+<div id="fourth-ribbon" class="ribbon-container" style="page-break-before:always;">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/sectionwise_summary_report_icon.svg" %> &nbsp;&nbsp;Section Wise Summary Report</h2>
+
+  <div style="background: none; text-align: left; color: #626262;"><h3>Sections Score</h3></div>
+  <div id="sectionsSummary" class="horizontal-bar">
+  </div>
+  <br/>
+  <div id="sectionsDetail" class="horizontal-bar">
+  </div>
+
+  <div id="sectionReport" style="vertical-align: middle;">
+  </div>
+</div>
+
+<div id="fifth-ribbon" class="ribbon-container" style="page-break-before:always;">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/historical_performance_icon.svg" %> &nbsp;&nbsp;Historical Performance</h2>
+  <div style="width:100%; text-align: center; vertical-align: middle;">
+    <table border="0" cellspacing="0" cellpadding="4" style="text-align: left; vertical-align: middle; width: 100%;">
+      <tr><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; width: 25px; height: 28px;"><%= wicked_pdf_image_tag "reports/score_small.png" %> </td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; text-align: center; font-size: 75%; width: 56%; height: 28px;">Assessment Score &nbsp;|&nbsp;  Comparison Graph</td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; font-size: 54%; width: 320px; float: right;vertical-align: middle; height: 28px;"><table cellpadding="0" cellspacing="0" height="100%"><tr><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_red.png" %></td><td style="font-size: 54%;">&nbsp;Self&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_blue.png" %></td><td style="font-size: 54%;">&nbsp;Class Topper&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_green.png" %></td><td style="font-size: 54%;">&nbsp;Class Average&nbsp;</td></tr></table></td></tr>
+    </table>
+  </div>
+  <br/>
+  <div style="width: 600px; text-align: center;" id="line1"></div> <!-- ToDo: (items / 2) percentage? consider height also -->
+  <br/>
+  <div width="100%">
+    <table border="0" cellspacing="0" cellpadding="4" style="text-align: left; vertical-align: middle; width: 100%;">
+      <tr><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; width: 25px; height: 28px;"><%= wicked_pdf_image_tag "reports/attempt_rate_small.png" %> </td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; text-align: center; font-size: 75%; width: 56%; height: 28px;">Assessment Attempt Rate &nbsp;|&nbsp; Comparison Graph</td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; font-size: 54%; width: 320px; float: right;vertical-align: middle; height: 28px;"><table cellpadding="0" cellspacing="0" height="100%"><tr><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_red.png" %></td><td style="font-size: 54%;">&nbsp;Self&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_blue.png" %></td><td style="font-size: 54%;">&nbsp;Class Topper&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_green.png" %></td><td style="font-size: 54%;">&nbsp;Class Average&nbsp;</td></tr></table></td></tr>
+    </table>
+  </div>
+  <br/>
+  <div style="width: 600px; text-align: center;" id="line2"></div>
+</div>
+
+
+<div id="sixth-ribbon" class="ribbon-container" style="page-break-before:always;">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/historical_performance_icon.svg" %> &nbsp;&nbsp;Historical Performance</h2>
+  <div width="100%">
+    <table border="0" cellspacing="0" cellpadding="4" style="text-align: left; vertical-align: middle; width: 100%;">
+      <tr><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; width: 25px; height: 28px;"><%= wicked_pdf_image_tag "reports/accuracy_small.png" %> </td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; text-align: center; font-size: 75%; width: 56%; height: 28px;">Assessment Accuracy &nbsp;|&nbsp; Comparison Graph</td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; font-size: 54%; width: 320px; float: right;vertical-align: middle; height: 28px;"><table cellpadding="0" cellspacing="0" height="100%"><tr><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_red.png" %></td><td style="font-size: 54%;">&nbsp;Self&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_blue.png" %></td><td style="font-size: 54%;">&nbsp;Class Topper&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_green.png" %></td><td style="font-size: 54%;">&nbsp;Class Average&nbsp;</td></tr></table></td></tr>
+    </table>
+  </div>
+  <br/>
+  <div style="width: 600px; text-align: center;" id="line3"></div> <!-- ToDo: (items / 2) percentage? consider height also -->
+  <br/>
+
+<!--  <div width="100%">
+    <table border="0" cellspacing="0" cellpadding="4" style="text-align: left; vertical-align: middle; width: 100%;">
+      <tr><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; width: 25px; height: 28px;"><%= wicked_pdf_image_tag "reports/speed_small.png" %> </td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; text-align: center; font-size: 75%; width: 56%; height: 28px;">Assessment Speed &nbsp;|&nbsp; Comparison Graph</td><td style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; font-size: 54%; width: 320px; float: right;vertical-align: middle; height: 28px;"><table cellpadding="0" cellspacing="0" height="100%"><tr><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_red.png" %></td><td style="font-size: 54%;">&nbsp;Self&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_blue.png" %></td><td style="font-size: 54%;">&nbsp;Class Topper&nbsp;</td><td>&nbsp;&nbsp;<%= wicked_pdf_image_tag "reports/tri_circles_green.png" %></td><td style="font-size: 54%;">&nbsp;Class Average&nbsp;</td></tr></table></td></tr>
+    </table>
+  </div>-->
+
+  <br/>
+  <div style="width: 600px; text-align: center;" id="line4"></div>
+</div>
+
+
+<div id="seventh-ribbon" class="ribbon-container" style="page-break-before:always;">
+  <h2 style="text-align: left;">&nbsp;&nbsp;&nbsp; <%= wicked_pdf_image_tag "reports/question_wise_details.svg" %>&nbsp;&nbsp;Question Wise Details</h2>
+  <div id="questionWiseDetails">
+  </div>
+</div>
+
+<br/>
+
+
+<script>
+
+    $(document).ready(
+            function() {
+                try
+                {
+
+                    //alert('reportJSON=' + reportJSON);
+                    //document.getElementById("heading.ignitorLogoUrl").src = reportJSON.heading.ignitorLogoUrl;
+                    document.getElementById("heading.instituteLogoUrl").src = reportJSON.heading.instituteLogoUrl;
+
+                    maxScore = getTillOneDecimalPlace(parseFloat(reportJSON.assessmentDetails.maximumMarks));
+                    maxDuration = parseInt(reportJSON.assessmentDetails.maximumDuration);
+                    numberOfQuestions = parseInt(reportJSON.assessmentDetails.numberOfQuestions);
+                    numberOfSections = reportJSON.sectionDetails.length;
+                    //alert('maxScore=' + maxScore);
+
+                    setHTML("studentProfile.name");
+                    setHTML("studentProfile.class");
+                    setHTML("studentProfile.Section");
+                    setHTML("studentProfile.studentID");
+                    //setHTML("studentProfile.Group");
+                    setHTML("studentProfile.edutorID");
+                    setHTML("studentProfile.schoolID");
+                    setHTML("studentProfile.updatedOn");
+
+                    setHTML("assessmentDetails.assessmentName");
+                    setHTML("assessmentDetails.Subject");
+                    setHTMLValue("studentQuizAttemptSummary.attemptedDate", getDateString(reportJSON.studentQuizAttemptSummary.attemptedDate));
+                    setHTMLValue("assessmentDetails.maximumDuration", getTimeString(maxDuration));
+                    setHTML("assessmentDetails.numberOfQuestions");
+                    setHTML("assessmentDetails.maximumMarks");
+                    setHTML("studentQuizAttemptSummary.correctQuestionAttempts");
+                    setHTMLValue("studentQuizAttemptSummary.numberOfWrongAttempts", parseInt(reportJSON.studentQuizAttemptSummary.questionAttempts) - parseInt(reportJSON.studentQuizAttemptSummary.correctQuestionAttempts));
+                    setHTMLValue("assessmentDetails.notAttempted", parseInt(reportJSON.assessmentDetails.numberOfQuestions) - parseInt(reportJSON.studentQuizAttemptSummary.questionAttempts));
+
+                    /* ---------------------------- BEGIN - summary ---------------------------- */
+                    document.getElementById("summaryReport").innerHTML = createSummary("summaryReport", reportJSON.aggregateAssessmentSummary, reportJSON.studentQuizAttemptSummary, reportJSON.topperQuizAttemptSummary, maxScore, parseInt(reportJSON.assessmentDetails.numberOfQuestions),parseInt(reportJSON.studentQuizAttemptSummary.questionAttempts),parseInt(reportJSON.topperQuizAttemptSummary.questionAttempts));
+                    document.getElementById("summaryInfo").innerHTML = createSummaryInfo(reportJSON.aggregateAssessmentSummary.numberOfTestTakers,reportJSON.studentRank);
+                    createDonuts("summaryReport", reportJSON.aggregateAssessmentSummary, reportJSON.studentQuizAttemptSummary, reportJSON.topperQuizAttemptSummary, maxScore, parseInt(reportJSON.assessmentDetails.numberOfQuestions));
+
+                    // assert (reportJSON.sectionWiseScore.numberOfSections === reportJSON.sectionWiseScore.sectionScores.length === reportJSON.questionWiseDetails.sectionDetails.length);
+                    if (0 < numberOfSections) {
+                        var sectionHTMLString = '';
+                        for (var i=0; i<numberOfSections; i++) {
+                            sectionHTMLString += '</div>'+'<br/>' +
+                                    '<div style="page-break-before:always;">&nbsp;</div>' +
+                                    '<div class="sectionHeading" >&nbsp;Section ' + reportJSON.sectionDetails[i].name + '</div><br>' +
+                                    '<div id="sectionReport_' + i + '" style="vertical-align: middle;">' +
+                                    createSummary("sectionReport_" + i, reportJSON.aggregateSectionSummaries[i], reportJSON.studentSectionAttemptSummaries[i], reportJSON.topperSectionAttemptSummaries[i], parseInt(reportJSON.sectionDetails[i].maximumMarks), parseInt(reportJSON.sectionDetails[i].numberOfQuestions)) +
+                                    '</div>'+'<div>';
+                        }
+                        document.getElementById("sectionReport").innerHTML = sectionHTMLString;
+                        for (var i=0; i<numberOfSections; i++) {
+                            createDonuts("sectionReport_" + i, reportJSON.aggregateSectionSummaries[i], reportJSON.studentSectionAttemptSummaries[i], reportJSON.topperSectionAttemptSummaries[i], parseInt(reportJSON.sectionDetails[i].maximumMarks), parseInt(reportJSON.sectionDetails[i].numberOfQuestions));
+                        }
+                    } else {
+                        // No sections - hide "Section Wise Summary Report"
+                        /*document.getElementById("fourth-ribbon").style.height = "0px";
+                         document.getElementById("fourth-ribbon").style.width = "0px";
+                         document.getElementById("fourth-ribbon").style.visibility = "hidden";*/
+                        document.getElementById("fourth-ribbon").parentNode.removeChild( document.getElementById("fourth-ribbon") );
+                    }
+                    /* ---------------------------- END - summary ---------------------------- */
+
+                    /* ---------------------------- BEGIN - historical performance ---------------------------- */
+                    var colorsArray = ['#FC6E51', '#A0D468', '#48CFAD']; // My, Average, Topper
+                    var numberOfComparisonTests = reportJSON.historicalPerformance.length;
+                    if (0 < numberOfComparisonTests) {
+                        var historicalTestScores = reportJSON.historicalPerformance;
+                        var myScoreArray = new Array('My Score');
+                        var averageScoreArray = new Array('Average Score');
+                        var topperScoreArray = new Array('Topper Score');
+                        var myAttemptRateArray = new Array('My Attempt Rate');
+                        var averageAttemptRateArray = new Array('Average Attempt Rate');
+                        var topperAttemptRateArray = new Array('Topper Attempt Rate');
+                        var myAccuracyArray = new Array('My Accuracy');
+                        var averageAccuracyArray = new Array('Average Accuracy');
+                        var topperAccuracyArray = new Array('Topper Accuracy');
+                        var mySpeedArray = new Array('My Speed');
+                        var averageSpeedArray = new Array('Average Speed');
+                        var topperSpeedArray = new Array('Topper Speed');
+                        var attemptedDateArray = new Array();
+                        for (var i=0; i<numberOfComparisonTests; i++) {
+                            var maxDurationOfTest = parseInt(historicalTestScores[i].assessmentDetails.maximumDuration);
+                            var maxMarksOfTest = parseInt(historicalTestScores[i].assessmentDetails.maximumMarks);
+                            if (historicalTestScores[i].studentQuizAttemptSummary) {
+                                myScoreArray[myScoreArray.length] = getTillOneDecimalPlace(parseFloat(historicalTestScores[i].studentQuizAttemptSummary.score) * 100 / maxMarksOfTest);
+                                myAttemptRateArray[myAttemptRateArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].studentQuizAttemptSummary.questionAttempts) * 100 / maxMarksOfTest);
+                                myAccuracyArray[myAccuracyArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].studentQuizAttemptSummary.correctQuestionAttempts) * 100 / parseInt(historicalTestScores[i].studentQuizAttemptSummary.questionAttempts));
+                                if (0 < maxDurationOfTest) {
+                                    mySpeedArray[mySpeedArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].studentQuizAttemptSummary.timeSpent) / 60);//* 100 / maxDurationOfTest
+                                }
+                                else {
+                                    mySpeedArray[mySpeedArray.length] = getTillOneDecimalPlace(maxDurationOfTest / 60);
+                                }
+                            } else {
+                                myScoreArray[myScoreArray.length] = null;
+                                myAttemptRateArray[myAttemptRateArray.length] = null;
+                                myAccuracyArray[myAccuracyArray.length] = null;
+                                mySpeedArray[mySpeedArray.length] = null;
+                            }
+                            averageScoreArray[averageScoreArray.length] = getTillOneDecimalPlace(parseFloat(historicalTestScores[i].aggregateAssessmentSummary.averageScore) * 100 / maxMarksOfTest);
+                            topperScoreArray[topperScoreArray.length] = getTillOneDecimalPlace(parseFloat(historicalTestScores[i].topperQuizAttemptSummary.score) * 100 / maxMarksOfTest);
+                            averageAttemptRateArray[averageAttemptRateArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].aggregateAssessmentSummary.averageQuestionAttempts) * 100 / maxMarksOfTest);
+                            topperAttemptRateArray[topperAttemptRateArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].topperQuizAttemptSummary.questionAttempts) * 100 / maxMarksOfTest);
+                            averageAccuracyArray[averageAccuracyArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].aggregateAssessmentSummary.averageCorrectQuestionAttempts) * 100 / parseInt(historicalTestScores[i].aggregateAssessmentSummary.averageQuestionAttempts));
+                            topperAccuracyArray[topperAccuracyArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].topperQuizAttemptSummary.correctQuestionAttempts) * 100 / parseInt(historicalTestScores[i].topperQuizAttemptSummary.questionAttempts));
+                            if (0 < maxDurationOfTest) {
+                                averageSpeedArray[averageSpeedArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].aggregateAssessmentSummary.averageTime) / 60);//* 100 / maxDurationOfTest
+                                topperSpeedArray[topperSpeedArray.length] = getTillOneDecimalPlace(parseInt(historicalTestScores[i].topperQuizAttemptSummary.timeSpent) / 60);//* 100 / maxDurationOfTest
+                            }
+                            else {
+                                averageSpeedArray[averageSpeedArray.length] = getTillOneDecimalPlace(maxDurationOfTest / 60);
+                                topperSpeedArray[topperSpeedArray.length] = getTillOneDecimalPlace(maxDurationOfTest / 60);
+                            }
+                            attemptedDateArray[attemptedDateArray.length] = getLineChartXFormat(parseInt(historicalTestScores[i].topperQuizAttemptSummary.attemptedDate)) + ',' + historicalTestScores[i].assessmentDetails.assessmentName;
+                        }
+
+                        // Add current assessment details last
+                        myScoreArray[myScoreArray.length] = getTillOneDecimalPlace(parseFloat(reportJSON.studentQuizAttemptSummary.score) * 100 / maxScore);
+                        averageScoreArray[averageScoreArray.length] = getTillOneDecimalPlace(parseFloat(reportJSON.aggregateAssessmentSummary.averageScore) * 100 / maxScore);
+                        topperScoreArray[topperScoreArray.length] = getTillOneDecimalPlace(parseFloat(reportJSON.topperQuizAttemptSummary.score) * 100 / maxScore);
+                        myAttemptRateArray[myAttemptRateArray.length] = parseInt(reportJSON.studentQuizAttemptSummary.questionAttempts) * 100 / maxScore;
+                        averageAttemptRateArray[averageAttemptRateArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.aggregateAssessmentSummary.averageQuestionAttempts) * 100 / maxScore);
+                        topperAttemptRateArray[topperAttemptRateArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.topperQuizAttemptSummary.questionAttempts) * 100 / maxScore);
+                        myAccuracyArray[myAccuracyArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.studentQuizAttemptSummary.correctQuestionAttempts) * 100 / parseInt(reportJSON.studentQuizAttemptSummary.questionAttempts));
+                        averageAccuracyArray[averageAccuracyArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.aggregateAssessmentSummary.averageCorrectQuestionAttempts) * 100 / parseInt(reportJSON.aggregateAssessmentSummary.averageQuestionAttempts));
+                        topperAccuracyArray[topperAccuracyArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.topperQuizAttemptSummary.correctQuestionAttempts) * 100 / parseInt(reportJSON.topperQuizAttemptSummary.questionAttempts));
+                        mySpeedArray[mySpeedArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.studentQuizAttemptSummary.timeSpent) / 60.0);//* 100 / maxDuration;
+                        averageSpeedArray[averageSpeedArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.aggregateAssessmentSummary.averageTime) / 60.0);//* 100 / maxDuration;
+                        topperSpeedArray[topperSpeedArray.length] = getTillOneDecimalPlace(parseInt(reportJSON.topperQuizAttemptSummary.timeSpent) / 60.0);//* 100 / maxDuration;
+                        attemptedDateArray[attemptedDateArray.length] = getLineChartXFormat(parseInt(reportJSON.topperQuizAttemptSummary.attemptedDate)) + ',' + reportJSON.assessmentDetails.assessmentName;
+
+                        // Create the actual line graphs
+                        createLineChart('line1', attemptedDateArray, true, [myScoreArray, averageScoreArray, topperScoreArray], colorsArray, 'Score (Percentage)');
+                        createLineChart('line2', attemptedDateArray, true, [myAttemptRateArray, averageAttemptRateArray, topperAttemptRateArray], colorsArray, 'Attempt Rate (Percentage)');
+                        createLineChart('line3', attemptedDateArray, true, [myAccuracyArray, averageAccuracyArray, topperAccuracyArray], colorsArray, 'Accuracy (Percentage)');
+                        //createLineChart('line4', attemptedDateArray, false, [mySpeedArray, averageSpeedArray, topperSpeedArray], colorsArray, 'Speed (Minutes)');
+                    }
+                    else {
+                        // No history comparisons - hide "Historical Performance"
+                        document.getElementById("fifth-ribbon").parentNode.removeChild( document.getElementById("fifth-ribbon") );
+                        document.getElementById("sixth-ribbon").parentNode.removeChild( document.getElementById("sixth-ribbon") );
+                    }
+                    /* ---------------------------- BEGIN - historical performance ---------------------------- */
+
+                    /* ---------------------------- BEGIN - question wise table ---------------------------- */
+                    numberOfQuestions = reportJSON.questionDetails.length; // For bug where question details are not available
+                    var questionTableinnerHTMLString = '';
+                    if (reportJSON.sectionDetails && 0 < reportJSON.sectionDetails.length) {
+                        var bloatedSectionDetails = JSON.parse( JSON.stringify( reportJSON.sectionDetails ) );
+                        var bloatedQuestionDetails = _.map(reportJSON.questionDetails, function(question){
+                            return _.extend(question, _.findWhere(reportJSON.studentQuestionAttemptSummaries, { id: question.id }));
+                        });
+                        bloatedQuestionDetails = _.map(bloatedQuestionDetails, function(question){
+                            return _.extend(question, _.findWhere(reportJSON.aggregateQuestionSummaries, { id: question.id }));
+                        });
+                        bloatedSectionDetails = _.map(bloatedSectionDetails, function(section){
+                            var sectionCopy = {};
+                            sectionCopy = section
+                            var questionsArray = section.questions
+                            questionsArray = _.map(questionsArray,function(questionNumber){
+                                return _.find(bloatedQuestionDetails, function(question){ return question.id == questionNumber; });
+                            });
+                            questionsArray = _.sortBy(questionsArray , function(question){ return question.number; });
+                            sectionCopy.questions = questionsArray;
+                            return sectionCopy;
+                        });
+                        //var numberOfQuestionSections = bloatedSectionDetails.length;
+                        _.each(bloatedSectionDetails,function(section){
+                            questionTableinnerHTMLString += '<br/>';
+                            questionTableinnerHTMLString += '<table class="gpaText1" border="0" cellspacing="0" cellpadding="4" width="100%" style="text-align: center; vertical-align: middle;">' +
+                                    '                        <tr class="sectionWiseQuestionAttemptsHeader" ><td>Section ' + section.name + '</td><td  class="sectionWiseQuestionAttemptsHeader" colspan="7">Attempt Details</td></tr>' +
+                                    '                        <tr><td style="border: 1px solid #AFBDC5;">Question Number</td><td style="border: 1px solid #AFBDC5;">Type</td><td style="border: 1px solid #AFBDC5;">Attempt</td><td style="border: 1px solid #AFBDC5;">Correct(?)</td><td style="border: 1px solid #AFBDC5;">Marks</td><td style="border: 1px solid #AFBDC5;">Time taken (secs)</td><td style="border: 1px solid #AFBDC5;">Correct % in class</td></tr>';
+                            _.each(section.questions,function(question){
+                                questionTableinnerHTMLString += '<tr><td style="border: 1px solid #AFBDC5; width: 10%;">' + question.number + '</td><td style="border: 1px solid #AFBDC5; width: 15%;">' + getFormattedQuestionType(question.type) + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">'+((question.attempt==="Y" || question.attempt==="y") ? '<%= wicked_pdf_image_tag "reports/yes_icon.svg"  %>' : '<%= wicked_pdf_image_tag "reports/no_icon.svg" %>')+'</td><td style="border: 1px solid #AFBDC5; width: 10%;">'+((question.correct==="Y" || question.correct==="y") ? '<%= wicked_pdf_image_tag "reports/correct_icon.svg"  %>' : '<%= wicked_pdf_image_tag "reports/wrong_icon.svg" %>')+'</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + getTillOneDecimalPlace(parseFloat(question.marks)) + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + question.timeTaken + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + ((0 === parseInt(question.totalAttempts)) ? 0 : Math.round(parseInt(question.correctAttempts) * 100 / parseInt(question.totalAttempts))) + '</td></tr>';
+                            })
+                            questionTableinnerHTMLString += '</table>';
+                        });
+/*                        var j = 0;
+                        for (var i=0; i<numberOfQuestionSections; i++) {
+                            if (0 < i) {
+                                questionTableinnerHTMLString += '<br/>';
+                            }
+                            questionTableinnerHTMLString += '                    <table class="gpaText" border="0" cellspacing="0" cellpadding="4" width="100%" style="text-align: center; vertical-align: middle;">' +
+                                    '                        <tr class="sectionWiseQuestionAttemptsHeader" ><td>Section ' + reportJSON.sectionDetails[i].name + '</td><td  class="sectionWiseQuestionAttemptsHeader" colspan="7">Attempt Details</td></tr>' +
+                                    '                        <tr><td style="border: 1px solid #AFBDC5;">Question Number</td><td style="border: 1px solid #AFBDC5;">Type</td><td style="border: 1px solid #AFBDC5;">Attempt</td><td style="border: 1px solid #AFBDC5;">Correct(?)</td><td style="border: 1px solid #AFBDC5;">Marks</td><td style="border: 1px solid #AFBDC5;">Time taken (secs)</td><td style="border: 1px solid #AFBDC5;">Correct % in class</td></tr>';
+
+                            //var numberOfQuestionsPerSection = parseInt(reportJSON.sectionDetails[i].numberOfQuestions);
+                            var numberOfQuestionsPerSection = reportJSON.sectionDetails[i].questions.length; // For bug where question details are not available
+                            var questionsInThisTable = j + numberOfQuestionsPerSection;
+                            for (; j<questionsInThisTable; j++) {
+                                var question = reportJSON.studentQuestionAttemptSummaries[j];
+                                questionTableinnerHTMLString += '<tr><td style="border: 1px solid #AFBDC5; width: 10%;">' + reportJSON.questionDetails[j].number + '</td><td style="border: 1px solid #AFBDC5; width: 15%;">' + getFormattedQuestionType(reportJSON.questionDetails[j].type) + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">'+((question.attempt==="Y" || question.attempt==="y") ? '<%= wicked_pdf_image_tag "reports/yes_icon.svg"  %>' : '<%= wicked_pdf_image_tag "reports/no_icon.svg" %>')+'</td><td style="border: 1px solid #AFBDC5; width: 10%;">'+((question.correct==="Y" || question.correct==="y") ? '<%= wicked_pdf_image_tag "reports/correct_icon.svg"  %>' : '<%= wicked_pdf_image_tag "reports/wrong_icon.svg" %>')+'</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + parseInt(question.marks) + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + question.timeTaken + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + ((0 === parseInt(reportJSON.aggregateQuestionSummaries[j].totalAttempts)) ? 0 : Math.round(parseInt(reportJSON.aggregateQuestionSummaries[j].correctAttempts) * 100 / parseInt(reportJSON.aggregateQuestionSummaries[j].totalAttempts))) + '</td></tr>';
+                            }
+                            questionTableinnerHTMLString += '</table>';
+                        }*/
+                    } else {
+                        questionTableinnerHTMLString += '<table border="0" cellspacing="0" cellpadding="4" width="100%" style="text-align: center; vertical-align: middle;">' +
+                                '                        <tr><td style="background-color: #FC6E51; color: white;">&nbsp;</td><td style="background-color: #FC6E51; color: white;" colspan="7">Attempt Details</td></tr>' +
+                                '                        <tr><td style="border: 1px solid #AFBDC5;">Question Number</td><td style="border: 1px solid #AFBDC5;">Type</td><td style="border: 1px solid #AFBDC5;">Attempt</td><td style="border: 1px solid #AFBDC5;">Correct(?)</td><td style="border: 1px solid #AFBDC5;">Marks</td><td style="border: 1px solid #AFBDC5;">Time taken (secs)</td><td style="border: 1px solid #AFBDC5;">Correct % in class</td></tr>';
+                        for (var j=0; j<numberOfQuestions; j++) {
+                            var question = reportJSON.studentQuestionAttemptSummaries[j];
+                            questionTableinnerHTMLString += '<tr><td style="border: 1px solid #AFBDC5; width: 10%;">' + reportJSON.questionDetails[j].number + '</td><td style="border: 1px solid #AFBDC5; width: 15%;">' + getFormattedQuestionType(reportJSON.questionDetails[j].type) + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">'+((question.attempt==="Y" || question.attempt==="y") ? '<%= wicked_pdf_image_tag "reports/yes_icon.svg"  %>' : '<%= wicked_pdf_image_tag "reports/no_icon.svg" %>')+'</td><td style="border: 1px solid #AFBDC5; width: 10%;">'+((question.correct==="Y" || question.correct==="y") ? '<%= wicked_pdf_image_tag "reports/correct_icon.svg"  %>' : '<%= wicked_pdf_image_tag "reports/wrong_icon.svg" %>')+'</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + getTillOneDecimalPlace(parseFloat(question.marks)) + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + question.timeTaken + '</td><td style="border: 1px solid #AFBDC5; width: 10%;">' + ((0 === parseInt(reportJSON.aggregateQuestionSummaries[j].totalAttempts)) ? 0 : Math.round(parseInt(reportJSON.aggregateQuestionSummaries[j].correctAttempts) * 100 / parseInt(reportJSON.aggregateQuestionSummaries[j].totalAttempts))) + '</td></tr>';
+                        }
+                        questionTableinnerHTMLString += '</table>';
+                    }
+                    document.getElementById("questionWiseDetails").innerHTML = questionTableinnerHTMLString; //createQuestionWiseDetails("questionWiseDetails", reportJSON.questionWiseDetails);
+                    /* ---------------------------- END - question wise table ---------------------------- */
+
+                    if (0 < numberOfSections) {
+                        var sectionsSummaryInnerHTML = '' +
+                                '        <table class="lightGrayNames" border="0" cellspacing="0" cellpadding="4" style="text-align: left; vertical-align: middle;">';
+                        for (var i=0; i<numberOfSections/2; i++) {
+                            sectionsSummaryInnerHTML += '' +
+                                    '            <tr>';
+                            if (0 === i) {
+                                sectionsSummaryInnerHTML += '<td rowspan="3" style="border-bottom: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5; ">Sections&nbsp;&nbsp;</td>';
+                            }
+                            var nextColumnI = i + 1 + Math.floor(numberOfSections/2);
+                            sectionsSummaryInnerHTML += '<td style="border-left: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5;';
+                            if (i === Math.floor(numberOfSections/2)) {
+                                sectionsSummaryInnerHTML += ' border-bottom: 1px solid #AFBDC5;';
+                            }
+                            sectionsSummaryInnerHTML += '"><div class= "yellowCircle">' + (i+1) + '&nbsp;&nbsp;</div></td><td style="border-top: 1px solid #AFBDC5;';
+                            if (i === Math.floor(numberOfSections/2)) {
+                                sectionsSummaryInnerHTML += ' border-bottom: 1px solid #AFBDC5;';
+                            }
+                            sectionsSummaryInnerHTML += '">Section ' + reportJSON.sectionDetails[i].name + '</td><td style="border-top: 1px solid #AFBDC5;';
+                            if (i === Math.floor(numberOfSections/2)) {
+                                sectionsSummaryInnerHTML += ' border-bottom: 1px solid #AFBDC5;';
+                            }
+                            sectionsSummaryInnerHTML += '">' + Math.round(parseInt(reportJSON.sectionDetails[i].maximumMarks) * 100 / maxScore) + '%&nbsp;&nbsp;</td><td style="border-left: 1px solid #AFBDC5; border-top: 1px solid #AFBDC5;';
+                            if (i === Math.floor(numberOfSections/2)) {
+                                sectionsSummaryInnerHTML += ' border-bottom: 1px solid #AFBDC5;';
+                            }
+                            sectionsSummaryInnerHTML += '">';
+                            if (nextColumnI < numberOfSections) {
+                                sectionsSummaryInnerHTML += '<div class= "yellowCircle">' + (nextColumnI+1) + '&nbsp;&nbsp;</div>';
+                            } else {
+                                sectionsSummaryInnerHTML += '&nbsp;';
+                            }
+                            sectionsSummaryInnerHTML += '</td><td style="border-top: 1px solid #AFBDC5;';
+                            if (i === Math.floor(numberOfSections/2)) {
+                                sectionsSummaryInnerHTML += ' border-bottom: 1px solid #AFBDC5;';
+                            }
+                            sectionsSummaryInnerHTML += '">';
+                            if (nextColumnI < numberOfSections) {
+                                sectionsSummaryInnerHTML += 'Section ' + reportJSON.sectionDetails[nextColumnI].name;
+                            } else {
+                                sectionsSummaryInnerHTML += '&nbsp;';
+                            }
+                            sectionsSummaryInnerHTML += '</td><td style="border-top: 1px solid #AFBDC5;';
+                            if (i === Math.floor(numberOfSections/2)) {
+                                sectionsSummaryInnerHTML += ' border-bottom: 1px solid #AFBDC5;';
+                            }
+                            sectionsSummaryInnerHTML += '">';
+                            if (nextColumnI < numberOfSections) {
+                                sectionsSummaryInnerHTML += Math.round(parseInt(reportJSON.sectionDetails[nextColumnI].maximumMarks) * 100 / maxScore) + '%&nbsp;&nbsp;';
+                            } else {
+                                sectionsSummaryInnerHTML += '&nbsp;';
+                            }
+                            sectionsSummaryInnerHTML += '</td></tr>';
+                        }
+                        sectionsSummaryInnerHTML += '        </table>';
+                        document.getElementById("sectionsSummary").innerHTML = sectionsSummaryInnerHTML;
+
+                        if (0 < numberOfSections) {
+                            var sectionsDetailInnerHTML = '' +
+                                    '<table class="lightGrayNames" border="0" cellspacing="0" cellpadding="4" style="width: 100%; text-align: left; vertical-align: middle;">' +
+                                    '    <tr><td style="width: 15%;">&nbsp;</td>';
+                            for (var i=0; i<numberOfSections; i++) {
+                                sectionsDetailInnerHTML += '<td style="width: ' + Math.round(parseInt(reportJSON.sectionDetails[i].maximumMarks) * 100 * 0.85 / maxScore) + '%;"><center><div style="text-align: center; vertical-align: middle; width: 20px; height: 20px; color: white; background-color: transparent; background-image: url(\'reports/tri_circles_red.png\'); background-size: 20px 20px; background-repeat: no-repeat;">' + (i+1) + '&nbsp;&nbsp;</div></center></td>';
+                            }
+                            sectionsDetailInnerHTML += '</tr>' +
+                                    '    <tr><td style="width:200px">Section Weightage %</td>';
+                            for (var i=0; i<numberOfSections; i++) {
+                                sectionsDetailInnerHTML += '<td><div style="width: 100%; color: #626262; padding: 8px 0px; margin: 0px;">' + Math.round(parseInt(reportJSON.sectionDetails[i].maximumMarks) * 100 / maxScore) + '% &nbsp;</div></td>'
+                            }
+                            sectionsDetailInnerHTML += '</tr>' +
+                                    '    <tr><td style="width:200px;">Topper\'s Score</td>';
+                            for (var i=0; i<numberOfSections; i++) {
+                                var percentage = Math.round(parseInt(reportJSON.topperSectionAttemptSummaries[i].score) * 100 / parseInt(reportJSON.sectionDetails[i].maximumMarks));
+                                sectionsDetailInnerHTML += '<td nowrap><div style="float: left; width: ' + percentage + '%; padding: 8px 0px; margin: 0px; background-color: #37BC9B;">' + percentage + '%&nbsp;</div>';
+                                if (100 > percentage) {
+                                    sectionsDetailInnerHTML += '<div style="float: right; width: ' + (100 - percentage) + '%; padding: 8px 0px; margin: 0px;">&nbsp;</div>';
+                                }
+                                sectionsDetailInnerHTML += '</td>';
+                            }
+                            sectionsDetailInnerHTML += '</tr>' +
+                                    '    <tr><td style="width:200px;">Class Average Score</td>';
+                            for (var i=0; i<numberOfSections; i++) {
+                                var percentage = Math.round(parseInt(reportJSON.aggregateSectionSummaries[i].averageScore) * 100 / parseInt(reportJSON.sectionDetails[i].maximumMarks));
+                                sectionsDetailInnerHTML += '<td nowrap><div style="float: left; width: ' + percentage + '%; padding: 8px 0px; margin: 0px; background-color: #8CC152;">' + percentage + '%&nbsp;</div>';
+                                if (100 > percentage) {
+                                    sectionsDetailInnerHTML += '<div style="float: right; width: ' + (100 - percentage) + '%; padding: 8px 0px; margin: 0px;">&nbsp;</div>';
+                                }
+                                sectionsDetailInnerHTML += '</td>';
+                            }
+                            sectionsDetailInnerHTML += '</tr>' +
+                                    '    <tr><td style="width:200px;">My Score</td>';
+                            for (var i=0; i<numberOfSections; i++) {
+                                var percentage = Math.round(parseInt(reportJSON.studentSectionAttemptSummaries[i].score) * 100 / parseInt(reportJSON.sectionDetails[i].maximumMarks));
+                                sectionsDetailInnerHTML += '<td nowrap><div style="float: left; width: ' + percentage + '%; padding: 8px 0px; margin: 0px; background-color: #E9573F;">' + percentage + '%&nbsp;</div>';
+                                if (100 > percentage) {
+                                    sectionsDetailInnerHTML += '<div style="float: right; width: ' + (100 - percentage) + '%; padding: 8px 0px; margin: 0px;">&nbsp;</div>';
+                                }
+                                sectionsDetailInnerHTML += '</td>';
+                            }
+                            sectionsDetailInnerHTML += '</tr>' +
+                                    '</table>';
+
+                            document.getElementById("sectionsDetail").innerHTML = sectionsDetailInnerHTML;
+                        }
+                    }
+                }
+                catch(err){
+                    $("body").html(err.message);
+                }
+            }
+    );
+
+</script>
+</body>
+<% if @key %>
+<%= wicked_pdf_stylesheet_link_tag "pdf" -%>
+    <%= render partial: 'assessment_tool/assessment_pdf_template' %>
+<% end %>
+</html>

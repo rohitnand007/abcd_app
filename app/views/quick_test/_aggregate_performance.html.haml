@@ -1,0 +1,72 @@
+.reportsview_rowcell
+  - if (@quicktest_taken_user_count > 0)
+
+    %table{class:"big_table",style: "float: right;"}
+      %tr
+        %td{colspan: 6}
+          Student Scores
+      %tr
+        %td{colspan: 1,style:"font-size: 24px; color:#4d937b"}
+          .total_marks
+            = totalmarks(quicktest)
+          %p{style:"font-size: 16px;"}
+            Total Marks
+        %td{colspan: 5}
+          %table{:style => "width:100%;text-align:center"}
+            %tr.fixed_height_row
+              %td.bar_div
+                .gray_div
+                  .green_div
+              %td
+                .marks_circle_div
+                  = @lowest_score
+              %td.score_text
+                %b
+                  Lowest Score
+                %br
+                = pluralize(lowest_score_student_number(quicktest),"Student")
+            %tr.fixed_height_row
+              %td.bar_div
+                .gray_div
+                  .green_div
+              %td
+                .marks_circle_div
+                  = @highest_score
+              %td.score_text
+                %b
+                  Highest Score
+                %br
+                = pluralize(highest_score_student_number(quicktest),"Student")
+            %tr.fixed_height_row
+              %td.bar_div
+                .gray_div
+                  .green_div
+              %td
+                .marks_circle_div
+                  = quiz_average_score(quicktest).to_i
+              %td.score_text
+                %b
+                  Average Score
+
+
+      %tr
+        %td{colspan: 3}
+          .reportgraph_info
+            = image_tag "cap.png" ,:style => "margin-top:1em;"
+
+        %td{colspan: 3}
+          .reportgraph_info{style:"line-height:2em;"}
+            %div{style:"font-size:1.3em;"}
+              Class Toppers
+            - top_students = return_top_n_scoring(quicktest,2)
+            = top_students.first ? top_students.first.name : "Empty"
+            ,
+            =top_students.last ? top_students.last.name : "Empty"
+
+
+
+
+  - else
+    %table{class:"big_table",style: "float: right; min-height: none; height: 25em;border: 5px solid #4d937b"}
+      %td
+        Please ask your students to download and take the test

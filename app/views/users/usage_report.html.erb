@@ -1,0 +1,132 @@
+﻿
+<script type="text/javascript">
+    // Resize the canvases when the page is resized.
+
+    function resize_canvas() {
+
+        canvas = document.getElementById("canvas");
+        if (canvas.width  < window.innerWidth)
+        {
+            canvas.width = 900 ;
+        }
+
+        if (canvas.height < window.innerHeight)
+        {
+            canvas.height = 500;
+        }
+    }
+    // Create bar chart 1
+
+    function StartBarChart1(canvasId) {
+
+        var scale = 1;
+        var counts_array = "<%=@counts%>".split(',');
+        var durations_array = "<%=@durations%>".split(',');
+        var subjects = "<%=@subjects%>".split(',');
+        subjects.splice(0,0,"");
+        subjects.splice(subjects.length,0,'');
+
+
+        var Chart = {
+            CanvasId: canvasId,
+            Background: "White",
+            margin: 10,
+            title: "Students Usage Report", titleColor: "Black",
+            minX: 0, maxX: 4, tickX: 1,
+            minY: 0, maxY: parseInt("<%=@max_Y%>") , tickY: parseInt("<%=@tick_Y%>"),
+            hasColumnNames: true, columnNames: subjects,
+            axisLineColor: "Black", tickLineColor: "Black",
+            click: true, clickColor: "Red"
+        };
+
+        Chart.bars = [];
+
+        var bars1 = [];
+        var bars2 = [];
+        var j,k=0;
+
+        for(j=0;j<counts_array.length;j++){
+            if (counts_array[j]>1000000){
+                bars1.push({x:j,y: "<%= @max_Y/2%>",Value: "> 1000000",title: "Number of times read"});
+            }else{
+                bars1.push({x:j,y: counts_array[j],Value: counts_array[j],title: "Number of times read"});
+            }
+        }
+
+        for(k=0;k<durations_array.length;k++){
+            if (durations_array[k]>100000){
+                bars2.push({x:k,y: "<%= @max_Y/2%>",Value: "> 100000",title: "Time Spent (mins)"});
+            }else{
+                bars2.push({x:k,y: durations_array[k],Value: durations_array[k], Color:'green',title:"Time Spent (mins)"});
+            }
+        }
+
+        Chart.bars.push(bars1);
+        Chart.bars.push(bars2);
+        BarChart(Chart);
+    }
+</script>
+
+<div id="content_header">
+  <h1 id="main_heading">Student Usage Report</h1>
+  <h3 id="sub_heading"></h3>
+</div>
+
+<div id="inner-tab-menu">
+  <ul>
+     <% unless current_user.is?'ET'%>
+          <li><a href="/usages">List</a></li>
+          <li class="inner_tab_selected"><a data-method="get" href="/usage/reports">Reports</a></li>
+          <li><a href="/usages/new">New</a></li>
+      <% else %>
+          <li><a href="<%=teacher_path(current_user)%>">List</a></li>
+
+      <% end %>
+  </ul>
+</div>
+
+<div id="data">
+        <div class="reports">
+          <canvas id="canvas">Looks like you are using older version of Internet Explorer.Please use versions 9 or above for better viewing.</canvas>
+       </div>
+        <script>resize_canvas(); StartBarChart1("canvas");</script>
+   <% #unless @user_usages.blank? %>
+            <div class="pagination_info">
+              <%= paginate @user_usages%>
+            </div>
+        <%# end %>
+</div>
+
+
+
+<!--
+<div class="block">
+  <div class="secondary-navigation">
+    <ul class="wat-cf">
+      <%# unless current_user.is?'ET'%>
+          <li><a href="/usages">List</a></li>
+          <li class="first active"><a data-method="get" href="/usage/reports">Reports</a></li>
+          <li><a href="/usages/new">New</a></li>
+      <%#else%>
+          <li><a href="<%#=teacher_path(current_user)%>">List</a></li>
+          <li class="first active"><a data-method="get" href="/usage/reports">Reports</a></li>
+      <%#end%>
+    </ul>
+  </div>
+  <div class="content">
+    <h2 class="title">
+      All
+      Usage
+    </h2>
+    <div class="inner">
+      <div style="background-color: white">
+        <canvas id="canvas">Looks like you are using older version of Internet Explorer.Please use versions 9 or above for better viewing.</canvas>
+      </div>
+      <script>resize_canvas(); StartBarChart1("canvas");</script>
+    </div>
+  </div>
+</div>
+<%# content_for :sidebar do %>
+    <%#= render :partial => 'shared/sidebar'%>
+<%#end%>
+-->

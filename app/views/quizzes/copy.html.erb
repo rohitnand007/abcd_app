@@ -1,0 +1,234 @@
+<script type="text/javascript" src="/javascripts/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript">
+ tinyMCE.init({
+        theme : "advanced",
+        mode : "textareas",
+        plugins : "safari,table,paste,tabfocus",
+        paste_convert_headers_to_strong : true,
+        paste_convert_middot_lists : true,
+        relative_urls : true, // Default value
+        //document_base_url : 'http://localhost:3000/question_images/',
+        document_base_url : 'http://www.myedutor.com/question_images/',
+        paste_remove_spans : true,
+        paste_remove_styles : true,
+        paste_strip_class_attributes : true,
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_buttons1 : "fmath_formula,undo,redo,cut,copy,paste,pastetext,|,bold,italic,underline,strikethrough,blockquote,charmap,bullist,numlist,removeformat,|,link,unlink,image,|,fontsizeselect,code",
+        valid_elements : "a[href|title],blockquote[cite],br,caption,cite,code,dl,dt,dd,em,i,img[src|alt|title|width|height|align],li,ol,p,pre,q[cite],small,strike,strong/b,sub,sup,u,ul"
+});
+</script>
+<div id="content_header">
+  <h1 id="main_heading">Assessment Settings</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessments Home", :controller => "quizzes" %></li>
+  </ul>
+</div>
+<div id="data">
+  <%= form_for @quiz,:html => { :class => :form }, :url => { :action => "copysave" } do |q| %>
+  <input type="hidden" name="old_quiz_id" value="<%=@old_quiz.id%>"/>
+    <%=q.error_messages%>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Assessment Name
+          </label>
+          <%= q.text_field :name,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Assessment Institute Id
+          </label>
+          <%= q.text_field :institute_test_id,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Assessment Description
+          </label>
+          <%= q.text_area :intro,:class=>"text required text_area",:size=>"2x5" %>
+        </div>
+      </div>
+    </div>
+    <div class='group'>
+      <div class='field'>
+        <div class="input select required">
+          <label class="select required  label" for="quiz_contexts_board_id">
+            <abbr title="required">*</abbr> Board</label>
+          <select class="select required drop_down" data-validate="true" id="quiz_context_attributes_board_id" name="quiz[context_attributes][board_id]">
+            <option value="">Please select</option>
+            <% @boards.each do |b| %>
+              <option <%=(@quiz.context.board_id==b.id) ? 'selected' : ''%> value="<%=b.id%>"><%=b.name%></option>
+            <% end  %></select></div>
+      </div>
+    </div>
+    <%= q.fields_for :context do |c| %>
+      <%=c.error_messages%>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Class
+            </label>
+            <%= c.collection_select("content_year_id",@quiz.context.board.try(:content_years).to_a,:id,:name,{ "Please Select" => ""},:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Subject
+            </label>
+            <%= c.collection_select("subject_id",@quiz.context.content_year.try(:subjects).to_a,:id,:name,{ "Please Select" => ""},:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Chapter
+            </label>
+            <%= c.collection_select("chapter_id",@quiz.context.subject.try(:chapters).to_a ,:id,:name,{ "Please Select" => ""},:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Topic
+            </label>
+            <%= c.collection_select("topic_id",@quiz.context.chapter.try(:topics).to_a ,:id,:name,{ "Please Select" => ""},:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <!--<div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Available From
+          </label>
+    <%= q.datetime_select :timeopen,:as=>:datetime,:start_year=>2012,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Available Till
+          </label>
+    <%= q.datetime_select :timeclose,:as=>:datetime,:start_year=>2012,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>-->
+    <!--<div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Shuffle Questions
+          </label>
+          <select name="quiz[shufflequestions]">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>-->
+    <!--<div class="group">
+      <div class="field">
+        <div class="input text required">
+          <label class="text required label" for="">
+            Total Marks
+          </label>
+    <%= q.text_field :grade,:class=>"text required text_field"%>
+        </div>
+      </div>
+    </div>-->
+    <div class="group">
+      <div class="field">
+        <div class="input text required">
+          <label class="text required label" for="">
+            Duration (minutes)
+          </label>
+          <%= q.text_field :timelimit,:class=>"text required text_field"%>
+          <%= q.hidden_field :format_type,:value=>@quiz.format_type%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Difficulty Level
+          </label>
+          <% options_difficult=[["Easy",1],["Medium",2],["Hard",3]] %>
+          <%= q.select :difficulty,options_for_select(options_difficult,q.object.difficulty),:class=>"string required text_field"%>
+        </div>
+      </div>
+
+      <%  if !@asset_id.nil? %>
+          <input type="hidden" name="asset_id" value="<%=@asset_id%>"/>
+      <% end %>
+    </div>
+    <div class='label heading hr'>
+    </div>
+    <div class="group">
+      <div align="center" class="field">
+        <input class="button big primary" data-disable-with="Saving..." name="commit" type="submit" value="Save Assessment Settings"/>
+        <a href="/questionbank" class="button danger icon remove">Cancel</a>
+      </div>
+    </div>
+  <% end %>
+</div>
+<script>
+  //<![CDATA[
+  $("#quiz_context_attributes_board_id").change(function() {
+    var selected_value = $('select#quiz_context_attributes_board_id :selected').val();
+    var url = "/course/get_content_years/"
+    var div_update = "#quiz_context_attributes_content_year_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#quiz_context_attributes_content_year_id").change(function() {
+    var selected_value = $('select#quiz_context_attributes_content_year_id :selected').val();
+    var url = "/content_years/get_subjets/"
+    var div_update = "#quiz_context_attributes_subject_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#quiz_context_attributes_subject_id").change(function() {
+    var selected_value = $('select#quiz_context_attributes_subject_id :selected').val();
+    var url = "/subjects/get_chapters/"
+    var div_update = "#quiz_context_attributes_chapter_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+  $("#quiz_context_attributes_chapter_id").change(function() {
+    var selected_value = $('select#quiz_context_attributes_chapter_id :selected').val();
+    var url = "/chapters/get_topics/"
+    var div_update = "#quiz_context_attributes_topic_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+  //]]>
+</script>

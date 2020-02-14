@@ -1,0 +1,83 @@
+<div id="content_header">
+  <h1 id="main_heading">Publish Details</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "show",:id=>@quiz.id %></li>
+  </ul>
+</div>
+<div id="data">
+  <div id='application-list'>
+    <table align='center' class='details' width='700px'>
+      <tbody>
+        <tr class='even left'>
+          <td>Assessment Name</td>
+          <td class='right'><%= @quiz.name%></td>
+        </tr>
+        <tr class='odd left'>
+          <%if !@details.to_group? %>
+          <td>Published to</td>
+          <td class='right'><%=User.find(@details.recipient_id).profile.firstname%></td>
+          <%else%>
+          <td>Published to Group Name</td>
+          <td class='right'><%=User.find(@details.group_id).profile.firstname%></td>
+          <%end%>
+        </tr>
+        <tr class='even left'>
+          <td>Assessment Location</td>
+          <td class='right'><%=@details.extras %></td>
+        </tr>
+        <tr class='even left'>
+          <td>Assessment Type</td>
+          <% types={1=>"Quiz",2=>"Practice-Test",3=>"Institute-Test",4=>"Assignment",5=>"Inclass",6=>"Regular",7=>"HOT/IIT",8=>"Olympiad",9=>"insti-tests"} %>
+          <td class='right'><%= types[@details.assessment_type]%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Shuffle Questions</td>
+          <td class='right'><%=(@details.shufflequestions?) ? "Yes" : "No"%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Shuffle Options</td>
+          <td class='right'><%=(@details.shuffleoptions?) ? "Yes" : "No"%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Allowed Pausing</td>
+          <td class='right'><%=(@details.pause?) ? "Yes" : "No"%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Password</td>
+          <td class='right'><%= @details.password%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Show Answers After(in hours)</td>
+          <td class='right'><%= @details.show_answers_after%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Show Score After(in hours)</td>
+          <td class='right'><%= @details.show_score_after%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Duration (minutes)</td>
+          <td class='right'><%= @details.timelimit%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Start Time</td>
+          <td class='right'><%= display_date_time(@details.timeopen)%></td>
+        </tr>
+        <tr class='even left'>
+          <td>End Time</td>
+          <td class='right'><%= display_date_time(@details.timeclose)%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Published On</td>
+          <td class='right'><%= display_date_time(@details.published_on)%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Published By</td>
+          <%p = User.find(@details.published_by).profile %>
+          <td class="right"><%= p.firstname%> <%=p.surname%></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

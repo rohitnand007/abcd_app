@@ -1,0 +1,113 @@
+#content_header
+  #breadcrumbs
+    -#= bread_crumb_message_page
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for @message,:url=>drm_content_send_path(@content),:html => { :class => :form,:multipart => true } do |f|
+              .inputs
+                .group
+                  .field
+                    = f.error_messages :header_message=>nil
+                    = f.hidden_field :sender_id,:value=>current_user.id
+                  .group
+                    .field
+                      = f.input :message_to,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} do
+                        = radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual"
+                        = 'Individual'
+                        = radio_button_tag :message_to, 'group',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Profile"
+                        = 'Group'
+                  .group#recipient
+                    .field
+                      = f.input :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:"
+                  .group#group
+                    .field
+                      = f.input :group ,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"} do
+                        = f.collection_select :group_id,asign_groups(current_user),:user_id,:firstname,{:include_blank => false,:prompt=>"select profile"} ,{:class=>"drop_down"}
+
+                .group{:id=>"body"}
+                  .field
+                    = f.input :body,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+
+                .group
+                  .field{:align=>'center'}
+                    = f.button :submit,"publish",:class=>'big primary'
+                    = link_to t("web-app-theme.cancel", :default => "Cancel"), drm_content_list_path,:class=>'button danger icon remove'
+
+:javascript
+  $(document).ready(function(){
+      $("input[name$='message_to']").click(function(){
+          var radio_value = $(this).val();
+          if(radio_value=='individual') {
+              $("#recipient").show("slow");
+              $("#group").hide();
+          }
+          else if(radio_value=='group') {
+              $("#message_multiple_recipient_ids").tokenInput('clear');
+              $(".token-input-dropdown").remove();
+              $(".token-input-list").remove();
+              $("#token-input-multiple_recipient_ids").remove();
+              $(function() {
+                 $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+                 queryParam: 'term',
+                 minChars: '3',
+                 hintText: 'Type first 3-letters of users surname/firstname/roll number',
+                 crossDomain: false,
+                 preventDuplicates:true,
+                 prePopulate: $("#message_multiple_ids").data("pre"),
+                 theme: ""
+                });
+              });
+              $("#group").show("slow");
+              $("#recipient").hide();
+          }
+      });
+       $("#recipient").hide();
+       $("#group").show();
+
+      $("#message_message_type").click(function(){
+             var selected_value = $(this).val();
+             if (selected_value == 'Centerreport') {
+                 $('#message_severity').val(2);
+             }
+             else{ $('#message_severity').val(1);}
+             if (selected_value == 'Control Message'){
+                 $('#ctrl_message_subject').show();
+                 $('#general_message_subject').hide();
+             }else{
+                 $('#ctrl_message_subject').hide();
+                 $('#general_message_subject').show();
+             }
+         });
+
+         $("#message_control_message_subject").click(function(){
+             var selected_value = $(this).val();
+
+             if (selected_value == 'WiFi Settings') {
+                 $('#message_body').val("SSID: enter ssid ,PASSWORD: enter password ,IS_PROXY: true/false, PROXY_NAME: proxy name, PORT: enter port");
+             }
+             else if(selected_value == 'Configuration Settings') {
+                 $('#message_body').val("key: KEY ,value: VALUE ,type: TYPE");
+             }
+             else{
+                 $('#message_body').val("");
+             }
+         });
+
+        $(function() {
+          $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+          queryParam: 'term',
+          minChars: '3',
+          hintText: 'Type first 3-letters of users surname/firstname/roll number',
+          crossDomain: false,
+          preventDuplicates:true,
+          prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+          theme: ""
+          });
+        });
+  });
+
+

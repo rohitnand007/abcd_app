@@ -1,0 +1,743 @@
+-#= javascript_include_tag 'jquery.stickysectionheaders'
+= javascript_include_tag 'jquery.sticky'
+= javascript_include_tag 'countUp'
+= stylesheet_link_tag 'jquery.stickysectionheaders'
+%script{:src => "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/rgbcolor.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/StackBlur.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/canvg.js", :type => "text/javascript"}
+%script{:src => "https://unpkg.com/scrollreveal@3.3.2/dist/scrollreveal.min.js", :type => "text/javascript"}
+= stylesheet_link_tag "c3.css"
+= javascript_include_tag "d3.js"
+= javascript_include_tag "c3.js"
+%canvas#canvas3{:style => "display: none"}
+- c1t1_info = @temporary_info_c1t1
+- c1t2_info = @temporary_info_c1t2
+- time = Time.new
+- today_date = time.strftime("#{time.day.ordinalize} %B, %Y") #Date.today.strftime("#{time.day.ordinalize} %B, %Y")
+- last_month_date = 30.days.ago.strftime("#{(30.days.ago).day.ordinalize} %B, %Y")
+- teacher_container_t1 =  @teacher_container_info_t1
+- teacher_container_t2 = @teacher_container_info_t2
+- lm_container_t1 = @lm_container_info_t1
+- lm_container_t2 = @lm_container_info_t2
+- se_container_t1 = @se_container_info_t1
+- se_container_t2 = @se_container_info_t2
+-#- colors = {blue:{darkest:"#194f90",dark:"#3f6cad",medium:"#7ca0c5",light:"#e2e7f0"},
+-#pink:{darkest:"#c50fc3",dark:"#ef466d",medium:"#fc92a4",light:"#fce6ec"},
+-#orange:{darkest:"#c12f05",dark:"#f37e3b",medium:"#f69e6c",light:"#faceb5"}}
+.container-fluid
+  .panel.panel-default
+    .panel-heading.dark_blue#panel_heading1
+      %div
+        .nav.navbar-left
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Institute Overview
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel1", :title=>"Collapse"}
+    #panel1.collapse.in
+      .panel-body.lightest_blue
+        .circles_container
+          .row
+            .panel_info
+              = "As of Date - "
+              %b #{today_date}
+            - 3.times do
+              %br
+          .row
+            .col-md-3
+              .circle{style:"text-align:center"}
+                .medium_circle.dark_pink#circle1
+                  = c1t1_info[0]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  CAMPUSES
+            .col-md-3
+              .circle
+                .medium_circle.dark_blue#circle2
+                  = c1t1_info[1]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  STUDENTS
+            .col-md-3
+              .circle
+                .medium_circle.dark_orange#circle3
+                  = c1t1_info[2]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  TEACHERS
+            .col-md-3
+              .circle
+                .medium_circle.dark_green#circle4
+                  = c1t1_info[3]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  BOOKS
+        .panel-footer.light_blue{style:" color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "01"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+                %br
+          %br
+          %br
+        .graphs_container
+          .panel_info
+            .row
+              %b
+                = "Campuswise Overview"
+          %br
+            %br
+            .graph_header.inline_header  Students
+            .graph_header.inline_header  Teachers
+            .graph_header.inline_header  Books
+            #students_graph.inline_graph_width30{data:{x:c1t2_info[0],y:c1t2_info[1].unshift("Students")}.to_json}
+            #teachers_graph.inline_graph_width30{data:{x:c1t2_info[0],y:c1t2_info[2].unshift("Teachers")}.to_json}
+            #books_graph.inline_graph_width30{data:{x:c1t2_info[0],y:c1t2_info[3].unshift("Books")}.to_json}
+        .panel-footer.light_blue{style:" color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "02"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+
+  .panel.panel-default
+    .panel-heading.dark_pink#panel_heading2
+      %div
+        .nav.navbar-left.first_img
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Learning Minutes
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel2", :title=>"Collapse"}
+      -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/print.png",:href => "/", :id=>"print_div"}
+      -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/"}
+      -#-#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/refresh.png",:href => "/"}
+      -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/expand.png", :id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel2"}
+    #panel2.collpapse.in
+      .panel-body.lightest_pink
+        .circles_container
+          .panel_info{style:"color: #767676"}
+            .row
+              = "From "
+              %b #{last_month_date}
+              = "to"
+              %b #{today_date}
+          - 3.times do
+            %br
+          .row
+            .col-md-2
+            .col-md-4
+              .circle{style:"text-align:center"}
+                .medium_circle.dark_blue#circle5
+                  = lm_container_t1[0]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  = "LEARNING MINUTES *"
+            .col-md-4
+              .circle
+                .medium_circle.dark_green#circle6
+                  = lm_container_t1[1]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  = "ACTIVE STUDENTS"
+                  %sup #
+            .col-md-2
+          .panel_info
+            .row
+              = "* Total learning minutes of all students spent during this period"
+              %br
+              %sup #
+              = "Students who have spent at least 60 learning minutes during this period"
+        .panel-footer.light_pink{style:"color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "01"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+        %br
+        %br
+        .graphs_container
+          .panel_info{style:"color: #767676"}
+            .row
+              = "From "
+              %b #{last_month_date}
+              = "to"
+              %b #{today_date}
+            - 3.times do
+              %br
+            .inline_graph_width50
+              .div{id:"learning_minutes_graph",data:{x:lm_container_t2[0],y:lm_container_t2[1].unshift('Learning Minutes')}.to_json}
+            .inline_graph_width50
+              .div{id:"active_students_graph",data:{x:lm_container_t2[0],y:lm_container_t2[2].unshift('Active Students')}.to_json}
+          .panel_info{style:"color: #767676"}
+            .row
+              = "* Learning minutes and Active students by campus"
+        .panel-footer.light_pink{style:"color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "02"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+
+  .panel.panel-default
+    .panel-heading.dark_orange#panel_heading3
+      %div
+        .nav.navbar-left.first_img
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Student Engagement
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel3", :title=>"Collapse"}
+    -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/print.png",:href => "/", :id=>"print_div"}
+    -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/"}
+    -#-#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/refresh.png",:href => "/"}
+    -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/expand.png", :id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel3"}
+    #panel3.collpapse.in
+      .panel-body.lightest_orange
+        .circles_container
+          .panel_info{style:"color: #767676"}
+            .row
+              = "From "
+              %b #{last_month_date}
+              = "to"
+              %b #{today_date}
+            - 3.times do
+              %br
+          .row
+            -#.col-md-1
+            .col-md-4
+              .circle{style:"text-align:center"}
+                .medium_circle.dark_blue#circle7
+                  = se_container_t1[0]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  VIDEOS WATCHED
+            .col-md-4
+              .circle
+                .medium_circle.dark_orange#circle8
+                  = se_container_t1[1]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  QUESTIONS ANSWERED
+            .col-md-4
+              .circle
+                .medium_circle.dark_green#circle9
+                  = se_container_t1[2]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  INTERACTIVE LOs CONSUMED
+        -#.col-md-1
+        .panel-footer.light_orange{style:"color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "01"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+        %br
+        %br
+        .graphs_container
+          .panel_info{style:"color: #767676"}
+            .row
+              %b Student Engagement by Campus
+            .row
+              = "From "
+              %b #{last_month_date}
+              = "to"
+              %b #{today_date}
+            - 1.times do
+              %br
+            .row
+              .col-md-4
+                #videos_watched_graph{data:{x:se_container_t2[0],y:se_container_t2[1].unshift('Videos Watched')}.to_json}
+              .col-md-4
+                #questions_answered_graph{data:{x:se_container_t2[0],y:se_container_t2[2].unshift('Questions Answered')}.to_json}
+              .col-md-4
+                #interactive_lo_graph{data:{x:se_container_t2[0],y:se_container_t2[3].unshift("Interactive LO's Consumed")}.to_json}
+          .panel_info{style:"color: #767676"}
+            .row
+              = ""
+            - 2.times do
+              %br
+        .panel-footer.light_orange{style:"color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "02"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+
+  .panel.panel-default
+    .panel-heading.dark_green#panel_heading4
+      %div
+        .nav.navbar-left.first_img
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Teacher Engagememnt
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel4", :title=>"Collapse"}
+    #panel4.collpapse.in
+      .panel-body.lightest_green
+        .circles_container
+          .panel_info{style:"color: #767676"}
+            .row
+              = "From "
+              %b #{last_month_date}
+              = "to"
+              %b #{today_date}
+            - 3.times do
+              %br
+          .row
+            -#.col-md-1
+            .col-md-4
+              .circle{style:"text-align:center"}
+                .medium_circle.dark_blue#circle10
+                  = teacher_container_t1[:active_teachers]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  ACTIVE TEACHERS*
+            .col-md-4
+              .circle
+                .medium_circle.dark_orange#circle11
+                  = teacher_container_t1[:tests_published]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  TESTS PUBLISHED
+            .col-md-4
+              .circle
+                .medium_circle.dark_green#circle12
+                  = teacher_container_t1[:assets_published]
+                .circle_text{style:"bottom:30px;position:relative;"}
+                  LEARNING OBJECTS PUBLISHED
+            -#.col-md-1
+          .panel_info
+            .row
+              = "* Teacher who published at least one learning object or test during this period"
+        .panel-footer.light_green{style:"color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "01"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+        %br
+        %br
+        .graphs_container
+          .panel_info{style:"color: #767676"}
+            .row
+              %b Teacher Engagement by Campus
+            .row
+              = "From "
+              %b #{last_month_date}
+              = "to"
+              %b #{today_date}
+          - 3.times do
+            %br
+            .row
+              .col-md-4
+                #active_teachers_graph{data:{x:teacher_container_t2[0], y:teacher_container_t2[1].unshift('Active Teachers')}.to_json}
+              .col-md-4
+                #tests_published_graph{data:{x:teacher_container_t2[0], y:teacher_container_t2[2].unshift('Tests Published')}.to_json}
+              .col-md-4
+                #content_assets_published_graph{data:{x:teacher_container_t2[0], y:teacher_container_t2[3].unshift('Learning Objects Published')}.to_json}
+          .panel_info{style:"color: #767676"}
+            .row
+              = ""
+        .panel-footer.light_green{style:"color:white; height:30px;"}
+          .row
+            .col-md-2{style:"bottom: 5px; left: 5px;"}
+              = "02"
+            .col-md-9
+            .col-md-1.nav_icons
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+              %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+
+:css
+  /*overall panel and image placing css below;*/
+  .container-fluid{
+  overflow-x:hidden;
+  }
+  .heading_row{
+  min-height: 68px;
+  right: 50px;
+  }
+
+  .glyphicon.glyphicon-print{
+  font-size: 25px;
+  color: #ffffff;
+  }
+
+  .align_vertical{
+  vertical-align: top;
+  }
+
+  .spacing{
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-right: 10px;
+  }
+
+  .glyphicon.glyphicon-menu-down{
+  font-size: 25px;
+  color: #ffffff;
+  }
+  .graph_header{font-size: 1.4em;}
+  .panel_info{
+  margin: 0 auto;
+  color: #767676;
+  font-size: 1.5em;
+  }
+  .heading_row > a{
+  min-height: 68px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  }
+  .panel-heading{
+  height: 68px;
+  line-height: 68px;
+  /*z-index: 1 !important;*/
+  }
+  /*#panel_heading1{z-index: 1 !important;}*/
+  /*#panel_heading2{z-index: 2000000000 !important;}*/
+  /*#panel_heading3{z-index: 3 !important;}*/
+  /*#panel_heading4{z-index: 4 !important;}*/
+  .inline_header{
+  display: inline-block;
+  width: 30%;
+  text-align: center;
+  color: #767676;
+  }
+  .row-bottom-margin{
+  margin-bottom:0px !important;
+  }
+  .first_img{
+
+  }
+  .first_header{
+  color:white;
+  vertical-align: middle;
+  position: relative;
+  top:2px;
+  }
+  .second_img {
+
+  }
+  .nav_icons{
+  visibility: hidden;
+  left:50px;
+  }
+  .nav_icons > img {
+  height: 30px;
+  position: relative;
+  bottom: 10px;
+  }
+  /*color's css below*/
+  .darkest_blue{background-color: #194f90}
+  .dark_blue{background-color: #3f6cad}
+  .light_blue{background-color: #7ca0c5}
+  .lightest_blue{background-color: #e2e7f0}
+
+  .darkest_pink{background-color: #c50fc3 }
+  .dark_pink{background-color: #ef466d}
+  .light_pink{background-color: #fc92a4 }
+  .lightest_pink{background-color: #fce6ec;}
+
+  .darkest_orange{background-color: #c12f05}
+  .dark_orange{background-color: #f37e3b}
+  .light_orange{background-color: #f69e6c}
+  .lightest_orange{background-color: #faceb5}
+
+  .darkest_green{  background-color: #1c6e2c;}
+  .dark_green{ background-color: #0e9b4d;}
+  .light_green{ background-color: #86cda6}
+  .lightest_green{ background-color: #c3e6d2;}
+  /*cirlcles related css of second container here*/
+
+  .circle_text{
+  bottom:30px;
+  position: relative;
+  font-size: 1.3em;
+  }
+  .circles_container_3{
+  padding: 5% 5% 5% 20%;
+  background-color: white;
+  z-index: -1;
+  }
+
+  .big_circle{
+  width: 200px;
+  height: 200px;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  border-radius: 100px;
+  display:inline-block;
+  color:white;
+  line-height: 200px;
+  font-size: 25px !important;
+
+  }
+  /*circles related css of third container here*/
+  .medium_circle{
+  width: 150px;
+  height: 150px;
+  -webkit-border-radius: 75px;
+  -moz-border-radius: 75px;
+  border-radius: 75px;
+  display:inline-block;
+  color:white;
+  line-height: 150px;
+  font-size: 24px !important;
+  }
+  /*circles related css of first container here*/
+  .circles_container{
+  padding: 2% 5% 2% 5%;
+  background-color: white;
+  z-index: -1;
+  }
+  .circle{
+  text-align: center ;
+  line-height: 100px;
+  /*display:inline-block;*/
+  padding: 10px 30px 0px 0px;
+  color: #767676;
+  }
+  .small_circle{
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    color:white;
+  }
+    /*graphs of 1St container related css here below  */
+  .graphs_container{
+  padding: 2% 4% 2% 4%;
+  background-color: white;
+  }
+  .inline_graph_width30{
+  display: inline-block;
+  width: 30%
+  }
+  .inline_graph_width50{
+  display: inline-block;
+  width: 49%;
+  }
+  /*overall graphs related css below*/
+  .c3-axis-y .tick, .c3-axis-y2 .tick {
+    display:none;
+  }
+  .c3-axis-x text{
+    word-wrap: break-word;
+    font-size:12px;
+    fill: #767676;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+:javascript
+  $(document).ready(function(){
+  function circleNumberCounter(elementSelectorId, totalCounters){
+  for (counter = 1 ; counter <= totalCounters; counter++ ){
+  var numAnimCircle = new CountUp(elementSelectorId + counter, 400, parseInt($("#"+elementSelectorId + counter).text()), 0, 2.5, {})
+  numAnimCircle.start();
+    }
+   }
+  circleNumberCounter("circle", 12);
+  window.sr = ScrollReveal({ reset: true });
+  sr.reveal('.graphs_container', { duration: 1500 })
+  sr.reveal('.circles_container', { duration: 1500 })
+  sr.reveal('.panel_info', { duration: 1500 })
+  $(".panel-heading").sticky({ topSpacing: 69, zIndex: 10 });
+  })
+  //function format1(n, number) {
+  //  return number + " " + n.toFixed().replace(/./g, function(c, i, a) {
+  //      return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+  //  });
+  //}
+  //$("#panel_heading1").sticky({ topSpacing: 69 });
+  //$("#panel_heading2").sticky({ topSpacing: 69 + 45 });
+  //$("#panel_heading3").sticky({ topSpacing: 69 + 45*2 });
+  //$("#panel_heading4").sticky({ topSpacing: 69 + 45*3 });
+  //
+  //$('.count').each(function () {
+  //  $(this).prop('Counter',400).animate({
+  //      Counter:  $(this).text()
+  //  }, {
+  //      duration: 3000,
+  //      easing: 'swing',
+  //      step: function (now) {
+  //          //$(this).text(Math.ceil(now));
+  //          $(this).text(Math.ceil(now));
+  //      }
+  //  }
+  //  );
+  //});
+  // javascript for graph printer
+
+  $("#print_div").click(function(){
+    //Hide all other elements other than printarea.
+
+
+  var $container = $('.circles_container'),
+    // Canvg requires trimmed content
+    content = $container.html().trim(),
+    canvas = document.getElementById('canvas3');
+
+    canvg(canvas, content);
+    var img = content.toDataURL("image/png", 1.0)
+    doc.addImage(img, 'PNG', 15, 40, 180, 60)
+    doc.text('Assessments Information', 10, 10)
+  doc.save('graph.pdf')
+
+  })
+  // graphs generator
+   var cdata = $.parseJSON($("#students_graph").attr('data'));
+  function generateVerticalGraph(selector, dataHash, axisHash, legendHash){
+  var defaultDataHash = {type: 'bar',
+    labels: {
+      format: function (v, id, i, j) {
+          if (v >= 1000)
+             return v/1000 + "K";
+          else if (v >= 1000000)
+             return v/1000000 + "M";
+          else
+             return v;
+      }
+  }}
+  var defaultAxisHash = {
+   x: {
+        type: 'category',
+          tick: {
+                fit: true,
+                multiline: true
+            }
+
+   },
+  rotated:false,
+        y2:{
+        show:false
+          }
+        }
+
+  return c3.generate({
+  bindto:selector,
+  data: $.extend({}, dataHash, defaultDataHash),
+  axis: $.extend({}, defaultAxisHash, axisHash),
+  legend:$.extend({}, legendHash),
+  bar: {
+    width: {
+        ratio: 0.5 // this makes bar width 50% of length between ticks
+    }
+    // or
+    //width: 100 // this makes bar width 100px
+  },
+    zoom: {
+        enabled: true
+    },
+  })
+  }
+  // javascript of graphs of container1
+  // graph1
+   var cdata_students = $.parseJSON($("#students_graph").attr('data'));
+   var axisHashOfAllStudents = {x:{type:'category',tick:{fit:true,multiline:true},categories:cdata_students.x},rotated:true,y2:{show:true}}
+   var legendHashOfAllStudents = {show:false}
+   var dataHashOfAllStudents = {colors:{x:'#7ca0c5','Students': '#3f6cad'},columns: [cdata_students.y]}
+
+  generateVerticalGraph("#students_graph", dataHashOfAllStudents, axisHashOfAllStudents, legendHashOfAllStudents );
+
+  // graph2
+  var cdata_teachers = $.parseJSON($("#teachers_graph").attr('data'));
+  var axisHashOfAllTeachers = {x:{type:'category',tick:{fit:true,multiline:true},categories:cdata_teachers.x},rotated:true,y2:{show:true}}
+  var legendHashOfAllTeachers = {show:false}
+  var dataHashOfAllTeachers = {colors:{x:'#7ca0c5','Teachers': '#f37e3b'},columns: [cdata_teachers.y]}
+
+  generateVerticalGraph("#teachers_graph", dataHashOfAllTeachers, axisHashOfAllTeachers, legendHashOfAllTeachers );
+
+  // graph3
+  var cdata_books = $.parseJSON($("#books_graph").attr('data'));
+  var axisHashOfAllBooks = {x:{type:'category',tick:{fit:true,multiline:true},categories:cdata_books.x},rotated:true,y2:{show:true}}
+  var legendHashOfAllBooks = {show:false}
+  var dataHashOfAllBooks = {colors:{x:'#7ca0c5','Books': '#767676'},columns: [cdata_books.y]}
+
+  generateVerticalGraph("#books_graph", dataHashOfAllBooks, axisHashOfAllBooks, legendHashOfAllBooks );
+
+
+  //javascript of graphs of container2
+
+  var cdata_as = $.parseJSON($("#active_students_graph").attr('data'));
+  var dataHashOfActiveStudents = {colors:{x:'#7ca0c5','Active Students': '#3f6cad'},columns: [cdata_as.y]}
+  var axisHashOfActiveStudents = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_as.x},rotated:false,y2:{show:false}}
+  var legendHashOfActiveStudents = {show:true}
+
+  generateVerticalGraph("#active_students_graph", dataHashOfActiveStudents, axisHashOfActiveStudents,legendHashOfActiveStudents);
+
+  var cdata_lm = $.parseJSON($("#learning_minutes_graph").attr('data'));
+  var dataHashOfLearningActivities = {colors:{x:'#7ca0c5','Learning Minutes': '#0e9b4d'},columns: [cdata_lm.y]}
+  var axisHashOfLearningActivities = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_lm.x},rotated:false,y2:{show:false}}
+  var legendHashOfLearningActivities = {show:true}
+
+  generateVerticalGraph("#learning_minutes_graph", dataHashOfLearningActivities, axisHashOfLearningActivities, legendHashOfLearningActivities)
+
+  // javascript of graphs of container 3
+   var cdata_vdos = $.parseJSON($("#videos_watched_graph").attr('data'));
+   var dataHashOfVideosWatched = {colors:{x:'#7ca0c5','Videos Watched': '#3f6cad'},columns: [cdata_vdos.y]}
+   var axisHashOfVideosWatched = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_books.x},rotated:false,y2:{show:false}}
+   var legendHashOfVideosWatched = {show:true}
+   generateVerticalGraph("#videos_watched_graph", dataHashOfVideosWatched, axisHashOfVideosWatched, legendHashOfVideosWatched  );
+
+   var cdata_q_a = $.parseJSON($("#questions_answered_graph").attr('data'));
+   var dataHashOfQuestionsAnswered = {colors:{x:'#7ca0c5','Questions Answered': '#f37e3b'},columns: [cdata_q_a.y]}
+   var axisHashOfQuestionsAnswered = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_q_a.x},rotated:false,y2:{show:false}}
+   var legendHashOfQuestionsAnswered = {show:true}
+   generateVerticalGraph("#questions_answered_graph", dataHashOfQuestionsAnswered, axisHashOfQuestionsAnswered, legendHashOfQuestionsAnswered  );
+
+   var cdata_ios = $.parseJSON($("#interactive_lo_graph").attr('data'));
+   var dataHashOfInteractiveLo = {colors:{x:'#7ca0c5',"Interactive LO's Consumed": '#0e9b4d'},columns: [cdata_ios.y]}
+   var axisHashOfInteractiveLo = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_ios.x},rotated:false,y2:{show:false}}
+   var legendHashOfInteractiveLo = {show:true}
+   generateVerticalGraph("#interactive_lo_graph", dataHashOfInteractiveLo, axisHashOfInteractiveLo, legendHashOfInteractiveLo  );
+
+  // javascript of graphs of container 4
+
+   var cdata_active_teachers = $.parseJSON($("#active_teachers_graph").attr('data'));
+   var dataHashOfActiveTeachers = {colors:{x:'#7ca0c5','Active Teachers': '#3f6cad'},columns: [cdata_active_teachers.y]}
+   var axisHashOfActiveTeachers = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_active_teachers.x},rotated:false,y2:{show:false}}
+   var legendHashOfActiveTeachers = {show:true}
+   generateVerticalGraph("#active_teachers_graph", dataHashOfActiveTeachers, axisHashOfActiveTeachers, legendHashOfActiveTeachers  );
+
+  var cdata_tests_published = $.parseJSON($("#tests_published_graph").attr('data'));
+  var dataHashOfTestsPublished = {colors:{x:'#c12f05','Tests Published': '#f37e3b'},columns: [cdata_tests_published.y]}
+  var axisHashOfTestsPublished = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_tests_published.x},rotated:false,y2:{show:false}}
+  var legendHashOfTestsPublished = {show:true}
+  generateVerticalGraph("#tests_published_graph", dataHashOfTestsPublished, axisHashOfTestsPublished, legendHashOfTestsPublished);
+
+  var cdata_ContentAssestsPublished = $.parseJSON($("#content_assets_published_graph").attr('data'));
+  var dataHashOfContentAssestsPublished = {colors:{x:'#0e9b4d','Learning Objects Published': '#0e9b4d'},columns: [cdata_ContentAssestsPublished.y]}
+  var axisHashOfContentAssestsPublished = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_ContentAssestsPublished.x},rotated:false,y2:{show:false}}
+  var legendHashOfContentAssestsPublished = {show:true}
+  generateVerticalGraph("#content_assets_published_graph", dataHashOfContentAssestsPublished, axisHashOfContentAssestsPublished, legendHashOfContentAssestsPublished)
+
+
+
+

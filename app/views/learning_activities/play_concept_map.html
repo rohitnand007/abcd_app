@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/play_concept_map.css">
+    <script src="js/konva.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/tinymce.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+<div id="ContainerForPreview" style="border:1px solid #76c4ac;overflow:hidden;"></div><div id="content" class="hidden"></div>
+<script src="js/play_concept_map.js"></script>
+<script>
+    var json = document.URL.split('value=')[1];
+    var finaljson = JSON.parse(decodeURIComponent(json));
+    $('#ContainerForPreview').previewConceptMap(finaljson,'download/');
+</script>
+</body>
+
+</html>

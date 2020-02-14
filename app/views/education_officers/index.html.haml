@@ -1,0 +1,58 @@
+:javascript
+  $(document).ready(function() {
+    $("#institutions").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Education Officers
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", education_officers_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_education_officer_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#institutions.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.institution.profile.firstname", :default => t("activerecord.labels.profile.firstname", :default => "Education Officer"))
+                %th= "Education Officer Id"
+                %th= "Rollno"
+                %th= t("activerecord.attributes.institution.profile.website", :default => t("activerecord.labels.profile.website", :default => "Website"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @education_officers.each do |edu_officer|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"admin_#{edu_officer.id}"}
+                  %td.col= link_to edu_officer.profile.firstname, education_officer_path(edu_officer) if edu_officer.profile
+                  %td.col= edu_officer.edutorid
+                  %td.col= edu_officer.rollno
+                  %td.col= edu_officer.profile.website  if edu_officer.profile
+                  %td.col= display_date_time(edu_officer.created_at)
+                  %td.col
+                    = link_to_show(education_officer_path(edu_officer))
+                    &nbsp
+                    = link_to_edit(edit_education_officer_path(edu_officer))
+                    =# link_to (institution.is_activated ? "#{t("web-app-theme.delete", :default => "Deactivate")}":"#{t("web-app-theme.delete", :default => "Activate")}"),  institution_path(institution), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}",:style=>institution.is_activated ? "":"color:red;"*/
+
+        - unless @education_officers.blank?
+          .pagination_info
+            = paginate @education_officers
+
+
+

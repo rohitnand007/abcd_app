@@ -1,0 +1,255 @@
+= form_for :tag_list,:url=> '/assessment_tool/get_questions_by_tags',:remote=>true do  |f|
+  - if @quiz.nil?
+    = hidden_field_tag :outside_assessment, true
+  -else
+    =# If there is no quiz, that means you are editing, searching questions from outside the assessment.
+    = hidden_field_tag :outside_assessment, @quiz.new_record? ? true : false
+  = hidden_field_tag :quiz_id, @quiz.nil? ? "": @quiz.id
+  = hidden_field_tag :publisher_question_bank_id, publisher_question_bank.nil? ? "" : publisher_question_bank.id
+  #searchOptions
+    %h3 Search by Filters
+    .searchFilterContainer
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "academic_class".humanize.titleize   #C should be caps
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              -# if is_publisher
+              = f.collection_select 'academic_class',  Tag.includes(:tag_references).where("tag_references.publisher_question_bank_id IN (?) AND tags.name=?",[publisher_question_bank.id],'academic_class').sort_by { |a| a.value.to_i }, :id, :value,{:prompt=>'Select', :selected=> select_default(@quiz,"academic_class_tag_id") },{class: 'drop_down',style:"width: 220px; padding:7px"}
+              -# else
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "subject".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'subject', quiz_tag_filters(current_user,@quiz,'subject',publisher_question_bank).sort_by(&:value), :id, :value, {:prompt=>"Select", :selected=> select_default(@quiz,"subject_tag_id")},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "chapter".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'chapter',quiz_tag_filters(current_user,@quiz,'chapter',publisher_question_bank).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "concept_names".humanize.titleize  #name shoudl be caps
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'concept_names',quiz_tag_filters(current_user,@quiz,'concept_names',publisher_question_bank).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: ' drop_down',style:"width: 220px; padding:7px"}
+        - unless @tags.nil?
+          - white_listed_tags = publisher_question_bank.tags.map(&:id)
+          - white_listed_search_tags = publisher_question_bank.tags.collect(&:name).uniq.sort - ["qsubtype"]
+          - (@tags&white_listed_search_tags).each do |tag|
+            %tr
+              %td{style: "border: 0px; padding: 2px;"}
+                %label{for: "subjectAddQuestionsButton"}
+                  %b
+                    - if tag == "specialCategory"
+                      = "Special Category"
+                    - elsif tag == "blooms_taxonomy"
+                      = "Revised Bloom's Taxonomy"
+                    - else
+                      = tag.humanize.titleize
+            %tr
+              %td{style: "border: 0px; padding: 2px;"}
+                .styled-select
+                  = f.collection_select tag,  Tag.where({name:tag,id:white_listed_tags}).sort_by(&:value), :id, :value,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        - if [4,14].include? publisher_question_bank.id
+          %tr
+            %td{style: "border: 0px; padding: 2px;"}
+              %label{for: "subjectAddQuestionsButton"}
+                %b
+                  Question Type
+                  = select_tag :qtype, options_for_select([['All Formats','All'],["Multiple Choice","multichoice"],["Fill In The Blanks","fib"],["True or False","truefalse"],["Activity","activity"],["Passage","passage"],["Long Answer Question","laq"],["Short answer Question","saq"],["Very Short Answer Question","vsaq"],["Project","project"]]),{class: 'drop_down',style:"width: 220px; padding:7px;display: none;"}
+          %tr#nstype
+            %td{style: "border: 0px; padding: 2px;"}
+              .styled-select
+                - qsubtype_tags =  Tag.where({name:"qsubtype",id:white_listed_tags}).sort_by(&:value)
+                - select_mapping = lambda {|qst| [qst.value_text,qst.id,{"data-tvalue"=>qst.value}]}
+                = f.select :qsubtype, options_for_select( qsubtype_tags.map(&select_mapping)), {:prompt=>'Select'}, {class:'drop_down',style:"width: 220px; padding:7px"}
+        - else
+          %tr
+            %td{style: "border: 0px; padding: 2px;"}
+              %label{for: "subjectAddQuestionsButton"}
+                %b
+                  Question Type
+          %tr
+            %td{style: "border: 0px; padding: 2px;"}
+              .styled-select
+                = select_tag :qtype, options_for_select([['All Formats','All'],["Multiple Choice","multichoice"],["Fill In The Blanks","fib"],["True or False","truefalse"],["Activity","activity"],["Passage","passage"],["Long Answer Question","laq"],["Short answer Question","saq"],["Very Short Answer Question","vsaq"],["Project","project"]]),{class: 'drop_down',style:"width: 220px; padding:7px"}
+          %tr
+            %td{style: "border: 0px; padding: 2px;"}
+              %label{for: "subjectAddQuestionsButton"}
+                %b
+                  Special Question Formats
+                  =check_box_tag 'checkbox', 'yes', false, class: 'nsbox', style: "margin-left: 38px;width: 11px;"
+          %tr#nstype
+            %td{style: "border: 0px; padding: 2px;"}
+              .styled-select
+                - qsubtype_tags =  Tag.where({name:"qsubtype",id:white_listed_tags}).sort_by(&:value)
+                - select_mapping = lambda {|qst| [qst.value_text,qst.id,{"data-tvalue"=>qst.value}]}
+                = f.select :qsubtype, options_for_select( qsubtype_tags.map(&select_mapping)), {:prompt=>'Select'}, {class:'drop_down',style:"width: 220px; padding:7px"}
+
+    %h3 Search by IDs
+    .searchIdBoxContainer
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td
+            =f.text_field "search_by_id",{placeholder:"Seperate IDs by commas (,)"}
+
+  %table
+    %tr
+      %td{style: "height: 10px;"}
+        %br
+        /%button#questionBankSearch{style: "background-color:#60c8cd; color: white;"}
+        = f.submit 'Search' ,id: "search_for_questions"
+        = image_tag "small_loading.gif",class:"loading",style:"vertical-align: middle"
+        //%span{style: "color:grey; font-size:-2;vertical-align: middle"} Reset search
+
+:javascript
+
+  add_accordion_to_searches();
+  $("#search_for_questions").button();
+  $('#tag_list_academic_class,#tag_list_subject,#tag_list_chapter,#tag_list_concept_names').val("");
+  $("#tag_list_academic_class").change(function() {
+      var selected_value = $('select#tag_list_academic_class :selected').val();
+      var question_bank_id = $('#search_db').val();
+      var div_chapter_update = "#tag_list_chapter"
+      var div_concept_name_update = "#tag_list_concept_names"
+      var div_subject_update = "#tag_list_subject"
+      var url = "/assessment_tool/get_reference_tags/"
+      if ( selected_value != '')
+      {
+          get_url_Data(url,selected_value+'?name=subject&publisher_question_bank_id='+question_bank_id,div_subject_update);
+
+          get_url_Data(url,selected_value+'?name=chapter&publisher_question_bank_id='+question_bank_id,div_chapter_update);
+
+          get_url_Data(url,selected_value+'?name=concept_names&publisher_question_bank_id='+question_bank_id,div_concept_name_update);
+      }
+  });
+  $("#tag_list_subject").change(function() {
+        var subject_value = $('select#tag_list_subject :selected').val();
+        var academic_value = $('select#tag_list_academic_class :selected').val();
+        var question_bank_id = $('#search_db').val();
+        var tag_ids = []
+
+        if ( academic_value != ''){
+           tag_ids.push(academic_value)
+         }
+        if ( subject_value != '')
+        {
+          tag_ids.push(subject_value)
+          var url = "/assessment_tool/get_reference_tags/"
+          var div_update = "#tag_list_chapter"
+          var div_concept_name_update = "#tag_list_concept_names"
+
+          get_url_Data(url,tag_ids+'?name=chapter&publisher_question_bank_id='+question_bank_id,div_update);
+
+          get_url_Data(url,tag_ids+'?name=concept_names&publisher_question_bank_id='+question_bank_id,div_concept_name_update);
+        }
+   });
+   $("#tag_list_chapter").change(function() {
+         var selected_value = $('select#tag_list_chapter :selected').val();
+         var question_bank_id = $('#search_db').val();
+         var academic_value = $('select#tag_list_academic_class :selected').val();
+         var subject_value = $('select#tag_list_subject :selected').val();
+         var tag_ids = []
+
+         if (academic_value != ''){
+            tag_ids.push(academic_value)
+         }
+         if (subject_value != ''){
+            tag_ids.push(subject_value)
+         }
+         if ( selected_value != '')
+          {
+          tag_ids.push(selected_value)
+           var url = "/assessment_tool/get_reference_tags/"
+           var div_update = "#tag_list_concept_names"
+           get_url_Data(url,tag_ids+'?name=concept_names&publisher_question_bank_id='+question_bank_id,div_update);
+          }
+   });
+   $("#tag_list_concept_names").change(function() {
+      var selected_value = $('select#tag_list_chapter :selected').val();
+      if (selected_value == '') {
+        //$("#tag_list_academic_class").get(0).selectedIndex = 0;
+        //$("#tag_list_subject").get(0).selectedIndex = 0;
+        //$("#tag_list_chapter").get(0).selectedIndex = 0;
+      }
+  });
+  $("#qtype").change(function() {
+    $('#tag_list_qsubtype').val("");
+  })
+  $("#tag_list_qsubtype").change(function() {
+    var subtype = $("#tag_list_qsubtype").find('option:selected').data("tvalue");
+    switch(subtype){
+      case "mmcq":
+        $('#qtype').val("multichoice");
+        break;
+      case "smcq":
+        $('#qtype').val("multichoice");
+        break;
+      case "ifib":
+        $('#qtype').val("fib");
+        break;
+      case "oomtf":
+        $('#qtype').val("passage");
+        break;
+      case "ommtf":
+        $('#qtype').val("passage");
+        break;
+      default:
+        $('#qtype').val("");
+    }
+  })
+  $("#search_for_questions").click(function(){
+     $(".loading").show();
+     empty_question_array();
+     return true;
+  });
+    //code for non-standard type questions checkbox
+    //$(document).ready ( function(){
+    //  $('.nsbox').bind('change', function () {
+    //     if ($(this).is(':checked')){
+    //       $("#nstype").show();
+    //       $("#qtype").prop('disabled', 'disabled');
+    //       }
+    //     else{ $("#nstype").hide();
+    //       $("#qtype").prop('disabled', false);
+    //       $("#tag_list_qsubtype").val("Select");
+    //       }
+    //  });
+    //  $('.nsbox').trigger('change');
+    //});
+    $(document).ready ( function(){
+          $('.nsbox').bind('change', function () {
+             if ($(this).is(':checked')){
+               $("#nstype").show();
+               $("#qtype").prop('disabled', 'disabled');
+               }
+             else{ $("#nstype").hide();
+               $("#qtype").prop('disabled', false);
+               $("#tag_list_qsubtype").val("Select")
+               }
+          });
+          $('.nsbox').trigger('change');
+        });
+    jQuery(function($) {
+        $('form').bind('submit', function() {
+            $(this).find(':input').removeAttr('disabled');
+        });
+
+    });
+    //code ends here

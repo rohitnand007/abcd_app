@@ -1,0 +1,11 @@
+%table.details{width: '700px', align: 'center'}
+  %tbody
+    %tr.odd.center
+      %th= "Package Name"
+      %th= "Shared User ID"
+      %th= "Version Number"
+  - @ebuild.ebuild_apps.each do |app|
+    %tr{:class => cycle("odd center", "even center")}
+      %td= app.package
+      %td= app.sharedUserId
+      %td= app.versionCode

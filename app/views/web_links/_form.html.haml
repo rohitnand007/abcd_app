@@ -1,0 +1,248 @@
+= simple_form_for @web_link, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Chapter!",
+                      :message => "You'll need to fix the following fields:"
+  .inputs
+    - unless current_user.is?("ET")
+      .group
+        .field
+          = f.association :board,:collection=>(current_user.role_id == 8 ? current_user.boards : Board.all),:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+          -#= f.label :board_id, "Board", :class=>'label'
+          -#= f.collection_select :board_id, current_user.role_id == 8 ? current_user.boards : Board.all ,:id,:name,{:prompt => true},{:class=>"drop_down"}
+      .group
+        .field
+          = f.label :content_year_id, "content year", :class=>'label'
+          = f.select :content_year_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true ,:label=>'Content Year'
+      .group
+        .field
+          = f.label :subject_id, "Subject", :class=>'label'
+          = f.select :subject_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    - else
+      .group
+        .field
+          = f.input :subject_id, :label_html=>{:class=>"label"} do
+            = f.collection_select :subject_id,current_user.class_contents,:id,:name_with_content_year,{:prompt=>true},{:class=>'drop_down' }
+    .group
+      .field
+        = f.label :chapter_id, "Chapter", :class=>'label'
+        = f.select :chapter_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    .group
+      .field
+        = f.label :chapter_id, "Chapter Pages", :class=>'label'
+        .chapter_page_no
+        %br
+    .group
+      .field
+        = f.label :topic_id, "Topic", :class=>'label'
+        = f.select :topic_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+
+    .group
+      .field
+        = f.label :chapter_id, "Topic Pages", :class=>'label'
+        .topic_page_no
+        %br
+    .group
+      .field
+        .web_link_page
+          = f.input :params,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Web-link Page No'
+    .group
+      .field
+        = f.input :link_type,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} do
+          = radio_button_tag :link_type, 'weblink',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual"
+          = 'WebLink'
+          = radio_button_tag :link_type, 'video',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Group"
+          = 'Video'
+          = radio_button_tag :link_type, 'flash',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Group"
+          = 'Flash'
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Display Name on tab:'
+    .group#extras
+      .field
+        = f.input :extras,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Web-link Url"
+    .group#video
+      .field
+        = f.fields_for :web_link_video do |a|
+          = a.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Web-Link Video Upload"
+    .group#flash
+      .field
+        = f.fields_for :web_link_flash do |a|
+          = a.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Web-Link Flash Upload"
+    .group
+      .field
+        = f.input :status, :as => :hidden, :input_html => { :value => 1 }
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f) ,:id=>'submit_form'
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), current_user.is?("ET") ? teacher_contents_path : web_links_path,:class=>'button danger icon remove'
+    
+:javascript
+  $("web_link_content_year_id").attr('disabled', 'disabled');
+  $("#web_link_board_id").change(function() {
+       clear_all(1);
+      var selected_value = $('select#web_link_board_id :selected').val();
+      var url = "/course/get_content_years/"
+      var div_update = "#web_link_content_year_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#web_link_content_year_id").change(function() {
+      clear_all(2)
+      var selected_value = $('select#web_link_content_year_id :selected').val();
+      var url = "/content_years/get_subjets/"
+      var div_update = "#web_link_subject_id"
+      get_url_Data(url,selected_value,div_update);
+  });                                                               
+  
+  $("#web_link_subject_id").change(function() {
+        clear_all(3);
+        var selected_value = $('select#web_link_subject_id :selected').val();
+        var url = "/subjects/get_chapters_values/"
+        var div_update = "#web_link_chapter_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+  
+    $("#web_link_chapter_id").change(function() {
+        clear_all(4);
+        var value = $('select#web_link_chapter_id :selected').val();
+        var selected_value = value.split("|")[0]
+        var page_no = value.split("|")[1]
+        if (page_no != ','){
+          $('.web_link_page').show();
+          $('.chapter_page_no').empty();
+          $('.chapter_page_no').append('Start-page: '+page_no.split(',')[0]+' End-page: '+page_no.split(',')[1]);
+        }
+        else {
+          $('.chapter_page_no').empty();
+          $('.chapter_page_no').append('No page numbers')
+          $('.web_link_page').hide();
+        }
+        var url = "/chapters/get_topics_values/"
+        var div_update = "#web_link_topic_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#web_link_topic_id").change(function() {
+        clear_all(5);
+        var value = $('select#web_link_topic_id :selected').val();
+        var selected_value = value.split("|")[0]
+        var page_no = value.split("|")[1]
+        if (page_no != ','){
+          $('.web_link_page').show();
+          $('.topic_page_no').empty();
+          $('.topic_page_no').append('Start-page: '+page_no.split(',')[0]+' End-page: '+page_no.split(',')[1]);
+        }
+        else {
+          $('.topic_page_no').empty();
+          $('.topic_page_no').append('No page numbers')
+          $('.web_link_page').hide();
+        }
+    });
+
+    function clear_all(status){
+    if (status == 1) {
+      $("#web_link_content_year_id").empty();
+      $("#web_link_subject_id").empty();
+      $("#web_link_topic_id").empty();
+      $("#web_link_chapter_id").empty();
+      $(".web_link_page").show();
+      $('.topic_page_no').empty();
+      $('.chapter_page_no').empty();
+    }
+    if (status == 2){
+     $("#web_link_subject_id").empty();
+     $("#web_link_topic_id").empty();
+     $("#web_link_chapter_id").empty();
+     $(".web_link_page").show();
+     $('.topic_page_no').empty();
+     $('.chapter_page_no').empty();
+    }
+    if (status == 3){
+         $("#web_link_topic_id").empty();
+         $("#web_link_chapter_id").empty();
+         $(".web_link_page").show();
+         $('.topic_page_no').empty();
+         $('.chapter_page_no').empty();
+        }
+    if (status == 4){
+         $("#web_link_topic_id").empty();
+         $(".web_link_page").show();
+         $('.topic_page_no').empty();
+         $('.chapter_page_no').empty();
+        }
+    if (status == 5){
+         $(".web_link_page").show();
+         $('.topic_page_no').empty();
+        }
+    }
+    $("#submit_form").click(function(){
+        var page_no = $('input#web_link_params').val();
+        var c_value = $('select#web_link_chapter_id :selected').val();
+        var chapter_value = c_value.split("|")[0]
+        var chapter_page = c_value.split("|")[1]
+        var t_value = $('select#web_link_topic_id :selected').val();
+        var topic_value = t_value.split("|")[0]
+        var topic_page = t_value.split("|")[1]
+        if(t_value!=null && t_value.length>1 && t_value.match("|,")==false){
+         if(page_no >= topic_page.split(',')[0]*1 && page_no <= topic_page.split(',')[1]*1 ){
+            $('input#web_link_params').val('page_start:'+page_no+','+'page_end:'+page_no);
+          }
+          else{
+            alert('The web link page number is not in the range ');
+            return false
+          }
+        }
+        else{
+            if(page_no >= chapter_page.split(',')[0]*1 && page_no <= chapter_page.split(',')[1]*1 ){
+              $('input#web_link_params').val('page_start:'+page_no+','+'page_end:'+page_no);
+            }
+            else{
+              alert('The web link page number is not in the range ');
+              return false
+            }
+       }
+       $('select#web_link_chapter_id :selected').val(chapter_value);
+       $('select#web_link_topic_id :selected').val(topic_value);
+    });
+
+
+  $(document).ready(function() {
+
+      var checked = $("#web_link_is_profile:input:checked").length;
+      if(checked == 1){
+          $("#content_profile").show();
+      }
+      else{
+          $("#content_profile").hide();
+      }
+      $("#web_link_is_profile").change(function(){
+          if($(this).is(':checked')){
+              $("#content_profile").show("slow");
+          }
+          else{
+              $("#content_profile").hide("slow");
+          }
+      });
+
+      $("input[name$='link_type']").click(function(){
+          var radio_value = $(this).val();
+          if(radio_value=='weblink') {
+              //$("#message_group_id").get(0).selectedIndex = 0;
+              $("#extras").show("slow");
+              $("#video").hide();
+              $("#flash").hide();
+          }
+          else if(radio_value=='video') {
+              $("#extras").hide();
+              $("#video").show("slow");
+              $("#flash").hide();
+          }
+          else if(radio_value=='flash') {
+                        $("#extras").hide();
+                        $("#video").hide();
+                        $("#flash").show("slow");
+                    }
+      });
+       $("#extras").hide();
+       $("#video").hide();
+       $("#flash").hide();
+  });

@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b User:
+  = @analytics_usage.user_id
+%p
+  %b Usage date:
+  = @analytics_usage.usage_date
+%p
+  %b Total usage:
+  = @analytics_usage.total_usage
+
+= link_to 'Edit', edit_analytics_usage_path(@analytics_usage)
+\|
+= link_to 'Back', analytics_usages_path

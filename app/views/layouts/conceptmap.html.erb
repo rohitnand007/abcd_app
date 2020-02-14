@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ConceptMap</title>
+  <%= stylesheet_link_tag    "conceptmap", :media => "all" %>
+  <%= javascript_include_tag "concept_map" %>
+  <%= stylesheet_link_tag "style", :media => "all" %>
+
+  <%= csrf_meta_tags %>
+  <%= yield(:head) %>
+</head>
+<body style="background: #EEEEEE;">
+
+<%= yield %>  
+</body>
+</html>

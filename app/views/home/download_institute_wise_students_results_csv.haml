@@ -1,0 +1,12 @@
+= form_tag download_institute_wise_students_results_csv_path, :multipart => true do
+  %h2 Get Info about downloaded and Not submitted students of Institute level
+  %h4 The csv file should be in the following format
+  %div{style:"background-color: #f9f9f9; width: 400px;"}
+    %h4 Please generate the following in Excel like program and save it as CSV file type.
+    %b quiz_id , published_id
+    %br
+    %t Ex: 76760, 84619
+  %br/
+  %br/
+  = file_field_tag "file"
+  = submit_tag 'Upload'

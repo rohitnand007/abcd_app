@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+%html.loading_icon
+  %head
+    %title
+      = 'ABCDE'
+    = favicon_link_tag '/assets/abcd_icons/favicon_abcd.ico'
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application'
+    %link{:rel=>"stylesheet", :href=>"http://www.w3schools.com/lib/w3.css"}
+    %link{:rel=>"stylesheet", :href=>"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"}
+    %link{:href => "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css", :rel => "stylesheet"}/
+    = javascript_include_tag 'application'
+  %body
+    #container
+      #header_bg
+        #header
+          #head_contentLeft
+            .logo_icons{:style=>"height: 120%;width: auto;"}
+              = link_to (image_tag "abcdlogo.png"),root_path
+            #nav_icons
+              = render 'shared/abcd_top_menu_inner'
+          #head_contentRight
+            .profile_block.center_vertical
+              = image_tag "user.png"
+              -#%label
+              -#  = current_user.name.truncate(23)
+              -#%button.profile_view
+            .profile_content
+              %label.profile_edit
+                = link_to "My Profile" , profile_path(current_user.profile)
+              %label.profile_edit
+                = link_to "Change Password",change_password_path
+              %label.profile_edit.logout
+                = link_to  "Logout", destroy_user_session_path, :method => :delete
+            - unless current_user.is? "ET"
+              .notification_block
+                = link_to (image_tag "notifications.png"), messages_path+user_path(current_user)
+            - unless current_user.is? "ECP" or current_user.is? "ES"
+              .search_block_v
+                = render 'shared/search_new_inner'
+          -##head_user_info
+          -#  = display_details
+      -#.page_bg_image
+      .body_content
+        .flash
+          = render 'shared/flash_messages'
+        .yield_gap
+        = yield
+      .oauth_frame
+        -if @cur
+          = render 'shared/oauth'
+
+      -##footer
+      -#  %p
+      -#    Copyright &copy; #{Time.now.year}
+      -#    %a{:href => "http://www.edutor.co.in", :target => "_blank" ,:style=>'color:#636363;'} Edutor Technologies
+      -#    &nbsp|
+      -#    %a{:href => "/privacy_policy", :target => "_blank" ,:style=>'color:#636363;'} Privacy Policy.
+      -#    &nbsp|
+      -#    %a{:href => "/refund_policy", :target => "_blank", :style =>'color:#636363;'}Refund Policy
+      -#    &nbsp|
+      -#    %a{:href => "/terms_of_use", :target => "_blank", :style =>'color:#636363;'}Terms of Use
+    #popup-box1.popup-position{style:"display:none;"}
+      #popup-wrapper
+        #popup-container
+          %h3 Start Your Assessment.
+          #div_btn
+            %div{onclick: "showInstructionBeforeStartingTest();"}
+              %input{type:"image", src:"/assets/submit_icon.png"}
+              %h3 Start
+            %div{onclick: "doNotStartTest();"}
+              %input{type:"image", src:"/assets/cancel_icon.png"}
+              %h3 Cancel
+    #popup-box2.popup-position{style:"display:none;"}
+      #popup-wrapper
+        #popup-container
+          %h3 Hey! Congratulations you have taken the Assessment.
+          %h3 Are you sure to submit this test?
+          #div_btn
+            %div{onclick: "toggle_visibility('popup-box2')"}
+              %input{type:"image", src:"/assets/cancel_icon.png"}
+              %h3 Cancel
+            %div{onclick: "submitQuiz()"}
+              %input{type:"image", src:"/assets/submit_icon.png"}
+              %h3 Submit
+    #popup-box3.popup-position{style:"display:none;"}
+      #popup-wrapper
+        .square
+          .spin
+        -#%input{type:"image", src:"/assets/spiffygif.gif"}
+    #loading_overlay{style: "display:none"}
+      = image_tag "ignitor_spinner.gif"
+
+:javascript
+      //function resize(){
+      //    if ($(window).width()<1350){
+      //    // UI restructure for smaller screens
+      //    $(".nav_icon_block").css({"width":"55","word-wrap":"break-word"})
+      //    $(".nav_text").css({padding:0})
+      //    $(".body_content").css({"padding":"0","margin":"5"})
+      //    $("#header").css({"box-shadow":"0px 2px 0px 0px #0090D4"})
+      //    $("#header_bg").css({"box-shadow":"none"})
+      //  }
+      //}
+      //window.addEventListener('resize', resize);
+      //resize();
+
+      //set the active header
+      $(active_header_block).css("background-color", "#E5F4FB");
+      $(active_header_block).children(".nav_menuarrow").css("visibility", "visible");
+
+      $(".nav_icon_block").click(function(){
+        var clicked_header_block = '#' +$(this).attr('id');
+        localStorage.setItem('active_header_block', clicked_header_block);
+        //alert('clicked: ' + clicked_header_block);
+      });
+      $(".top-menu-bar").bind('mouseleave',function(){
+              $(".show").hide();
+              $(this).toggle();
+      });
+      $(".nav_icon_block").hover(function () {
+     		$(this).css("background-color", "#E5F4FB");
+        $(this).children(".nav_menuarrow").css("visibility", "visible");
+        $(this).find(".dropmenu").show();
+        //If this is not active header remove background for active header
+        if(('#' +$(this).attr('id') )!= active_header_block){
+          $(active_header_block).css("background-color", "#ffffff");
+          $(active_header_block).children(".nav_menuarrow").css("visibility", "hidden");
+        }
+      },
+      function () {
+            if(('#' +$(this).attr('id') )!= active_header_block){
+              $(this).css("background-color", "white");              
+              $(this).children(".nav_menuarrow").css("visibility", "hidden");
+              //If this is not active header set background for active header  
+              $(active_header_block).css("background-color", "#E5F4FB");
+              $(active_header_block).children(".nav_menuarrow").css("visibility", "visible");
+            }
+            $(this).css("border-bottom", "0");
+            $(this).find(".dropmenu").hide();        
+      }
+      );
+      $(".profile_block").bind('click',function() {
+              $(".profile_content").toggle()
+            });
+      $(".profile_content").bind('mouseleave',function() {
+                    $(".profile_content").css("display", "none")
+                  });
+      attachSearchEvents();
+      $(".search_input").val("").focus();
+      $(".logout").click(function(){
+        localStorage.setItem('active_header_block', null);
+      });
+
+      function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(event) {
+          if (!event.target.matches('.dropbtn')) {
+
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+              var openDropdown = dropdowns[i];
+              if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+              }
+            }
+          }
+        }

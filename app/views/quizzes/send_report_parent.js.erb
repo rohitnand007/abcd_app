@@ -1,0 +1,12 @@
+ $('#progress-indicator').hide();
+ $("#data").css('opacity','');
+ $("#data :input").attr("disabled", false);
+ $("#select_all").attr("checked",false)
+ $("input[name=report]").each(function()
+ {
+     this.checked = false
+ })
+ $("#response_message").html("<%= escape_javascript(@sent_message) %>");
+ <% if @not_size > 0 %>
+ $("#response_message").append("<p style='color:red;'><%= escape_javascript(@not_sent) %></p>");
+ <%end%>

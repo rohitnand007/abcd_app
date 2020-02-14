@@ -1,0 +1,12 @@
+#content_header
+  %h1#main_heading Editing Power Chips
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_power_chip_path
+#data
+  %table{width:'100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"

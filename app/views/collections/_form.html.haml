@@ -1,0 +1,30 @@
+= simple_form_for @collection,:html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Collection!",
+                          :message => "You'll need to fix the following fields:"
+
+  .inputs
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :collection_books,:input_html=>{:class=>"text_field","data-pre" => f.object.books.map{|u| Hash[id: u.id, name: u.name]}.to_json},:label_html=>{:class=>"label"},:label=>"Books:"
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), collections_path,:class=>'button danger icon remove'
+
+:javascript
+  $(document).ready(function(){
+     $(function() {
+              $("#collection_collection_books").tokenInput("/books.json", {
+              queryParam: 'term',
+              minChars: '3',
+              hintText: 'Type first 3-letters of book',
+              crossDomain: false,
+              preventDuplicates:true,
+              prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+              theme: ""
+              });
+            });
+     });

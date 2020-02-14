@@ -1,0 +1,94 @@
+<img alt="Blue_loading" class="loading" src="/assets/blue_loading.gif" />	
+%img(src="/assets/blue_loading.gif")
+<img alt="Small_loading" class="loading" src="/assets/small_loading.gif" style="vertical-align: middle; display: none;">
+%img(src="/assets/small_loading.gif")
+
+ %img{:src => "/assets/blue_loading.gif", :id => "loading", :height => "100", :style => "visibility: hidden", :width => "100", :align => "middle"}
+
+:javascript
+
+  $("#changeQuestion").click(function(){
+    $("#loading").css("visibility", "visible")
+  })
+
+  for the subjects in alphabetical order issue : see partial:search_ncx_questions.html.haml\
+  #edit the below code to get the APPROPRIATE RESULT:
+  {%tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'subject_id', get_user_type_group(@board,'Subject',@quiz).sort_by(&:name & "ASC").order, :id, :name, {:prompt=>"Select",:selected=>select_default_ncx(@quiz,"subject_id")},{class: 'drop_down',style:"width: 220px; padding:7px"}}
+
+              function orderSelect($element) {
+                var options   = $element.find('option'),
+                  n_options = options.length,
+                    temp = [],
+                      parts,
+                        i;
+
+                    for(i = n_options; i --;) {
+                      temp[i] = options[i].text + "," + options[i].value ; 
+                              }
+
+                        temp.sort();
+
+                          for(i = n_options; i --;) {
+                              parts = temp[i].split(',');
+
+                                options[i].text  = parts[0];
+                                  options[i].value = parts[1]; 
+                                    }
+                                }
+
+
+              edit button that's bugging you is in partial select_questions
+http://stackoverflow.com/questions/20754942/grouped-collection-select-alphabetical-order-rails
+for non standard types qustions....partial is _select_questions.haml
+
+
+/assessment_tool/new 
+    srcfile=directory+"/"
+    f current_user.is? "ECP"
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Passage questions count Mismatch
+1) see _section_info
+  edit:= assessment_div.questions.count
+2) see _test_details
+  edit: = quiz.total_questions
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    POR-582 in show_multichoice.html.erb
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$("#booksList").find(":checkbox").removeAttr('checked');
+
+  $(".selectall").click(function(e){
+    e.preventDefault();
+      $("#booksList").find(":checkbox").attr('checked','checked');
+  });
+  $(".deselectall").click(function(e){
+    e.preventDefault();
+      $("#booksList").find(":checkbox").removeAttr('checked');
+  });
+  --------------------------------------------------------------------------------------------------------------------------
+  function checkAll(ele) {
+  -#-#-#-#   var checkboxes = document.getElementsByTagName('ibooks');
+  -#-#-#-#    if (ele.checked) {
+  -#-#-#-#      alert();
+  -#-#-#-#       for (var i = 0; i < checkboxes.length; i++) {
+  -#-#-#-#           if (checkboxes[i].type == 'checkbox') {
+  -#-#-#-#               checkboxes[i].checked = true;
+  -#-#-#-#           }
+  -#-#-#-#       }
+  -#-#-#-#   }else {
+  -#-#-#-#       for (var i = 0; i < checkboxes.length; i++) {
+  -#-#-#-#           console.log(i)
+  -#-#-#-#           if (checkboxes[i].type == 'checkbox') {
+  -#-#-#-#               checkboxes[i].checked = false;
+  -#-#-#-#           }
+  -#-#-#-#       }
+  ////////   }
+  ////////}
+  modified:   app/controllers/powerchips_controller.rb
+  modified:   app/models/ignitor_user_chip.rb
+  modified:   app/models/user.rb
+  modified:   app/views/content_deliveries/index.html.haml
+  modified:   app/views/powerchips/_chips_list_to_delete.html.haml
+  modified:   app/views/powerchips/powerchip_search.js.erb
+  modified:   app/views/powerchips/powerchip_unregister.html.haml

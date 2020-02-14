@@ -1,0 +1,7 @@
+.licenceUtilizedPieChart
+  %h4= "License Utilization"
+  .utilizationChart{id:"uChart#{ibook.id}"}
+  - license_consumed_percentage = ibook.license_consumed_percentage
+  - pieid = "uChart"+ibook.id.to_s
+  :javascript
+    createDonut("#{j pieid}",'#4d917a', '#636363', #{license_consumed_percentage}, 100, 'Licenses Utilized', 'Licences not yet Utilized');

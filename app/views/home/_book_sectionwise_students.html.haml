@@ -1,0 +1,42 @@
+%br
+.row
+  .col-md-2.contents_box.center_align
+    %br
+    %br
+    %img{:alt => "abcd_logo", :src => "ibook_public/#{row_info[0]}/cover.png",:href => "/"}
+    %br
+    %br
+    = row_info[1]
+  -row_info[3].zip(colors.cycle,count)  do |stu_no|
+    .col-md-2.contents_box.center_align
+      %br
+      %br
+      .medium_circle{id:"circle#{stu_no[2]}",class:"#{stu_no[1]}"}
+        = stu_no[0]
+  -#.col-md-2.contents_box.center_align
+  -#  %br
+  -#  %br
+  -#  .medium_circle.dark_pink#circle7
+  -#    = 333
+  -#.col-md-2.contents_box.center_align
+  -#  %br
+  -#  %br
+  -#  .medium_circle.dark_orange#circle8
+  -#    = 420
+  -#  %br
+  -#  %br
+  -#.col-md-2.contents_box.center_align
+  -#  %br
+  -#  %br
+  -#  .medium_circle.dark_green#circle9
+  -#    = 420
+  -#  %br
+  -#  %br
+  -#.col-md-2.contents_box.center_align
+  -#  %br
+  -#  %br
+  -#  .medium_circle.dark_blue#circle10
+  -#    = 420
+  -#  %br
+  -#  %br
+  -#  %br

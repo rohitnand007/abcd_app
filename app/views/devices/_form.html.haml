@@ -1,0 +1,87 @@
+= simple_form_for @device, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+  - if current_user.is?'EA'
+    .group
+      .field
+        #instution
+          = f.label :institution_id, "Institution", :class=>'label'
+          = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,Center.includes(:profile),:id,:name,{:prompt=>'select'},{:class=>"drop_down"}
+  -elsif current_user.is? 'IA'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,current_user.centers,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -elsif current_user.is?'CR'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[current_user.center],:id,:name,{},{:class=>"drop_down"}
+  -else
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = current_user.type.eql?("Institution") ? current_user.name : current_user.institution.name
+        - if current_user.center or current_user.type.eql?('Center')
+          = f.label :center_id, "  Center", :class=>'label'
+          = current_user.type.eql?("Center") ? current_user.name : current_user.center.name
+  .group
+    .field
+      = f.input :model,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :deviceid,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :status,:as=>:select,:collection=>Device::DEVICE_STATUS,:include_blank => false,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :device_type,:as=>:select,:collection=>Device::DEVICE_TYPES,:include_blank => false,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      -#= f.label :Belongs_to, "Belongs To", :class => "label"
+      -#= f.association :users ,:as=>:text,:input_html=>{:rows=>4,:cols=>100 ,:class => 'text_field',"data-pre" => f.object.users.map{|u| Hash[id: u.id, name: u.profile.try(:autocomplete_display_name)]}.to_json},:label => false
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), devices_path,:class=>'button danger icon remove'
+:javascript
+  var users = $('#device_user_ids');
+  $(users).tokenInput(getSearchURL1(), { preventDuplicates:true,prePopulate: $(users).data('pre'),
+      theme: '' ,crossDomain: false });
+
+
+  $("#device_institution_id").change(function() {
+      var institution = $('select#device_institution_id :selected').val();
+      var url = '/institution/get_centers/' + institution
+      var div_update = "#device_center_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+  $("#device_center_id").change(function() {
+
+      var institution = $('select#device_institution_id :selected').val();
+      var center = $('select#device_center_id :selected').val();
+      $(users).tokenInput('clear');
+      $(".token-input-dropdown").remove();
+      $(".token-input-list").remove();
+      $("#token-input-device_user_ids").remove();
+      $(users).tokenInput(getSearchURL1(), { preventDuplicates:true,
+          theme: '' ,crossDomain: false });
+      $(users).tokenInput('clear');
+
+  });

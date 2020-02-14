@@ -1,0 +1,322 @@
+= stylesheet_link_tag "assessment_tool"
+= render partial: "instructions/instruction_select",locals:{edit:false}
+.body_content1{style:"padding-left: 5% ; padding-right: 5%"}
+  .assessments_layout
+    - multi_subject_assessment_tip = "checking this box allows to associate assessment to multiple  subjects."
+    - open_format_assessment_tip ="For creating Open Format Assessments, please use our classic assessment template by clicking on the button"
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      = render :partial => 'create_assessment_tabbed_header'
+      .ui-tabs-panel.ui-corner-bottom
+        = render 'bread_crumbs_indicator'
+
+        - 2.times do
+          %br
+
+        = form_for @quiz, :url => {:controller => 'assessment_tool', :action => 'create'}, :html => { :multipart => true } do |f|
+          = f.fields_for :quiz_detail do |q_d|
+            #metadata_box
+              -#%label
+              -#  Assessment Type:
+              #quiz_format_type
+                = f.hidden_field :format_type,:value=> 8
+                -#%label#pink_bg{for:"quiz_format_type_8"}
+                -#  Normal
+                -#= f.radio_button :format_type, 1, :checked=>false
+                -#%label{for:"quiz_format_type_1"}
+                -#  Open Format
+              -#%br
+              -#%br
+              -if !current_user.is? "ECP"
+                %label Name:
+                = f.text_field :name,id:"testNameInput",class:"form-name",placeholder:"Assessment Name ...",required:"required",onClick:"this.select()"
+                %label Form:
+                .styled-select
+                  = q_d.collection_select :academic_class_tag_id, Tag.where("tags_db_id=? AND name=? AND standard=?",1,'academic_class', true),:id, :value,{}, {id:"quiz_class",class: 'drop_down',style:"width: 150px; padding:7px"}
+                %span{:id=>'quiz_subject1'}
+                  %label{style:'vertical-align: middle;'} Subject:
+                  .styled-select{style:'vertical-align: middle;'}
+                    = q_d.collection_select :subject_tag_id, Tag.where("tags_db_id=? AND name=? AND standard=?",1,'subject', true), :id, :value,{:prompt=>'Select'}, {class: 'drop_down',id:"quiz_subject_box",style:"width: 150px; padding:7px;vertical-align: middle;"}
+                %label Duration in min.
+                = f.number_field :timelimit, min:"0", max:"180",value:10, size:"3",id:"testHoursInput",class:"form-name",placeholder:"Min",required:"required", style: "padding: 1px 0px 1px 10px"
+              %br
+              %label Instructions:
+              %br
+              %br
+              - current_instruction = Instruction.where(user_id:current_user.id,is_live:true)
+              = f.text_area :intro,size: "135",id:"testInstructionsInput",class:"form-name seperate_text",value:current_instruction.present? ? current_instruction.first.content : ""
+            %br
+              -#= link_to "Save as Template","#",class:"black_bg button",id:"intro_save"
+              -#= link_to "Select a Template","#",class:"grey_bg button",id:"intro_select"
+
+          -# This div is used to create and edit sections in the given assessment
+          .ui-widget-contentid{style: "width: 100%;overflow-x: auto;"}
+            %table#add_quiz_sections{cellpadding: "0", cellspacing: "0", width: "100%"}
+              %tr
+                - f.object.quiz_sections.build
+                = f.fields_for :quiz_sections do |quiz_section|
+                  = render 'quiz_section_fields', :f => quiz_section
+                %td{:id=>"additional_main_section",style: "margin: 0px; min-width:300px; padding: 4px; border: 1px solid #CCC; vertical-align: top;"}
+                  = link_to_add_association "+ Add Section", f , :quiz_sections, "data-association-insertion-method"=>"before","data-association-insertion-node"=>"#additional_main_section"
+          %br
+          %div{style: "float: left;"}
+            = f.submit "Add Questions" ,value:"Save and Close",
+            id:"saveAssessment1",confirm:"Template once saved cannot be changed. Do you want to continue?	", class: "orange_bg"
+          %div{style: "float: right;"}
+            = f.submit "Add Questions" ,value:"Add Questions" ,
+            id:"addQuestionsToAssessment",confirm:"Template once saved cannot be changed. Do you want to continue?	", class: "green_bg"
+          - 2.times do
+            %br
+%div.intro_name
+  %label Template Name:
+  %br
+  %input{size:30,type:"text",required:true, id:"intro_template_name",placeholder:"Enter a template name. Ex..Bitsat"}
+  = link_to "Save Template","#",id:"template_create", class:"button"
+
+:javascript
+  //loadTinyMCEEditorById("testInstructionsInput")
+  $(".intro_name").hide();
+  $(".instruction_templates").hide();
+  $(document).ready(
+      function() {
+      $("#quiz_format_type").buttonset();
+      $(".tiptipClass").tipTip();
+      $("#create-assessment-create-template").removeClass('step_normal').addClass('step_active')
+      $("#openFormatButton").button();
+      $( ".middleOK" ).button();
+      $( ".leftOK" ).button();
+      $( "#saveAssessment1" ).button();
+      $( "#addQuestionsToAssessment" ).button();
+       tinyMCE.init({
+                    mode:'exact',
+                    elements: "testInstructionsInput",
+                    theme:"advanced",
+                    verify_html: false,
+                    theme_advanced_buttons1:"Blank,bold,italic,underline,separator,bullist,numlist,separator,\
+                    undo,redo,|,forecolor,backcolor, |, justifyleft, justifycenter, justifyright, justifyfull,\
+                    formatselect,fontselect,fontsizeselect,\
+                    hr,|,sub,sup,|,code",
+                    theme_advanced_toolbar_location:"top",
+                    theme_advanced_toolbar_align:"left", theme_advanced_statusbar_location:"none",
+                    relative_urls:true,
+                    document_base_url : '"http://"+window.location.host + "/question_images/"',
+                    width:1100,
+                    height:200
+
+                    });
+   });
+   $("#metadata_box").children().css('vertical-align','middle');
+   $("#quiz_quiz_detail_attributes_multi_subject").val(1);
+   $("#quiz_quiz_detail_attributes_multi_subject").change(
+    function() {
+        var selected_val = $("#quiz_quiz_detail_attributes_multi_subject").val();
+        if (selected_val == 1){
+          //$("#quiz_location").hide("slow");
+          //$("#quiz_quiz_detail_attributes_quiz_location_practice").attr("checked",false)
+          //$("#quiz_quiz_detail_attributes_quiz_location_institute").attr("checked",false)
+          //$("#quiz_quiz_detail_attributes_quiz_location_homework").attr("checked",false)
+          $("#quiz_subject").hide("slow")
+          $("#quiz_quiz_detail_attributes_subject_tag_id").hide("slow")
+          $("#subject_id").hide("slow");
+          $("#subject_id option:selected").prop("selected", false)
+        }
+      else{
+        //$("#quiz_location").show("slow")
+        $("#quiz_subject").show("slow")
+        $("#subject_id").show("slow");
+        var selected_value = $('select#quiz_class_id :selected').val();
+           var url = "/assessment_tool/get_contents/"
+           var div_subject_update = "#subject_id"
+           if ( selected_value != '')
+            {
+              get_url_Data(url,selected_value+'?name=subject&value=content_year_id',div_subject_update);
+            }
+        $("#subject_id").val($("#subject_id option:last").val())
+      }
+   });
+
+  $(".multi_subject_box").change(function(){
+  if ($(".multi_subject_box").is(':checked')==true){
+  $("#quiz_subject_box").prop("disabled",true);
+  $("#subject_id option:selected").prop("selected", false)
+  }
+  else
+  {
+    $("#quiz_subject_box").prop("disabled",false);
+  var selected_value = $('select#quiz_class_id :selected').val();
+           var url = "/assessment_tool/get_contents/"
+           var div_subject_update = "#subject_id"
+           if ( selected_value != '')
+            {
+              get_url_Data(url,selected_value+'?name=subject&value=content_year_id',div_subject_update);
+            }
+        $("#subject_id").val($("#subject_id option:last").val())
+  }
+  })
+
+
+
+
+   //$('#quiz_location input[type= "radio"]').change(function() {
+   //   var subject_tag = $("#quiz_quiz_detail_attributes_subject_tag_id")
+   //   var subject_id = $("#quiz_context_attributes_subject_id")
+   //   $("#quiz_subject").show("slow")
+   //   //$(subject_tag).show("slow")
+   //   //$(subject_id).show("slow")
+   //   if (subject_tag.is(":visible"))  {
+   //     return true
+   //   }
+   //   else{
+   //     var selected_value = $('select#quiz_class :selected').val();
+   //     var url = "/assessment_tool/get_reference_tags/"
+   //     var div_update = "#quiz_quiz_detail_attributes_subject_tag_id"
+   //     get_url_Data(url,selected_value+"?name=subject",div_update);
+   //   }
+   //   if (subject_id.is(":visible"))  {
+   //     return true
+   //   }
+   //   else{
+   //      var selected_value = $('select#quiz_class_id :selected').val();
+   //      var url = "/content_years/get_subjets/"
+   //      var div_update = "#quiz_context_attributes_subject_id"
+   //      get_url_Data(url,selected_value,div_update);
+   //   }
+   //});
+
+  $("#quiz_class").change(function() {
+      var selected_value = $('select#quiz_class :selected').val();
+      var url = "/assessment_tool/get_reference_tags/"
+      var div_update = "#quiz_quiz_detail_attributes_subject_tag_id"
+      get_url_Data(url,selected_value+"?name=subject",div_update);
+  });
+
+  $("#quiz_board_id").change(function() {
+   var selected_value = $('select#quiz_board_id :selected').val();
+           var div_class_update = "#quiz_class_id"
+           var div_subject_update = "#subject_id"
+           var url = "/assessment_tool/get_contents/"
+          if ( selected_value != '')
+          {
+             get_url_Data(url,selected_value+'?name=content_year&value=board_id',div_class_update);
+             get_url_Data(url,selected_value+'?name=subject&value=board_id',div_subject_update);
+          }
+   }); 
+
+   $("#quiz_class_id").change(function() {
+   var selected_value = $('select#quiz_class_id :selected').val();
+           var url = "/assessment_tool/get_contents/"
+           var div_subject_update = "#subject_id"
+           if ( selected_value != '')
+            {
+              get_url_Data(url,selected_value+'?name=subject&value=content_year_id',div_subject_update); 
+            }
+           
+   });
+
+   $("#quiz_format_type").change(function(){
+     if ($('#quiz_format_type_1').is(':checked'))
+     {
+      $("#add_quiz_sections").hide("slow")
+     }
+     else
+     {
+      $("#add_quiz_sections").show("slow")
+     }
+
+   });
+
+   // Assessment Name Prompt
+  var assessmentName = $("#quiz_class option:selected").text()+"_"+ Date.now() ;
+  $("#testNameInput").val(assessmentName)
+  //$("#quiz_class").change(function(){
+  //if($("#quiz_subject_box option:selected").text() == "Select"){
+  // var assessmentName = $("#quiz_class option:selected").text() +"_"+ Date.now() ;
+  //$("#testNameInput").val(assessmentName);}
+  //else
+  //{var assessmentName =$("#quiz_subject_box option:selected").text() + "_" + $("#quiz_class option:selected").text()+"_" + Date.now();
+  //$("#testNameInput").val(assessmentName);}
+  //})
+  //$('#quiz_subject_box').change(function() {
+  //var assessmentName = $("#quiz_subject_box option:selected").text() + "_" + $("#quiz_class option:selected").text()+"_" + Date.now();
+  //if($("#quiz_subject_box option:selected").text() == "Select"){var assessmentName = $("#quiz_class option:selected").text() +"_"+ Date.now() ;
+  //$("#testNameInput").val(assessmentName)}
+  //else{$("#testNameInput").val(assessmentName);}
+  //});
+  $("#quiz_quiz_detail_attributes_multi_subject").on('click',function(){
+  if ($("#quiz_quiz_detail_attributes_multi_subject:checkbox:checked").length == 0){
+   if($("#quiz_subject_box option:selected").text() == "Select"){
+   var assessmentName = $("#quiz_class option:selected").text()+"_"+ Date.now() ;
+  $("#testNameInput").val(assessmentName)}
+  else{
+  var assessmentName =$("#quiz_subject_box option:selected").text() + "_" + $("#quiz_class option:selected").text()+"_" + Date.now();
+  $("#testNameInput").val(assessmentName);
+  }
+  }
+  else{
+  var assessmentName ="Multi"+"_"+ $("#quiz_class option:selected").text() +"_"+ Date.now() ;
+  $("#testNameInput").val(assessmentName);
+  }
+  })
+  // Assessment instructions prompt
+  var firstInstrucion = "1. Read all the questions carefully."
+  var secondInstruction = "2. Attempt all the questions."
+    tinyMCE.triggerSave();
+    //if ($("#testInstructionsInput").val()  == ""){$("#testInstructionsInput").val(firstInstrucion +"<br>"+"<br>"+secondInstruction);}
+  $("#intro_save").click(function(){
+   tinyMCE.triggerSave()
+  if ($("#testInstructionsInput").val()  == ""){alert("Cannot save a blank template")}
+  else{
+  $(".intro_name").dialog({title: "Save Instructions Template",
+            dialogClass: 'createNewTemplate',
+            width: "auto",
+            height: "auto",
+            resizable: false,
+            draggable: false,
+            modal: true});}
+
+  });
+  $("#template_create").click(function(){
+  if ($("#intro_template_name").val()  == ""){alert("Cannot save a blank template")}
+  else
+  {tinyMCE.triggerSave();
+  $.ajax({
+  type: 'POST',
+  url: '/instructions',
+  data: {'template_name' : $("#intro_template_name").val(),
+        'content' : $("#testInstructionsInput").val() },
+  success: function(data){
+    //data is whatever you RETURN from your controller.
+    //an array, string, object...something
+        location.reload();
+  }
+  })
+  $(".intro_name").dialog("close");}
+
+  })
+  $("#intro_select").click(function(){
+      $(".instruction_templates").dialog({title: "Save Instructions Template",
+            dialogClass: 'createNewTemplate',
+            width: "40%",
+            height: "auto",
+            resizable: false,
+            draggable: false,
+            modal: true})
+  })
+
+  // validations for instruction Prompt
+
+
+
+:css
+  #intro_save{
+  position: relative;
+  float:right;
+  right:46px;
+  bottom:75px;
+  }
+  #intro_select{
+  position: relative;
+  float: right;
+  left: 64.5px;
+  bottom:43px;
+
+  }

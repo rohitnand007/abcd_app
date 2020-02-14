@@ -1,0 +1,15 @@
+#content_header
+  #breadcrumbs
+    -#= bread_crumb_message_page
+#inner-tab-menu
+  %ul
+    -#%li=  link_to "#{t("web-app-theme.list", :default => "Inbox")}", messages_path+user_path(current_user)
+    -#%li= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+    -#%li.inner_tab_selected= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"

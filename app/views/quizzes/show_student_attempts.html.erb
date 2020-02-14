@@ -1,0 +1,230 @@
+<%= stylesheet_link_tag 'quizzes.css' %>
+<div id="content_header">
+  <h1 id="main_heading">Assessment Details </h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessments Home", :controller => "quizzes", :action => "student_not_attempted_assessments" %></li>
+    
+      <% if Time.now.to_i<@publish.timeclose %>
+        <% if @attempts.size > 0 %>
+          <li><%=link_to "Take Assessment Again", :controller => "quizzes", :action => "start_assessment",:id=>@publish.id %></li>
+        <%else%>
+          <li><%=link_to "Take Assessment", :controller => "quizzes", :action => "start_assessment",:id=>@publish.id %></li>
+        <%end%>
+      <%end%>
+
+  </ul>
+</div>
+
+<%assessment_info=[]%>
+
+<% if !@quiz.name.nil? and  @quiz.name!=""%>
+    <%assessment_info.push("Assessment Name: #{@quiz.name}")%>
+<%end%>
+
+<%# if !@quiz.context.subject.try(:name).nil? and @quiz.context.subject.try(:name)!=""%>
+    <%#assessment_info.push("Subject: #{@quiz.context.subject.try(:name)}")%>
+<%#end%>
+
+<%# if !@quiz.timelimit.nil? and @quiz.timelimit!="" %>
+    <%#assessment_info.push("Duration (minutes): #{@quiz.timelimit}")%>
+<%#end%>
+
+<%# if !@quiz.institute_test_id.nil? and @quiz.institute_test_id!=""%>
+    <%#assessment_info.push("Assessment Institute Id: #{@quiz.institute_test_id}")%>
+<%#end%>
+
+<%# temp = (@quiz.context.chapter.nil?) ? '' : @quiz.context.chapter.name %>
+<%# if  temp!="" %>
+    <%#assessment_info.push("Chapter: #{temp}")%>
+<%#end%>
+
+<%# if !@quiz.questions.count.nil? %>
+    <%#assessment_info.push("Total Questions: #{@quiz.questions.count}")%>
+<%#end%>
+
+<%# if !@quiz.context.board.try(:name).nil? and @quiz.context.board.try(:name)!=""%>
+    <%#assessment_info.push("Board: #{@quiz.context.board.try(:name)}")%>
+<%#end%>
+
+<%#temp = (@quiz.context.topic.nil?) ? '' : @quiz.context.topic.name %>
+<%# if temp!=""  %>
+    <%#assessment_info.push("Topic: #{temp}")%>
+<%#end%>
+
+<%# if @quiz.quiz_question_instances.sum(:grade) %>
+    <%#assessment_info.push("Total Marks: #{@quiz.quiz_question_instances.sum(:grade)}")%>
+<%#end%>
+
+<%# if !@quiz.context.content_year.try(:name).nil? and  @quiz.context.content_year.try(:name)!=""%>
+    <%#assessment_info.push("Class: #{@quiz.context.content_year.try(:name)}")%>
+<%#end%>
+
+<% if !@quiz.user.profile.firstname.nil? or @quiz.user.profile.surname!="" %>
+    <%assessment_info.push("Created By: #{@quiz.user.profile.firstname} #{@quiz.user.profile.surname}")%>
+<%end%>
+
+<% if display_date_time(@publish.published_on) %>
+    <%assessment_info.push("Published on: #{display_date_time(@publish.published_on)}")%>
+<%end%>
+
+<%temp = (@quiz.user.id==1)? 'Edutor' : (@quiz.user.center.try(:name))%>
+<% if !temp.nil? and temp!="" %>
+    <%assessment_info.push("Center Name: #{temp}")%>
+<%end%>
+
+<%if @publish.to_group %>
+    <%temp=User.find(@publish.group_id).profile.firstname%>
+<%else%>
+    <%temp=User.find(@publish.recipient_id).name%>
+<%end%>
+<% if !temp.nil? and temp!="" %>
+    <%assessment_info.push("Published to:#{temp}")%>
+<%end%>
+
+<% if @publish.total_attempts %>
+    <% assessment_info.push("Number of Students Attempted: #{QuizAttempt.where(:publish_id => @publish).group(:user_id).count.count}") %>
+<%end%>
+
+<%quiz_instructions = @quiz.intro.gsub(/<\/?[^>]*>/, "")%>
+<%quiz_instructions = @quiz.intro%>
+<!--  -->
+
+<div id="data">
+  <div id='application-list'>
+    <table align='center' class='details assessment_details' width='100%'>
+      <tbody>
+        <%k=0%>
+        <%temp_class ="odd left" %>
+        <%assessment_info.each do |val|%>
+          <%col_span = 0 %>
+          <%if k == 6 %>
+              <%col_span = 6 %>
+          <%end%>
+          <%if k%3==0%>
+           <tr class='<%=temp_class%>' style="text-align: left;">
+            <%if temp_class=="odd left"%>
+              <%temp_class ="even left" %>
+            <%else%>
+              <%temp_class ="odd left" %>
+            <%end%>
+          <%elsif col_span==6 %>
+            </tr>
+            <tr class='<%=temp_class%>' style="text-align: left;">
+          <%end%>
+          <% index_of_seperator = val.index(":") %>
+          <td class="cell_field" colspan="1"><span><%= val.slice(0, index_of_seperator) %></span></td>
+          <td class="cell_value" colspan="<%=col_span-1%>" style="text-align: left;color:#000000;"><span><%= val.slice(index_of_seperator+1, val.length-index_of_seperator-1)%></span></td>
+          <%k = k+1 %>
+          <%if k%3==0 or k>=assessment_info.length%>
+            </tr>
+          <%end%>
+        <%end%>
+          <!--td>Date Created: <!%= display_date_time(@quiz.timecreated)%></td-->
+        <% if quiz_instructions.length > 0 %>
+          <tr class= "odd left" style="text-align:left;">
+            <td class="cell_field" colspan="6">Instructions:</td>
+          </tr>
+          <tr class= "odd left" style="text-align:left;">
+            <td id="instructions"class="cell_value" colspan="6" style="text-align: left;color:#000000;"><%= quiz_instructions.html_safe %></td>
+          </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </div>
+
+  <%if @attempts.size > 0 && @quiz.format_type > 0%>
+    <div class='label heading hr'>
+      <!--a href="/quizzes/download_catchall/<%=@quiz.id%>" target="_blank">View Test paper</a-->
+    </div>
+    <div>
+    <%end%>
+    <h1 class="student-attempts-heading">All Attempts</h1>
+  </div>
+  <div>&nbsp;</div>
+  <div style="position: relative;display: block">
+    <table width='100%'>
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='student-attempts' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th>Student Name</th>
+                  <!--<th>Start Time</th>-->
+                  <th>Submission Time</th>
+                  <!--<th>Time Taken(mins)</th>-->
+                  <th>Correct</th>
+                  <th>Wrong</th>
+                  <th>Unattempted</th>
+                  <th>Marks</th>
+                  <th>Machine Evaluated Marks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <% @attempts.each do |t| %>
+                  <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                    <% else %>
+                    <tr class="tr-odd odd">
+                    <% end %>
+                    <%if t.timefinish+@publish.show_score_after*3600 >= Time.now.to_i%>
+                      <td class='col'>
+                        <%=t.user.name%>
+                      </td>
+                      <td class="col"><%= display_date_time(t.timefinish)%></td>
+                      <td class="col"></td>
+                      <td class="col"></td>
+                      <td class="col"></td>
+                      <td class='col'>Scores will be available after <%=((t.timefinish+@publish.show_score_after*3600-Time.now.to_i)/60)%> minutes</td>
+                      <td class="col"></td>
+                    <%else%>
+                      <td class='col'>
+                        <%=t.user.name%>
+                      </td>
+                      <!--<td class="col"><%= display_date_time(t.timestart)%></td>-->
+                      <td class="col"><%= display_date_time(t.timefinish)%></td>
+                      <td class="col"><%= t.quiz_question_attempts.where(:correct=>true).count%></td>
+                      <td class="col"><%= t.quiz_question_attempts.includes(:mcq_question_attempts, :fib_question_attempts, :match_question_attempts).select { |m| (!m.mcq_question_attempt_ids.empty? or !m.fib_question_attempts.where(:selected => true).empty? or !m.match_question_attempt_ids.empty?) }.count - t.quiz_question_attempts.where(:correct => true).count %></td>
+                      <td class="col"><%= t.quiz_question_attempts.count - t.quiz_question_attempts.includes(:mcq_question_attempts, :fib_question_attempts, :match_question_attempts).select { |m| (!m.mcq_question_attempt_ids.empty? or !m.fib_question_attempts.where(:selected => true).empty? or !m.match_question_attempt_ids.empty?) }.count %></td>
+                      <td class="col"><%= t.sumgrades%>/<%=@total_marks%></td>
+                      <td class="col">
+                        <%#=link_to "View Details", :controller => "quizzes", :action => "show_student_question_attempts",:id=>t.id %>
+                        <%= @machine %>/<%= @total_marks %>
+                      </td>
+                    <%end%>
+                  </tr>
+                  <%i = i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <br/>
+  <% if @quiz.format_type == 1 %>
+    <div class="group">
+      <div align="center" class="field">
+        <a href="/quizzes/start_assessment/<%=@publish.id%>" class="button big primary"><%=@attempts.size > 0 ? "Take Assessment Again" : "Take Assessment"%></a>
+      </div>
+    </div>
+  <%end%>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#student-attempts").dataTable({
+      "aaSorting": [],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+        {"bSortable": false },{"bSortable": false },null,null,null,null,
+        {"bSortable": false }
+      ]
+    });
+    addtipTip();// on ajax update recall
+  });
+</script>

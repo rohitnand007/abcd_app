@@ -1,0 +1,18 @@
+.googlesearchimage_img {
+    width: 100px;
+    height: 100px;
+}
+
+img {
+    padding: 2px;
+    border: 1px solid #CCC;
+}
+
+.search_button {
+  height: 25px;
+  background-color: #60c8cd;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+}
+

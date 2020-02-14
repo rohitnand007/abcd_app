@@ -1,0 +1,64 @@
+%h2 Publisher Question Banks
+.existingMappings
+  %table#questionBanks.listing
+    %thead
+      %tr.tr-head
+        %th Question Bank ID
+        %th Publisher Question Bank
+        %th Owner
+        %th Assigned Institutions
+    %tbody
+      - @publisher_question_banks.each do |publisher_question_bank|
+        %tr
+          %td= publisher_question_bank.id
+          %td
+            = publisher_question_bank.question_bank_name
+            = link_to "Edit", edit_publisher_question_bank_path(publisher_question_bank)
+          %td= publisher_question_bank.publisher ? publisher_question_bank.publisher.name.to_s+" (Publisher)" : publisher_question_bank.institution.name.to_s+" (Institution)"
+          %td
+            - publisher_question_bank.users.each do |user|
+              %table
+                %tr
+                  %td
+                    = user.name
+                  %td
+                    %strong
+                      = user.id
+                  %td
+                    /This is not an ajax call
+                    = link_to "Unassign", unmap_institution_from_publisher_question_banks_path(institution_id:user.id, publisher_question_bank_id:publisher_question_bank.id), confirm:"Are you sure you want to unassign?"
+
+
+%br
+%h3 Assign Question Banks to Institutions
+%h5 Please use this feature carefully
+%br
+
+.mapPublishersToInstitution
+  = form_tag map_institution_to_publisher_question_banks_url do
+    %table
+      %tr
+        %td
+          %label Publisher Question Bank
+          %br
+          .styled-select
+            = select_tag :publisher_question_bank_id , options_from_collection_for_select(@publisher_question_banks, :id , :id ), class:"drop_down"
+        %td
+          %label Institution ID
+          %br
+          .styled-select
+            = select_tag :institution_id , options_from_collection_for_select(@institutions, :id , :id ), class:"drop_down"
+    = button_tag "Assign", confirm:"Are you sure you want to assign the question bank?"
+:javascript
+  $(":button").button();
+  $("#questionBanks").dataTable({
+          "aoColumns": [
+                      null,null,null,
+                      { "bSortable": false }
+                       ],
+          "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+          "bPaginate": false,
+          "bFilter": false,
+          "bInfo": false
+          }
+  )

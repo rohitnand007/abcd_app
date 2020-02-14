@@ -1,0 +1,119 @@
+= simple_form_for @section, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Section!",
+                      :message => "You'll need to fix the following fields:"
+  .inputs
+  - if current_user.is?'EA'
+    .group
+      .field
+        #institution
+          = f.association :institution,:collection=>Institution.includes(:profile),:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>@section.institution.try(:centers).to_a,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.association :academic_class,:collection=>@section.center.try(:academic_classes).to_a,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+  -elsif current_user.is? 'IA'or current_user.is? 'EO'
+    .group
+      .field
+        = f.association :institution,:collection=>[current_user.institution],:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>current_user.centers,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.association :academic_class,:collection=>@section.center.try(:academic_classes).to_a,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+  -elsif current_user.is?'CR'
+    .group
+      .field
+        = f.association :institution,:collection=>[current_user.institution],:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>[current_user.center],:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.association :academic_class,:collection=>current_user.academic_classes,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+  -else
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = current_user.type.eql?("Institution") ? current_user.name : current_user.institution.name
+        - if current_user.center or current_user.type.eql?('Center')
+          = f.label :center_id, "  Center", :class=>'label'
+          = current_user.type.eql?("Center") ? current_user.name : current_user.center.name
+  .group
+    .field
+      =f.simple_fields_for :profile do |p|
+        .group
+          .field
+            = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Name'
+        -#.group
+        -#  .field
+        -#    = p.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Logo'
+    -#.group
+    -#  .field
+    -#    = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -#-#- if current_user.institution_id != 25607
+    -#  .group
+    -#    .field
+    -#      = f.label :board_tokens, "Assign Boards", :class => "label"
+    -#      = f.input :board_tokens,:as=>:text,:input_html=>{:rows=>4,:cols=>100,"data-pre" => f.object.boards.map(&:attributes).to_json,:class=>"text_field"},:label=>false
+    -#      %br
+
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), sections_path,:class=>'button danger icon remove'
+:javascript
+  $("#section_institution_id").change(function() {
+      set_default($("#section_center_id"));
+      set_default($("#section_academic_class_id"));
+      var institution = $('select#section_institution_id :selected').val();
+      if (institution==""){institution = 0;}
+      var url = '/institution/get_centers/' + institution
+      var div_update = "#section_center_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+  $("#section_center_id").change(function() {
+      set_default($("#section_academic_class_id"));
+      var institution = $('select#section_institution_id :selected').val();
+      var center = $('select#section_center_id :selected').val();
+      if (institution==""){institution = 0;}
+      if (center==""){center = 0;}
+      var url = '/institution/get_academic_classes/' +institution+'/'+ center
+      var div_update = "#section_academic_class_id"
+      get_url_Data_for_multiparams(url,div_update);
+
+  });
+  //$(function() {
+  //    var ac_class = $('select#section_academic_class_id :selected').val();
+  //    $("#section_board_tokens").tokenInput(getBoardsURL(ac_class), {
+  //        crossDomain: false,
+  //        preventDuplicates:true,
+  //        prePopulate: $("#section_board_tokens").data("pre"),
+  //        tokenLimit: 1,
+  //        theme: ""
+  //    });
+  //});
+  //$("#section_academic_class_id").change(function() {
+  //    var ac_class = $('select#section_academic_class_id :selected').val();
+  //    $("#section_board_tokens").tokenInput('clear');
+  //    $(".token-input-dropdown").remove();
+  //    $(".token-input-list").remove();
+  //    $("#token-input-section_board_tokens").remove();
+  //    $("#section_board_tokens").tokenInput(getBoardsURL(ac_class), { preventDuplicates:true,tokenLimit: 1,
+  //        theme: '' ,crossDomain: false });
+  //    $("#section_board_tokens").tokenInput('clear');
+  //
+  //});
+  //-#function getBoardsURL(ac_class_id) {
+  //-#    var academic_class_id =  ac_class_id;
+  //-#    return "/get_boards.json/?academic_class_id="+academic_class_id
+  //-#}

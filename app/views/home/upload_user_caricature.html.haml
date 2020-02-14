@@ -1,0 +1,11 @@
+#content_header
+  %h1#main_heading Upload User Caricature
+  %br
+    = form_tag(upload_user_caricture_path,{:multipart=>true,:method=>:post}) do
+      = label_tag :file,"Upload ZIP file with Edutorid as filename"
+      %br
+      %br
+      = file_field_tag :user_caricature
+      %br
+      %br
+      = submit_tag "Upload",:disable_with=>"Uploading"

@@ -1,0 +1,142 @@
+%script{:src => "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js", :type => "text/javascript"}
+:javascript
+  document.onreadystatechange = function(){
+     var e = document.getElementById("popup-box3");
+    if(document.readyState = "loading"){
+     e.style.display = 'block';
+    }
+    if(document.readyState == "complete"){
+     e.style.display = 'none';
+    }
+  };
+  MathJax.Hub.Config({
+      tex2jax: {
+         inlineMath: [['$','$'], ['\\(','\\)']],
+         processEscapes: true
+       },
+       TeX: {extensions: ["mhchem.js"]}
+      });
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  $(document).ready(function() {
+    // disables right click
+    $(document).on("contextmenu",function(){
+       //return false;
+    }); 
+  }); 
+#a_assessment_wrapper
+  #a_assessment{style: "display:none"}
+    #a_header
+      %hr
+      #a_meta_quiz
+        #a_quiz_data
+          = {quiz: @quiz.id, publish: @publish.id}.to_json
+        .a_meta_quiz_name
+          = image_tag "test_title_icon.png" ,{align: "middle"}
+          %span
+            = @quiz.name
+        .a_meta_test_instruction{onclick: "tabClickInstructions(0, -1);"}
+          Test Instructions
+          %div
+        .a_dyn_test_attempt
+          Attempted:
+          %span 00
+          out of
+          %span 100
+        .a_meta_sec_count
+          %span
+      #a_quiz_link{style: "display:none;"}
+        %a{href: "#"}
+          Go back to Assessment
+      %hr
+      #a_meta_section
+        .a_meta_sec_select
+          %span Section:
+          %select
+        .a_meta_sec_instruction{onclick: "showSecInstructions();"}
+          Sections Instructions
+          %div
+        .a_dyn_sec_attempt
+          Attempted:
+          %span 00
+          out of
+          %span 33
+        .a_meta_ques_browse
+          #browse
+      #a_flag_ques{style: "display:none;"}
+        #a_flag_sec
+          You are Attempting:
+          %span
+        .a_meta_ques_browse
+          #browse1
+      #a_rev_ques{style: "display:none;"}
+        #a_tab_sec
+        .a_meta_ques_browse
+          You are reviewing this test
+      %hr
+    #a_question_body
+      -##a_meta_question
+      -##a_question_box
+      -#%button Flag
+    #a_question_commit
+      %input{type:"button", value:"Previous"}
+      %input{type:"button", value:"Next"}
+    #a_quiz_tool
+      .a_time_keeper
+        .a_time_meta
+          = image_tag "clock_icon.png"
+          %span Test Duration
+          -if @publish.pause
+            %input.pause_button{type:"button", value:"Pause Test", state: "Running", onclick: "togglePauseTest();"}
+        .a_time_data
+          .a_time_up
+            00:00:00
+            %hr
+            Time Consumed
+          .a_time_down
+            00:00:00
+            %hr
+            Remaining Time    
+      #a_flag_keeper
+        .a_flag_meta
+          = image_tag "flag_icon.png"
+          %span No. of Flagged Questions
+          %a{href: "#", state: "all_questions", onclick: "toggleQuizMode();"} See Flagged Questions
+        .a_flag_browse
+          %hr
+          .a_flag_browse_left
+            %div
+              = image_tag "grey_arrow_left.png"
+            %div{onclick: "updateScrollerWithFlaggedQuestions;"}
+              %span
+              %span 00
+          .a_flag_browse_right
+            %div{onclick: "updateScrollerWithFlaggedQuestions;"}
+              %span
+              %span 00
+            %div
+              = image_tag "grey_arrow_right.png"
+      .a_quiz_commit
+        %input{type:"button", value:"Review Test"}
+        %input{type:"button", value:"Submit Test",href:  "#", onclick: "toggle_visibility('popup-box2');"}
+    #a_instructions_dialog_box
+      #a_instructions_wrapper
+        #a_instructions_tab
+          #a_test_instructions_tab{onclick: "tabClickInstructions(0);"}
+            %h3 Test Instructions
+          #a_sec_instructions_wrapper_tab{onclick: "tabClickInstructions(1, 0);"}
+            %h3 Section Instructions
+        #a_sec_instructions_tab
+        #a_instructions_meta
+        #a_instructions_heading
+        #a_instructions
+        #a_instructions_commit
+          %input{type: "button", value: "Start Test", onclick: "resumeTest();"}
+
+  #a_fixed_quiz_tool
+
+= javascript_include_tag 'assessment_app'
+= stylesheet_link_tag 'assessment_new'
+= javascript_include_tag 'assessment_new'
+= javascript_include_tag 'timer'
+= javascript_include_tag 'scroller'
+

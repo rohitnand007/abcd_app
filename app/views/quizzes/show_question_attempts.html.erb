@@ -1,0 +1,161 @@
+<div id="content_header">
+  <h1 id="main_heading">Assessment Report For <%=User.find(@question_attempts.first.user_id).profile.firstname%> <%=User.find(@question_attempts.first.user_id).profile.surname%></h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "show",:id=>@quiz.id %></li>
+  </ul>
+</div>
+<div id="data">
+  <div id='application-list'>
+    <table align='center' class='details' width='700px'>
+      <tbody>
+        <tr class='odd left'>
+          <td>Assessment Name</td>
+          <td class='right'><%= @quiz.name%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Assessment Institute Id</td>
+          <td class='right'><%= @quiz.institute_test_id%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Description</td>
+          <td class='right'><%= @quiz.intro.gsub(/<\/?[^>]*>/, "")%></td>
+        </tr>
+        <!--<tr class='even left'>
+          <td>Time Taken (minutes)</td>
+          <td class='right'><%= @question_attempts.sum(:time_taken)/60%></td>
+        </tr>-->
+        <tr class='odd left'>
+          <td>Total Questions</td>
+          <td class='right'><%= @total_questions %></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Correct Attempts</td>
+          <td class='right'><%= @correct_attempts %></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Not Attempts</td>
+          <td class='right'><%= @not_attempts%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Wrong Attempts</td>
+          <td class='right'><%= @wrong_attempts %></td>
+        </tr>
+        <tr class='even left'>
+          <td>Total Marks</td>
+          <% sum_marks = @question_attempts.sum(:marks) %>
+          <td class='right'><%= sum_marks%>/<%=@total_marks%></td>
+        </tr>
+        <tr class='tr-blank'></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="width:600px;">
+    <%= button_to "Download pdf report", url_for(request.params.merge(:format => :pdf)),:class=>'button' ,:style=>"float:left;margin:10px;"%>
+    <% if @user.profile.parent_email.present? %>
+      <%= button_to "Send report to parent email",send_report_parent_path(@quiz_attempt_id,{:type=>"email"}),:class=>'button',:style=>"float:left;margin:10px;" %>
+    <%end%>
+    <%= button_to "Send report to student",send_report_parent_path(@quiz_attempt_id,{:type=>"message"}),:class=>'button',:style=>"float:left;margin:10px;" %>
+  </div>
+
+  <div style="clear:both;"></div>
+  <div class='label heading hr'>
+  </div>
+  <div>
+    <h1>Attempt Details</h1>
+  </div>
+  <div>
+    <table width='100%'>
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='publish_groups' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th>Question</th>
+                  <th>Attempt</th>
+                  <th>Option selected</th>
+                  <th>Correct Answer(s)</th>
+                  <th>Marks</th>
+                  <th>Time taken (seconds)</th>
+                  <%if @quiz.format_type == 0 or @quiz.format_type == 4%>
+                    <th></th>
+                  <%end%>
+                </tr>
+              </thead>
+              <tbody>
+              <%i=0%>
+                  <%if @quiz.format_type == 0 or @quiz.format_type == 4 or @quiz.format_type == 8 %>
+                      <% unless @quiz.quiz_sections.empty? %>
+                          <%@quiz.quiz_sections.each do |section|%>
+                              <tr><td><%= section.name%></td></tr>
+                              <%= render "quizzes/question_attempts", :attempts=>@question_attempts.where(:question_id=>section.questions.map(&:id)) %>
+                          <%end%>
+                      <%else%>
+                          <%= render "quizzes/question_attempts", :attempts=>@question_attempts%>
+                      <%end%>
+                  <%else%>
+                      <% @question_attempts.each do |t| %>
+                        <% if i%2 == 0 %>
+                          <tr class="tr-even even">
+                          <% else %>
+                          <tr class="tr-odd odd">
+                          <% end %>
+                          <td class="col"><%= Question.find(t.question_id).tag%></td>
+                          <% attempts = McqQuestionAttempt.where(:quiz_question_attempt_id=>t.id)
+                             ans = []
+                             if attempts.size ==1 && attempts.first.question_answer_id ==0
+                               ans << "Not Attempted"
+                             else
+                               attempts.each do |a|
+                                 qans = QuestionAnswer.find(a.question_answer_id).tag
+                                 ans << qans
+                               end
+                             end
+                          %>
+                          <% correct_answers = QuestionAnswer.where(:question=>t.question_id,:fraction=>1)
+                             c_ans = []
+                             correct_answers.each do |a|
+                               c_ans << a.tag
+                             end
+                          %>
+                          <% if t.correct? %>
+                            <td class="col"><img src="/assets/web-app-theme/icons/tick.png" alt="Correct"/></td>
+                          <%elsif ans.empty?%>
+                              <td class="col">Not Attempted</td>
+                          <%else%>
+                            <td class="col"><img src="/assets/web-app-theme/icons/cross.png" alt="Wrong"/></td>
+                          <%end%>
+
+                          <td class="col"><%= ans.join(",").html_safe %></td>
+                          <td class="col"><%= c_ans.join(",").html_safe %></td>
+                          <td class="col"><%= t.marks%></td>
+                          <td class="col"><%= (t.time_taken)%></td>
+                        </tr>
+                        <%i = i+1%>
+                      <%end%>
+                <%end%>
+                <% if i%2 == 0 %>
+                  <tr class="tr-even even">
+                  <% else %>
+                  <tr class="tr-odd odd">
+                  <% end %>
+                  <td class="col"></td>
+                  <td class="col"></td>
+                  <td class="col"></td>
+                  <td class="col"></td>
+                  <td class="col">Total Marks = <%=sum_marks%></td>
+                  <td class="col"></td>
+                  <%if @quiz.format_type == 0  or @quiz.format_type == 4 %>
+                    <td class="col"></td>
+                  <%end%>
+                </tr>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

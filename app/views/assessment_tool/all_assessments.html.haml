@@ -1,0 +1,30 @@
+= stylesheet_link_tag "assessment_tool"
+
+.body_content1
+  .assessments_layout
+    .spinner-gif{:style => "display: none; position: fixed; z-index: 5; left: 45%; top: 45%"}
+      = image_tag 'spiffygif.gif'
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      %ul#tabsul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-corner-all{role: "tablist"}
+        %li{style: "width: 4px;"}   
+        %li.ui-state-default.ui-corner-top
+          =link_to "My Assessments" , assessment_tool_my_assessments_path
+        -unless (current_user.is? "ET") && (current_user.institution_id == 106509)
+          %li.ui-state-default.ui-state-active.ui-corner-top
+            %a{href: "#"} All Assessments
+        %li.ui-state-default.ui-corner-top
+          =link_to "Create Assessment" , assessment_tool_new_path
+      = render :partial => 'filter_form'
+      #assessment-filter-partial
+        = render :partial => 'assessment_list'
+
+
+
+:javascript
+  $(document).ready(
+      function() {
+      common_ready_function();
+      prepare_dialogs_for_analytics();
+      $(".classComboBox").prop("selectedIndex", -1);
+   }
+  );

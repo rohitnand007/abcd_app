@@ -1,0 +1,95 @@
+-#%h1 Listing Device Messages
+-#
+-#%table
+-#  %tr
+-#    %th Sender
+-#    %th Group
+-#    %th Message
+-#    %th Device
+-#    -#%th Exclude teacher group
+-#    %th Deviceid
+-#    %th Subject
+-#    %th Message type
+-#    %th Label
+-#
+-#
+-#  - @device_messages.each do |device_message|
+-#    %tr
+-#      %td= device_message.sender_id
+-#      %td= device_message.group_id
+-#      %td= device_message.message_id
+-#      %td= device_message.device_id
+-#      -#%td= device_message.exclude_teacher_group
+-#      %td= device_message.deviceid
+-#      %td= device_message.subject
+-#      %td= device_message.message_type
+-#      %td= device_message.label
+-#      %td= link_to 'Show', device_message
+-#      %td= link_to 'Edit', edit_device_message_path(device_message)
+-#      %td= link_to 'Destroy', device_message, :confirm => 'Are you sure?', :method => :delete
+-#
+-#%br
+-#
+-#= link_to 'New Device message', new_device_message_path
+
+:javascript
+  $(document).ready(function() {
+    $("#messages_list").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading  DeviceMessages
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_device_message_path
+    %li= link_to "Delete Messages", delete_device_messages_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#messages_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Sender
+                -#%th Group
+                %th Message
+                -#%th Device
+                -#%th Exclude teacher group
+                %th Deviceid
+                %th Subject
+                %th Message type
+                %th Path
+                %th Sent Date
+                %th.last{colspan: 3} &nbsp
+            %tbody
+              - @device_messages.each do |device_message|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"message_#{device_message.id}"}
+                  %td.col
+                    = User.find(device_message.sender_id).name
+                  -#%td.col= device_message.group_id
+                  %td.col= device_message.message_id
+                  -#%td.col= device_message.device_id
+                  -#%td.col= device_message.exclude_teacher_group
+                  %td.col= device_message.group_id.nil? ? device_message.deviceid : User.find(device_message.group_id).try(:name)
+                  %td.col= device_message.subject
+                  %td.col= device_message.message_type
+                  %td.col= device_message.label
+                  %td.col= display_date_time(device_message.created_at)
+                  %td.col= link_to 'Show', device_message
+                  %td.col= link_to 'Edit', edit_device_message_path(device_message)
+                  %td.col= link_to 'Destroy', device_message, :confirm => 'Are you sure?', :method => :delete
+        .pagination_info
+          = paginate @device_messages

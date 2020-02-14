@@ -1,0 +1,59 @@
+%h1 Listing etx_files
+%h3{:style =>'color:red'} The Assessments in which the deleted questions appear will be orphaned--use this feature carefully!!!
+%div#zip_selector
+  %input{type:"checkbox",name:"zip_ids_checker" ,value:"zip_id",id:"zip_box"} search Zip Ids
+
+
+%table#etx_files_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1,data: etx_files_path(format: :json)}
+  %thead
+    %tr.tr-head
+      %th Etx.ID
+      %th Etx.Name
+      %th Question Ids
+      %th Status
+      %th function
+-#  - @etx_files.each do |etx_file|
+-#    %tr{:class => cycle("tr-odd", "tr-even")}
+-#      %td= link_to etx_file.zip_upload_id , "/zip/#{etx_file.zip_upload_id.to_s}/etx_list"
+-#      %td= etx_file.filename.split('/').last
+-#      %td{:style => 'word-break:break-all ; width:1085px'}= etx_file.ques_no
+-#      - if etx_file.status
+-#        %td= "Deleted"
+-#        %td= ""
+-#      - else
+-#        %td= "Available"
+-#        %td= link_to 'Destroy', etx_file, :confirm => 'Are you sure?', :method => :delete
+:javascript
+  $(document).ready(function() {
+    $("#etx_files_list").dataTable({
+                "aoColumnDefs" : [
+                                    {"bSortable":false, "aTargets":[0]},
+                                    {"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]},
+                                    {"bSortable":false, "aTargets":[3]},
+                                    {"bSortable":false, "aTargets":[4]}
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#etx_files_list").attr("data"),
+                "oLanguage": {"sSearch": "Search EtxFiles:"},
+                "fnServerParams": function(aoData){
+                    aoData.push({name: 'search_term', value: $(":checkbox").prop("checked")});
+                }
+    });
+  });
+:css
+  #zip_selector{
+    position: relative;
+    float: right;
+
+  }

@@ -1,0 +1,48 @@
+%p#notice= notice
+
+%p
+  %b User:
+  = @power_chip.user_id
+%p
+  %b Publisher:
+  = @power_chip.publisher_id
+%p
+  %b Publisher name:
+  = @power_chip.publisher_name
+%p
+  %b License key:
+  = @power_chip.license_key
+%p
+  %b Start date:
+  = @power_chip.start_date
+%p
+  %b End date:
+  = @power_chip.end_date
+%p
+  %b License status:
+  = @power_chip.license_status
+%p
+  %b License type:
+  = @power_chip.license_type
+%p
+  %b Action on expiry:
+  = @power_chip.action_on_expiry
+%p
+  %b Message on expiry:
+  = @power_chip.message_on_expiry
+%p
+  %b Content:
+  = @power_chip.content_id
+%p
+  %b Device:
+  = @power_chip.device_id
+%p
+  %b Uid:
+  = @power_chip.uid
+%p
+  %b Extras:
+  = @power_chip.extras
+
+= link_to 'Edit', edit_power_chip_path(@power_chip)
+\|
+= link_to 'Back', power_chips_path

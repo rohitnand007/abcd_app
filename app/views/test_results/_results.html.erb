@@ -1,0 +1,76 @@
+<%unless @all_test_configs.empty?%>
+
+    <% all_user_ids = [] %>
+    <%group=User.find(params[:group_id]) rescue nil%>
+    <%content = Content.find(params[:content_id]) rescue nil %>
+    <%unless group.nil? and content.nil?%>
+        <%= (group.type.eql?'Section') ? group.academic_class.try(:name).to_s+group.try(:name).to_s : group.try(:name)%>
+        <%= content.try(:name)%>
+        <%test_configurations = (content.type.eql?'Board') ? @all_test_configs.where(:status=>3,:group_id=>group).default_order : @all_test_configs.where(:status=>3,:group_id=>group).where('uri like ?',"%#{content.name}%").default_order%>
+        <!-- To get test_configurations published for group and students -->
+        <%#test_configurations = (content.type.eql?'Board') ? @all_test_configs.where(:status=>3).where('group_id = ? or group_id IN(?)',group,group.students) : @all_test_configs.where(:status=>3).where('group_id = ? or group_id IN(?)',group,group.students).where('uri =?',"%#{content.uri}%")%>
+    <%else%>
+        <%test_configurations =  @all_test_configs.where(:status=>3).default_order%>
+    <%end%>
+    <%unless test_configurations.empty?%>
+        <div class="grid_16 height400">
+          <table id="mytablelist" class='fancyTable'>
+            <thead>
+            <tr>
+              <th></th>
+    <%end%>
+    <%test_configurations.each do |test_config|%>
+        <th> <%= test_config.test_type %> </th>
+    <%end%>
+    <%unless test_configurations.empty?%>
+        </tr>
+        </thead>
+        <tbody>
+
+        <% @all_users.each do |user| %>
+            <tr>
+              <td><%=link_to (user.fullname.blank? ? user.edutorid : user.fullname),students_test_reports_path(:user_id=>user.id) %></td>
+              <%test_configurations.each do |test_config|%>
+                  <%test_config_end_time = Time.at(test_config.end_time).to_i rescue nil%>
+                  <%if params[:type].eql?'assessment-practice-tests' or test_config.is_practice_test?%>
+                      <!--last attempt to be considered -->
+                      <% test_results =  TestResult.where('uri = ? and submission_time <= ? and user_id=?',test_config.uri,test_config_end_time,user.id).order('submission_time DESC').select('percentage')%>
+                  <%else%>
+                      <!--only first attempt will be considered -->
+                      <% test_results =  TestResult.where('uri = ? and submission_time <= ? and user_id=?',test_config.uri,test_config_end_time,user.id).group('test_results.user_id').order('submission_time DESC').select('percentage')%>
+                  <%end%>
+                  <td>
+                    <%case  test_results.first.try(:percentage).to_f%>
+                    <%when (0..40.0)%>
+                        <span class="red_label"><%= test_results.first.try(:percentage) %></span>
+                    <%when (40.0..60.0)%>
+                        <span class="orange_label"><%= test_results.first.try(:percentage) %></span>
+                    <%when (60.0..100.0)%>
+                        <span class="green_label"><%= test_results.first.try(:percentage) %></span>
+                    <%else%>
+                        <%= test_results.first.try(:percentage) %>
+                    <%end%>
+                  </td>
+              <% end %>
+            </tr>
+        <%end%>
+        </tbody>
+        </table>
+        </div>
+        <div class="clear"></div>
+    <%else%>
+        <br/>
+        No Assessments evaluated.
+    <%end%>
+    <%if !@all_users.empty? and !test_configurations.empty?%>
+        <div class='pagination_info'><%= paginate @all_users,:remote=>true%></div>
+    <%end%>
+<%else%>
+    <br/>
+    No Assessments created.
+<%end%>
+<script type='text/javascript'>
+
+        $('#mytablelist').fixedHeaderTable({altClass: 'odd',fixedColumns: 1 ,themeClass:'fancyTable'});
+
+</script>

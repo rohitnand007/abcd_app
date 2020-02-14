@@ -1,0 +1,198 @@
+%script{:src => "/assets/pdf.js", :type => "text/javascript"}
+= stylesheet_link_tag "assessment_tool"
+.body_content1
+  .assessments_layout{style:"color:#636363"}
+    .spinner-gif{:style => "display: none; position: fixed; z-index: 5; left: 45%; top: 45%"}
+      = image_tag 'spiffygif.gif'
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      = render :partial => 'create_assessment_tabbed_header'
+      .ui-tabs-panel.ui-corner-bottom
+        = render :partial => 'bread_crumbs_indicator'
+        %br
+        %div#test_details.ui-widget-content{style: "padding-left: 16px;"}
+          = render :partial => 'test_details', locals:{quiz: @quiz}
+        %br
+        %form#questions
+          %label No of questions
+          %input#qty{:name => "qty", :size => "2", :type => "text"}/
+          %input#add_questions{:name => "add", :type => "button", :value => "add"}/
+        %br
+        %form#add_catchall_questions_form{:action => "/assessment_tool/update_openformat_assessment/#{@quiz.id}", :enctype => "multipart/form-data", :method => "POST"}
+          %table#users.listing.sort_table{:align => "center", :cellpadding => "1", :cellspacing => "1", :width => "100%"}
+            %thead
+              %tr.tr-head
+                %th
+                %th S.No.
+                %th Tag Name
+                %th Difficulty Level
+                %th Marks
+                %th Penalty (positive)
+                %th Answer Tags(Comma-separated)
+                %th Correct Answer
+                %th
+            %tbody#table-head
+              - if @quiz.questions.empty?
+                %tr.tr-even.even
+                  %td.col
+                  %td.col.sl 1
+                  %td.col
+                    %input{:name => "questions[][tag]", :size => "4", :type => "text", :value => "1"}/
+                  %td.col
+                    %select{:name => "questions[][difficulty]"}
+                      %option{:value => "1"} Easy
+                      %option{:value => "2"} Medium
+                      %option{:value => "3"} Hard
+                  %td.col
+                    %input{:type=>"number", :min=>"1",:name => "questions[][marks]", :size => "4", :value => "1",:step=>0.01}/
+                  %td.col
+                    %input{:type=>"number", :min=>"0",:name => "questions[][penalty]", :size => "4", :value => "0",:step=>0.01}/
+                  %td.col
+                    %input{:name => "questions[][answer_tags]", :type => "text", :value => "a,b,c,d"}/
+                  %td.col
+                    %input{:name => "questions[][correct_answer]", :size => "4", :type => "text", :value => "a"}/
+                %input{:name => "quiz_id", :type => "hidden", :value => @quiz.id}/
+              - else
+                = render :partial => "openformat_questions"
+          %br/
+          #add_question{:style => "cursor: pointer"}
+            %a +Add more questions
+          %br/
+          %div
+            = fields_for @attachment do |f|
+              = f.label :upload_pdf
+              = f.file_field :attachment
+          #serial_no{:style => "display:none"} 2
+          .group
+            .field{:align => "center"}
+              %input{"data-disable-with" => "Updating...", :name => "commit", :type => "submit", :value => "Save",:id=>"submit_button"}
+
+
+
+
+:javascript
+  $(document).ready(function(){
+     $("#create-assessment-add-questions").removeClass('step_normal').addClass('step_active');
+     //$("#submit_button").buton();
+   }
+  );
+  $("#add_question").click(function(){
+        //var s = $("#serial_no").html
+        //var row = $("#tr-row").clone();
+        //$('#table-head').children("tr").eq(0).clone().appendTo('#table-head');
+          add_rows(1)
+      });
+      function remove_tr(e) {
+        $(e).closest("tr").remove();
+        var last_sl = 0
+         $("#table-head").find("tr").each(function(){
+            $(this).find("td.col.sl").text(last_sl+1)
+            last_sl++
+         });
+      }
+
+      $("#add_questions").click(function()
+      {
+         var n = $("#qty").val();
+          add_rows(n)
+          $("#qty").val('');
+          return false;
+      });
+            function add_rows(n){
+                for (i = 0; i < n; i++) {
+                    last_row = $('#table-head').children("tr:last")
+                    last_row_clone = last_row.clone();
+                    last_row_clone.children("td:last(:has(.remove_tag)").remove();
+                    //fist_row = $('#table-head').children("tr:first").clone();
+                    $('#table-head').append(last_row_clone);
+                    //$('#table-head').append("<tr class='tr-even even'><td class='col'></td><td class='col sl'>1</td><td class='col'><input type='text' value='1' size='4' name='questions[][tag]'></td><td class='col'><select name='questions[][difficulty]'><option value='1'>Easy</option><option value='2'>Medium</option>    <option value='3'>Hard</option></select></td><td class='col'>  <input type='number' value='1' step='any' size='4' name='questions[][marks]' min='1'></td><td class='col'><input type='number' value='0' step='any' size='4' name='questions[][penalty]' min='0'></td><td class='col'>  <input type='text' value='a,b,c,d' name='questions[][answer_tags]'></td><td class='col'>  <input type='text' value='a' size='4' name='questions[][correct_answer]'></td></tr>");
+                    new_row = $('#table-head').children("tr:last")
+                    var last_sl = parseInt(last_row.find("[class='col sl']").text(), 10);
+                    new_row.find("[class='col sl']").text(last_sl+1)
+                    if (last_sl == '1'){
+                     new_row.append("<td class='col remove_tag' onclick='remove_tr(this);' style='cursor: pointer'>Remove</td>");
+                    }
+                    if (new_row.find('td.remove_tag').length == 0){
+                      new_row.append("<td class='col remove_tag' onclick='remove_tr(this);' style='cursor: pointer'>Remove</td>");
+                    }
+                    //if (last_sl != 1){
+                    //
+                    //}
+                    new_row.appendTo('#table-head');
+                }
+            }
+
+
+    //
+    // NOTE:
+    // Modifying the URL below to another server will likely *NOT* work. Because of browser
+    // security restrictions, we have to use a file server with special headers
+    // (CORS) - most servers don't support cross-origin browser requests.
+    //
+    //var url = 'http://cdn.mozilla.net/pdfjs/tracemonkey.pdf';
+    var url = "/quizzes/download_catchall/#{@quiz.id}";
+    //
+    // Disable workers to avoid yet another cross-origin issue (workers need the URL of
+    // the script to be loaded, and currently do not allow cross-origin scripts)
+    //
+    PDFJS.disableWorker = true;
+
+    var pdfDoc = null,
+            pageNum = 1,
+            scale = 1.0,
+            canvas = document.getElementById('the-canvas'),
+            ctx = canvas.getContext('2d');
+
+    //
+    // Get page info from document, resize canvas accordingly, and render page
+    //
+    function renderPage(num) {
+        // Using promise to fetch the page
+        pdfDoc.getPage(num).then(function(page) {
+            var viewport = page.getViewport(scale);
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Render PDF page into canvas context
+            var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            page.render(renderContext);
+        });
+
+        // Update page counters
+        document.getElementById('page_num').textContent = pageNum;
+        document.getElementById('page_count').textContent = pdfDoc.numPages;
+    }
+
+    //
+    // Go to previous page
+    //
+    function goPrevious() {
+        if (pageNum <= 1)
+            return;
+        pageNum--;
+        renderPage(pageNum);
+    }
+
+    //
+    // Go to next page
+    //
+    function goNext() {
+        if (pageNum >= pdfDoc.numPages)
+            return;
+        pageNum++;
+        renderPage(pageNum);
+    }
+
+    //
+    // Asynchronously download PDF as an ArrayBuffer
+    //
+    PDFJS.getDocument(url).then(function getPdfHelloWorld(_pdfDoc) {
+        pdfDoc = _pdfDoc;
+        renderPage(pageNum);
+        $("body").removeClass("loading");
+        $("#modal").hide();
+        myFunction();
+    });
+

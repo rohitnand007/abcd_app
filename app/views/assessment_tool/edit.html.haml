@@ -1,0 +1,280 @@
+%script{:src => "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js", :type => "text/javascript"}
+:javascript
+  MathJax.Hub.Config({
+      tex2jax: {
+         inlineMath: [['$','$'], ['\\(','\\)']],
+         TeX: {extensions: ["mhchem.js"]}
+       }
+      });
+= stylesheet_link_tag "assessment_tool"
+.body_content1
+  .assessments_layout{style:"color:#636363"}
+    .spinner-gif{:style => "display: none; position: fixed; z-index: 5; left: 45%; top: 45%"}
+      = image_tag 'spiffygif.gif'
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      = render :partial => 'create_assessment_tabbed_header'
+      .ui-tabs-panel.ui-corner-bottom
+        = render :partial => 'bread_crumbs_indicator'
+        - assessment_divisions = assessment_divisions(@quiz)
+        %br
+        %div#test_details.ui-widget-content{style: "padding-left: 16px;"}
+          = render :partial => 'test_details', locals:{quiz: @quiz}
+        %br
+        %br
+        %div{style: "padding-left: 16px;"}
+          = render :partial => 'section_indicator_panel', locals:{assessment_divisions:assessment_divisions}
+        -#%div#random_test_generator
+        -#  = link_to "Random_test_generator","#",class:"button",id:"rtg"
+        %br
+        #addQuestionTabs{style: "border-bottom: 0px solid #CCC;"}
+          %ul#addQuestionTabsul
+            %li{style: "width: 4px;"}   
+            %li
+              %a{href: "#addQuestionTabs-1"} Import from Question Bank
+            %li
+              %a{href: "#addQuestionTabs-2"} Create New Question
+            %li
+              %a{href: "#addQuestionTabs-3"} Preview Section
+            %li
+              %a{href: "#addQuestionTabs-4"} Edit Question
+          #addQuestionTabs-1
+            = render :partial => 'import_questions'
+          #addQuestionTabs-2
+            #createQuestionTabs
+              %ul#questionMode
+                %li
+                  %a{href: "#multipleQuestions",id:"multiple_questions"} Multiple Questions
+                %li
+                  %a{href: "#individualQuestion"} Individual Question
+              #multipleQuestions
+                = form_for @quiz,as: :quiz1, remote:true ,url:{ :controller => "assessment_tool",
+                :action => "create_and_add_multiple_questions",:quiz_id => @quiz.id ,
+                  :assessment_div_id=>""} do |qf|
+                  = qf.fields_for qf.object.questions.build do |pqf|
+                    = render :partial => 'tags_builder', locals: {f:pqf}
+                    = render :partial => 'question_builder', locals: {f:pqf}
+
+                  %br
+                  %hr
+                  %br
+                  .right
+                    = qf.submit "Save & Add"
+                    to
+                    %span.selected_section_cue
+
+              #individualQuestion
+                = form_for @quiz,as: :quiz2, remote:true ,url:{ :controller => "assessment_tool",
+                 :action => "create_and_add_individual_question",:quiz_id => @quiz.id ,
+                  :assessment_div_id=>""} do |qf|
+                  = qf.fields_for qf.object.questions.build do |iqf|
+                    = render :partial => 'tags_builder', locals: {f:iqf}
+                    = render :partial => 'question_fields' , locals:{f:iqf} # the below partial also acts takes question object as input this can be used as question_fields in cocoon gem to create nested questions for passage based questions
+                  %br
+                  %hr
+                  %br
+                  .right
+                    = qf.submit "Save & Add",:id=>'question_save_add'
+                    to
+                    %span.selected_section_cue
+
+          #addQuestionTabs-3
+          #addQuestionTabs-4
+            %div{style:"height:400px; padding-top: 100px; text-align: center"}
+              Please choose a question to edit from "Preview Section" tab
+            =# render :partial => 'shared/under_construction'
+        %br
+        %hr
+        %br
+        %div{style: "float: right;"}
+          %font{color: "grey"}
+          = link_to "Preview Assessment", assessment_tool_show_path(@quiz), :id=>"goToAssessmentPreview"
+          - quiz_id =  @quiz.present? ? @quiz.id : ""
+        %br
+        %br
+:css
+  #rtg{
+  float: right;
+  top:-20px;
+  }
+:javascript
+  function associateAjaxCallForChangeDatabaseSelectBox(){
+        $("#search_db").change(function(){
+            var db = $("#search_db").val();
+            var qbt = $("#search_db").find('option:selected').data("question_bank_type");
+            var qu_id = parseInt("#{ quiz_id }");
+            $.ajax({//Make the Ajax Request
+                type: "GET",
+                url: '/assessment_tool/update_search_filter',
+                data: {question_bank_id: db,quiz:qu_id,question_bank_type: qbt},
+                beforeSend:  function() {
+                    $('.spinner-gif').show();
+                    //$('#progress-indicator').show();
+                    //$("#users_list").css('opacity',0.6);
+                    //$(".filters :input").attr("disabled", true);
+                },
+                success: function(html){//html = the server response html code
+                    $('.spinner-gif').hide();
+                    $('.loading').hide();
+                    alert("Success ! Database changed to "+ $("#search_db :selected").text() +".");
+                    //$('#progress-indicator').hide();
+                    //$("#users_list").css('opacity','');
+                    //$(".filters :input").attr("disabled", false);
+                },
+                fail:function(){
+                    $('.spinner-gif').hide();
+                    $('.loading').hide();
+                    alert("Oops ! Something went wrong. Try changing the query terms");
+                }
+            });
+        })
+    }
+  $(document).ready(function() {
+  window.loadTinyMCEEditor = loadTinyMCEEditor;
+  // exclusively for multiple questions rendering as per requuirements of abcde institute
+    function multipleQuestionContainerNumberer(){
+     $("#multipleQuestions").live("cocoon:after-insert",function(event,inserted_item){
+     load_Tiny_mce(event,inserted_item);
+     do_numbering(inserted_item);
+     });
+     }
+    $("#multiple_questions").one("click",function(){
+    for (count = 1; count < 5; count++ ){
+    $("#question_multiplier").click();
+    }
+    })
+    multipleQuestionContainerNumberer()
+    //multipleQuestionContainerNumberer()
+  // end of code for --- abcde exclusive feature
+
+  var question_array = [];
+  //binds reset passage action to click handler
+  $("#reset_passage_question").click(function(){
+    reset_passage_question($(this));
+  });
+
+  attachLiveEventsForDynamicEntities();
+  setupEventsForStaticEntities();
+
+  // make true false checkboxes act like radio buttons
+  $(".tf_option_set input:checkbox").live("click",act_like_radio_buttons)
+
+  // Highlights current edit action represented as "Add Questions" in bread crumbs
+  $("#create-assessment-add-questions").removeClass('step_normal').addClass('step_active');
+
+  $("#selected_questions_control_buttons").hide();
+  $(".loading").hide();
+  $(".section_indicator_panel").children().css('vertical-align','middle')
+
+  // Call the option_set_change function upon changing the type of question
+  $(".question_selector").live("change",reset_options)
+
+  // runs a script to update the edit section tab
+  $( "#section_selector" ).change(change_displayed_section);
+
+  // if the assessment has sections, add questions button will be there and the click handler is attached to it
+  $("#addQuestions").click(addQuestionsToActiveSection);
+
+  // if the assessment has no sections, add questions to simple test button will be there and the click handler is attached to it
+  $("#addQuestionsSimpleTest").click(addQuestionsDirectlyToAssessment);
+
+  // Creating a tabbed layout for adding questions
+  $( "#addQuestionTabs" ).tabs().removeClass("ui-widget-content");
+
+  // Creating a nested tabbed layout for creating questions
+  $("#createQuestionTabs").tabs().tabs("select",1).removeClass("ui-widget-content");
+
+  // attaching automatic new question form for each click on last question
+  //$("#groupQuestion .question_container:last-child tr.ui-widget-content td.question_text_area").live('click',function(){
+  //  $("#questionAdder")[0].click();
+  //})
+
+  // Add theme colors to buttons
+  stylizeButtons();
+
+  // Displays loading animations upon clicking on search for questions button
+  $("#search_for_questions").click(function(){
+      $(".loading").show();
+  });
+
+  // Selects edit section tab upon clicking on go to edit section button
+  $( "#goToEditSection" ).click(function(e) {
+    e.preventDefault();
+    $("#addQuestionTabs").tabs("select",2);
+  });
+
+  /* Load tiny mce editor on text areas after newly
+   adding a field on both passage questions and individual question, add quesiton numbering for child */
+  $(".nested-fields.basic_container").live("cocoon:after-insert",function(event,inserted_item){
+    load_Tiny_mce(event,inserted_item);
+    do_numbering(inserted_item);
+  })
+
+  //identify the objects to be renumbered before removing nested items
+    $(".nested-fields.basic_container").live("cocoon:before-remove",function(event,removed_item){
+
+      if (removed_item.hasClass("mcq_option_set"))
+      {removed_item.closest(".question_container").addClass("marked_for_renumbering");}
+    })
+
+  // Renumber after removal
+   $(".nested-fields.basic_container").live("cocoon:after-remove",function(event,removed_item){
+      var $marked_for_renumbering = $(".marked_for_renumbering")
+      do_numbering($marked_for_renumbering);
+      $marked_for_renumbering.removeClass("marked_for_renumbering");
+   })
+
+
+  /* load tiny MCE editor on loaded text areas */
+    preload_Tiny_mce();
+  // does numbering on mcq option set for individual questions
+  $("#individualQuestion .question_container").find(".mcq_option_set").each(function(){do_numbering($(this))});
+  $("#multipleQuestions .question_container").find(".mcq_option_set").each(function(){do_numbering($(this))});
+
+  /* Setting the page ready for the assessment division
+   selected by default by triggering the change method on section selector */
+  $( "#section_selector" ).change();
+
+  // applies tinyMCE editor to questions opened for editing
+  /* after ajax success call back for forms */
+   $('.question_editor').live('ajax:success',
+     function(e, data, textStatus, jqXHR){
+       $object = $("#addQuestionTabs-4 .basic_container")
+       apply_Tiny_mce($object);
+       do_numbering($object);
+     }
+   );
+
+  // clears the edit question form
+   $('.edit_question').live('ajax:success',
+     function(e, data, textStatus, jqXHR){
+      $("#addQuestionTabs-4").html("");
+     }
+   );
+
+
+  $('#createQuestionTabs').on('ajax:beforeSend',function(){
+     $('.spinner-gif').show().fadeOut(3000);
+     //$("#createQuestionTabs :input").attr("disabled", true);
+  });
+
+
+  associateAjaxCallForChangeDatabaseSelectBox();
+    try{
+    $( "#addQuestions" ).button( "disable" );
+    }
+    catch(err) {
+      //nothing here
+    }
+    try{
+    $( "#addQuestionsSimpleTest" ).button( "disable" );
+    }
+    catch(err) {
+        //nothing here
+    }
+  }
+  );
+
+
+
+
+

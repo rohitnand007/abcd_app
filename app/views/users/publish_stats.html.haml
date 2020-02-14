@@ -1,0 +1,129 @@
+= simple_form_for :new_user_usages,:url=>"/users/generate_user_publish_stats", :html => { :class => :form } do |f|
+  =f.error_messages
+  .inputs
+  - if current_user.is?'EA'
+    .group
+      .field
+        #instution
+          = f.label :institution_id, "Institution", :class=>'label'
+          = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[@user.center].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -elsif current_user.is? 'IA'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,current_user.centers,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -elsif current_user.is?'CR'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[current_user.center],:id,:name,{},{:class=>"drop_down"}
+
+  -else
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[current_user.center],:id,:name,{},{:class=>"drop_down"}
+  .group
+    .field
+      .input.string.optional
+        %label.string.optional.label{:for => "report_start_date"} Start Date
+        %input#report_start_date.string.optional.text_field{:maxlength => "255", :name => "report_start_date", :size => "50", :type => "text", :value => @report_start_date}/
+  .group
+    .field
+      .input.string.optional
+        %label.string.optional.label{:for => "report_end_date"} End Date
+        %input#report_end_date.string.optional.text_field{:maxlength => "255", :name => "report_end_date", :size => "50", :type => "text", :value => @report_end_date}/
+
+  .group
+    .field{:align=>'center'}
+      = f.button :submit, "Generate Report",:class=>'big primary', disable_with: "Generate Report"
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), publish_stats_users_path,:class=>'button danger icon remove'
+
+:javascript
+  $(document).ready(function(){
+      if ($('select#new_user_usages_role_id :selected').val()==5)
+      {
+          $('#class_teacher_status').show();
+      }
+
+      var groups = $('#new_user_usages_group_ids');
+      var INST = $('select#new_user_usages_institution_id :selected').val();
+      var CENT = $('select#new_user_usages_center_id :selected').val();
+      // alert($('select#new_user_usages_center_id :selected').val());
+      $(groups).tokenInput(getSearchURL("user"), { preventDuplicates:true,prePopulate: $(groups).data('pre'),
+          theme: '' ,crossDomain: false });
+
+      //for user forms
+      // $("#new_user_usages_center_id").attr('disabled', 'disabled');
+      $("#new_user_usages_institution_id").change(function() {
+          set_default($("#new_user_usages_center_id"));
+          set_default($("#new_user_usages_academic_class_id"));
+          set_default($("#new_user_usages_section_id"));
+          var institution = $('select#new_user_usages_institution_id :selected').val();
+          if(institution==""){
+           institution=0;
+           $("#new_user_usages_academic_class_id").attr('disabled','disabled');
+           $("#new_user_usages_section_id").attr('disabled','disabled');
+          }
+          var url = '/institution/get_centers/' + institution
+          var div_update = "#new_user_usages_center_id"
+          get_url_Data_for_multiparams(url,div_update);
+
+      });
+      // show/hide of is class teacher status onchange of role in users form
+      $("#new_user_usages_role_id").change(function() {
+          var role_id = $('select#new_user_usages_role_id :selected').val();
+
+          if(role_id == 4){
+              $("#rollno").show();
+              $("#parentEmail").show();
+              $("#schoolTag").show();
+          }
+          else{
+              $("#rollno").hide();
+              $("#parentEmail").hide();
+              $("#schoolTag").hide();
+          }
+
+      });
+      // Disabling 'Add More' link if number of nested attributes exceeds more than 3
+      var $add_count = 1;
+      $(".add_more").click(function(e) {
+          if($add_count >= 2){
+             // get the number of remove fileds in document  and compare and hide
+              if ($add_count == $(".remove_fields").length){
+                  $(".add_more").css('display','none');
+                   $add_count = $(".remove_fields").length;
+              }
+          }else{
+              $add_count += 1;
+          }
+      });
+      $(function() {
+              $( "#report_start_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+              $( "#report_end_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+          });
+  });
+
+
+

@@ -1,0 +1,237 @@
+<!doctype html><!--HTML 5 doctype declaration-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Concept-Map</title>
+  <meta name="description" content="This is for Concept-Map">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="Expires" content="-1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, user-scalable=no">
+  <%= stylesheet_link_tag "style", :media => "all" %>
+  <%= javascript_include_tag 'concept_map','myscript' %>
+
+  <style type="text/css">
+      .web_dialog_overlay {
+          position: fixed;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          background: #000000;
+          opacity: .15;
+          filter: alpha(opacity = 15);
+          -moz-opacity: .15;
+          z-index: 101;
+          display: none;
+      }
+
+      .web_dialog {
+          display: none;
+          position: fixed;
+          width: 400px;
+          height: 400px;
+          top: 50%;
+          left: 50%;
+          margin-left: -190px;
+          margin-top: -100px;
+          background-color: #ffffff;
+          border: 2px solid #336699;
+          padding: 0px;
+          z-index: 102;
+          font-family: Verdana;
+          font-size: 10pt;
+      }
+
+      .web_dialog_title {
+          border-bottom: solid 2px #336699;
+          background-color: #336699;
+          padding: 4px;
+          color: White;
+          font-weight: bold;
+      }
+
+      .web_dialog_title a {
+          color: White;
+          text-decoration: none;
+      }
+
+      .align_right {
+          text-align: right;
+      }
+  </style>
+  <script type="text/javascript">
+      tinyMCE.init({
+          mode:'textareas',
+          plugins:"uploadimage,table,advhr,advimage,advlink,insertdatetime,media,preview",
+          theme:'advanced',
+          theme_advanced_buttons1:"bold,italic,underline,separator,bullist,numlist,separator,undo,redo,|,forecolor,backcolor, |, justifyleft, justifycenter, justifyright, justifyfull",
+          theme_advanced_buttons2:"styleselect,formatselect,fontselect,fontsizeselect",
+          theme_advanced_buttons3:"tablecontrols,|,charmap,iespell,media,advhr",
+          theme_advanced_buttons4:"hr,removeformat,visualaid,|,sub,sup,|,insertdate,inserttime,preview,uploadimage,|,link,unlink,code",
+          theme_advanced_toolbar_location:"top",
+          theme_advanced_toolbar_align:"left", theme_advanced_statusbar_location:"none",
+          relative_urls:true,
+          skin : "o2k7",
+          skin_variant : "silver"
+      })
+      ;
+      tinyMCE.addI18n('en.uploadimage', {
+          desc:'Insert an image from your computer'
+      });
+
+  </script>
+
+</head>
+<body id="Body" style="font-size: 100%">
+<div class="box" id="box">
+  <ul id="tabMenu">
+    <li id="createconceptmap_button" style="display:none" class="newConcept  selected" onclick="createConceptMap()">
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>Details
+        </div>
+        <div id="create_arrow" class="polygon-right-selected"></div>
+      </div>
+    </li>
+    <li id="editconceptmap_button" class="conceptMap  selected" onclick="editConceptMap()">
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>
+          &nbsp;&nbsp;&nbsp;Create
+        </div>
+        <div  id="edit_arrow" class="polygon-right-selected"></div>
+      </div>
+    </li>
+    <li id="previewconceptmap_button"  class="preview" onclick="previewConceptMap()">
+
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>Preview
+        </div>
+        <div id="preview_arrow" class="polygon-right"></div>
+      </div>
+
+    </li>
+    <li id="submit_button" class="submitCM" onclick="submitConceptMap()">
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>Save
+        </div>
+        <div id="submit_arrow" class="polygon-right"></div>
+      </div>
+    </li>
+
+  </ul>
+
+  <div class="boxBody" id="boxBody" style="display:none;width: 100%;height: 100%;left:1em;top:4em;position:fixed">
+    <div id="newConcept" class="show parent" style="width: 100%;height: 100%;">
+      <div style="top:20%;width: 100%;height: 100%;"><h1>New concept element</h1>
+
+        <form accept-charset="UTF-8" action="/concepts" class="new_concept" id="new_concept" method="post">
+          <div style="margin:0;padding:0;display:inline">
+            <input name="utf8" type="hidden" value="&#x2713;" />
+            <input name="authenticity_token" type="hidden" value="Mhz62KY1KqMy43R34AxK7e/BCp1Bgy0Io2BFWIdB+9A=" />
+          </div>
+
+          <table><tr><td>
+            <label for="concept_name">Name</label><br/>
+          </td><td><input id="concept_name" name="concept[name]" size="30" type="text" />
+          </tr><tr><td>
+
+            <label style="display: inline;font-size:18px;">Board <p style="color:red;display: inline;">*</p> </label>
+          </td><td>
+            <%= collection_select :quiry,:board, Board.all,:id,:name %>
+          </tr><tr><td>
+
+            <label style="display: inline;font-size:18px;">Class <p style="color:red;display: inline;">*</p> </label>
+          </td><td>
+            <%= collection_select :quiry,:class, [],'','' %>
+
+
+          </tr><tr><td>
+            <label style="display: inline;font-size:18px;">Subject <p style="color:red;display: inline;">*</p> </label>
+          </td>
+            <td>
+              <%= collection_select :quiry,:subject, [],'','' %>
+
+            </td>
+          </tr>
+            <tr>
+
+              <td><label style="display: inline;font-size:18px;">Chapters <p style="color:red;display: inline;">*</p> </label>
+              </td><td>
+              <%= collection_select :quiry,:chapters, [],'','' %>
+
+            </td>
+            </tr>
+          </table>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="conceptmap" >
+  <div id="map" class="map-space">
+    <svg id="s" xmlns="http://www.w3.org/2000/svg" version="1.1" >
+    </svg>
+  </div>
+  <div id="anim_map" class="anim_map_space">
+  </div>
+  <div id='editbuttons'>
+    <input type="button" name="Add Child" title="Add Child" value="Add Child" onClick="addNode('null');" style="position: fixed;right: 35%;top: 2%;height:30px;width:6em;background-color:#DBA901;z-index:1000;">
+    <input type="button" name="delete" title="Delete" value="Delete" onClick="deleteNode('null');" style=" display:none; position: fixed;right: 40%;top: 2%;height:30px;width:50px;background-color:#DBA901;">
+  </div>
+  <div id="aside">
+    <div id="label_fields">
+      <h3 id="title_label">Information</h3>
+      <div id="content_label"></div>
+    </div>
+
+    <div><input id="title" type="text" placeholder="Type node name..." value=""  onmouseout="updateContent()"></input></div>
+    <div><textarea  id="content" placeholder="type node information here..." style="width: 95%;height:20em;padding: 4px" onmouseout="updateContent()"></textarea></div>
+  </div>
+  <div id="logo" style="position: fixed;top: 0.2%;right: 1%;z-index: 25;opacity: 0.4; width:10%;"><img src="/assets/edutorlogo.png"/>
+  </div>
+  <div id="footer" style="position: fixed;bottom: 0px;width:100%;height:35px;z-index: 21;">
+    <div id="zoomerplus" style="position: fixed;bottom: 1%;right: 32%;z-index: 21;"><img src="/assets/zoomin.png"/>
+    </div>
+    <div id="zoomerminus" style="position: fixed;bottom: 1%;right: 42.1%;z-index: 21;"><img src="/assets/zoomout.png"/>
+    </div>
+    <div  id="normal_view" style="position: fixed;bottom: 1%;right: 37.1%;z-index: 21;"><img src="/assets/zoom.png"/>
+    </div>
+  </div>
+  <div id="dummy" style="display: none">
+  </div><img id="zoomimage" style="visibility: hidden; position: fixed;z-index: 24;" alt="Image not found..." onclick="javascript:this.style.visibility='hidden';" />
+</div>
+<script>
+    $("#quiry_board").change(function() {
+        var selected_value = $('select#quiry_board :selected').val();
+        var url = "/course/get_content_years/"
+        var div_update = "#quiry_class"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#quiry_class").change(function() {
+        var selected_value = $('select#quiry_class :selected').val();
+        var url = "/content_years/get_subjets/"
+        var div_update = "#quiry_subject"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#quiry_subject").change(function() {
+        var selected_value = $('select#quiry_subject :selected').val();
+        var url = "/subjects/get_chapters/"
+        var div_update = "#quiry_chapters"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+</script>
+</body>
+</html>

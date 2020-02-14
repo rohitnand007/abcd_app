@@ -1,0 +1,243 @@
+= simple_form_for @user,:url=>users_path, :html => { :class => :form } do |f|
+  =f.error_messages
+  .inputs
+  - if current_user.is?'EA'
+    .group
+      .field
+        #instution
+          = f.label :institution_id, "Institution", :class=>'label'
+          = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[@user.center].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #academic_class
+          = f.label :academic_class_id, "Academic Class", :class=>'label'
+          = f.collection_select :academic_class_id,[@user.academic_class].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,[@user.section].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -elsif current_user.is? 'IA'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,current_user.centers,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #academic_class
+          = f.label :academic_class_id, "Academic Class", :class=>'label'
+          = f.collection_select :academic_class_id,[@user.academic_class].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,[@user.section].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -elsif current_user.is?'CR'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[current_user.center],:id,:name,{},{:class=>"drop_down"}
+    .group
+      .field
+        #academic_class
+          = f.label :academic_class_id, "Academic Class", :class=>'label'
+          = f.collection_select :academic_class_id,current_user.academic_classes,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,[@user.section].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -else
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = current_user.type.eql?("Institution") ? current_user.name : current_user.institution.name
+    .group
+      .field
+        - if current_user.center or current_user.type.eql?('Center')
+          = f.label :center_id, "  Center", :class=>'label'
+          = current_user.type.eql?("Center") ? current_user.name : current_user.center.name
+  %div{:class=>'label heading hr'}
+  =f.simple_fields_for :profile do |p|
+    .group
+      .field
+        = p.input :surname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Surname'
+    .group
+      .field
+        = p.input :middlename,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Middle name'
+    .group
+      .field
+        = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'First name'
+    .group#parentEmail
+      .field
+        = p.input :parent_email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -#.group
+    -#  .field
+    -#    = p.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Image'
+  -#.group
+  -#  .field
+  -#    = f.label :role_id, "Role", :class => "label"
+  -#    = f.collection_select :role_id,asign_roles(current_user),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  .group#email
+    .field
+      = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.label :password, :class => "label"
+      = f.password_field :password, :class => "text_field"
+      %span.description must be at least 6 characters
+  .group
+    .field
+      = f.label :password_confirmation, "Re-enter Password", :class => "label"
+      = f.password_field :password_confirmation, :class => "text_field"
+  .group
+    .field
+      = f.input :date_of_birth,:as=>:date, :start_year => Date.today.year - 60,:order => [:day,:month, :year],:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group#rollno
+    .field
+      = f.input :rollno,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  -#.group
+  -#  .field
+  -#    = f.input :extras,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Chip expiry (if applicable)"
+  .group
+    .field
+      #schoolTag{:style=>"display:none;"}
+        = f.label :school_uid, "School Tag", :class => "label"
+        = f.input :school_uid,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>false
+  .group
+    .field
+      =f.label :Group, "Groups", :class => "label"
+      = f.input :group_tokens ,:as=>:text,:input_html=>{:rows=>4,:cols=>100 ,:class => 'text_field',:id=>"user_group_ids"},:label => false
+      %br
+  .group
+    .field
+      =f.label :Group, "Associate Devices:", :class => "label heading"
+      %br
+      %br
+      = f.simple_fields_for :devices do |device|
+        = render 'device_fields', :f => device
+      .links.add_more
+        -#= link_to_add_association '+ Add Another',f,:devices
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>'Creating...'
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), users_path,:class=>'button danger icon remove'
+:javascript
+  $(document).ready(function(){
+      //if ($('select#user_role_id :selected').val()==5)
+      //{
+      //    $('#class_teacher_status').show();
+      //}
+
+      var groups = $('#user_group_ids');
+      var INST = $('select#student_institution_id :selected').val();
+      var CENT = $('select#student_center_id :selected').val();
+      // alert($('select#user_center_id :selected').val());
+      $(groups).tokenInput(getSearchURL("user"), { preventDuplicates:true,prePopulate: $(groups).data('pre'),
+          theme: '' ,crossDomain: false });
+
+      //for user forms
+      // $("#user_center_id").attr('disabled', 'disabled');
+      $("#student_institution_id").change(function() {
+          set_default($("#student_center_id"));
+          set_default($("#student_academic_class_id"));
+          set_default($("#student_section_id"));
+          var institution = $('select#student_institution_id :selected').val();
+          if(institution==""){
+           institution=0;
+           $("#student_academic_class_id").attr('disabled','disabled');
+           $("#student_section_id").attr('disabled','disabled');
+          }
+          var url = '/institution/get_centers/' + institution
+          var div_update = "#student_center_id"
+          get_url_Data_for_multiparams(url,div_update);
+
+      });
+
+      $("#student_center_id").change(function() {
+          set_default($("#student_academic_class_id"));
+          set_default($("#student_section_id"));
+          var institution = $('select#student_institution_id :selected').val();
+          var center = $('select#student_center_id :selected').val();
+          if(institution=="") { institution=0;}
+          if(center==""){
+           center=0;
+           $("#student_section_id").attr('disabled','disabled');
+          }
+          var url = '/institution/get_academic_classes/' +institution+'/'+ center
+          var div_update = "#student_academic_class_id"
+          get_url_Data_for_multiparams(url,div_update);
+          $("#student_academic_class_id").removeAttr('disabled');
+
+          $(groups).tokenInput('clear');
+          $(".token-input-dropdown").remove();
+          $(".token-input-list").remove();
+          $("#token-input-student_group_ids").remove();
+          $(groups).tokenInput(getSearchURL("user"), { preventDuplicates:true,
+              theme: '' ,crossDomain: false });
+          $(groups).tokenInput('clear');
+
+      });
+
+      $("#student_academic_class_id").change(function() {
+          set_default($("#student_section_id"));
+          var institution = $('select#student_institution_id :selected').val();
+          var center = $('select#student_center_id :selected').val();
+          var academic_class = $('select#student_academic_class_id :selected').val();
+          if(institution=="") { institution=0;}
+          if(center=="") { center=0;}
+          if(academic_class=="") { academic_class=0;}
+          var url = '/institution/get_sections/' +institution+'/'+ center+'/'+academic_class
+          var div_update = "#student_section_id"
+          get_url_Data_for_multiparams(url,div_update);
+          $("#student_section_id").removeAttr('disabled');
+
+      });
+
+      // show/hide of is class teacher status onchange of role in users form
+      //$("#user_role_id").change(function() {
+      //    var role_id = $('select#user_role_id :selected').val();
+      //
+      //    if(role_id == 4){
+      //        $("#rollno").show();
+      //        $("#parentEmail").show();
+      //        $("#schoolTag").show();
+      //    }
+      //    else{
+      //        $("#rollno").hide();
+      //        $("#parentEmail").hide();
+      //        $("#schoolTag").hide();
+      //    }
+      //
+      //});
+      // Disabling 'Add More' link if number of nested attributes exceeds more than 3
+      var $add_count = 1;
+      $(".add_more").click(function(e) {
+          if($add_count >= 2){
+             // get the number of remove fileds in document  and compare and hide
+              if ($add_count == $(".remove_fields").length){
+                  $(".add_more").css('display','none');
+                   $add_count = $(".remove_fields").length;
+              }
+          }else{
+              $add_count += 1;
+          }
+      });
+  });
+
+

@@ -1,0 +1,14 @@
+= form_tag update_user_groups_path, :multipart => true do
+  %h2 Update Abstract User Groups
+  %h4 The csv file should be in the following format
+  %div{style:"background-color: #f9f9f9; width: 400px;"}
+    %h4 Please generate the following in Excel like program and save it as CSV file type.
+    %b EdutorId , Abstract group name
+    %br
+    "Student1", "group name1"
+    %br
+    "Student2", "group name2"
+  %br/
+  %br/
+  = file_field_tag "file"
+  = submit_tag 'Update Group'

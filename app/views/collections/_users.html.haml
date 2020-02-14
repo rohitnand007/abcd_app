@@ -1,0 +1,48 @@
+:javascript
+  $(document).ready(function() {
+    $("#users").dataTable({
+        "aoColumns": [
+                   {"bSortable": false },null,null,null,null,null,
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+    addtipTip();// on ajax update recall
+  });
+%table{cellpadding:1,cellspacing: 1}
+  %tr
+    %td{style: 'padding-left:16px;'}
+    %td
+
+  %div
+  %table#users.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.user.email", :default => t("activerecord.labels.email", :default => "Name"))
+        %th Roll No
+        %th Class
+        %th Section
+        %th Id
+        %th Device Id
+    %tbody
+      -#%tr.tr-blank
+      - @users.each do |user|
+        %tr{:class => cycle("tr-odd", "tr-even")}
+          %td.col= link_to user.fullname, user_path(user)
+          %td.col= user.rollno
+          %td.col= user.academic_class.name if user.academic_class
+          %td.col= user.section.name if user.section
+          %td.col= user.edutorid
+          %td.col= user.devices.map(&:deviceid).join(',') if user.devices
+
+
+  .pagination_info
+    = (paginate @users) unless @users.blank?
+

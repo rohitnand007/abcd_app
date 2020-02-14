@@ -1,0 +1,24 @@
+= form_tag "/tags_dbs/#{@db_id}/update_users", :method => 'post', :multipart => true do 
+	.users_container{style:"overflow:auto;height:550px;cursor:move;"}
+		%table
+			%thead
+				%tr
+					%th Institutions
+					%th Publishers
+			%tbody
+				%tr
+					%td{style:"vertical-align:top;"}
+						-@institutions.each do |institution|
+							%label
+								= check_box_tag "tags_db[user_ids][]", institution.id, @tags_db.user_ids.include?(institution.id)
+								= institution.name
+							%br
+					%td{style:"vertical-align:top;"}
+						-@publishers.each do |publisher|
+							%label
+								= check_box_tag "tags_db[user_ids][]", publisher.id, @tags_db.user_ids.include?(publisher.id)
+								= publisher.name
+							%br
+	%br
+	.actions
+		= submit_tag "Update Users", disable_with: "Updating...", class: 'button'

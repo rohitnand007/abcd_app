@@ -1,0 +1,319 @@
+-if user_signed_in? && (current_user.rc=="EA")
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important; font-family: Arial, Sans-serif;"}
+      %li{:style => "color: #555;font-size: 18px;"}
+        = link_to "Home", root_path, :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px;"}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Users
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Institutions",institutions_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Centers",centers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Forms", academic_classes_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Sections", sections_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Groups", groups_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Teachers", teachers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Students", users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Cdn Users", cdn_configs_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Student Search", student_search_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publishers", publishers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Education Officers", education_officers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Upload Students", upload_csv_file_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Upload Teachers", bulk_teachers_upload_interface_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Bulk Assign Licenses", bulk_assign_interface_license_sets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Bulk Unassign Licenses", bulk_unassign_interface_license_sets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Devices
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Devices", devices_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Device Messages", device_messages_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Question Bank
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "All Question Banks", publisher_question_banks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Stores", stores_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Tags
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Tags List", tags_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Tag DBS", tags_dbs_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Add Tags(CSV)", csv_upload_interface_tags_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+-elsif user_signed_in? && (current_user.rc=="IA")
+
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important;font-family: Arial, Sans-serif;"}
+      %li{:style => "color: #555;font-size: 18px;"}
+        = link_to "Home", root_path,:style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Users
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Centers",centers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Forms", academic_classes_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Sections", sections_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Groups", groups_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Teachers", teachers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Students", users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Assessments
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          -#= link_to "Quick Test", controller:"quick_test",action:"new"
+          -#= link_to "Zip Uploads", quizzes_zip_upload_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          -#= link_to 'Assessment Uploads', assessment_upload_zip_uploads_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Assessments",'/assessment_tool/all_assessments', :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          -#= link_to "Zip Uploads[QB]", zip_upload_question_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      -unless current_user.is? "EO"
+        %li{:style => "color: #555;font-size: 18px;"}
+          = link_to "Devices", devices_path, :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Question Bank
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Search Questions", assessment_tool_manage_questions_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+      -unless current_user.is? "EO"
+        %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+          %a{:href => "#", :style=>"padding: 25px 10px;"}
+            Licenses
+            %i.fa.fa-caret-down
+          .w3-dropdown-content.w3-white.w3-card-4
+            = link_to "Licenses", license_sets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+            = link_to "Download Booklist", get_csv_book_list_ibooks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+-elsif user_signed_in? && (current_user.rc=="EO")
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important;font-family: Arial, Sans-serif;"}
+      %li{:style => "color: #555;font-size: 18px;"}
+        = link_to "Home", root_path,:style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Users
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Centers",centers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Forms", academic_classes_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Sections", sections_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Groups", groups_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Teachers", teachers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Students", users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Assessments
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          -#= link_to "Quick Test", controller:"quick_test",action:"new"
+          -#= link_to "Zip Uploads", quizzes_zip_upload_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          -#= link_to 'Assessment Uploads', assessment_upload_zip_uploads_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Assessments",'/assessment_tool/all_assessments', :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+      -#= link_to "Zip Uploads[QB]", zip_upload_question_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Question Bank
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Search Questions", assessment_tool_manage_questions_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px;"}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Content
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Content Catalogue", user_assets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publish Content", user_assets_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publish History", user_assets_path(:p => 2), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publish Inbox", messages_path+user_path(current_user), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          -#= link_to "User Statistics", publish_stats_users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+-elsif user_signed_in? && (current_user.rc=="ECP")
+
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important;font-family: Arial, Sans-serif;"}
+      %li{:style => "color: #555;font-size: 18px;"}
+        = link_to "Dashboard", dashboard_publisher_path(current_user.id), :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Question Bank
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Zip Uploads", zip_upload_question_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Search Questions", assessment_tool_manage_questions_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Create New Question Bank", new_publisher_question_bank_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "List all", list_publisher_question_banks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          My Books
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Book Catalogue", ibooks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Add Book", new_ibook_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Download Booklist", get_csv_book_list_ibooks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          My Collections
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Collection Catalogue", ipacks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Create Collection", new_ipack_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Assets
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Upload Single Asset", single_asset_upload_interface_user_assets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Bulk Upload Assets", bulk_upload_assets_interface_user_assets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Asset Catalogue", my_assets_interface_user_assets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Assessments", assessment_tool_my_assessments_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Learning Activities", learning_activities_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        = link_to "Institutes", schools_publisher_path(current_user.id), :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        = link_to "Licenses", license_sets_path, :style=>"padding: 25px 10px;"
+
+-elsif user_signed_in? && (current_user.rc=="CR")
+
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important;font-family: Arial, Sans-serif;"}
+      %li{:style => "color: #555;font-size: 18px;"}
+        = link_to "Home", root_path, :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Users
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Forms", academic_classes_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Sections", sections_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Groups", groups_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Teachers", teachers_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          =# link_to "Students", users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Assessments
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          -#= link_to "Quick Test", controller:"quick_test",action:"new"
+          = link_to "Zip Uploads", quizzes_zip_upload_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to 'Assessment Uploads', assessment_upload_zip_uploads_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Assessments",'/assessment_tool/all_assessments', :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        = link_to "Devices", devices_path, :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Question Bank
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Search Questions", assessment_tool_manage_questions_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Licenses
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Licenses", license_sets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Download Booklist", get_csv_book_list_ibooks_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+-elsif user_signed_in? && (current_user.rc=="ET")
+
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important;font-family: Arial, Sans-serif;"}
+      %li{:style => "color: #555;font-size: 18px;"}
+        = link_to "Home", root_path, :style=>"padding: 25px 10px;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Users
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Sections", sections_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Groups", groups_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Students", users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px; "}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Assessments
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Assessments",'/assessment_tool/my_assessments', :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px;"}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Question Bank
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Search Question Database", assessment_tool_manage_questions_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px;"}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Content
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Content Catalogue", user_assets_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publish Content", user_assets_path(:p => 1), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publish History", user_assets_path(:p => 2), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          = link_to "Publish Inbox", messages_path+user_path(current_user), :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+          -#= link_to "User Statistics", publish_stats_users_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+
+
+-elsif user_signed_in? && (current_user.rc=="ES")
+
+  #primary_nav_wrap
+    %ul.w3-navbar.w3-card-2{:style => "height:10%; box-shadow: none !important;font-family: Arial, Sans-serif;"}
+      %li.w3-dropdown-hover{:style => "color: #555;font-size: 18px;"}
+        %a{:href => "#", :style=>"padding: 25px 10px;"}
+          Assessments
+          %i.fa.fa-caret-down
+        .w3-dropdown-content.w3-white.w3-card-4
+          = link_to "Assessments",quizzes_student_not_attempted_assessments_path, :style=>"font-weight: 400; line-height: 1.42857143; color: #333;white-space: nowrap;font-size: 14px; padding: 3px 20px;clear: both;"
+

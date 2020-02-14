@@ -1,0 +1,10 @@
+= simple_form_for(@analytics_usage) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :user_id
+    = f.input :usage_date
+    = f.input :total_usage
+
+  .actions
+    = f.button :submit,:class=>'big primary'

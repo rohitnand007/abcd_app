@@ -1,0 +1,23 @@
+#content_header
+  -#%h1#main_heading Students
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "My Classes", teacher_path(params[:id])
+      %li
+        = link_to "My Students", '#',{:class=>'current'}
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "Usage Statistics")}", my_students_report_path(params[:id],params[:group_id])
+    %li= link_to 'Test Reports',students_test_reports_path
+#data
+  #progress-indicator.progress-indicator= image_tag('progress-indicator.gif')
+  %table{width: '100%'}
+    %tr
+      %td#users_list{valign: 'top'}
+        = render 'my_students'
+
+
+

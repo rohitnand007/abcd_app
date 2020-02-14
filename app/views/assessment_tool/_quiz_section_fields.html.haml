@@ -1,0 +1,22 @@
+%td.nested-fields{style: "width: 206px; margin: 0px; padding: 4px; border: 1px solid #CCC; vertical-align: top;"}
+
+  %table
+    %tr
+      %td{colspan: "2"}
+        = f.text_field :name,class:"form-first-name",style: "width: 180px;",placeholder:"Type Section name ..."
+        %br
+        %br
+        = f.text_area :intro,class:"form-last-name",style: "width: 180px;height:100px;",placeholder:"Add instructions if any ..."
+
+    -#%tr
+    -#  %td
+    -#    = link_to_add_association "+ Add sub-section", f , :children_sections,:partial=>"quiz_sub_section",
+    -#          "data-association-insertion-method"=>"before",
+    -#          "data-association-insertion-node"=>"table",
+    -#          "data-association-insertion-traversal"=>"closest",
+    -#          "data-association-insertion-node-down"=>"tr:last-child",
+    -#          "data-association-insertion-traversal-down"=>"find"
+  %br
+  %div
+    = #button.leftOK{style: "background-color:#60c8cd; color: white;"} OK
+    = link_to_remove_association (image_tag("delete_icon_black.png"))+"  Cancel", f, style:"text-decoration:none"

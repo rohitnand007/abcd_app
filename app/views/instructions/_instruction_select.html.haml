@@ -1,0 +1,27 @@
+.instruction_templates
+  %h1 Instruction Templates
+  = form_for @instruction,:url => url_for(:controller => 'instructions', :action => 'instruction_select'), method: :post do |f|
+    %table#instructions_list{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+      %thead
+        %tr.tr-head
+          %th{:align=>"left"} Template Name
+          %th Select Button
+          %th Content
+
+      - @instructions.each do |instruction|
+        %tr{:class => cycle("tr-odd", "tr-even")}
+          %td= instruction.template_name
+          %td{align:"center"}= radio_button_tag "selector", instruction.id, @present_instruction.id == (instruction.id) ? true : false, id: "instruction_selected"
+          %td{align:"center"}= link_to " ▼ ","#",class:"button instruction_info"
+          %tr.instruction_textarea
+            %td{width:'128%'}
+              %textarea{rows:"4", cols:"50" ,readonly:true,name:"instruct_textarea"}= strip_tags(instruction.content)
+
+
+    = f.submit "Template select", class: "button"
+
+:javascript
+  $(".instruction_textarea").hide();
+  $(".instruction_info").click(function(){
+  $(this).closest("tr").next().toggle();
+  })

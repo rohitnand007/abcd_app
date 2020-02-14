@@ -1,0 +1,80 @@
+:css
+  #assessment_iit_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_iit_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#maend_heading assessment_iit
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_iits_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_iit_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_iit_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @assessment_iits.each do |assessment_iit|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_iit_#{assessment_iit.id}"}
+                  -#%td.col=  assessment_iit.rb.id
+                  %td.col
+                    = assessment_iit.asset.user.name if assessment_iit.asset
+                  %td.col
+                    = assessment_iit.board.name if assessment_iit.board
+                  %td.col
+                    = assessment_iit.content_year.name if assessment_iit.content_year
+                  %td.col
+                    = assessment_iit.subject.name  if assessment_iit.subject
+                  %td.col
+                    = link_to assessment_iit.chapter.name, chapter_path(assessment_iit.chapter)  if assessment_iit.chapter
+                  %td.col
+                    = link_to assessment_iit.topic.name, topic_path(assessment_iit.topic)  if assessment_iit.topic
+                  %td.col
+                    = assessment_iit.name
+                  %td.col
+                    = display_date_time(assessment_iit.created_at)
+                  %td.col
+                    = link_to_show(assessment_iit_path(assessment_iit))
+                    &nbsp
+                    = link_to_edit(edit_assessment_iit_path(assessment_iit))
+                    &nbsp;
+                    = link_to_delete(assessment_iit_path(assessment_iit))
+
+        - unless @assessment_iit.blank?
+          .pagination_info
+            = paginate @assessment_iits
+        #assessment_iit_configuration

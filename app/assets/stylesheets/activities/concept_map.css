@@ -1,0 +1,29 @@
+#conceptmap_catalog thead{
+	color: white;
+	text-align:center;
+	border:none;
+}
+#conceptmap_catalog thead tr th{
+	text-align: center;
+	border:none;
+}
+.table>tbody>tr>td{
+	vertical-align:middle;
+}
+#conceptmap_catalog tbody tr td:nth-child(5){
+   border-right:none;
+   border-left:none;
+}
+#conceptmap_catalog tbody tr td:nth-child(6){
+   border-right:none;
+   border-left:none;
+}
+
+#conceptmap_catalog tbody tr td:nth-child(7){
+   border-right:none;
+   border-left:none;
+}
+#conceptmap_catalog tbody tr td:nth-child(8){
+   border-right:none;
+   border-left:none;
+}

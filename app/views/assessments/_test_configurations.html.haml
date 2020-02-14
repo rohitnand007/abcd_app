@@ -1,0 +1,62 @@
+:javascript
+  $(document).ready(function() {
+    $("#test_configuration_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+     $(".tipTipTop").tipTip({edgeOffset: 10,defaultPosition: 'top',delay: 0});
+  });
+
+
+%table#test_configuration_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+  %thead
+    %tr.tr-head
+      -#%th.first Id
+      %th Test File Name
+      %th Start Time
+      %th End Time
+      %th Published To
+      %th Published At
+      %th Top-Mark
+      %th Class Average
+      %th Status
+      %th.last &nbsp
+  %tbody
+    -#%tr.tr-blank
+    - test_configurations.each do |test_configuration|
+      %tr{:class => cycle("tr-odd", "tr-even")}
+        -#%td.col= test_configuration.id
+        %td.col= test_configuration.test_type
+        %td.col
+          = display_date_time(test_configuration.start_time)
+        %td.col
+          = display_date_time(test_configuration.end_time)
+        %td.col
+          = (test_configuration.group.try(:academic_class).try(:fullname) +" "+test_configuration.group.try(:fullname))
+        %td.col
+          = display_date_time(test_configuration.created_at)
+        %td.col
+          = test_configuration.topper_mark
+        %td.col
+          = test_configuration.class_average
+        %td.col
+          = test_configuration.current_status
+        %td.col
+          =# link_to_unless test_configuration.published?, 'Publish',publish_form_test_configuration_path(test_configuration)
+          -# unless test_configuration.published?
+            =link_to image_tag('web-app-theme/themes/default/icons/publish.png'),'#',:title=>'Published',:class=>'tipTipTop'
+          - if test_configuration.can_evaluate?
+            = link_to image_tag('web-app-theme/themes/default/icons/evaluate.png'),evaluate_test_configuration_path(test_configuration),:title=>'Evaluate',:class=>'tipTipTop'
+          -#= link_to_show(test_configuration_path(test_configuration))
+          -#= link_to_edit(edit_test_configuration_path(test_configuration))
+          -#= link_to_delete(test_configuration_path(test_configuration)) unless test_configuration.status.eql?(3)

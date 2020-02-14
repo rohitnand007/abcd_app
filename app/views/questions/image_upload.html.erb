@@ -1,0 +1,45 @@
+<div id="content_header">
+  <h1 id="main_heading">Upload Image</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Question Bank", :controller => "questions", :action => "index" %></li>
+    <li><%=link_to "My Questions", :controller => "questions", :action => "myquestions" %></li>
+    <li><%=link_to "My Draft Questions", :controller => "questions", :action => "mydraftedquestions" %></li>
+  </ul>
+</div>
+<div id="data">
+  <% if !@filename.nil? %>
+  <h1>Please copy the uploaded filename and paste in the form after clicking the Insert Image button.</h1>
+  <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Uploaded Filename:
+          </label>
+          <br/><br/><b><%=@filename%></b>
+        </div>
+      </div>
+    </div>
+  <div class='label heading hr'>
+    </div>
+  <% end %>
+    <form id="upload-image" class="form" method="POST" action="/questions/submit_image" enctype="multipart/form-data">
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Select Image
+          </label>
+          <input type="file" name="image"/>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div align="center" class="field">
+        <input class="button big primary" data-disable-with="Uploading..." name="commit" type="submit" value="Upload Image"/>
+        <a href="/questionbank" class="button danger icon remove">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>

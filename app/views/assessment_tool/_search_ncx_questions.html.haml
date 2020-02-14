@@ -1,0 +1,145 @@
+= form_for :tag_list,:url=> '/assessment_tool/get_questions_by_content',:remote=>true do  |f|
+  - if @quiz.nil?
+    = hidden_field_tag :outside_assessment, true
+  -else
+    =# If there is no quiz, that means you are editing, searching questions from outside the assessment.
+    = hidden_field_tag :outside_assessment, @quiz.new_record? ? true : false
+  = hidden_field_tag :quiz_id, @quiz.nil? ? "": @quiz.id
+  #searchOptions
+    %h3 Search by Filters
+    .searchFilterContainer
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "academic_class".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'content_year_id',  get_user_type_group(@board,'ContentYear',@quiz).sort_by(&:name), :id, :name,{:prompt=>'Select',:selected=>select_default_ncx(@quiz,"content_year_id")},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "subject".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'subject_id', get_user_type_group(@board,'Subject',@quiz).sort_by(&:name), :id, :name, {:prompt=>"Select",:selected=>select_default_ncx(@quiz,"subject_id")},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "chapter".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'chapter_id',get_user_type_group(@board,'Chapter',@quiz).sort_by(&:name), :id, :name,{:prompt=>'Select'},{class: 'drop_down',style:"width: 220px; padding:7px"}
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                = "topic".humanize
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = f.collection_select 'topic_id',get_user_type_group(@board,'Topic',@quiz).sort_by(&:name), :id, :name,{:prompt=>'Select'},{class: ' drop_down',style:"width: 220px; padding:7px"}
+
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                Question Type
+        %tr
+          %td{style: "border: 0px; padding: 2px;"}
+            .styled-select
+              = select_tag :qtype, options_for_select([['All Formats','All'],["Multiple Choice","multichoice"],["Fill In The Blanks","fib"],["True or False","truefalse"],["Activity","activity"],["Passage","passage"],["Long Answer Question","laq"],["Short answer Question","saq"],["Very Short Answer Question","vsaq"],["Project","project"]]),{class: 'drop_down',style:"width: 220px; padding:7px"}
+    %h3 Search by IDs
+    .searchIdBoxContainer
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td
+            =f.text_field "search_by_id",{placeholder:"Seperate IDs by commas (,)"}
+
+  %table
+    %tr
+      %td{style: "height: 10px;"}
+        %br
+        /%button#questionBankSearch{style: "background-color:#60c8cd; color: white;"}
+        = f.submit 'Search' ,id: "search_for_questions"
+        =# image_tag "small_loading.gif",class:"loading",style:"vertical-align: middle"
+        //%span{style: "color:grey; font-size:-2;vertical-align: middle"} Reset search
+
+:javascript
+  add_accordion_to_searches();
+  $("#search_for_questions").button();
+  $("#tag_list_content_year_id").change(function() {
+      var selected_value = $('select#tag_list_content_year_id :selected').val();
+      var div_chapter_update = "#tag_list_chapter_id"
+      var div_topic_update = "#tag_list_topic_id"
+      var div_subject_update = "#tag_list_subject_id"
+      var url = "/assessment_tool/get_contents/"
+      if ( selected_value != '')
+      {
+          get_url_Data(url,selected_value+'?name=subject&value=content_year_id',div_subject_update);
+
+          get_url_Data(url,selected_value+'?name=chapter&value=content_year_id',div_chapter_update);
+
+          get_url_Data(url,selected_value+'?name=topic&value=content_year_id',div_topic_update);
+      }
+  });
+  $("#tag_list_subject_id").change(function() {
+        var subject_value = $('select#tag_list_subject_id :selected').val();
+        var content_year_value = $('select#tag_list_content_year_id :selected').val();
+        var tag_ids = []
+
+        if ( content_year_value != ''){
+           tag_ids.push(content_year_value)
+         }
+        if ( subject_value != '')
+        {
+          tag_ids.push(subject_value)
+          var url = "/assessment_tool/get_contents/"
+          var div_update = "#tag_list_chapter_id"
+          var div_topic_update = "#tag_list_topic_id"
+
+          get_url_Data(url,tag_ids+'?name=chapter&value=subject_id',div_update);
+
+          get_url_Data(url,tag_ids+'?name=topic&value=subject_id',div_topic_update);
+        }
+   });
+   $("#tag_list_chapter_id").change(function() {
+         var selected_value = $('select#tag_list_chapter_id :selected').val();
+         var content_year_value = $('select#tag_list_content_year_id :selected').val();
+         var subject_value = $('select#tag_list_subject_id :selected').val();
+         var tag_ids = []
+
+         if (content_year_value != ''){
+            tag_ids.push(content_year_value)
+         }
+         if (subject_value != ''){
+            tag_ids.push(subject_value)
+         }
+         if ( selected_value != '')
+          {
+          tag_ids.push(selected_value)
+           var url = "/assessment_tool/get_contents/"
+           var div_update = "#tag_list_topic_id"
+           get_url_Data(url,tag_ids+'?name=topic&value=chapter_id',div_update);
+          }
+   });
+   $("#tag_list_concept_names").change(function() {
+      var selected_value = $('select#tag_list_chapter :selected').val();
+      if (selected_value == '') {
+        //$("#tag_list_academic_class").get(0).selectedIndex = 0;
+        //$("#tag_list_subject").get(0).selectedIndex = 0;
+        //$("#tag_list_chapter").get(0).selectedIndex = 0;
+      }
+  });
+  $("#search_for_questions").click(function(){
+     $(".loading").show();
+     empty_question_array();
+     return true;
+  });
+

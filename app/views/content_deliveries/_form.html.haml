@@ -1,0 +1,474 @@
+= stylesheet_link_tag 'user_assets'
+= javascript_include_tag 'user_assets'
+= render partial:"user_assets/asset",locals:{edit:false}
+-#= render partial:"asset"
+- if @user_asset.id
+  %div.breadcrumb.flat
+    %a.done{href: "#"} Select Asset
+    %a.done{href: "#"} Select Book to Publish
+    %a.active{href: "#"} Select Location and Publish
+  %div.selected_asset
+    -#= check_box_tag "param", 1,true, class: "style_checkbox", id: "check"
+    = @user_asset.asset_name
+    %a{href: "/content_deliveries/new?id=#{@ibook.id}", style: "font-size: 12px; font-style: italic;color: red;"} X
+  %div.selected_book
+    -#= check_box_tag "param", 1,true, class: "style_checkbox", id: "check"
+    = @ibook.get_title_and_class
+    %a{href: "/user_assets?p=1&asset_id=#{@user_asset.id}", style: "font-size: 12px; font-style: italic;color: red;"} X
+- else
+  %div.breadcrumb.flat
+    %a.done{href: "#"} Select Book to publish
+    %a.active{href: "#", id: "select_asset_bc"} Select Asset
+    %a{href: "#", id:"location_to_publish_bc"} Select location to publish
+  %div.selected_book
+  %div.selected_asset
+    -#= check_box_tag "param", 1,true, class: "style_checkbox", id: "check"
+    = @ibook.get_title_and_class
+    - if @user_asset.id
+      %a{href: "/user_assets?p=1&asset_id=#{@user_asset.id}", style: "font-size: 12px; font-style: italic;color: red;"} X
+    - else
+      %a{href: "/user_assets?p=1", style: "font-size: 12px; font-style: italic;color: red;"} X
+- if @user_asset.id.present?
+  = button_tag "+Import", class: "button disable",id: 'ImportCont', disabled:true
+  = link_to "Publish","#",class: "button tablebutton" , id: 'AssetPublish'
+- else
+  = button_tag "+ Import",class: "button" , id: 'ImportContent', disabled: false
+  = button_tag "Publish",class: "button disable" , id: 'AssetPublishh', disabled:true, style:"position:relative;top:407px;left:60%", title:"Click on '+Import' button to add assets before publishing"
+
+= simple_form_for(@content_delivery, html: {style: "display: table;"}) do |f|
+  = f.error_notification
+  %div{style: "display: inline;"}
+    = hidden_field_tag "book_id", @ibook.id
+
+  %br
+  %div.chapters
+    %h1.toc_font Chapters (#{@chapter_arr.count})
+    %div{style: "overflow: auto; max-height: 380px; padding-left: 5px;"}
+      -@chapter_arr.each_with_index do |chapter, index|
+        %div.sidelist
+          - @chap = chapter[0] if index==0
+          -#= hidden_field_tag "chapter_guid",chapter[2]
+          -#= hidden_field_tag "chapter_parent_guid" , chapter[3]
+          = label_tag do
+            -if @new_book
+              = radio_button_tag "uri1", [chapter[1]+"$"+chapter[2]+"$"+chapter[3]], (index==0), id: "#{chapter[0]}", onclick: "buttonID(this.id);"
+            -else
+              = radio_button_tag "uri1", chapter[1], (index==0), id: "#{chapter[0]}", onclick: "buttonID(this.id);"
+            = chapter[0]
+  %div.section
+    %h1.toc_font Topics
+    %div.toc_section#topics
+    %div.publish_info#publish_info{style: "padding: 30px;"}
+      %div{style: "width: 390px;border: 1px solid (171, 160, 160);"}
+      = text_field_tag :name,"", placeholder: "Display name",value: "#{@user_asset.asset_name}",class: "text_box", title:"Display Name will be visible on the student's tab. Please provide appropriate text"
+      %a.cleartext#clear{href: "name/clear"}X
+      %nobr
+      %div#msg1
+        %i{style:"color:red;"} *Please enter a Display Name
+      -#= link_to "+ Add New Asset","#",class: "button short" , id: 'createNewAsset'
+      -#= link_to "+ Available Assets","#",class: "button right" , id: 'AvailableAssets'
+      %br
+      %div#asset
+        - if @user_asset.new_record?
+        - else
+          = label_tag do
+            = hidden_field_tag 'asset_id', @user_asset.id
+            -#= @user_asset.asset_name.titleize
+        %br
+
+      %a Publish To:
+      = label_tag do
+        = radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label=>"Individual"
+        = 'Individual'
+      = label_tag do
+        = radio_button_tag :message_to, 'group',"true",:input_html=>{:class=>"text_field"},:label=>"Group"
+        = 'Group'
+      %br
+      #group.content_publish_input_block_row
+        .content_publish_input_block_col1 Select Group:
+        .content_publish_input_block_col2
+          %select.text_box{name: "group_id", id: "test",required: true}
+            %option{value: "" , :selected => 'disabled'}
+              = "Select Group"
+            - new_build_groups(current_user).each do |g|
+              %option{value: g.user_id}
+                = g.try(:section_name).encode('UTF-8', :invalid => :replace, :undef => :replace)
+      #recipient.content_publish_input_block_row
+        .content_publish_input_block_col1 Individual:
+        .content_publish_input_block_col2
+          = text_field :message, :multiple_recipient_ids,:label=>"To:"
+      %br
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible on the book ToC on students' tab", style: "background-image: none !important;" do
+        = check_box_tag "show_in_toc", 1, true
+        = "Show_in_toc".humanize
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible under 'my books' on students' tab", style: "background-image: none !important;  visibility: collapse" do
+        = check_box_tag "is_content?",1, true
+        = "Content".humanize
+
+      -#= label_tag do
+      -#  = check_box_tag "is_homework?"
+      -#  = "is_homework?".humanize
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible directly on the book page on students' tab", style: "background-image: none !important;" do
+        = check_box_tag "show_in_live_page", "accepted",false
+        = "Show_in_live_page".humanize
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible under 'my tests' on students' tab", style: "background-image: none !important; visibility: collapse" do
+        = check_box_tag "is_assessment?"
+        = "Assessment".humanize
+      = link_to "Publish","#",:class=>'button right',id: "form_submit"
+
+:javascript
+  $(".inception").hide();
+
+    $("#msg1").hide();
+    $("#name").click(function(){
+    $("#msg1").hide();
+    })
+    $("input[name$='message_to']").click(function(){
+      var radio_value = $(this).val();
+      if(radio_value=='individual') {
+        $("#to_group").val("0");
+        $("#recipient").show("slow");
+        $("#group").hide();
+      }
+      else if(radio_value=='group') {
+        $("#to_group").val("1");
+        $("#message_multiple_recipient_ids").tokenInput('clear');
+        $(".token-input-dropdown").remove();
+        $(".token-input-list").remove();
+        $("#token-input-multiple_recipient_ids").remove();
+        $(function() {
+          $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_ids").data("pre"),
+            theme: "",
+            zindex:2000
+          });
+        });
+        $("#group").show("slow");
+        $("#recipient").hide();
+    }
+    });
+    $("#recipient").hide();
+    $("#group").show();
+
+    $(function() {
+        $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+            theme: "",
+            zindex:2000
+        });
+    });
+     var topic_json = #{@topic_arr.to_json};
+     var sub_json = #{@sub_arr.to_json};
+     var new_id = "#{"input[id='"+@chap+"']"}"
+     $(new_id).click();
+     function buttonID(id){
+     $("#topics").html("");
+        var obj1 = topic_json[id];
+        for(var i in obj1){
+         text1 = "<label><input id=\"" +i+"\" name=\"uri2\" type=\"radio\" value=\""+obj1[i]+"\">"+i+"</label>"
+         $("#topics").append(text1);
+         var obj2 = sub_json[i];
+           for(var j in obj2){
+             text2 = "<label style= \"padding-left: 30px;display: inline-block;width: 280px;height: 30px;\"><input id=\"" +j+"\" name=\"uri2\" onclick=\"subsubID(this.id);\" type=\"radio\" value=\""+obj2[j]+"\">"+j+"</label>"
+             $("#topics").append(text2);
+           }
+       $("#topics").append("<hr/>")}
+     }
+     function subID(id){
+        $("#subtopics").html("");
+           var obj = sub_json[id];
+           for(var i in obj){
+             text = "<label><input id=\"" +i+"\" name=\"uri3\" onclick=\"subsubID(this.id);\" type=\"radio\" value=\""+obj[i]+"\">"+i+"</label>"
+            $("#subtopics").append(text);
+           }
+          }
+     $(".user_asset").show();
+         $("#available_assets").hide();
+         $("#ImportContent").click(function () {
+             $(".inception").dialog({title: "Upload a new Asset",
+              dialogClass: 'createNewAsset',
+              width: "auto",
+              resizable: false,
+              draggable: true,
+              modal: true});
+                 });
+     $(".publish_info").hide();
+     $(".toc_font").show();
+       $("#AssetPublish").click(function(){
+         $(".publish_info").dialog({title: "Publish Information",
+                   dialogClass: 'PubInfo',
+                   width: "600px",
+                   resizable: false,
+                   draggable: false,
+                   modal: true});
+                   });
+  var option = $("assetbox option:selected").attr("value");
+
+   $("#form_submit").click(function(){
+    if ($("#name").val()==""){
+      $("#msg1").show();
+    }
+    else if ($("input[name$='message_to']:checked").val()=="group"  && $("#test").val()==""){
+    alert("Please select a Group");
+    }
+    else if ($("input[name$='message_to']:checked").val()=="individual" && $(".token-input-list").text().length == 0 ){
+    alert("Please select atleast one Individual")
+    }
+
+    else
+    { var ele = $(".publish_info")
+      $("#new_content_delivery").append(ele)
+      $("#new_content_delivery").submit();
+      $(".PubInfo").hide();
+    }
+    });
+
+    $("#clear").click(function(evt){
+    evt.preventDefault();
+    $("#name").val("").focus();
+    });
+  $("#assetbutton").click(function(){
+  $("#AssetPublishh").removeAttr('class');
+  $("#AssetPublishh").removeAttr('title');
+  $("#AssetPublishh").attr('class','button');
+  $("#AssetPublishh").prop('disabled', false);
+  $("#AssetPublishh").css('top','370px');
+  $("#AssetPublishh").css('left','59%');
+  $("#ImportContent").prop('disabled', true);
+  $("#ImportContent").attr('class', 'button disable');
+  $("#select_asset_bc").removeClass('active');
+  $("#location_to_publish_bc").addClass('active');
+
+  });
+  $("#newassetbutton").click(function(){
+  $("#AssetPublishh").removeAttr('class')
+  $("#AssetPublishh").attr('class','button');
+  $("#AssetPublishh").removeAttr('disabled');
+  $("#AssetPublishh").css('top','370px');
+  $("#AssetPublishh").css('left','59%');
+  $("#AssetPublishh").removeAttr('title');
+  $("#ImportContent").prop('disabled', true);
+  $("#ImportContent").attr('class', 'button disable');
+  });
+
+
+  $("#AssetPublishh").click(function(){
+         $(".publish_info").dialog({title: "Publish Information",
+                   dialogClass: 'PubInfo',
+                   width: "600px",
+                   resizable: false,
+                   draggable: false,
+                   modal: true});
+                   });
+
+  $("#assetbox").change(function(){
+  var value = $(this).find("option:selected").attr("value");
+  $("#attachment").show();
+   switch (value){
+      case "weblink":
+        $("#weblink").html("<input class=\"text_box\" id=\"name\" name=\"user_asset[weblink_url]\" type=\"text\" value=\"\">")
+        $("#weblink").show();
+        $("#attachment").hide();
+        $("#newassetbutton").removeClass("disable");
+        $("#newassetbutton").prop("disabled", false);
+        break;
+
+      case "":
+      $("#msg").show();
+      $("#weblink").hide();
+
+      break;
+
+      case "animation":
+      case "text-book":
+      case "assessment-quiz":
+      case "assessment-practice-tests":
+      case "concept-map":
+      case "audio":
+      case "video-lecture":
+        $("#msg").hide();
+        $("#weblink").hide();
+
+        break;
+
+
+      default:
+      $("#msg").hide();
+      $("#weblink").hide();
+      break;
+      }
+    });
+  //"the below code is to ensure only one radio button in the whole document is clicked"
+  $(document).on('click', 'input[name$="uri2"]', function() {
+    $('input[name="uri1"]').prop('checked', false);
+  })
+
+:css
+  .chapters>label{
+  float:left;
+  clear:left;}
+  .chapters>input{
+  float:left;}
+  .chapters {
+  display: table-cell;
+  vertical-align: top;
+  width: 40%;
+  border: 1px rgb(238, 238, 238) solid;
+  height: 420px;
+  color: #636363;
+  }
+  .section {
+  display: table-cell;
+  width: 60%;
+  border: 1px rgb(238, 238, 238) solid;
+  height: 420px;
+  color: #636363;
+  }
+  .toc_font{
+  text-align: center;
+  margin: 0px 0px;
+  font-size: 15px;
+  /*border-bottom: 1px rgb(171, 160, 160) solid;*/
+  background: #eee;
+  padding: 8px;
+  color: #2fb38e;
+  height: 17px;
+  }
+  .sidelist{
+  border-bottom: 1px rgb(171, 160, 160) solid;
+  margin-top: 9px;
+  height: 30px;}
+
+  .toc_section>label{
+  display: inline-block;
+  width: 480px;
+  height: 30px;
+  }
+  .toc_section{
+  display: block;
+  padding-top: 10px;
+  padding-left: 10px;
+  overflow: auto;
+  height: 311px;
+  max-height: 311px;
+  border-bottom: 1px dashed grey;
+  }
+  .publish_info{
+   padding: 32px 95px;
+  }
+  .publish_info>label{
+    display: inline-block;
+    width: 133px;
+    height: 30px;
+  }
+  .scrollbox{
+  overflow: auto;
+  width: 389px;
+  margin-bottom: 8px;
+  max-height: 200px;
+  }
+  .scrollbox>label{
+  display: inline-block;
+      width: 170px;
+      height: 30px;
+  }
+  .short{
+  left: 0% !important;
+  padding: 0.5em 1.5em;
+  top: 2px;
+  }
+  .wireframe{
+    border: 1px solid #636363;
+    background-color: white;
+    color: #636363;
+    left: 0%;
+    position: relative;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 3px;
+    cursor: default;
+  }
+  #createNewAsset{
+  position: relative;
+  left: 89.5%;
+  }
+  .right{
+  float: right;
+  top: -6px;}
+
+  #ImportContent{
+  position: relative;
+  top: -7px;
+  padding: 11px 21px 10px 16px;
+  left: 92%;
+  font-size: 13px;
+  }
+  #ImportCont{
+  position: relative;
+  top: -7px;
+  padding: 11px 21px 10px 16px;
+  left: 92%;
+  font-size: 13px;
+  }
+  .move_text{
+  position: relative;
+  left: 68.5%;
+  top: -14px;
+  padding: 11px 21px 10px 16px;
+  color: #636363;}
+  #AssetPublish{
+  position: relative;
+  left: 62%;
+  top: 412px
+  }
+  #AssetPublishh{
+  position: relative;
+  top: 370px;
+  left: 61%;
+  }
+  #asset{
+  color: red;}
+  .disable{
+  background: grey;
+  }
+  .disable:hover{
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      cursor: default;
+      }
+  .cleartext{
+  text-decoration: none;
+  color: black;
+  position: relative;
+  top: -35px;
+  float: right;
+  right: 5px;}
+
+  .tablebuttonn{
+  color:rgb(122, 201, 170);
+  zoom: 1.1;
+  padding: 0.6em 1.2em;
+  border: 1px solid rgb(122, 201, 170);
+  background-color: inherit;}
+  #name{
+    margin-bottom: 10px;
+  }
+  #publish_info .tiptipClass{
+    padding: 0;
+  }
+
+  div.token-input-dropdown{
+    top: 442px !important;
+    left: 468px !important;
+  }

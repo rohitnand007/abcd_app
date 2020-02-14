@@ -1,0 +1,35 @@
+<div class="nested-fields">
+<div class="group">
+  <div class="field">
+    <div class="input text required">
+      <label class="text required label" for="">
+        Answer
+        <abbr title="required">*</abbr>(if there are multiple answers, specify with comma(,) separated EX:'color,colour')
+      </label>
+      <%= f.text_area :answer,:class=>"text required text_area answer_text_area",:size=>"2x5" %>
+    </div>
+  </div>
+</div>
+<div class="group">
+  <div class="field">
+    <div class="input string">
+      <label class="string label" for="">
+        Select if case sensitive
+      </label>
+      <%= f.check_box(:case_sensitive) %>
+    </div>
+  </div>
+</div>
+ <!-- <div class="group">
+    <div class="field">
+      <div class="input string">
+        <label class="string label" for="">
+          Select if Correct Answer
+        </label>
+        <% f.check_box(:fraction) %>
+      </div>
+    </div>
+  </div>
+     !-->
+  <%= link_to_remove_association "Remove This Answer", f %>
+</div>

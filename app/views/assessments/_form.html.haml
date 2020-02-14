@@ -1,0 +1,156 @@
+= simple_form_for @assessment, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+    - if current_et and current_user.teacher_class_rooms.try(:first).try(:content).type.eql?('Board')
+      .group
+        .field
+          %span{:class=>'label',:style=>"color:red"}*Incomplete Class details to upload assessments.Please contact CenterAdmin.
+    .group
+      .field
+        = f.label :content_id, "Subject", :class=>'label'
+        = f.collection_select :subject_id,current_user.class_contents,:id,:name_with_content_year,{:prompt=>true},{:class=>'drop_down' }
+    .group
+      .field
+        = f.label :chapter_id, "Chapter", :class=>'label'
+        = f.collection_select :chapter_id,Chapter.all,:id,:name,{:prompt=>true},{:class=>'drop_down' }
+    .group
+      .field
+        = f.label :topic_id, "Topic", :class=>'label'
+        = f.collection_select :topic_id,Topic.all,:id,:name,{:prompt=>true},{:class=>'drop_down' }
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        
+    .group
+      .field
+        = f.input :extras,:as=>:select,:collection=>Assessment::LOCATION,:prompt=>true,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:label=>"Destination"
+    .group
+      .field
+        = f.input :assessment_type,:as=>:select,:collection=>[],:prompt=>true,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+    .group#assessment_type_password{:style=>"display:none;"}
+      .field
+        = f.input :passwd,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Password for test"
+        %span{:class=>'label',:style=>"color:orange;padding-left:200px;"}*This password is used to unlock the test in the tab.
+    -#.group     disabled is_lock func till development completes.
+      .field
+        = f.input :is_locked,:checked=>"unchecked",:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Lock the test"
+        -#= f.hidden_field :status,:value=>1
+    .group
+      .field
+        = f.simple_fields_for :asset do |a|
+          = render 'asset_fields', :f => a
+          = a.hidden_field :publisher_id,:value=>current_user.id
+
+    .group
+      .field
+        - if f.object.new_record?
+          = f.input '' ,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} do
+            = radio_button_tag 'assessment[status]','1',true,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual"
+            Publish Now
+            = radio_button_tag 'assessment[status]','10',false,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual"
+            Publish Later
+    %div{:class=>'label heading hr'}
+    - if f.object.new_record?
+      .group#test_configuration_fields
+        .field
+          = f.simple_fields_for :test_configurations do |test_config|
+            = render 'test_configuration_fields',:f=>test_config
+
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:value=>"Upload Assessment"
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), assessments_path,:class=>'button danger icon remove'
+
+:javascript
+  $("#assessment_board_id").change(function() {
+      var selected_value = $('select#assessment_course_id :selected').val();
+      var url = "/course/get_content_years/"
+      var div_update = "#assessment_content_year_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_content_year_id").change(function() {
+      var selected_value = $('select#assessment_content_year_id :selected').val();
+      var url = "/content_years/get_subjets/"
+      var div_update = "#assessment_subject_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_subject_id").change(function() {
+       var selected_value = $('select#assessment_assessment_type :selected').val();
+              if (selected_value == "home-work") {
+                     $('#assessment_chapter_id').find('option:first').attr('selected', 'selected');
+                     $('#assessment_topic_id').find('option:first').attr('selected', 'selected');
+                     $("#assessment_chapter_id").attr('disabled','disabled');
+                     $("#assessment_topic_id").attr('disabled','disabled');
+              }
+      else {
+      var selected_value = $('select#assessment_subject_id :selected').val();
+      var url = "/subjects/get_chapters/"
+      var div_update = "#assessment_chapter_id"
+      get_url_Data(url,selected_value,div_update);
+      }
+  });
+
+  $("#assessment_chapter_id").change(function() {
+      var selected_value = $('select#assessment_chapter_id :selected').val();
+      var url = "/chapters/get_topics/"
+      var div_update = "#assessment_topic_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessments_topic_id").change(function() {
+      var selected_value = $('select#assessment_topic_id :selected').val();
+      var url = "/topics/get_subtopics/"
+      var div_update = "#assessment_sub_topic_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_assessment_type").change(function() {
+   var selected_value = $('select#assessment_assessment_type :selected').val();
+   if (selected_value == "home-work") {
+       $('#assessment_chapter_id').find('option:first').attr('selected', 'selected');
+       $('#assessment_topic_id').find('option:first').attr('selected', 'selected');
+       $("#assessment_chapter_id").attr('disabled','disabled');
+       $("#assessment_topic_id").attr('disabled','disabled');
+   }
+   else if (selected_value == "inclass")  {
+        $("#assessment_type_password").show("slow");
+   }
+   else {
+        $("#assessment_type_password").hide("slow");
+   }
+
+  });
+
+
+  $("#assessment_extras").change(function() {
+   var selected_value = $('select#assessment_extras :selected').val();
+   if (selected_value == "homework") {
+     $("#assessment_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value="practice-tests">Regular</option>');
+   }
+   else if (selected_value == "institute")  {
+     $("#assessment_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value="insti-tests">Assignment</option>').append('<option  value="inclass">Inclass</option>');
+   }
+   else if (selected_value == "practice")  {
+    $("#assessment_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value="practice-tests">Regular</option>').append('<option  value="iit">HOT/IIT</option>').append('<option  value="olympiad">Olympiad</option>');
+   }
+   else if (selected_value == "quiz")  {
+     $("#assessment_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value="quiz">Quiz</option>');
+   }
+
+  });
+
+  $(document).ready(function() {
+      $("#assessment_chapter_id").attr('disabled', 'disabled');
+      $("#assessment_topic_id").attr('disabled', 'disabled');
+
+      $("#assessment_status_1").click(function() {
+          // to consider the test configuration if status is Publish Now
+          $('#assessment_test_configurations_attributes_0__destroy').remove();
+          $("#test_configuration_fields").show('slow');
+      });
+      $("#assessment_status_10").click(function() {
+          // to not consider the test configuration if status is Publish Later
+          $('.inputs').append("<input type='hidden' value='1' name='assessment[test_configurations_attributes][0][_destroy]' id='assessment_test_configurations_attributes_0__destroy'>");
+          $("#test_configuration_fields").hide('slow');
+      });
+
+
+  });
+

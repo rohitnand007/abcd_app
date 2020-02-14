@@ -1,0 +1,10 @@
+#content_header
+  %h1#main_heading  Messages
+#user_options
+  .button-box
+    = link_to '',messages_path+user_path(current_user),:id=>'dummy_button',:class => "option_buttons",:title=>'Go To Inbox'
+  .button-box
+    = link_to '',sent_message_path(current_user),:id=>'dummy_button',:class => "option_buttons",:title=>'Go To Sent Messages'
+= content_for :right_side_bar do
+  #sidebar.right_side_bar
+    = render(:partial => 'shared/sidebar')

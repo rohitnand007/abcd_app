@@ -1,0 +1,63 @@
+= wicked_pdf_stylesheet_link_tag 'document'
+= wicked_pdf_image_tag "rails.png"
+%div{:style=>"color:red;border:1px solid red;"}
+  = @user.inspect
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left{:style=>"color:black;"}
+          %td= t("activerecord.attributes.user.firstname", :default => t("activerecord.labels.firstname", :default => "Name"))
+          %td.right{:style=>"color:red;"}
+            = @user.name
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.email", :default => t("activerecord.labels.email", :default => "Email"))
+          %td.right= @user.email
+        %tr.even.left
+          %td= t("activerecord.attributes.user.date_of_birth", :default => t("activerecord.labels.date_of_birth", :default => "Date of birth"))
+          %td.right= @user.date_of_birth
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.edutorid", :default => t("activerecord.labels.edutorid", :default => "Id"))
+          %td.right= @user.edutorid
+        %tr.even.left
+          %td= t("activerecord.attributes.user.sign_in_count", :default => t("activerecord.labels.sign_in_count", :default => "Sign in count"))
+          %td.right= @user.sign_in_count
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.current_sign_in_at", :default => t("activerecord.labels.current_sign_in_at", :default => "Current sign in at"))
+          %td.right= display_date_time @user.current_sign_in_at
+        %tr.even.left
+          %td=  t("activerecord.attributes.user.last_sign_in_at", :default => t("activerecord.labels.last_sign_in_at", :default => "Last sign in at"))
+          %td.right= display_date_time @user.last_sign_in_at
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.device_id", :default => t("activerecord.labels.device_id", :default => "Device"))
+          %td.right= @user.devices.map(&:deviceid).join(',') if @user.devices
+        %tr.even.left
+          %td= t("activerecord.attributes.user.institution_id", :default => t("activerecord.labels.institution_id", :default => "Institution"))
+          %td.right= @user.institution.try(:name)
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.center_id", :default => t("activerecord.labels.center_id", :default => "Center"))
+          %td.right= @user.center.try(:name)
+        %tr.even.left
+          %td= t("activerecord.attributes.user.academic_class_id", :default => t("activerecord.labels.academic_class_id", :default => "Academic class"))
+          %td.right= @user.academic_class.try(:name)
+        %tr.odd.left
+          %td=  t("activerecord.attributes.user.section_id", :default => t("activerecord.labels.section_id", :default => "Section"))
+          %td.right= @user.section.try(:name)
+        %tr.even.left
+          %td= t("activerecord.attributes.user.activated", :default => t("activerecord.labels.activated", :default => "Activated"))
+          %td.right= @user.is_activated? ? 'Yes' : 'No'
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.role_id", :default => t("activerecord.labels.role_id", :default => "Role"))
+          %td.right= @user.rc
+        %tr.even.left
+          %td= t("activerecord.attributes.user.enrolled", :default => t("activerecord.labels.enrolled", :default => "Enrolled"))
+          %td.right= @user.is_enrolled? ? 'Yes' : 'No'
+        %tr.even.left
+          %td= t("activerecord.attributes.user.school_uid", :default => t("activerecord.labels.school_uid", :default => "School Tag"))
+          %td.right= @user.school_uid
+        %tr.odd.left
+          %td= t("activerecord.attributes.user.rollno", :default => t("activerecord.labels.rollno", :default => "Rollno"))
+          %td.right= @user.rollno
+
+
+

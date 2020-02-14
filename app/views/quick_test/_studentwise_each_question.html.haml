@@ -1,0 +1,32 @@
+.report_box
+  - student_question_data = first_attempt_correctness_per_10_questions_per_each_student(quicktest)
+  - no_of_questions = student_question_data.first[1].size
+  .reportsblock_chart_title
+    Question Grids
+  .questiongrid_rowhead
+    .questiongrid_cell
+      Student Name
+    - (1..no_of_questions).each do |i|
+      .questiongrid_cell
+        = "Q"+i.to_s
+    .questiongrid_cell Scores
+
+  - student_question_data.each do |student_hash|
+    .reportsblock_chart_row
+    .questiongrid_headcell= student_hash[0]
+    - question_map = student_hash[1]
+    - question_map.each do |question,correctness|
+      - if correctness
+        .questiongrid_cell
+          .squareRight
+      - else
+        .questiongrid_cell
+          .squareWrong
+    .questiongrid_cell
+      = student_hash[2]
+  .questiongrid_rowhead
+    .questiongrid_cell
+    - (1..no_of_questions).each do |i|
+      .questiongrid_cell
+        = @percentages[i-1].to_s + "%"
+    .questiongrid_cell

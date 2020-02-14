@@ -1,0 +1,80 @@
+:javascript
+  $(document).ready(function() {
+    $("#messages_list").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading
+    = @main_heading
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.new", :default => "Create New Assessment")}", quizzes_select_method_path
+    %li= link_to "#{t("web-app-theme.new", :default => "My Published Assessments")}", quizzes_myquizzes_path
+    %li= link_to "#{t("web-app-theme.new", :default => "My Unpublished Assessments")}", quizzes_myunpublishedquizzes_path
+    -if current_user.id != 1
+      %li= link_to "#{t("web-app-theme.new", :default => Institution.find(current_user.institution_id).profile.firstname+" Assessments")}", my_institutes_assessments_path
+    -else
+      %li= link_to "#{t("web-app-theme.new", :default => "All Other Assessments")}", all_other_assessments_path
+    %li= link_to "#{t("web-app-theme.new", :default => "Edutor Assessments")}", edutor_assessments_path
+#data
+  %table{width:'100%'}
+    %tr
+      %td
+        %div
+          %table#questions_list.listing.sort_table{align:'center', width:'100%', cellpadding:1, cellspacing:1}
+            %thead
+              %tr.tr-head
+                %th Name
+                %th Board
+                %th Academic Class
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Total Attempts
+                %th No. of Questions
+                %th Total Marks
+                %th Difficulty Level
+                -if current_user.id == 1
+                  %th Created by / Institute
+                -else
+                  %th Created by
+                %th No. of times Published
+                %th
+            %tbody
+              - @quizzes.each do |q|
+                %tr{:class => cycle("tr-odd odd", "tr-even even")}
+                  %td.col= q.name
+                  %td.col= (q.context.try(:board).try(:name))
+                  %td.col= q.try(:context).try(:content_year).try(:name)
+                  %td.col= q.try(:context).try(:subject).try(:name)
+                  %td.col= q.try(:context).try(:chapter).try(:name)
+                  %td.col= q.try(:context).try(:topic).try(:name)
+                  %td.col= q.attempts
+                  %td.col= q.questions.count
+                  %td.col= q.quiz_question_instances.sum(:grade)
+                  %td.col= q.difficulty_text
+                  -if current_user.id == 1 && q.institution_id !=1
+                    %td.col= q.user.profile.try(:firstname)+'/'+Institution.find(q.institution_id).try(:profile).try(:firstname)
+                  -elsif current_user.id == 1 && q.institution_id ==1
+                    %td.col= q.user.profile.try(:firstname)+'/ Edutor'
+                  -else
+                    %td.col= q.user.profile.try(:firstname)
+                  %td.col= q.quiz_targeted_groups.count
+                  %td.col
+                    = link_to_show(q)
+
+%br
+.pagination_info
+  = paginate @quizzes

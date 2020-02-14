@@ -1,0 +1,69 @@
+:javascript
+  $(document).ready(function() {
+    $("#content_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#main_heading Contents
+  -#%h3#sub_heading List
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "List")}", contents_path
+    -#%li= link_to 'Manage', '/content/manage'
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#content_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th.first= t("activerecord.attributes.content.vendor_id", :default => t("activerecord.labels.vendor_id", :default => "Content Name"))
+                %th Type
+                %th Status
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th.last &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @contents.each do |content|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"content_#{content.id}"}
+                  %td.col= content.name
+                  %td.col= content.type
+                  %td.col= display_content_status(content.status)
+                  %td.col= display_date_time(content.created_at)
+                  %td.col
+                    - if content.status == 5 and current_user.role.id == 7
+                      = link_to 'Upload processed content',upload_content_path(content),:title => 'Upload processed content' ,:class => 'tipTipTop'
+                      &nbsp;
+                    -#if content.status == 6 and current_user.role.id != 7
+                      = link_to 'Reject',reject_content_path(content),:title => 'Reject Content',:class => 'tipTipTop'
+                      = link_to 'Publish',publish_content_path(content) ,:title => 'Publish Content' ,:class => 'tipTipTop'
+                    = link_to (params[:status].eql?('6') ? 'Download processed content':'Download new content'),content.type.eql?("Assessment")? download_assessment_path(content) : est_download_content_path(content),:class => 'tipTipTop',:title => 'Download Content'
+                    &nbsp;
+                    - if current_user.role.id == 7 and content.status !=2
+                      - if content.type == "Assessment"
+                        = link_to 'Contact',new_message_path({:recipient_id=>content.asset.publisher_id,:content_id=>content.id}),:class => 'titTipTop',:title => 'Contact Provider'
+                        &nbsp;
+                      - elsif content.type == "AssessmentHomeWork"
+                        = link_to 'Contact',new_message_path({:recipient_id=>content.asset.publisher_id,:content_id=>content.id}),:class => 'titTipTop',:title => 'Contact Provider' unless content.asset.try(:publisher_id).nil?
+                      - else
+                        = link_to 'Contact',new_message_path({:recipient_id=>content.assets.first.publisher_id,:content_id=>content.id}),:class => 'titTipTop',:title => 'Contact Provider' unless content.assets.try(:first).try(:publisher_id).nil?
+                        &nbsp;
+                    - if current_user.role.id == 5 and content.status != 2
+                      = link_to 'Contact Edutor',new_message_path({:recipient_id=>User.where('edutorid like ?','%EST-%').first.id,:content_id=>content.id}),:class=>'tipTipTop' ,:title=>'Contact Edutor Service'
+        - unless @contents.blank?
+          .pagination_info
+            = paginate @contents

@@ -1,0 +1,23 @@
+#content_header
+  %h1#main_heading Themes
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", themes_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_theme_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_theme_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", theme_path(@theme)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.theme.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @theme.name
+        %tr.even.left
+          %td Created At
+          %td.right= display_date_time(@theme.created_at)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_theme_path(@theme), :class => "button icon edit"
+            = link_to "Delete", theme_path(@theme), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"

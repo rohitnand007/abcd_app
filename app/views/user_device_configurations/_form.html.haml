@@ -1,0 +1,12 @@
+= simple_form_for(@user_device_configuration) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :config
+    = f.input :workspace_apps
+    = f.input :firewall
+    = f.input :apps
+    = f.input :deviceid
+
+  .actions
+    = f.button :submit,:class=>'big primary'

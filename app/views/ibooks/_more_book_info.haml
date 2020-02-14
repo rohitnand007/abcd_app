@@ -1,0 +1,28 @@
+%table.moreBookInfo
+  %tbody
+    %tr
+      %td Created
+      %td= ibook.created_on
+    %tr
+      %td Updated
+      %td= ibook.updated_on
+    %tr
+      %td Total licenses issued:
+      %td= ibook.total_licenses_issued
+    %tr
+      %td Total licences utilized:
+      %td= ibook.total_licenses_utilized
+    %tr
+      %td Part of Collections:
+      %td{'data-type'=>'collections'}= ibook.part_of_collections.join(",")
+    %tr
+      %td Is content package available?
+      - if ibook.encrypted_content.exists?
+        %td Yes
+      - else
+        %td
+          No
+          = link_to "Upload", edit_ibook_path(ibook)
+    %tr
+      %td= link_to "✎",edit_info_ibook_path(ibook),style:"font-size:20px;"
+      %td

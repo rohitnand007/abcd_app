@@ -1,0 +1,80 @@
+:css
+  #assessment_insti_test_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_insti_test_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#maend_heading assessment_insti_test
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_insti_tests_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_insti_test_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_insti_test_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @assessment_insti_tests.each do |assessment_insti_test|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_insti_test_#{assessment_insti_test.id}"}
+                  -#%td.col=  assessment_insti_test.rb.id
+                  %td.col
+                    = assessment_insti_test.asset.user.name if assessment_insti_test.asset
+                  %td.col
+                    = assessment_insti_test.board.name if assessment_insti_test.board
+                  %td.col
+                    = assessment_insti_test.content_year.name if assessment_insti_test.content_year
+                  %td.col
+                    = assessment_insti_test.subject.name  if assessment_insti_test.subject
+                  %td.col
+                    = link_to assessment_insti_test.chapter.name, chapter_path(assessment_insti_test.chapter)  if assessment_insti_test.chapter
+                  %td.col
+                    = link_to assessment_insti_test.topic.name, topic_path(assessment_insti_test.topic)  if assessment_insti_test.topic
+                  %td.col
+                    = assessment_insti_test.name
+                  %td.col
+                    = display_date_time(assessment_insti_test.created_at)
+                  %td.col
+                    = link_to_show(assessment_insti_test_path(assessment_insti_test))
+                    &nbsp
+                    = link_to_edit(edit_assessment_insti_test_path(assessment_insti_test))
+                    &nbsp;
+                    = link_to_delete(assessment_insti_test_path(assessment_insti_test))
+
+        - unless @assessment_insti_test.blank?
+          .pagination_info
+            = paginate @assessment_insti_tests
+        #assessment_insti_test_configuration

@@ -1,0 +1,44 @@
+:javascript
+  $(document).ready(function() {
+    $("#usages").dataTable({
+        "aoColumns": [
+                    null,null,
+                    {"bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Usage
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#usages.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th User
+                %th Edutorid
+                %th Duration
+
+
+            %tbody
+              - @users.each do |user|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"usage_#{user.id}"}
+                  %td.col= link_to user.name, get_pearson_usage_path(user)
+                  %td.col= user.edutorid
+                  %td.col= show_duration(user.user_usages.select('sum((end_time-start_time)) as duration').first.duration.to_i) rescue ''
+
+
+
+          .pagination_info
+            =# paginate @usages unless @usages.blank?
+

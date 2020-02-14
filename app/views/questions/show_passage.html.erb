@@ -1,0 +1,63 @@
+ 
+<%= render partial: "content_header" %>
+<div id="data">
+  <table style="width: 100%">
+    <tr>
+      <td>
+        <div id='main' style="width: 100%">
+          <div class='block' id='block-text' style="min-width:900px;width:96%;margin:2%">
+            <div class='content' style="margin: 0px;">
+              <div class='inner question_style' >
+                <p class='first' style="min-width: 900px;overflow-x: auto">
+                  <%= @question.questiontext_format.html_safe %>
+                  <span class='hightlight'></span>
+                </p>
+                <%if @question.answer_lines !=0 %>
+                    <% @question.answer_lines.times do %>
+                        <br/>
+                        <hr>
+                    <%end%>
+                <%end%>
+                <%if @question.generalfeedback.present?%>
+                    <p style="font-weight: bold">Answer Feedback:</p>
+                    <p>
+                      <%= @question.generalfeedback_format.html_safe %>
+                    </p>
+                <%end%>
+              </div>
+            </div>
+          </div>
+          <%= render partial: "question_metadata" %>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<%@question.questions.each do |q|%>
+    <div id="data">
+      <table style="width: 100%">
+        <tr>
+          <td class="child_question_id">
+            Question ID:
+            <%= link_to q.id, question_path(q)  %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div id='main' style="width: 100%">
+              <div class='block' id='block-text' style="min-width:900px;width:96%;margin:2%">
+                <div class='content' style="margin: 0px;">
+                  <div class='inner question_style' >
+                    <p class='first' style="min-width: 900px;">
+                      <%= q.questiontext_format.html_safe %>
+                      <span class='hightlight'></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+<%end%>

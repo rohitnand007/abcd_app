@@ -1,0 +1,722 @@
+// Place all the styles related to the assessment_tool controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+table {
+  font-size: 12px;
+}
+:focus {
+  outline: none;
+}
+.ui-button.ui-state-default{
+  background-color: #0f9b4d;
+  color: #fff;
+  border: 1px solid #0f9b4d;
+  font-weight: normal;
+}
+
+#assessment_key_pdf_id{
+  background-color: #0f9b4d !important;
+  color: #fff !important;
+}
+
+#assessment_key_pdf_id:hover{
+  background-color: #0f9b4d !important;
+  color: #fff !important;
+}
+
+#assessment_pdf_id{
+  background-color: #0f9b4d !important;
+  color: #fff !important;
+}
+
+#assessment_pdf_id:hover{
+  background-color: #0f9b4d !important;
+  color: #fff !important;
+}
+
+
+#pink_bg.ui-state-active.ui-button.ui-widget.ui-state-default.ui-button-text-only.ui-corner-left{
+  background-color: #ef466d;
+  color: #fff;
+  border-color: #ef466d;
+}
+
+#pink_bg.ui-state-active.ui-button.ui-widget.ui-state-default.ui-button-text-only.ui-corner-left:hover{
+  background-color: #fff;
+  color: #ef466d !important;
+  border-color: #ef466d;
+}
+
+.grey_bg.ui-button.ui-state-default{
+  background-color: #fff;
+  color: #252629 !important;
+  border: 1px solid #252629;
+  font-weight: normal;
+}
+
+.grey_bg.ui-button.ui-state-default :hover{
+  background-color: #d9dee4;
+  color: #252629;
+  border: 0px solid #d9dee4 !important;
+  font-weight: normal;
+  border-radius: 4px;
+}
+
+.orange_bg.ui-button.ui-state-default{
+  background-color: #f37e3b;
+  color: #ffffff;
+  border: 1px solid #f37e3b;
+  font-weight: normal;
+}
+
+.green_bg.ui-button.ui-state-default{
+  background-color: #0f9b4d;
+  color: #ffffff;
+  border: 1px solid #0f9b4d;
+  font-weight: normal;
+}
+
+.span.ui-button-text{
+  background-color: #ef466d;
+  color: #fff;
+}
+
+#quiz_format_type{
+  display:inline-block;
+  background-color:#fff;
+  .ui-button.ui-widget.ui-state-default.ui-button-text-only{
+    border-color:#ccc;
+    font-size: 10px;
+    color: #ccc;
+    background-color:#fff;
+  }
+  .ui-button.ui-widget.ui-state-default.ui-button-text-only.ui-state-active.ui-state-hover{
+    //background-color: #636363 !important;    
+    color:#39b18d;
+    border-color:#39b18d;
+  };
+  .ui-button.ui-widget.ui-state-default.ui-button-text-only.ui-state-active{
+  	background-color:#fff;
+  	color:#39b18d;
+  	border-color:#39b18d;
+  	font-weight:bold;
+  	font-size:1em;
+  }
+}
+.demo-description {
+  clear: both;
+  padding: 12px;
+  font-size: 1.3em;
+  line-height: 1.4em;
+}
+
+.ui-draggable, .ui-droppable {
+  background-position: top;
+}
+
+.ui-widget-header{
+  background: none;
+  border: none;
+}
+.ui-tabs .ui-tabs-nav li {
+  margin: 1px 0 0 0.4em;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-default {
+  //border-bottom: 1px solid #39b18d;
+}
+#addQuestionTabs>.ui-tabs-nav li.ui-state-default {
+  /*border-bottom: 1px solid #ffffff;*/
+}
+#addQuestionTabs>.ui-tabs-nav {
+  li a{
+    font-weight: normal;
+    font-size: 13px;
+  }
+  li.ui-state-active,li.ui-state-hover {
+    background-color: white !important;
+    background: none !important;
+    border-color: #39b18d;
+ }
+  li.ui-state-active{
+
+    border-bottom-color: white;
+  }
+}
+
+/* modify tab look for create question tab */
+
+#createQuestionTabs{
+  /*border bottom in theme color blue */
+  .ui-tabs-nav {
+    /*border-bottom: 3px solid #60c9cd;*/
+  }
+  li.ui-state-active,li.ui-state-hover,li.ui-state-default {
+    background: none !important;
+    border:none;
+  }
+  li.ui-state-active{
+    border-bottom: 4px solid #39b18d;
+  }
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-default.ui-state-active {
+  border-top: 1px solid #39b18d;
+  border-left: 1px solid #39b18d;
+  border-right: 1px solid #39b18d;
+  border-bottom: 2px solid white;
+}
+.ui-tabs-nav {
+  border-bottom: 1px solid #39b18d;
+}
+
+.assessment-section {
+  border: 1px solid #CCC;
+  padding: 1em 1em;
+  background-color: #fdfdfd;
+  .section-title{
+    color: #3e6ca8 !important;
+    text-transform: capitalize;
+  }
+}
+
+.ui-tabs .ui-tabs-panel {
+  padding: 1em 0em;
+}
+
+
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+  color: #252629 !important;
+  outline: none !important;
+  background-color: #d9dee4;
+  border-color: #e6e9ed;
+}
+
+.ui-state-active{ border-color: #cccccc; color: #60c8cd;}
+.ui-state-default{font-weight: normal; color: #636363;
+  border: 1px solid #e6e9ed;
+  background: none;
+  a{color:#252629 !important}
+  }
+.ui-widget-content .ui-state-default {
+  background: #0f9b4d;
+}
+
+#download_options, .assessment_publish_control{
+  center{
+    .ui-icon{
+      height: 2em;
+      width: 2em;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .ui-button-text{
+      display: inline-block;
+      vertical-align: middle;
+      color: #fff;
+    }
+
+    .ui-button{
+      padding: 8px;
+    }
+  }
+  .goto{
+    .ui-button{
+      width:100px;
+      height: 30px;
+      .ui-icon{
+        width: 100px;
+        height: 30px;
+        top: auto !important;
+        margin-top: auto !important;
+        left: auto !important;
+        margin-left: auto !important;
+      }
+    }
+  }
+
+
+}
+
+td .ui-icon{
+  height: inherit;
+  width: inherit;
+  top: auto !important;
+  margin-top: auto !important;
+  left: auto !important;
+  margin-left: auto !important;
+}
+.ui-state-hover[role=button]{
+  background-color: #fff !important;
+  color: #0f9b4d !important;
+}
+
+.orange_bg.ui-state-hover[role=button]{
+  background-color: #ffffff !important;
+  color: #f37e3b !important;
+}
+
+.green_bg.ui-state-hover[role=button]{
+  background-color: #ffffff !important;
+  color: #0f9b4d !important;
+}
+
+.ui-dialog-titlebar-close{
+/*  background-color: #f27777; */
+}
+.ui-dialog-titlebar-close:hover{
+	background-color:  #f27777 !important;
+}
+/* --------- BEGIN create assessment step breadcrumb styles --------- */
+.step_active {
+  /*background-color:#60c8cd;*/
+  background-color: #0f9b4d;
+  display:block;
+  background-image: image-url("arrow.png");
+  background-repeat:no-repeat;
+  width:160px !important;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  padding:0 0 0 6px !important;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:crosshair !important;
+  margin-right: 3px;
+}
+
+
+#step_active_btn {
+  background-color:#60c8cd;
+  display:block;
+  width:165px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;
+}
+
+#step_active_btn .no { float:left;
+  height:30px; width:10px;
+  line-height:30px;
+  padding:0 8px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;}
+#step_active_btn .btnarea { float:left;
+  background-image: image-url("arrow.png");
+  background-repeat:no-repeat;
+  height:30px;
+  line-height:30px;
+  padding:0 0 0 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;}
+
+/*    --------------       */
+
+.step_normal { background-color:#fff;
+  display:block;
+  background-image: image-url("arrow.png");
+  background-repeat:no-repeat;
+  width:160px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#bbb;
+  border: 1px solid #bbb;
+  line-height:30px;
+  padding:0 0 0 6px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:crosshair !important;
+  margin-right: 3px;
+}
+
+
+#step_normal_btn {
+  background-color:#CCCCCC;
+  display:block;
+  width:165px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+#step_normal_btn .no { float:left;
+  height:30px; width:10px;
+  line-height:30px;
+  padding:0 8px;
+  border-radius:4px;}
+#step_normal_btn .btnarea { float:left;
+  background-image: image-url("arrow.png");
+  background-repeat:no-repeat;
+  height:30px;
+  line-height:30px;
+  padding:0 0 0 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;}
+
+
+/* ------For form elements in assessment template creation---------- */
+.form-first-name{
+  height:30px; color:#636363;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border:#CCC 0.1em solid; padding-left:10px;
+}
+
+.form-last-name {
+  height:50px; color:#636363;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border:#CCC 0.1em solid; border-top:none; padding-left:10px;
+}
+
+.form-name{
+  height:30px; color:#636363;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border:#CCC 0.1em solid; padding-left:10px;
+}
+
+/*------------------Narendra Edit  page CSS ---------------*/
+
+.question_container{
+  width: 100%;
+  min-width: 820px;
+  .ui-widget-content{
+    border: none;
+  }
+}
+.qtext_head{
+  width: inherit;
+  display: table;
+}
+.q_text{
+  width: 65%;
+  background-color: #f7f7f7;
+  min-height: 3em;
+  display: table-cell;
+  position: relative;
+
+
+}
+.q_assets{
+  display: table-cell;
+  /*float: right;*/
+  margin-right: 1em;
+  position: relative;
+  vertical-align: middle;
+
+}
+.q_options{
+
+  width: inherit;
+
+  min-height: 2em;
+  display: table;
+}
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}
+input[type=number]{
+  width: 4.2em;
+  padding: 5px 0 5px 10px;
+}
+
+/* Gives a default text color*/
+.body_content{
+ color: #636363;
+  h1{color: inherit;}
+}
+
+/* modifies ui widget text area width */
+.ui-widget textarea{
+  width: inherit;
+  height: 50px;
+}
+#quiz_question_questiontext{
+  width: inherit;
+  height: 50px;
+}
+
+/* sets width for tagit plugin input class */
+.tagit{
+  width: 250px;
+}
+
+.tagsTable{
+  td{
+    padding-right: 20px;
+    padding-bottom: 5px;
+  }
+}
+/* TODO  Explore in what order css is appended to the compiled css file */
+.tagit-new{
+  input.ui-autocomplete-input{
+    width: 80px !important;
+  }
+}
+
+/* modifies default styling for tagit */
+ul.tagit li.tagit-choice {
+  border: 1px solid #C6C6C6 !important;
+}
+
+/* ---------------- Makes the text input field fill the entire parent area ------------------*/
+.full_text{
+  width:100% !important;
+  border: none;
+  background-color: inherit;
+}
+.full_text:focus{
+  outline-color: transparent;
+}
+.full_text_camouflage{
+  border: none;
+  background-color: inherit;
+  height: 100%;
+  width: 500px;
+}
+.full_text_camouflage:focus{
+  outline-color: transparent;
+}
+
+/*-----------------------styling for Tinymce-----------------------*/
+table[id$="_questiontext_tbl"]{
+  width: 100% !important;
+}
+.defaultSkin td.mceToolbar {
+
+  background: none repeat scroll 0% 0% transparent;
+}
+
+/*
+.mce_uploadimage{
+  visibility: hidden;
+}
+*/
+/* Multimedia layout */
+
+.multimedia_container{
+  padding: 5px;
+  padding-top: 0px;
+}
+.multimedia_layout{
+  position:absolute;width:95px;height:auto;border-radius:5px;padding-right:5px;display: none;
+}
+.multimedia_icon{
+  background-color:#a8a8aa;height:2em;width:inherit;border-bottom:1px solid white;text-align:left;line-height:2em;padding-left:5px;color:white;
+}
+.multimedia_icon:hover,.multimedia_icon:active,.multimedia_icon:focus {background-color:#62c6cc;color:white;}
+
+.multimedia_container:hover,.multimedia_container:focus,.multimedia_container:active{
+  .multimedia_layout{
+    display: block;
+  }
+  .multimedia_button{
+    background-color:#62c6cc;color:white;
+  }
+}
+.multimedia_button{
+  background-color:#a8a8aa;color:white;border:0px solid #a8a8aa;width:100px;border-radius:5px;padding:5px 10px 10px 5px;
+}
+
+
+/* start of assessment report */
+/* --------- BEGIN create assessment styles --------- */
+.step_active2 {
+  background-color:#60c8cd;
+  display:block;
+  background-image: url(/assets/arrow.png);
+  background-repeat:no-repeat;
+  width:99%;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  padding:0 0 0 10px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+/*    --------------       */
+
+.step_normal2 { background-color:#cccccc;
+  display:block;
+  background-image: url(/assets/arrow.png);
+  background-repeat:no-repeat;
+  width:160px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  padding:0 0 0 6px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+
+
+#step_normal_btn2 {
+  background-color:#CCCCCC;
+  display:block;
+  width:165px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+#step_normal_btn2 .no { float:left;
+  height:30px; width:10px;
+  line-height:30px;
+  padding:0 8px;
+  border-radius:4px;}
+#step_normal_btn2 .btnarea { float:left;
+  background-image: url(/assets/arrow_02.png);
+  background-repeat:no-repeat;
+  height:30px;
+  line-height:30px;
+  padding:0 0 0 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;}
+
+
+/* -------------------------------------- */
+
+.form-first-name{
+  height:30px; color:#636363;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border:#CCC 0.1em solid; padding-left:10px;
+}
+
+.form-last-name {
+  height:30px; color:#636363;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border:#CCC 0.1em solid; border-top:none; padding-left:10px;
+}
+
+.form-name{
+  height:30px; color:#636363;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border:#CCC 0.1em solid; padding-left:10px;
+}
+/* --------- END create assessment styles --------- */
+
+/* --------- START create analytic report styles --------- */
+.popup{
+  width: auto;
+  height: auto;
+  background-color: white;
+  border: 2px solid #d1d2d4;
+  border-radius: 2px;
+  color:black;
+  margin-top:-2px;
+  background-image:url('/assets/tip.png') no-repeat center center #fafafa;
+}
+/* --------- END create analytic report styles --------- */
+
+.mceButton.mce_Blank.mceButtonEnabled {
+  display: none;
+}
+/* End of assessment report */
+.questionTagCheckBox{
+  float: right;
+}
+
+#assessment_options a[role='button']{
+  width: 100px !important;
+  height: 30px !important;
+  border: 1px solid #e6e9ed;
+  color: #252629 !important;
+}
+
+.filter-div .styled-select{
+  position:relative;
+  top: 10px;
+}
+
+#filter-assessment{
+  border: 1px solid #39b18d;
+  top: -3px;
+  left: 3%;
+}
+//-------------------Assessment_creation_page_css_edits--------------------
+.multi_subject_box{
+  position:relative;
+  left:10px;
+  top:8px;
+}
+.multi_label{
+  position:relative;
+  left:15px;
+  top:8px;
+  font-style: italic;
+  font-size: 13px;
+}
+#multi_tiptip{
+  position: relative;
+  right:-14px;
+  bottom:-6px;
+}

@@ -1,0 +1,31 @@
+- if ibook.info_file.exists?
+  - toc_tree = ibook.get_toc_tree
+  .contentsWrapper
+    %h4.tocTogglerHeader
+      Table of Contents
+      %span.tocToggler ►
+    .contents
+      %ul.chapters
+        - toc_tree['chapters'].each do |chapter|
+          %li
+            = chapter['name']
+            - if chapter['topics'].present?
+              %ul.topics
+                - chapter['topics'].each do |topic|
+                  %li
+                    = topic['name']
+                    - if topic['sub-topics'].present?
+                      %ul.subtopics
+                        - topic['sub-topics'].each do |subtopic|
+                          %li
+                            = subtopic['name']
+                            - if subtopic['sub-sub-topics'].present?
+                              %ul.subsubtopics
+                                - subtopic['sub-sub-topics'].each do |subsubtopic|
+                                  %li
+                                    = subsubtopic['name']
+                                    - if subsubtopic['sub-sub-sub-topics'].present?
+                                      %ul.subsubsubtopics
+                                        - subsubtopic['sub-sub-sub-topics'].each do |subsubsubtopic|
+                                          %li
+                                            = subsubsubtopic['name']

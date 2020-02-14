@@ -1,0 +1,253 @@
+<%= "file://#{Rails.root.to_s}/public/assets/pdf.css".html_safe %>
+<style>
+  table>tbody>tr>td img{
+
+  }
+  @font-face {
+      font-family: "krutidev";
+      src: url(<%="file://#{Rails.root.to_s}/public/assets/krutidev.ttf".html_safe %>);
+  }
+  @font-face {
+      font-family: "Mangal";
+      src: url(<%="file://#{Rails.root.to_s}/public/assets/mangal.ttf".html_safe %>);
+  }
+  .page-break {
+    display:block;
+    clear:both;
+    page-break-after:always;
+}
+.page-break-top{
+    display:block;
+    clear:both;
+    page-break-before:always;
+}
+
+</style>
+
+<br/>
+<div class="logo">
+  
+</div>
+</br></br></br>
+</hr>
+
+<% @question_ids = []   %>
+<div class="page">
+  <% i = 1 %>
+  <%if !@questions.empty?%>
+      <% @questions.each do |question| %>
+          <%if !@question_ids.include? question.id %>
+              <%if question.qtype != 'passage'%>
+                  <div class="nobreak">
+                    <table>
+                      <tbody>
+                      <tr>
+                    <td style="vertical-align: top;text-align: left; width:25px;"><%= i %>.</td>&nbsp;&nbsp;
+                    <td style="width:700px;"><%=  question.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %></td>
+                     <td style="width:50px;vertical-align: top;text-align: right;"><%= question.defaultmark.to_s%></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                      <br/>
+                    <%if question.answer_lines !=0 %>
+                        <% question.answer_lines.times do %>
+                            <br/>
+                            <hr>
+                        <%end%>
+                    <%end%>
+                  </div>
+                  <div class="nobreak">
+                    <table align="center" width="100%">
+                      <% a = ("a".."z").to_a  %>
+                      <% n = 0 %>
+                      <% question.question_answers.each do |c| %>
+                          <tr>
+                            <td align="left" style="vertical-align:top;width: 30px;">
+                              &nbsp;
+                            </td>
+                            <td align="left" valign="middle">
+                              <%= a[n] %>. &nbsp;
+                              <%= c.pdf_answer_format.gsub("<br />"," ").gsub("<p>","").gsub("<p >", "").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+                            </td>
+                            <% n= n+1 %>
+                          </tr>
+                      <%end%>
+                    </table>
+                  </div>
+                <% @question_ids << question.id %>
+              <% else %>
+                  <% x = 0 %>
+                  <% s = ("a".."z").to_a  %>
+                    <div class="nobreak">
+                      <table>
+                        <tbody>
+                        <tr>
+                          <td style="vertical-align: top;">
+                            <%= i %>.&nbsp;&nbsp;
+                          </td>
+                          <td style="width:700px;">
+                            <%=  question.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %>
+                          </td>
+                            <td>
+                          <td style="width:50px;vertical-align: top;text-align: right;"></td>
+                            </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    <%if question.answer_lines !=0 %>
+                        <% question.answer_lines.times do %>
+                            <br/>
+                            <hr>
+                        <%end%>
+                    <%end%>
+                    <br/>
+                  </div>
+                  <% question.questions.each do |q|%>
+                    <div class="nobreak">
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td style="vertical-align: top;">
+                              <%= i.to_s+'.'+(s[x]).to_s %>&nbsp;&nbsp;
+                            </td>
+                            <td style="width:700px;">
+                              <%=  q.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %>
+                            </td>
+                            <td style="width:50px;vertical-align: top;text-align: right;"><%=q.defaultmark.to_s%></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                        <%if q.answer_lines !=0 %>
+                            <% q.answer_lines.times do %>
+                                <br/>
+                                <hr>
+                            <%end%>
+                        <%end%>
+                        <br/>
+                      </div>
+                      <div style="padding-left:25px;">
+                        <table align="center" width="100%">
+                          <% a = ("a".."z").to_a  %>
+                          <% n = 0 %>
+                          <% q.question_answers.each do |c| %>
+                              <tr>
+                                <td align="left" style="vertical-align:top;width: 30px;">
+                                  &nbsp;
+                                </td>
+                                <td align="left" valign="middle">
+                                  <%= a[n] %>. &nbsp;
+                                  <%=  c.pdf_answer_format.gsub("<br />"," ").gsub("<p>","").gsub("<p >", "").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+                                </td>
+                                <% n= n+1 %>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <%  q.feedback_format.gsub("<br />"," ").gsub("<p>","").gsub("<p >", "").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+                                </td>
+                              </tr>  
+                          <%end%>
+                          <br/>
+                        </table>
+                      </div>
+                      <% x= x+1 %>
+                      <% @question_ids << q.id %>
+                  <%end%>
+              <% end %>
+              <%i = i+1 %>
+          <% end %>
+      <%end%>
+      <br/>
+  <%end%>
+</div>
+
+ <% @question_array = []%>
+<div>
+           <div class="page-break"></div>
+      <h1>Key</h1>
+      <table border="1px solid">
+        <thead>
+        <th>
+          Question No
+        </th>
+        <th>
+          Answer
+        </th>
+         <th>
+          Description
+        </th>
+        </thead>
+        <%i = 1%>
+           <% @questions.each do |q| %>
+                <%if  !@question_array.include? q.id %>
+                      <% if q.qtype == "fib"%>
+                        <tr>
+                          <td align="center" style="width:100px;"><%= i %></td>
+                          <td  align="center" style="width:100px;"><%= q.question_fill_blanks.map(&:answer).join(',') %></td>
+                          <td align="center" style="width:250px;"><%=q.generalfeedback.html_safe%><td>
+                        </tr>
+                      <%elsif ['multichoice','truefalse'].include? q.qtype %>
+                          <tr>
+                              <td align="center" style="width:100px;"><%= i %></td>
+                              <% a = ("a".."z").to_a  %>
+                              <% n = 0 %>
+                              <% q.question_answers.each do |c| %>
+                                  <% if c.fraction==1 %>
+                                      <td  align="center" style="width:100px;"><%= a[n] %></td>
+                                  <%end%>
+                                  <% n = n+1 %>
+                              <%end%>
+                              <td align="center" style="width:250px;"><%=q.generalfeedback.html_safe%><td>
+                          <tr>
+                      <% elsif q.qtype == "passage" %>
+                          <% x = 0 %>
+                          <% s = ("a".."z").to_a  %>
+                          <% if !q.questions.empty? %>
+                              <% q.questions.each do |question|%>
+                                  <% if  !@question_array.include? question.id %>
+                                      <tr>
+                                          <td align="center" style="width:100px;"><%=  i.to_s+'.'+(s[x]).to_s %></td>
+                                          <% if question.qtype == "fib"%>
+                                              <td  align="center" style="width:100px;"><%= question.question_fill_blanks.map(&:answer).join(',') %></td>
+                                          <%elsif ['multichoice','truefalse'].include? question.qtype %>
+                                              <% a = ("a".."z").to_a  %>
+                                              <% n = 0 %>
+                                              <% question.question_answers.each do |c| %>
+                                                  <% if c.fraction==1 %>
+                                                      <td  align="center" style="width:100px;"><%= a[n] %></td>
+                                                  <%end%>
+                                                  <% n = n+1 %>
+                                              <%end%>
+                                          <%else%>
+                                                <% if question.generalfeedback.empty? %>
+                                                    <td  align="left" style = "font-style: italic;">Descriptive</td>
+                                                <%else%>
+                                                    <td  align="left" ><%= question.feedback_format.html_safe %></td>
+                                                <%end%>
+
+                                        <%end%>
+                                        <td align="center" style="width:200px;"><%=question.generalfeedback.html_safe%><td>
+                                      </tr>
+                                    <% @question_array << question.id %>
+                                    <% x = x+1 %>
+                                  <%end%>
+                              <%end%>
+                          <%end%>
+                      <%else%>
+                          <tr>
+                          <td  align="center" style="width:100px;"><%= i%></td>
+                          <% if q.generalfeedback.empty? %>
+                          <td  align="left" style = "font-style: italic;">Descriptive</td>
+                                <%else%>
+                                <td  align="left" ><%=  q.generalfeedback.html_safe %></td>
+                                <%end%></tr>
+                      <%end%>
+                    <% @question_array << q.id %>
+                    <% i = i+1 %>
+                <%end%>
+            <%end%>
+        
+      </table>
+</div>
+
+
+

@@ -1,0 +1,5 @@
+- @new_question = f.object.new_record?
+-# f.object.question_fill_blanks.build
+%div{style:("display:none")}
+  = f.fields_for :question_fill_blanks do |f|
+    = render :partial => 'question_fill_blank_fields', locals:{f:f}

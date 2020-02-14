@@ -1,0 +1,8 @@
+%div
+  = stylesheet_link_tag 'ipacks'
+  %table
+    - @ipack.ibooks.each_slice(@slices) do |ibooks|
+      %tr
+        - ibooks.each do |ibook|
+          %td
+            = render partial:"ibooks/abridged_book_info",locals: {ibook:ibook}

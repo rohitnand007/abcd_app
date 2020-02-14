@@ -1,0 +1,63 @@
+-#%h2{style: "font-size: 15px; font-style: italic;float: left;"} Select a Book to publish Asset
+- if asset_id
+  %div.breadcrumb.flat
+    %a.done{href: "#"} Select Asset
+    %a.active{href: "#"} Select Book to Publish
+    %a{href: "#"} Select Location and Publish
+
+  %div.selected_asset
+    -#= check_box_tag "param", 1,true, class: "style_checkbox", id: "check"
+    = UserAsset.find(asset_id).asset_name
+    %a{href: "/user_assets", style: "font-size: 12px; font-style: italic;color: red;"} X
+- else
+  %div.breadcrumb.flat
+    %a.active{href: "#"} Select Book to publish
+    %a{href: "#"} Select Asset
+    %a{href: "#"} Select location to publish
+%br
+%table#available_books_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+  %thead
+    %tr.tr-head
+      %th Book Title
+      - unless current_user.is? "ET"
+        %th Book Info
+      %th Form
+      %th Subject
+      -#%th Book Id
+      %th Publish To
+
+  - @ibooks.each do |book|
+    -book_metadata = book.get_metadata
+    %tr{:class => cycle("tr-odd", "tr-even") }
+      %td= book_metadata["displayName"]
+      %td= book_metadata["bookinfo"]
+      %td= book_metadata["academicClass"]
+      %td= book_metadata["subject"]
+      -#%td= book.ibook_id
+      %td= link_to "Select", new_content_delivery_path(id: book.id, asset_id: asset_id), class: "button tablebutton"
+:javascript
+     var a = "#asset_" + "#{asset_id}";
+     //$(a).attr("href", "javascript:void(0)");
+     $(a).css("color", "red");
+  //$(a).addClass("disable-hover");
+
+  //$("#check").click(function(){
+  //if($("#check").is(':checked')){
+  //}
+  //else {
+  //   var url = window.location.pathname;
+  //       window.location.href = url;// checked
+  //    }
+  //    });
+:css
+  .selected_asset{
+      right: 89%;
+      top: 92px;
+  }
+  /*table.listing .tr-even {*/
+  /*text-align: center !important;*/
+  /*}*/
+  /*table.listing .tr-odd {*/
+  /*text-align: center !important;*/
+  /*}*/
+

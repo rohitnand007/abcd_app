@@ -1,0 +1,26 @@
+%p#notice= notice
+
+%p
+  %b Userid:
+  = @log.UserId
+%p
+  %b CdnId:
+  = @log.CdnId
+
+%p
+  %b ReportType:
+  = @log.ReportType
+%p
+  %b UserRequestUrl:
+  = @log.UserRequestUrl
+
+%p
+  %b crash:
+  = @log.crash
+
+%p
+  %b OccuredTime:
+  = @log.OccuredTime
+
+
+= link_to 'Back', '/cdn_logs'

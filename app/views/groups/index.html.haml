@@ -1,0 +1,56 @@
+:javascript
+  $(document).ready(function() {
+    $("#groups").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Groups
+#inner-tab-menu
+  %ul
+    -#%li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", groups_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}",new_group_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#groups.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.user.email", :default => t("activerecord.labels.email", :default => "Name"))
+                %th Id
+                %th Institution
+                %th School
+                %th Form
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th Show
+            %tbody
+              -#%tr.tr-blank
+              - @groups.each do |group|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"group_#{group.id}"}
+                  %td.col
+                    = link_to group.fullname, group_path(group)
+                    = "(#{group.students.size})"
+                  %td.col= group.edutorid
+                  %td.col= group.institution.try(:name)
+                  %td.col= group.center.try(:name)
+                  %td.col= group.academic_class.try(:name)
+                  %td.col= display_date_time(group.created_at)
+                  %td.col
+                    = link_to_show(group_path(group))
+
+        - unless  @groups.blank?
+          .pagination_info
+            = paginate @groups

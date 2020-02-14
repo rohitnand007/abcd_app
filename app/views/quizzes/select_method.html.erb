@@ -1,0 +1,34 @@
+<div id="content_header">
+  <h1 id="main_heading">Select Assessment creation method</h1>
+</div>
+<div id="data">
+  <% if flash[:notice] %>
+    <div class="notice"><%= flash[:notice] %></div>
+  <% end %>
+  <form accept-charset="UTF-8" class="form" id="assessment_creation_select_form" method="POST" action="/quizzes/submit_method">
+    <div class='group'>
+      <div class='field'>
+        <div class="input string optional">
+          <label class="string optional label" for="multichoice">Online by filling forms</label>
+          <input type="radio" id="multichoice" class="string required text_field" name="method" value="online"/>
+        </div>
+      </div>
+    </div>
+    <div class='group'>
+      <div class='field'>
+        <div class="input string optional">
+          <label class="string optional label" for="truefalse">By uploading Microsoft doc file</label>
+          <input type="radio"id="truefalse" class="string required text_field" name="method" value="doc"/>
+        </div>
+      </div>
+    </div>
+    <div class='label heading hr'>
+    </div>
+    <div class='group'>
+      <div align='center' class='field'>
+        <input class="button big primary" data-disable-with="Creating..." name="commit" type="submit" value="Proceed" />
+        <a href="/questions" class="button danger icon remove">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>

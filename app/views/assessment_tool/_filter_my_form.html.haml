@@ -1,0 +1,66 @@
+.filter-div{style: "line-height: 50px; margin-bottom: -30px;"}
+  = form_tag "/assessment_tool/filter", remote: true do
+    %input{type: "text", style: "display: none;", value: "my", name: "my"}
+    &nbsp;&nbsp;Form:
+    .styled-select
+      %select.classComboBox.drop_down{name: "ac_class", style: "width: 175px;"}
+        -if !@tag_c.nil? #&& current_user.institution.user_configuration.use_tags
+          %optgroup{label: "Tags"}
+            -@tag_c.each do |t_a|
+              %option{value: t_a[0]}
+                = t_a[1]
+        -if !@a_context_c.nil? # && !current_user.institution.user_configuration.use_tags
+          %optgroup{label: "Context"}
+            -@a_context_c.each do |t_a|
+              %option{value: t_a[0] }
+                = t_a[1]
+    &nbsp;&nbsp; Subject:
+    .styled-select
+      %select.classComboBox.drop_down{name: "subject", style: "width: 175px;"}
+        -if !@tag_s.nil? #&& current_user.institution.user_configuration.use_tags
+          %optgroup{label: "Tags"}
+            -@tag_s.each do |t_a|
+              %option{value: t_a[0]}
+                = t_a[1]
+        -if !@a_context_s.nil? #&& !current_user.institution.user_configuration.use_tags
+          %optgroup{label: "Context"}
+            -@a_context_s.each do |t_a|
+              %option{value: t_a[0] }
+                = t_a[1]
+    &nbsp;&nbsp; Assessment Status:
+    .styled-select
+      %select.classComboBox.drop_down{name: "a_type", style: "width: 175px;"}
+        %option{value: "published"} Published
+        %option{value: "un-published"} Not Published
+    &nbsp;&nbsp; Start Date:
+    %input#assessment_start_date{:maxlength => "255", :name => "assessment_start_date", :size => "10", :type => "text", :class=>"styled-select"}
+    &nbsp;&nbsp; End Date:
+    %input#assessment_end_date{:maxlength => "255", :name => "assessment_end_date", :size => "10", :type => "text", :class=>"styled-select"}
+    %input#filter-assessment.button.ui-button-text-icon{type: "submit", value: "Filter", style: "width: 100px;"}
+
+:javascript
+  $("#filter-assessment").click(
+        function() {
+        $('.spinner-gif').show();
+     }
+    );
+    $( "#assessment_start_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+    $( "#assessment_end_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+:css
+  #assessment_start_date{
+  height: 24px;
+  top: -2px;
+  }
+  #assessment_end_date{
+  height: 24px;
+  top:-2px;
+  }
+  .ui-widget-header {
+    border: 1px solid #cccccc;
+    background: #f9f9f9 url(/assets/jquery-ui/ui-bg_gloss-wave_35_f6a828_500x100.png) 50% 50% repeat-x;
+    color: #ffffff;
+    font-weight: 500;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+

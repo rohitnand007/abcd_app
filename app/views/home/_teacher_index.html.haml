@@ -1,0 +1,29 @@
+#content_header
+  -#%h1#main_heading Home
+  #breadcrumbs
+    %ul
+      %li
+        = link_to 'Home','#',{:class=>'current'}
+
+#data
+  %table
+    %tr
+      %td
+        #user_options
+          .button-box
+            = link_to '',{:action=>'view_contents'},:id=>'contents_button',:class => 'option_buttons tipTip',:title=>'Content'
+          .button-box
+            = link_to '',teacher_path(current_user),:id=>'classes_button',:class=>'option_buttons tipTip',:title => 'My Classes'
+          .button-box
+            = link_to '',quizzes_path,:id=>'manage_assessment_button',:class => "option_buttons tipTip",:title=>'My Assessments'
+          -#.button-box
+            = link_to '',check_usage_reports_path(current_user),:id=>'reports_button',:class=>'option_buttons tipTip',:title => 'Reports'
+          .button-box
+            = link_to '',messages_path+user_path(current_user),:id=>'messages_button',:class => 'option_buttons tipTip',:title=>'Messages'
+          .button-box
+            = link_to '',assessment_home_works_path,:id=>'give_home_work_button',:class => 'option_buttons tipTip',:title=>'Give Home Work'
+          -#.button-box
+            %a#time_table_button.option_buttons.tipTip{:href => "#", :title => "Time Table"}
+      %td{:valign => "top"}
+        .right_side_bar
+          = render(:partial => 'shared/sidebar')

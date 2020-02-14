@@ -1,0 +1,62 @@
+:javascript
+  $(document).ready(function() {
+    $("#usages").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,null,
+                    {"bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Usage
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "List")}", usages_path
+    - if current_user.is?'EA'
+      %li= link_to "#{t("web-app-theme.report", :default => "Reports")}",institutions_usage_reports_path
+    - elsif current_user.is? 'IA'
+      %li= link_to "#{t("web-app-theme.report", :default => "Reports")}",institute_report_path(current_user)
+    - elsif current_user.is? 'CR'
+      %li= link_to "#{t("web-app-theme.report", :default => "Reports")}",center_report_path(current_user)
+    %li= link_to "#{t("web-app-theme.new", :default => "Content Reports")}",contents_usage_reports_path
+    %li= link_to "#{t("web-app-theme.new", :default => "Download CSV")}",download_csv_usages_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#usages.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Content Name
+                %th UserId
+                %th Name
+                %th Total duration
+                %th Count
+                %th Last used time
+                %th Last used duration
+                %th
+            %tbody
+              - @usages.each do |usage|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"usage_#{usage.id}"}
+                  %td.col=  usage.uri.split('/').last rescue ''
+                  %td.col= usage.user_id
+                  %td.col= usage.user.profile.display_name   if usage.user and usage.user.profile
+                  %td.col= usage.duration
+                  %td.col= usage.count
+                  %td.col=  display_date_time(usage.last_used_time)
+                  %td.col= usage.last_used_duration
+                  %td.col
+                    = link_to_show(usage_path(usage))
+
+        .pagination_info
+          = paginate @usages unless @usages.blank?
+

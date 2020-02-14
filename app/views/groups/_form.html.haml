@@ -1,0 +1,181 @@
+.inputs
+  - if current_user.is?'EA'
+    .group
+      .field
+        #institution
+          = f.association :institution,:collection=>Institution.includes(:profile),:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>@group.institution.try(:centers),:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.association :academic_class,:collection=>@group.center.try(:academic_classes).to_a,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,@group.academic_class.try(:sections).to_a,:id,:name,{:prompt=>true},{:class=>"drop_down"}
+  -elsif current_user.is? 'IA'
+    .group
+      .field
+        = f.association :institution,:collection=>[current_user.institution],:input_html => { :class => 'drop_down' },:include_blank=>false,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>current_user.centers,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.association :academic_class,:collection=>@group.center.try(:academic_classes).to_a,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,@group.academic_class.try(:sections).to_a,:id,:name,{:prompt=>true},{:class=>"drop_down"}
+
+  -elsif current_user.is?'EO'
+    .group
+      .field
+        = f.association :institution,:collection=>[current_user.institution],:input_html => { :class => 'drop_down' },:include_blank=>false,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>current_user.centers,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.label :section_id, "Form", :class=>'label'
+          = f.association :academic_class,:collection=>@group.center.try(:academic_classes).to_a,:input_html => { :class => 'drop_down' },:prompt=>true, label: false #,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Class", :class=>'label'
+          = f.collection_select :section_id,@group.academic_class.try(:sections).to_a,:id,:name,{:prompt=>true},{:class=>"drop_down"}
+
+  -elsif current_user.is?'CR'
+    .group
+      .field
+        = f.association :institution,:collection=>[current_user.institution],:input_html => { :class => 'drop_down' },:include_blank=>false,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #centers
+          = f.association :center,:collection=>[current_user.center],:input_html => { :class => 'drop_down' },:include_blank=>false,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #academic_class
+          = f.association :academic_class,:collection=>current_user.academic_classes,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,@group.academic_class.try(:sections).to_a,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+  -else
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = current_user.type.eql?("Institution") ? current_user.name : current_user.institution.name
+        = f.input :institution_id,:as=>"hidden", :input_html => { :value => current_user.institution_id }
+    .group
+      .field
+        - if current_user.center or current_user.type.eql?('Center')
+          = f.label :center_id, "  Center", :class=>'label'
+          = current_user.type.eql?("Center") ? current_user.name : current_user.center.name
+          = f.input :center_id,:as=>"hidden", :input_html => { :value => current_user.center_id }
+    -#.group
+    -#  .field
+    -#    #academic_class
+    -#      = f.association :academic_class,:collection=>current_user.center.academic_classes,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+    -#.group
+    -#  .field
+    -#    #sections
+    -#      = f.label :section_id, "Section", :class=>'label'
+    -#      = f.collection_select :section_id,@group.academic_class.try(:sections).to_a,:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+
+
+  .group
+    .field
+      = f.simple_fields_for :profile do |p|
+        = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} ,:label=>'Group name'
+  -#.group
+  -#  .field
+  -#    = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  -#.group
+  -#  .field
+  -#    = f.label :Group, "Assign Users", :class => "label"
+  -#    = f.association :inverse_groups ,:as=>:text,:input_html=>{:rows=>4,:cols=>100 ,"data-pre" => f.object.inverse_groups.map{|u| Hash[id: u.id, name: u.profile.autocomplete_display_name]}.to_json,:class=>'text_field'},:label => false
+  = render partial: "groups/student_list"
+  - unless current_user.is?'ET'
+    = render partial: "groups/teachers_list"
+  %br
+  %br
+  -unless @group.new_record?
+    %span{:id=>"students_in_groups"}
+      Students in the group
+      = render partial: "users",locals: {:@users => @students}
+  %br
+  %br
+  -#.group
+  -#  .field
+  -#    = f.simple_fields_for :build_info do |b|
+  -#      = b.input :build_number,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Build Number'
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:value=>button_name,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), groups_path,:class=>'button danger icon remove'
+:javascript
+  $(document).ready(function(){
+  $("#students_in_groups").find('input[type=checkbox]').each(function () {
+             this.checked = true;
+
+  });
+  //for assinging users to the group
+  // $('#student_group_inverse_group_ids').tokenInput("/users_token_search.json", { preventDuplicates:true,prePopulate: $('#student_group_inverse_group_ids').data('pre'),
+  //        theme: '' ,crossDomain: false,queryParam: 'term' ,minChars: 3,hintText: 'Type first 3-letters of users rollno or edutorid or fistname/surname'});
+
+  $("#student_group_institution_id").change(function() {
+      set_default($("#student_group_center_id"));
+      set_default($("#student_group_section_id"));
+      set_default($("#student_group_academic_class_id"));
+      var selected_value = $('select#student_group_institution_id :selected').val();
+      if (selected_value==""){
+       selected_value = 0;
+       $("#student_group_section_id").attr('disabled', 'disabled');
+       $("#student_group_academic_class_id").attr('disabled', 'disabled');
+       }
+      var url = '/institution/get_centers/' + selected_value
+      var div_update = "#student_group_center_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+  $("#student_group_center_id").change(function() {
+      set_default($("#student_group_academic_class_id"));
+      set_default($("#student_group_section_id"));
+      var selected_value = $('select#student_group_institution_id :selected').val();
+      var center = $('select#student_group_center_id :selected').val();
+      if (selected_value==""){selected_value = 0;}
+      if (center==""){
+        center = 0;
+       $("#student_group_section_id").attr('disabled','disabled');
+      }
+      var url = '/institution/get_academic_classes/' +selected_value+'/'+ center
+      var div_update = "#student_group_academic_class_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+  $("#student_group_academic_class_id").change(function() {
+      set_default($("#student_group_section_id"));
+      var institution = $('select#student_group_institution_id :selected').val();
+      var center = $('select#student_group_center_id :selected').val();
+      var academic_class = $('select#student_group_academic_class_id :selected').val();
+      if (institution==""){institution = 0;}
+      if (center==""){center = 0;}
+      if (academic_class==""){academic_class = 0;}
+      var url = '/institution/get_sections/' +institution+'/'+ center+'/'+academic_class;
+      var div_update = "#student_group_section_id";
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+
+  });

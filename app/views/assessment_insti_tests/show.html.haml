@@ -1,0 +1,28 @@
+#content_header
+  %h1#maend_heading assessment_insti_tests
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}",assessment_insti_tests_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_insti_test_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_insti_test_path(@assessment_insti_test)
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_insti_test_path(@assessment_insti_test)
+#data
+  #application-list
+    .heading= @assessment_insti_test.name
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.assessment_insti_test.rb.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @assessment_insti_test.name
+        %tr.even.left
+          %td
+          - if current_user.role.name.eql?('Support Team')
+            %td.right= link_to "Download", est_download_content_path(@assessment_insti_test) ,:title=>'Download Attachement',:class=>'tipTipRight'
+          - else
+            %td.right= link_to "Download", download_zip_content_path(@assessment_insti_test) ,:title=>'Download Attachement',:class=>'tipTipRight'
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to 'Edit',edit_assessment_insti_test_path(@assessment_insti_test), :class => "button icon edit"
+            = link_to 'Delete',assessment_insti_test_path(@assessment_insti_test), :method => "delete",:class => "button danger icon remove", :confirm => "Are you sure?"

@@ -1,0 +1,74 @@
+= stylesheet_link_tag "assessment_tool"
+.body_content1
+  .assessments_layout
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      = render :partial => 'create_assessment_tabbed_header'
+      .ui-tabs-panel.ui-corner-bottom
+        = render :partial => 'bread_crumbs_indicator'
+      - 5.times do
+        %br
+      - if @quiz.questions.empty?
+        #download_options
+          Add Questions By Importing Or Creating To The Assessment :
+          = @quiz.name
+          %br
+          %br
+          .goto{style:"float:left;"}
+            = link_to "Edit Assessment", assessment_tool_edit_path(@quiz), :class=>"utility_button previous-btn"
+      - else
+        #download_options{style:"position:relative; color:#fff"}
+          %center
+            %div
+              %i
+                Download as
+            %br
+            %br
+            = link_to "&nbsp;  Assessment PDF".html_safe, assessment_pdf_download_path(@quiz,:format=>:pdf), :class=>"utility_button", :id => "assessment_pdf_id"
+            = link_to "&nbsp;  Assessment key PDF".html_safe, assessment_pdf_download_path(@quiz,:format=>:pdf, "key" => true), :class=>"utility_button", :id => "assessment_key_pdf_id"
+          
+          - if @quiz.quiz_targeted_groups.empty?
+            .goto{style:"position:absolute; top: 60px"}
+              = link_to "Edit Assessment", assessment_tool_edit_path(@quiz), :class=>"button"
+          - if !@quiz.questions.empty?
+            .goto{style:"position:absolute; top: 60px; left:95%;"}
+              -if current_user.is? "ECP"
+                = link_to "Publish", assessment_tool_publish_ecp_assessment_path(@quiz),class:"button"
+              -else
+                = link_to "Publish", assessment_tool_publish_path(@quiz), :class=>"button"
+        %br
+        %br
+        %br
+        = stylesheet_link_tag "pdf"
+        .preview_area{style:"margin:auto; width:auto;background:#f9f9f9;"}
+          %br
+          %h2{style:"text-align:center"} Preview
+          .note{style:"width: 600px;margin:auto;"}
+            Note:
+            %p
+              Page breaks are not displayed in the preview. Please download PDF to view the complete pdf.
+          .live_assessment_preview{style:"background-color:#fff;box-shadow: 3px 3px 20px #DDD; border: 1px solid #ccc;padding:5%;width: 600px;margin:auto;"}= render partial: 'assessment_pdf_template'
+:javascript
+  $.fn.hasAttr = function(name) {
+   return this.attr(name) !== undefined;
+    };
+  $(document).ready(function() {
+    $("#create-assessment-preview").removeClass('step_normal').addClass('step_active')
+    $(".utility_button").button({
+        icons:{primary:"ui-icon-plain-download-btn"}
+      });
+    $(".live_assessment_preview img").each(function(){
+    var img=$(this);var src = img.attr("src");
+     img.attr("src",src.replace(/^.+public/,''));
+      if (!img.hasAttr("onload") && img.width()>500){
+        img.width("100%");
+      }
+      })
+    $(".utility_button.next-btn").button({
+        icons:{primary:"ui-icon-next-btn"},
+        text:false
+      });
+    $(".utility_button.previous-btn").button({
+        icons:{primary:"ui-icon-previous-btn"},
+        text:false
+      });
+  })

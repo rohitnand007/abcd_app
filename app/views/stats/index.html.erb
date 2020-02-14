@@ -1,0 +1,115 @@
+<div id='content_header'>
+  <h1 id='main_heading'>
+    <%=@main_heading%>
+  </h1>
+</div>
+<div id='data'>
+  <% if !@filter_center.nil? && !@centers.nil? %>
+    <form id="select-center" class="form" method="POST" action="/stats/filter">
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Filter By Center
+            </label>
+            <select name="filter_center">
+              <% if current_user.id ==1 %>
+                <option <%= @filter_center.to_i==0 ? 'selected' : '' %> value="0">All</option>
+              <% end %>
+              <% @centers.each do |key,value| %>
+                <option <%= @filter_center.to_i==key ? 'selected' : '' %> value="<%=key%>"><%=value%></option>
+              <%end%>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Type
+            </label>
+            <select name="filter_type" id="filter_type">
+              <option <%= @filter_type=="messages" ? 'selected' : '' %> value="messages">Messages</option>
+              <option <%= @filter_type=="published_assessments" ? 'selected' : '' %> value="published_assessments">Published Assessments</option>
+              <option <%= @filter_type=="taken_assessments" ? 'selected' : '' %> value="taken_assessments">Taken Assessments</option>
+              <option <%= @filter_type=="teacher_activity" ? 'selected' : '' %> value="teacher_activity">Teacher Activity</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!--<div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Start Date
+            </label>
+            <input type="text" name="filter_start_date" value="<%=@filter_start_date%>"/>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              End Date
+            </label>
+            <input type="text" name="filter_end_date" value="<%=@filter_end_date%>"/>
+          </div>
+        </div>
+      </div>-->
+      <div class="group" id="group_by">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Group By
+            </label>
+            <select name="filter_group_by">
+              <option <%= @filter_group_by=="date" ? 'selected' : '' %> value="date">Daily</option>
+              <option <%= @filter_group_by=="month" ? 'selected' : '' %> value="month">Monthly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="group" id="teacher_particular" style="display:none">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Select by
+            </label>
+            <select name="filter_teacher_type">
+              <option <%= @filter_teacher_type=="all_messages" ? 'selected' : '' %> value="all_messages">Messages to Students</option>
+              <option <%= @filter_teacher_type=="published_assessments" ? 'selected' : '' %> value="published_assessments">Published Assessments</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <div align="center" class="field">
+              <input class="button big primary" data-disable-with="Generating report..." name="" type="submit" value="View Stats"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  <% end %>
+
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#filter_type").change(function(){
+      var c = $("#filter_type").val();
+      if (c=="teacher_activity") {
+        $("#teacher_particular").show();
+        $("#group_by").hide();
+      }
+      else
+      {
+        $("#teacher_particular").hide();
+        $("#group_by").show();
+      }
+    });
+  });
+</script>

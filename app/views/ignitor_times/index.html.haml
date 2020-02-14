@@ -1,0 +1,21 @@
+%h1 List of IgnitorTimes
+%table#ignitor_times_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+  %thead
+    %tr.tr-head
+      %th Id 
+      %th Name
+      %th ignitor_web_url
+      %th Actions
+  - @ignitor_times.each do |ig_time|
+    %tr{:class => cycle("tr-odd", "tr-even") }
+      %td= ig_time.id
+      %td
+        = ig_time.name
+        = link_to 'Edit', "/ignitor_times/#{ig_time.id}/edit"
+        = link_to 'Delete', ig_time, :confirm => 'Ignitor_time   once deleted cannot be retrieved!', :method => :delete
+      %td= ig_time.ignitor_web_url
+      %td
+        = link_to 'Manage Institutions', "/ignitor_times/#{ig_time.id}/select_institutions", class:"button", :method=> :get
+        = link_to 'Show',"/ignitor_times/#{ig_time.id}", class:"button"
+
+= link_to "Create_ignitor_times", "/ignitor_times/new", class:"button"

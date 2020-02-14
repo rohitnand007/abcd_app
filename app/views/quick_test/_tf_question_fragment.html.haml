@@ -1,0 +1,54 @@
+.nested-fields
+  .q_typemenu
+    .question_attribute_button.labeler
+      True or False
+    .question_attribute_button.image_inserter
+      = link_to_add_association 'Insert image', f, :question_images,
+      "data-association-insertion-method"=>"append",
+      "data-association-insertion-node"=>".nested-fields",
+      "data-association-insertion-traversal"=>"closest",
+      "data-association-insertion-node-down"=>".q_textcell",
+      "data-association-insertion-traversal-down"=>"find"
+
+    .question_attribute_button.delete_question
+      = link_to_remove_association image_tag("empty.png"), f
+  = render "question_text_fragment", :f=>f
+  = f.hidden_field  :qtype, value:"truefalse"
+  %br
+  - doesnt_contain_options = f.object.question_answers.empty?
+  - 2.times{f.object.question_answers.build} if doesnt_contain_options
+  .q_optionblock
+    - count = 1
+    - sym = {"1"=>["A","True"],"2"=>["B", "False"]}
+    = f.fields_for :question_answers do |b|
+      .q_optionrow
+        .option_cell1
+          = b.label "answer "+sym[count.to_s][0]
+        .option_cell2
+          - if doesnt_contain_options
+            = b.text_field :answer, value: sym[count.to_s][1],required:"required"
+          - else
+            = b.text_field :answer,required:"required"
+        .option_cell3
+          - if (count==1) and (doesnt_contain_options)
+            = b.check_box :fraction, value:"1", checked:true,class:"tf_checkbox"
+          - else
+            = b.check_box :fraction, value:"1",class:"tf_checkbox"
+          This is the correct answer
+      - count+=1
+    .q_optionrow
+      .option_cell1
+        Explanation
+      .option_cell2
+        = f.text_field :generalfeedback, placeholder:"Optional"
+      .option_cell3
+
+
+  %br
+  %hr
+  %br
+:javascript
+  //The below script serves as validation for true or false checkboxes only. Both should not be selected for a single question
+  $(document).on('click', 'input[class="tf_checkbox"]', function() {
+    $('input[type="checkbox"]').not(this).prop('checked', false);
+  });

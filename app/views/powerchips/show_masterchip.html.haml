@@ -1,0 +1,23 @@
+#content_header
+  %h1#main_heading Quotes
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", masterchip_list_path
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td Name
+          %td.right= @masterchip.name
+        %tr.odd.left
+          %td Author
+          %td.right= @masterchip.serial
+        %tr.even.left
+          %td= t("web-app-theme.created_at", :default => "Created at")
+          %td.right= display_date_time(@masterchip.created_at)
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+

@@ -1,0 +1,73 @@
+%p#notice= notice
+
+-#%p
+-#  %b Sender:
+-#  = @device_message.sender_id
+-#%p
+-#  %b Recipient:
+-#  = @device_message.recipient_id
+-#%p
+-#  %b Group:
+-#  = @device_message.group_id
+-#%p
+-#  %b Message:
+-#  = @device_message.message_id
+-#%p
+-#  %b Device:
+-#  = @device_message.device_id
+-#%p
+-#  %b Exclude teacher group:
+-#  = @device_message.exclude_teacher_group
+%p
+  %b Deviceid:
+  = @device_message.deviceid
+%p
+  %b Subject:
+  = @device_message.subject
+%p
+  %b Message type:
+  = @device_message.message_type
+-#%p
+-#  %b Label:
+-#  = @device_message.label
+-#%p
+-#  %b Body:
+-#  = @device_message.body
+
+:javascript
+  $(document).ready(function() {
+    $("#message_acknowledgs").dataTable({
+        "aoColumns": [
+                    null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+%div
+  %table#message_acknowledgs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th=  t("activerecord.attributes.academic_class.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th=  t("activerecord.attributes.academic_class.center", :default => t("activerecord.labels.center", :default => "Acknowledged at"))
+        %th=  t("activerecord.attributes.academic_class.center", :default => t("activerecord.labels.center", :default => "status"))
+    %tbody
+      - @device_message.message_acknowledgs.each do |ack|
+        %tr{:class => cycle("tr-odd", "tr-even")}
+          %td.col= link_to ack.user.name, user_path(ack.user)
+          %td.col= display_date_time(ack.created_at)
+          %td.col= message_status(ack.status)
+
+
+
+= link_to 'Edit', edit_device_message_path(@device_message)
+\|
+= link_to 'Back', device_messages_path
+

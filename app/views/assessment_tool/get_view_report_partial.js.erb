@@ -1,0 +1,5 @@
+$('.spinner-gif').hide();
+$("#body_content_1").hide("slide", 500);
+$("#dynamic_content").html("<%= escape_javascript(render :partial => 'get_view_report_partial1', locals: {task: @task}) %>");
+$("#body_content_2").show();
+$("#send_reports").button();

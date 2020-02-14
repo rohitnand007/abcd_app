@@ -1,0 +1,6 @@
+$("#qtg-filter-partial").html("<%= escape_javascript(render :partial => 'assessment_tool/qtg_create_reports_compare_partial') %>");
+$("#qtg-filter-partial input[type=checkbox]").each(function(){
+    if ($.inArray(this.value, assesment_compare_array) !== -1) {
+        $(this).prop('checked',true)
+    }
+});

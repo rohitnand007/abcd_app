@@ -1,0 +1,36 @@
+<div class="nobreak">
+  <table>
+    <tbody>
+    <tr>
+      <td style="text-align: left; width:25px; vertical-align: top;"><%= i %>.&nbsp;</td>
+      <td style="width:700px;"><%= question.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %></td>
+      <td style="width:50px;text-align: right;"><%= QuizQuestionInstance.where("quiz_id=? and question_id=?", @quiz.id, question.id).first.grade.to_s %></td>
+    </tr>
+    </tbody>
+  </table>
+  <br/>
+  <% if question.answer_lines !=0 %>
+      <% question.answer_lines.times do %>
+          <br/>
+          <hr>
+      <% end %>
+  <% end %>
+</div>
+<div class="nobreak" style="padding-left:25px;">
+  <table align="center" width="100%">
+    <% a = ("a".."z").to_a %>
+    <% n = 0 %>
+    <% question.question_answers.each do |c| %>
+        <tr>
+          <td align="left" style="vertical-align:top;width: 30px;">
+            &nbsp;
+          </td>
+          <td align="left" valign="middle",class="question_answer">
+            <%= a[n] %>. &nbsp;
+            <%=raw c.pdf_answer_format.gsub("<br />", " ").gsub("<p>", "").gsub(/<p[^>]*>/, "").gsub("</p>", "").force_encoding('utf-8').encode.html_safe %>
+          </td>
+          <% n= n+1 %>
+        </tr>
+    <% end %>
+  </table>
+</div>

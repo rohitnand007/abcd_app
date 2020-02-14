@@ -1,0 +1,16 @@
+<div class="nested-fields">
+  <div class='label heading hr'>
+  </div>
+  <div class="group">
+      <div class="field">
+        <div class="input text required">
+          <label class="text required label" for="">
+            Section Name
+            <abbr title="required">*</abbr>
+          </label>
+          <%= f.text_field :name,:class=>"text required text_area"%>
+        </div>
+      </div>
+</div>
+    <%= link_to_remove_association "Remove This Section", f %>
+</div>

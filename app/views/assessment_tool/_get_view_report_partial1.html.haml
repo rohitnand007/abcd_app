@@ -1,0 +1,133 @@
+%div{height: "100%"}
+  .spinner-gif{:style => "display: none; position: fixed; z-index: 5; left: 45%; top: 45%"}
+    = image_tag 'spiffygif.gif'
+  %br
+    %br
+      %hr
+        %br
+          %table{border: "0", cellpadding: "0", cellspacing: "0"}
+            %tbody
+              %tr{style: "color: #60c8cd;"}
+                %td{style: "padding: 2px 20px 2px 0px;"}
+                  = task.parent_obj.quiz.name
+                %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                  Published To:
+                  = User.find(task.parent_obj.group_id).name
+          %br
+            %i
+              Compared with
+              = pluralize task.misc.split(',').count, 'Test'
+            #response
+            %br
+              %table{border: "0", cellpadding: "0", cellspacing: "0"}
+                %tbody
+                  - task.misc.split(',').each do |qtg_id|
+                    - qtg = QuizTargetedGroup.find(qtg_id)
+                    %tr{style: "color: #60c8cd;"}
+                      %td{style: "padding: 2px 20px 2px 0px;"}
+                        = qtg.quiz.name
+                      %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                        Published To:
+                        = User.find(qtg.group_id).name
+                      %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                        Published Time:
+                        = Time.at(qtg.published_on).strftime('%D')
+
+            %br
+              = link_to "Send Reports","/send_assessment_reports",:id=>"send_reports",:remote=>true,:style=>"float:right;margin-right:30px;"
+              %br/
+              %br/
+              %div{style: "width:100%; height:250px; overflow: auto; border-top: 1px solid #CCC; border-bottom: 1px solid #CCC; text-align: left; vertical-align: middle;margin-top:15px;"}
+                %table{border: "0", cellpadding: "0", cellspacing: "0", width: "100%"}
+                  %tbody
+                    %tr
+                      %td{style: "padding: 2px 20px 2px 0px; border-bottom: 1px solid #CCC;"}
+                        %b Student Name
+                      %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC; border-bottom: 1px solid #CCC;"}
+                        %b Student ID
+                      %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC; border-bottom: 1px solid #CCC;"}
+                        %b status
+
+                      %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC; border-bottom: 1px solid #CCC;"}
+                        %b
+                          Download Link
+                      %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC; border-bottom: 1px solid #CCC;"}
+                        = check_box_tag('viewReportStudentAll',"")
+
+                    - task.assessment_pdf_jobs.each do |j|
+                      %tr
+                        %td{style: "padding: 2px 20px 2px 0px;"}
+                          = j.recipient.name
+                        %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                          = j.recipient.rollno
+                        %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                          %b
+                            = j.state
+                        %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                          - if j.state == "accepted" or j.state == "report_delivered"
+                            %a{:href => j.asset.attachment.url, :download => (j.recipient.name + ".pdf")}
+                              = j.recipient.name + ".pdf"
+                        - if j.state == "accepted" or j.state == "report_delivered"      
+                          %td{style: "padding: 2px 20px 2px 20px; border-left: 1px solid #CCC;"}
+                            = check_box_tag("viewReportStudent",j.id)or j.state == "report_delivered"
+              %br
+              -#%div{style: "float: right;"}
+              -#  %button#downloadStudentReports Download
+              -#  or
+              -#  %button#downloadStudentReportsAsZip Download as ZIP
+              %br
+              %br
+              %hr
+              %br
+              %div#selectedNumberText{style: "float: left"}
+              -#%div{style: "float: right;"}
+              -#  %input#configStudents2{type: "radio", onclick: "document.getElementById('configParents2').checked = false; document.getElementById('configBoth2').checked = false;", style: "padding-right: 2px;"}
+              -#    Students
+              -#  %input#configParents2{type: "radio", onclick: "document.getElementById('configStudents2').checked = false; document.getElementById('configBoth2').checked = false;", style: "padding-right: 2px;"}
+              -#    Parents
+              -#  %input#configBoth2{type: "radio", onclick: "document.getElementById('configStudents2').checked = false; document.getElementById('configParents2').checked = false;", style: "padding-right: 2px;"}
+              -#    Both
+              -#  %button#publishStudentReports.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only{"aria-disabled" => "false", role: "button"}
+              -#    %span.ui-button-text Publish
+              %br
+:javascript
+   $(document).ready(function() {
+            $("#send_reports").css("font-size","1em").button();
+            $("#send_reports").button();
+            $("#send_reports").button('disable','true');
+   });
+            
+  $("#viewReportStudentAll").click(function() {
+        var isSelected = document.getElementById('viewReportStudentAll').checked;
+        if (isSelected){
+           $("#send_reports").button('enable',true); 
+        }
+
+        var g = document.getElementsByName("viewReportStudent");
+        for (var i=0; i<g.length; i++) {
+            g[i].checked = isSelected;
+        }
+    });
+  $("#send_reports").click(function() {
+     report_array = []
+     var task = "#{@task.id}"
+     $("[name='viewReportStudent']").each(function() {
+         var item = this.value.toString();
+         if( $(this).prop('checked') ){
+              report_array.push(item);
+         }
+      } );  
+    if (report_array.length == 0)
+     {
+       alert('Select Any Report')
+       return false
+     }    
+    var new_href = "/send_assessment_reports/?reports="+ report_array.join("-")+"&&task="+task
+    $(this).attr("href",new_href);
+    return true; 
+  });  
+
+  $("#send_reports").on('ajax:beforeSend',function(){
+                $("#send_reports").button('disable'); 
+                $('.spinner-gif').show();
+  });

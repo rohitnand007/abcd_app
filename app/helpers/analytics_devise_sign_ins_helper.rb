@@ -1,0 +1,2 @@
+module AnalyticsDeviseSignInsHelper
+end

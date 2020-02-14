@@ -1,0 +1,63 @@
+= form_tag 'powerchip_check_add', id:'slotSearchForm' do
+  %div{style: "font-size:18px;color:#636363;padding:10px; width:5in;background-color:#f9f9f9"}
+    %ol
+      %li Select the type of chip you are looking for
+      %li Enter the serial no. or cid. (CID for memory chip or serial no. for USB) and click on "Check & Add"
+      %li If the record is found, details will be displayed.
+      %li If the record in not found, a new record will be added and displayed
+    %label
+      = radio_button_tag 'mode', 'chip',true
+      Chip CID
+    %label
+      = radio_button_tag 'mode', 'usb'
+      USB Serial No.
+    %br
+    %br
+    = text_field_tag 'chip_id',"",required:true,placeholder:"CID or Serial Number...", style:"width:4in;"
+    %br
+    %br
+    = submit_tag "Check & Add", class:'button'
+    %br
+    %br
+    #progress-indicator= image_tag('progress-indicator.gif')
+    #message
+
+  - 3.times do
+    %br
+  #recordDetails
+:javascript
+  $('#progress-indicator').hide();
+  $('#slotSearchForm').submit(function(){
+    var url = '/powerchip_check_add';
+    $.ajax({
+      type:"POST",
+      url:url,
+      data:$('#slotSearchForm').serialize(),
+      beforeSend:function(){
+        $('#progress-indicator').show();
+      },
+      success: function(response_data){
+        $('#progress-indicator').hide();
+        var status = response_data['status']
+        if (status=='new'){
+          $("#message").css('color','green').text("New record created");
+          html_data = generateTable(response_data['header'],response_data['records'],"width:100%;text-align:center; color:#636363")
+          $("#recordDetails").html(html_data);
+          }
+        else{
+          $("#message").css('color','red').text("Record(s) already exists");
+          html_data = generateTable(response_data['header'],response_data['records'],"width:100%;text-align:center; color:#636363")
+          $("#recordDetails").html(html_data);
+          }
+        $("#recordDetails").find('thead').css({
+          'background-color':'#f9f9f9'
+        })
+      },
+      error: function(data){
+        $('#progress-indicator').hide();
+        $("#recordDetails").html("");
+        alert("Request Failed");
+      }
+    });
+    return false; // avoids execution of actual form submit
+  });

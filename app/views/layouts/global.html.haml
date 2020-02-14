@@ -1,0 +1,54 @@
+%html
+  %head
+    %title= 'My Edutor'
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application'
+    = javascript_include_tag 'application'
+    %script{:src => "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML", :type => "text/javascript"}
+  %body
+    #container
+      #header_bg
+        -##header
+        -#  .logo
+        -#    -if user_signed_in? && (current_user.is?('EA') or current_user.is?'EST' or current_user.is?'EC')
+        -#      = link_to (image_tag "logo_plain.png"),root_path
+        -#    -elsif user_signed_in? && current_user.is?('IA')
+        -#      = current_user.institution.profile.photo? ? (link_to image_tag(current_user.institution.profile.photo.url(:small)), root_path) : (link_to current_user.institution.name,root_path)
+        -#    -elsif user_signed_in? && current_user.is?('ECP')
+        -#      = link_to image_tag(current_user.profile.photo.url(:small)), root_path
+        -#    -else
+        -#      = current_user.institution.profile.photo? ? (link_to image_tag(current_user.institution.profile.photo.url(:small)), root_path) : (link_to current_user.institution.name,root_path)
+        -#  #topnav
+        -#    .nav{style: 'color:#fff;'}
+        -#      Welcome ,&nbsp;
+        -#      %span{style: 'font-size:14px;'}=current_user.try(:name)
+        -#    -#.nav= link_to 'Home',root_path
+        -#    .nav= link_to "My profile", profile_path(current_user.profile)
+        -#    - if current_user.is?'IA'
+        -#      .nav= link_to "Institute profile", profile_path(current_user.try(:institution).try(:profile))
+        -#    - elsif current_user.is?'CR'
+        -#      - if Teacher.center_teachers_incomplete_class_details?(current_user.center)
+        -#        :javascript
+        -#          $.sticky('<b><a href="#{teachers_path(:mode=>"incomplete_class_details")}">Incompleted class details for teachers...</a></b><p>');
+        -#      .nav= link_to "Center profile", profile_path(current_user.try(:center).try(:profile))
+        -#    -unless current_user.is?'ES' or current_user.is?'EP'
+        -#      .nav= link_to "Messages",messages_path+user_path(current_user)
+        -#    -unless current_user.is?'ES'
+        -#      .nav= link_to "Change password",change_password_path
+        -#    .nav= link_to  "Logout", destroy_user_session_path, :method => :delete
+        -#
+        -#  #top-menu-bar
+        -#    = render 'shared/top_menu'
+        -#  = render 'shared/search'
+      #wrapper.wat-cf
+        #content_wrapper
+          #content
+            .flash
+              = render 'shared/flash_messages'
+            = yield
+
+      #footer_bg
+        #footer
+          %p
+            Copyright &copy; #{Time.now.year}
+            %a{:href => "http://www.edutor.co.in", :target => "_blank" ,:style=>'color:#fff;'} Edutor Technologies.

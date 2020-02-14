@@ -1,0 +1,111 @@
+
+<script type="text/javascript">
+    // Resize the canvases when the page is resized.
+
+    function resize_canvas() {
+
+        canvas = document.getElementById("canvas");
+        if (canvas.width  < window.innerWidth)
+        {
+            canvas.width = 900 ;
+        }
+
+        if (canvas.height < window.innerHeight)
+        {
+            canvas.height = 500;
+        }
+    }
+    // Create bar chart 1
+
+    function StartBarChart1(canvasId) {
+
+        var scale = 1;
+        var counts_array = "<%=@counts%>".split(',');
+        var names = "<%=@names%>".split(',');
+        counts_array.splice(0,0,"");
+        counts_array.splice(counts_array.length,0,'');
+        names.splice(0,0,"");
+        names.splice(counts_array.length,0,'');
+
+        var Chart = {
+            CanvasId: canvasId,
+            Background: "White",
+            margin: 10,
+            title: "Content Usage Report", titleColor: "Black",
+            minX: 0, maxX: 9, tickX: 1,
+            minY: 0, maxY: parseInt("<%=@max_Y%>") , tickY: parseInt("<%=@tick_Y%>"),
+            hasColumnNames: true, columnNames: names,
+            axisLineColor: "Black", tickLineColor: "Black",
+            click: true, clickColor: "Red"
+        };
+
+        Chart.bars = [];
+
+        var bars1 = [];
+        var j=0;
+
+        for(j=0;j<counts_array.length;j++){
+
+            bars1.push({x:j,y: counts_array[j],Value: counts_array[j],title: "Number of times read"});
+
+        }
+
+        Chart.bars.push(bars1);
+        BarChart(Chart);
+    }
+</script>
+
+
+<div id="content_header">
+  <h1 id="main_heading">Usage</h1>
+  <h3 id="sub_heading">Content Usage Report</h3>
+</div>
+
+<div id="inner-tab-menu">
+  <!-- <ul>
+    <li><a href="/usages">List</a></li>
+    <li class="first active"><a data-method="get" href="/usage/reports">Reports</a></li>
+    <li><a href="/usages/new">New</a></li>
+  </ul>-->
+</div>
+
+<div id="data">
+  <div class="reports">
+    <canvas id="canvas">Looks like you are using older version of Internet Explorer.Please use versions 9 or above for better viewing.</canvas>
+  </div>
+  <script>resize_canvas(); StartBarChart1("canvas");</script>
+  <% unless @list.blank? %>
+      <div class="pagination_info">
+        <%= paginate @list%>
+      </div>
+  <% end %>
+</div>
+
+<!--
+
+<div class="block">
+  <div class="secondary-navigation">
+    <ul class="wat-cf">
+      <li><a href="/usages">List</a></li>
+      <li class="first active"><a data-method="get" href="/usage/reports">Reports</a></li>
+      <li><a href="/usages/new">New</a></li>
+    </ul>
+  </div>
+  <div class="content">
+    <h2 class="title">
+      All
+      Usage
+    </h2>
+    <div class="inner">
+      <div style="background-color: white">
+        <canvas id="canvas">Looks like you are using older version of Internet Explorer.Please use versions 9 or above for better viewing.</canvas>
+      </div>
+      <script>resize_canvas(); StartBarChart1("canvas");</script>
+    </div>
+  </div>
+</div>
+<%#= paginate @list%>
+<%# content_for :sidebar do %>
+<%#= render :partial => 'shared/sidebar'%>
+<%#end%>
+-->

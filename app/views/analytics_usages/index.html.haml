@@ -1,0 +1,23 @@
+%h1 Listing analytics_usages
+
+%table
+  %tr
+    %th User
+    %th Usage date
+    %th Total usage
+    %th
+    %th
+    %th
+
+  - @analytics_usages.each do |analytics_usage|
+    %tr
+      %td= analytics_usage.user_id
+      %td= analytics_usage.usage_date
+      %td= analytics_usage.total_usage
+      %td= link_to 'Show', analytics_usage
+      %td= link_to 'Edit', edit_analytics_usage_path(analytics_usage)
+      %td= link_to 'Destroy', analytics_usage, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Analytics usage', new_analytics_usage_path

@@ -1,0 +1,29 @@
+:css
+  #top-menu-bar ul li a span.no-menu:hover {
+    text-decoration: underline;
+  }
+%ul
+  %li= link_to content_tag(:span,"Home",:class=>'no-menu') ,root_path ,:style=>''
+  -if user_signed_in? && (current_user.role.name=="Institute Admin")
+    %li
+      = link_to_menu("Users")
+      %ul.top-menu-bar
+        %li= link_to "Users", users_path
+        %li= link_to "Upload Students", upload_csv_file_path
+        %li= link_to "Centers", centers_path
+        %li= link_to "Classes", academic_classes_path
+        %li= link_to "Sections", sections_path
+    %li
+      = link_to_menu("Books")
+      %ul.top-menu-bar
+        %li= link_to "Books List",books_path
+        %li= link_to "New Book", new_book_path
+    %li
+      = link_to_menu("Collections")
+      %ul.top-menu-bar
+        -#%li= link_to "Boards", boards_path
+        %li= link_to "Collections List", collections_path
+        %li= link_to "New Collection", new_collection_path
+        %li= link_to "Assign Collection", assign_collection_path
+    %li= link_to content_tag(:span,"Devices",:class=>'no-menu'),device_info_path
+

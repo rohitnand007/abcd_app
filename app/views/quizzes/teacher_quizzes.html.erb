@@ -1,0 +1,316 @@
+<link href="/assets/web-app-theme/base.css.scss" media="screen" rel="stylesheet" type="text/css" />
+
+<style>
+
+.nav {
+    background-color:#14b9d6;
+    border-radius: 5px;
+    font:bold 1.5em colabrate,HelveticaNeueLTStd55Roman,Arial, sans-serif;
+    line-height:16px;
+    padding-left:1em;
+    padding-right:1em;
+    padding-top:0.5em;
+    padding-bottom:0.5em;
+}
+
+.nav a{
+   text-decoration:none;
+   color:white;
+}
+.nav a:hover{
+   text-decoration:none;
+   color:#991F00;
+}
+
+#mask{
+    width: 100%;
+    height:100%;
+    left:0px;
+    top:0px;
+    background-color:black;
+    opacity:0.3;
+    position:fixed;
+    z-index:150;
+}
+#loader_anim{
+    left:47%;
+    top:46%;
+    background-color:black;
+    position:absolute;
+    overflow:auto;
+}
+
+#results_header{
+	position:fixed;
+	left:0px;
+	top:0px;
+	height:3em;
+	width:100%;
+	background-color:#313944;
+	font-size:0.8em;
+	color:white;
+    padding-top:10px;
+    z-index: 5;
+    padding-bottom:10px;
+}
+select{
+	height:30px;
+	overflow: hidden;	
+	font-family:colabrate;
+    font-size: 1.5em;
+	-webkit-appearance: button;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    -webkit-padding-end: 20px;
+    -webkit-padding-start: 2px;
+    -webkit-user-select: none;
+    border: 1px solid #AAA;
+    color: black;
+    margin: 0;
+    padding-left: 5px;
+    padding-right: 20px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    text-overflow: ellipsis;
+    -moz-appearance: button;
+    -moz-user-select: none;
+    white-space: nowrap;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAKCAYAAABWiWWfAAAABHNCSVQICAgIfAhkiAAAAUVJREFUKJGVTj9Lw0Acfb87YpFC0upiS7m7hECha3ZxliJOfgE/gourg7g4u/oFpHQRv4KTk0jrVNLVlJSiNqTXczElXKnFNz3ePx7wiyiKnE6ns4N/otVq7RWcF8R13ep8Pk9qtdprmqbDbSNhGLqe5/UYYyxN0xcAYIVZqVSWRLTLGOsrpW6jKHI2DbXbbaW1HgI4JiJd6MwOGmNARBdJkgyEEHXbl1JeZln2DuDA9lZjk8lkWTaIKOCcf/i+3wUAIUTd9/0+5/yGiFavjTGfq055QAjRYIwNiMi13j4BOCSiqqXfj0ajcwBmbQwAms3mvuM4d5zzM2OMbRdYaq1P4jh+LIvcTs1ms+/pdPrged4XgCMisjPDPM/leDx+s7trz8oIgkAYY54BNIgIi8XiOo7jKwD5X72NCMPQVUr1pJSn27I/0sZndZuMtPYAAAAASUVORK5CYII=) no-repeat right #9EA6B3;
+}
+#results_body{
+	width:100%;
+    padding-top:4em;
+    padding-bottom:1em;
+	
+}
+</style>
+<script src="/assets/jquery.js" type="text/javascript"></script>
+<script>
+  $(document).ready(function() {
+        document.getElementById("mask").style.display = "none";
+
+     var d = '<%= raw @sg.gsub('=>',':') %>'
+   json_obj =   jQuery.parseJSON(d);
+      var _temp = document.getElementById("sorted_ids").innerHTML;
+      var div_ids = _temp.split(":");
+      var _top = 4.5;
+      for(var i=0;i<div_ids.length-1;i++){
+          var _obj = document.getElementById(div_ids[i]);
+          _obj.style.position ="absolute";
+          _obj.style.left=5+'px';
+          _obj.style.top=_top+'em';
+          _top += 5.7;
+
+
+      }
+
+});
+  var json_obj;
+function loadme(_url){
+	try{
+		document.getElementById("mask").style.display = "";
+		window.setTimeout(function(){
+		this.document.location.href = '/quizzes/teacher_show_attempts/'+_url;
+		},50);
+	}catch(er){
+	alert('er'+er)
+	}
+}
+function subject_changed(){
+    try{
+        var subject_id = document.getElementById("subject_id").value;
+        var group_select_obj = document.getElementById("group_id");
+        var temp_obj;
+        if(subject_id==""){
+            group_select_obj.options.length=0
+            group_select_obj.options.length=1
+            group_select_obj.options[0].innerHTML= "All Groups";
+            group_select_obj.options[0].value= "";
+
+            var i = 1;
+            $.each(json_obj, function(key,value) {
+                for (var j=0;j<value.length && value!=undefined && value[j]; j++){
+                    var res = 1;
+                    for (var k=0; k<group_select_obj.options.length; k++) {
+                        if(group_select_obj.options[k].value==value[j][0])
+                        {
+                           res =0;
+                           break;
+                        }
+                    }
+                    if(res==1){
+                        group_select_obj.options.length= (i+1);
+                        group_select_obj.options[i].innerHTML= value[j][1];
+                        group_select_obj.options[i].value= value[j][0];
+                        i++;
+                    }
+                }
+
+            });
+
+            return;
+        }
+                     temp_obj = json_obj[subject_id];
+
+        group_select_obj.options.length=0
+        group_select_obj.options.length=temp_obj.length+1
+        group_select_obj.options[0].innerHTML= "All Groups";
+        group_select_obj.options[0].value= "";
+        for(var i =0; i<temp_obj.length; i++){
+            group_select_obj.options[i+1].innerHTML= temp_obj[i][1];
+            group_select_obj.options[i+1].value= temp_obj[i][0];
+
+        }
+    }catch(er){
+        alert("sub change er"+er);
+    }
+}
+
+</script>
+<div id="mask" style="display:none;">
+    <div id="loader_anim">
+      <img src="/assets/progress-indicator.gif"/>
+    </div>
+</div>
+
+<div id="results_window">
+ <div id="results_header">
+<div style='position:relative;text-align: center'>
+<label style='display:inline;padding-top:10px; font-size:1.5em;' >Results of</label> &nbsp;&nbsp;&nbsp;
+  <select id="subject_id" name="filter_center" onchange="subject_changed()">
+    <option value="" selected="">All Subjects</option>
+  <% @subjects.each do |key,value| %>
+      <option value="<%=key%>"><%=value%></option>
+  <%end%>
+  </select>                                                                          &nbsp;&nbsp;&nbsp;
+  <select id="group_id" name="filter_group">
+    <option value="" selected="">All Groups</option>
+
+  <% @groups.each do |key,value| %>
+      <option value="<%=key%>"><%=value%></option>
+  <%end%>
+  </select>                                                                                            &nbsp;&nbsp;&nbsp;
+  <div class="nav" id="go_button" onclick="get_quizzes(this.id)"  style="text-align:center;display:inline; ">
+    <a>Go</a>
+  </div>
+  <div class="nav" style="float: right;text-align:center;display:inline;margin-right: 1em;" onclick="log_out()">
+
+    <a href="/teacher/sign_out" data-method="delete" rel="nofollow">Logout</a>
+  </div>
+  <div style="float: left;text-align:center;font-family:colabrate;font-size:1.5em;display:inline;margin-left: 1em;">
+    <%= current_user.name %></br> <%= current_user.institution.name %>
+  </div>
+
+</div>
+ </div>
+
+<div id="results_body">
+  <% @quiz_start = 0 %>
+<%= render :partial=>'quizzes/teacher_quizzes'%>
+</div>
+</div>
+<div style="display:none;font-family:colabrate;font-size:2em;height:2.1em;width:100%;border-bottom:1px solid #c2d1d8;border-top:1px solid #c2d1d8;background-color:white;margin-bottom:1px;">
+<div id='prev_quiz_button'  style="position:absolute;text-align:center;line-height:2em;height:2em;width:49.8%;color:white;background-color: #002D5D;display: inline;opacity: 0.4 " onclick="get_prev_quizzes()" >
+  prev
+</div>
+<div id='next_quiz_button' style="position:absolute;left:50.2%;text-align:center;line-height:2em;height:2em;width:49.8%;color:white;background-color: #002D5D;display: inline; " onclick="get_next_quizzes()">
+  next
+</div>
+</div>
+
+<script>
+    var quiz_start =1;
+
+
+    function log_out(){
+        try{
+            document.getElementById("mask").style.display = "";
+
+        }catch(er){
+            alert('log_out er:'+er)
+        }
+    }
+        function get_quizzes(_id){
+       try{
+        var subject_id = "";
+        var group_id = "";
+           subject_id = document.getElementById("subject_id").value;
+           group_id = document.getElementById("group_id").value;
+           if(subject_id=="" || subject_id==null)
+               subject_id ="";
+           if(group_id=="" || group_id==null)
+               group_id ="";
+           if(_id=="go_button"){
+               quiz_start =  1;
+           }
+
+        $.ajax({//Make the Ajax Request
+            type: "POST",
+            url: '/get_teacher_quizzes/',
+            data: {subject:subject_id,group:group_id,page:quiz_start},
+            beforeSend:  function() {
+                document.getElementById("mask").style.display = "";
+            },
+            success: function(html){//html = the server response html code
+                document.getElementById("mask").style.display = "none";
+                try{
+                    var _display_quizzes_count = document.getElementById('show_quizzes_count').innerHTML*1;
+
+                    if(document.getElementById("pages_count").innerHTML*1 <= quiz_start || _display_quizzes_count==0)
+                        document.getElementById("next_quiz_button").style.opacity=0.5;
+                    else if(document.getElementById("pages_count").innerHTML*1 > quiz_start)
+                        document.getElementById("next_quiz_button").style.opacity=1;
+                    if(quiz_start==1 || document.getElementById("pages_count").innerHTML*1==1)
+                        document.getElementById("prev_quiz_button").style.opacity=0.5;
+                    else
+                        document.getElementById("prev_quiz_button").style.opacity=1;
+
+                }   catch(er){
+                    alert("pages_count er"+er)
+                }
+            }
+        });
+       }catch(er){
+           alert('getquiz er:'+er)
+       }
+   }
+
+    function get_next_quizzes(){
+        try{
+            if(document.getElementById("pages_count").innerHTML*1 <= quiz_start || document.getElementById("next_quiz_button").style.opacity==0.5) {
+                document.getElementById("next_quiz_button").style.opacity=0.5;
+                return;
+            }
+            if(document.getElementById("pages_count").innerHTML*1 == quiz_start+1)
+                document.getElementById("next_quiz_button").style.opacity=0.5;
+            else
+                document.getElementById("next_quiz_button").style.opacity=1;
+            document.getElementById("prev_quiz_button").style.opacity=1;
+
+            //if((!range1 && range*1 > quiz_start) || (range1 && range1*1 > quiz_start)){
+                quiz_start += 1;
+                get_quizzes('');
+            //}
+        }catch(er){
+            alert('getquiz er:'+er)
+        }
+    }
+    function get_prev_quizzes(){
+        try{
+            if(quiz_start<=1) {
+                document.getElementById("prev_quiz_button").style.opacity=0.5;
+                return;
+            }
+            if(quiz_start-1==1)
+                document.getElementById("prev_quiz_button").style.opacity=0.5;
+            else
+                document.getElementById("prev_quiz_button").style.opacity=1;
+            document.getElementById("next_quiz_button").style.opacity=1;
+            quiz_start -= 1;
+            get_quizzes('');
+
+        }catch(er){
+            alert('getquiz er:'+er)
+        }
+    }
+</script>

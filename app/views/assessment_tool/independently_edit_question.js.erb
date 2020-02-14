@@ -1,0 +1,3 @@
+$("#editQuestion").html("<%= escape_javascript(render :partial => 'independent_question_editor', locals: {assessment_div: @assessment_div,page_number:@page_number})%>");
+$("#manageQuestions").tabs("select",3)
+$("#changeQuestion").button()

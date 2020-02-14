@@ -1,0 +1,80 @@
+:css
+  #assessment_end_chapter_quiz_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_end_chapter_quiz_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#maend_heading assessment_end_chapter_quiz
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_end_chapter_quizzes_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_end_chapter_quiz_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_end_chapter_quiz_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @assessment_end_chapter_quizzes.each do |assessment_end_chapter_quiz|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_end_chapter_quiz_#{assessment_end_chapter_quiz.id}"}
+                  -#%td.col=  assessment_end_chapter_quiz.rb.id
+                  %td.col
+                    = assessment_end_chapter_quiz.asset.user.name if assessment_end_chapter_quiz.asset
+                  %td.col
+                    = assessment_end_chapter_quiz.board.name if assessment_end_chapter_quiz.board
+                  %td.col
+                    = assessment_end_chapter_quiz.content_year.name if assessment_end_chapter_quiz.content_year
+                  %td.col
+                    = assessment_end_chapter_quiz.subject.name  if assessment_end_chapter_quiz.subject
+                  %td.col
+                    = link_to assessment_end_chapter_quiz.chapter.name, chapter_path(assessment_end_chapter_quiz.chapter)  if assessment_end_chapter_quiz.chapter
+                  %td.col
+                    = link_to assessment_end_chapter_quiz.topic.name, topic_path(assessment_end_chapter_quiz.topic)  if assessment_end_chapter_quiz.topic
+                  %td.col
+                    = assessment_end_chapter_quiz.name
+                  %td.col
+                    = display_date_time(assessment_end_chapter_quiz.created_at)
+                  %td.col
+                    = link_to_show(assessment_end_chapter_quiz_path(assessment_end_chapter_quiz))
+                    &nbsp
+                    = link_to_edit(edit_assessment_end_chapter_quiz_path(assessment_end_chapter_quiz))
+                    &nbsp;
+                    = link_to_delete(assessment_end_chapter_quiz_path(assessment_end_chapter_quiz))
+
+        - unless @assessment_end_chapter_quiz.blank?
+          .pagination_info
+            = paginate @assessment_end_chapter_quizzes
+        #assessment_end_chapter_quiz_configuration

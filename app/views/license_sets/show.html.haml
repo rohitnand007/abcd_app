@@ -1,0 +1,27 @@
+%p#notice= notice
+
+%p
+  %b Collection:
+  = @license_set.ipack
+%p
+  %b Institution:
+  = @license_set.institution
+%p
+  %b Center:
+  = @license_set.center
+%p
+  %b Publisher:
+  = @license_set.publisher
+%p
+  %b Starts:
+  = @license_set.starts
+%p
+  %b Ends:
+  = @license_set.ends
+%p
+  %b Licenses
+  = @license_set.licences
+
+= link_to 'Edit', edit_license_set_path(@license_set)
+\|
+= link_to 'Back', license_sets_path

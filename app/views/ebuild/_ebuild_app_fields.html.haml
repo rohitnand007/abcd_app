@@ -1,0 +1,8 @@
+.nested-fields
+  .group
+    .field
+      = f.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    - unless f.object_name == "ebuild_tag[ebuild_app_attributes][0]"
+      .remove_field{:style=>'float:right;margin: -28px 23% 0 0;padding-right:0px;'}
+        = link_to_remove_association 'Remove', f
+

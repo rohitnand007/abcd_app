@@ -1,0 +1,59 @@
+:javascript
+  $(document).ready(function() {
+    $("#teacher_subjects").dataTable({
+        "aoColumns": [
+                   null,null,null,null,{ "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "My Subjects", '#',{:class=>'current'}
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#teacher_subjects.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Created At
+                %th Manage Content
+            %tbody
+              -#%tr.tr-blank
+              - @subjects.each do |content|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col
+                    = content.board.try(:name) if content.board
+                  %td.col
+                    = content.content_year.try(:name) if content.content_year
+                  %td.col
+                    = content.try(:name)
+                  %td.col
+                    = display_date_time(content.created_at)
+                  %td.col
+                    =  link_to "Manage",manage_content_path(content)
+        - unless @subjects.blank?
+          .pagination_info
+            = paginate @subjects
+        #subject_configuration
+= content_for :right_side_bar do
+  .right_side_bar#sidebar
+    = render(:partial => 'shared/sidebar')
+

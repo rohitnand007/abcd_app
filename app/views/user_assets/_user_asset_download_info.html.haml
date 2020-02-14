@@ -1,0 +1,11 @@
+%table#UserAssetInfo.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+  %thead
+    %tr.tr-head
+      %th Student id
+      %th Student Name
+      %th Downloaded Status
+  -@usu_array.each do |usu|
+    %tr{:class => cycle("tr-odd","tr-even")}
+      %td{align:"center"}= usu[:id]
+      %td{align:"center"}= usu[:name]
+      %td{align:"center"}= usu[:downloaded]

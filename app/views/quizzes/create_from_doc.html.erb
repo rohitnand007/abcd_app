@@ -1,0 +1,64 @@
+<div id='content_header'>
+  <h1 id='main_heading'>
+    
+  </h1>
+</div>
+<div id='inner-tab-menu'>
+  <ul>
+    <li><a href="/quizzes/new">Create Assessment from Online form</a></li>
+    <li><%=link_to "Browse Assessments", :controller => "quizzes", :action => "index" %></li>
+  </ul>
+</div>
+<div id='data'>
+  <div>
+    <h3>Already have the doc ready to upload ?</h3>
+    Go <a href="/assessments/new">here</a>
+  </div>
+  <div class='label heading hr'>
+  </div>
+  <div>
+    <h1>Available Assessment Doc Templates</h1>
+  </div>
+  <div>Download the document template(Microsoft Word) for the assessment. After you have filled the document, you can upload the document.</div><br/>
+  <table width='100%'>
+    <tr>
+      <td>
+        <div>
+          <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='questions_list' width='100%'>
+            <thead>
+              <tr class='tr-head'>
+                <th>Format Type</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                  <tr class="tr-even even">
+                  <td class='col'>Fill in the Blanks</td>
+                  <td class='col'><a href="/assets/assessment_templates/DAD_Sub_Class_Chapter_index_no_Topic_index_no.doc">Download</a></td>               
+                </tr>
+                <tr class="tr-even even">
+                  <td class='col'>Multiple Choice</td>
+                  <td class='col'><a href="/assets/assessment_templates/MCQ_Sub_Class_Chapter_index_no_Topic_index_no.doc">Download</a></td>
+                </tr>
+                <tr class="tr-even even">
+                  <td class='col'>Match the following</td>
+                  <td class='col'><a href="/assets/assessment_templates/MTF_Sub_Class_Chapter_index_no_Topic_index_no.doc">Download</a></td>
+                </tr>
+                <tr class="tr-even even">
+                  <td class='col'>Sequence Sentences(Parajumble)</td>
+                  <td class='col'><a href="/assets/assessment_templates/SS_Sub_Class_Chapter_index_no_Topic_index_no.doc">Download</a></td>
+                </tr>
+                <tr class="tr-even even">
+                  <td class='col'>True/False</td>
+                  <td class='col'><a href="/assets/assessment_templates/TOF_Sub_Class_Chapter_index_no_Topic_index_no.doc">Download</a></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>
+<div class='pagination_info'>
+</div>

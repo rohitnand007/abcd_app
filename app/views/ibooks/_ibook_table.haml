@@ -1,0 +1,6 @@
+%table.assignedBooks
+  - pack_ibooks.each_slice(3) do |ibooks|
+    %tr
+      - ibooks.each do |ibook|
+        %td
+          = render partial:'ibooks/abridged_book_info', locals:{ibook:ibook}

@@ -1,0 +1,48 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", contents_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_content_path
+      %li.active= link_to "#{t("web-app-theme.show", :default => "Show")}", content_path
+  .content
+    .inner
+      %p
+        %b
+          = t("activerecord.attributes.content.vendor_id", :default => t("activerecord.labels.vendor_id", :default => "syllabus"))
+          \:
+        = @content.board.name
+      %p
+        %b
+          = t("activerecord.attributes.content.academic_class_id", :default => t("activerecord.labels.academic_class_id", :default => "Content Year"))
+          \:
+        = @content.content_year.name if @content.content_year_id
+      %p
+        %b
+          = t("activerecord.attributes.content.subject_id", :default => t("activerecord.labels.subject_id", :default => "Subject"))
+          \:
+        = @content.subject.name if @content.subject_id 
+      %p
+        %b
+          = t("activerecord.attributes.content.chapter", :default => t("activerecord.labels.chapter", :default => "Chapter"))
+          \:
+        = @content.chapter if @content.chapter_id
+      %p
+        %b
+          = t("activerecord.attributes.content.subchapter", :default => t("activerecord.labels.subchapter", :default => "Topic"))
+          \:
+        = @content.topic if @content.topic_id
+      %p
+        %b
+          = t("activerecord.attributes.content.filename", :default => t("activerecord.labels.filename", :default => "Name"))
+          \:
+        = @content.name
+      %p
+        %b
+          = t("activerecord.attributes.content.syllabus_id", :default => t("activerecord.labels.syllabus_id", :default => "status"))
+          \:
+        = @content.status  
+      .wat-cf
+        = link_to "Edit", edit_content_path(@content), :class => "button icon edit"
+        = link_to "Delete", content_path(@content), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+        = link_to 'Download the Content',est_download_content_path(@content)
+- content_for :sidebar, render(:partial => 'shared/sidebar')

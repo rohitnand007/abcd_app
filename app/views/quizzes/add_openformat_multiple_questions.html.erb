@@ -1,0 +1,94 @@
+<div id="content_header">
+  <h1 id="main_heading">Add Questions</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "show",:id=>@quiz.id %></li>
+    <li><%=link_to "Publish Assessment", :controller => "quizzes", :action => "publish_to",:id=>@quiz.id %></li>
+  </ul>
+</div>
+<div id="data">
+  <%= form_for @quiz,:url=>"/submit_openformat_multiple_questions/"+@quiz.id.to_s  do |f|%>
+  <!--<form id="add_catchall_questions_form" method="POST" action="/submit_openformat_multiple_questions/<%=@quiz.id%>" enctype="multipart/form-data" >-->
+    <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='users' width='100%'>
+      <thead>
+        <tr class='tr-head'>
+          <th></th>
+          <th>S.No.</th>
+          <th>Section</th>
+          <th>Tag Name</th>
+          <th>Page Number</th>
+          <th>In Page Location</th>
+          <th>Difficulty Level</th>
+          <th>Marks</th>
+          <th>Penalty (positive)</th>
+          <th>Answer Tags(Comma-separated) </th>
+          <th>Correct Answer</th>
+        </tr>
+      </thead>
+      <tbody id="table-head">
+        <tr class="tr-even even">
+          <td class='col remove_tag' onclick="remove_tr(this);" style="cursor: pointer">Remove</td>
+          <td class='col'>1</td>
+          <td class='col'><input name="questions[][section]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][tag]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][page_no]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][inpage_location]" type="text" value="" size="2"/></td>
+          <td class='col'><select name="questions[][difficulty]"><option value="1">Easy</option><option value="2">Medium</option><option value="3">Hard</option></select></td>
+          <td class='col'><input name="questions[][marks]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][penalty]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][answer_tags]" type="text" value="" /></td>
+          <td class='col'><input name="questions[][correct_answer]" type="text" value="" size="2"/></td>
+        </tr>
+        <tr class="tr-odd odd">
+          <td class='col remove_tag' onclick="remove_tr(this);" style="cursor: pointer">Remove</td>
+          <td class='col'>1</td>
+          <td class='col'><input name="questions[][section]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][tag]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][page_no]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][inpage_location]" type="text" value="" size="2"/></td>
+          <td class='col'><select name="questions[][difficulty]"><option value="1">Easy</option><option value="2">Medium</option><option value="3">Hard</option></select></td>
+          <td class='col'><input name="questions[][marks]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][penalty]" type="text" value="" size="2"/></td>
+          <td class='col'><input name="questions[][answer_tags]" type="text" value="" /></td>
+          <td class='col'><input name="questions[][correct_answer]" type="text" value="" size="2"/></td>
+        </tr>
+        <tr  id="last_tr"><input type="hidden" name="quiz_id" value="<%=@quiz.id%>"/></tr>
+      </tbody>
+    </table>
+    <br/>
+    <div id="add_question" style="cursor: pointer"><a>+Add more questions</a></div>
+    <br/>
+    <div>
+
+      <div id="assets">
+        <%= f.fields_for :assets do |c| %>
+            <%= render 'asset_fields', :f => c %>
+        <% end %>
+        <div class="links">
+          <%= link_to_add_association "Add pdf", f, :assets %>
+        </div>
+      </div>
+
+    </div>
+    <div style="display:none" id="serial_no">2</div>
+    <div class="group">
+      <div align="center" class="field">
+        <input class="button big primary" data-disable-with="Creating..." name="commit" type="submit" value="Save"/>
+        <a href="/questionbank" class="button danger icon remove">Cancel</a>
+      </div>
+    </div>
+  <%end%>
+  <!--</form>-->
+</div>
+<script>
+  $("#add_question").click(function(){
+    //var s = $("#serial_no").html
+    //var row = $("#tr-row").clone();
+    $('#table-head').children("tr").eq(0).clone().appendTo('#table-head');
+
+  });
+  function remove_tr(e) {
+    $(e).closest("tr").remove();
+  }
+</script>

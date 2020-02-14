@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery.loader.css">
+    <script src="/assets/activities/konva.js"></script>
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="/assets/activities/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/assets/activities/jquery.bootpag.min.js"></script>
+    <script type="text/javascript" src="/assets/activities/jquery.ui.touch-punch.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/activities/name_the_image.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_name_the_image.css">
+    <script src="/assets/activities/jquery-confirm.js"></script>
+    <script src="/assets/activities/jquery-simple-pagination-plugin.js"></script>
+    <script src="/assets/activities/jquery.loader.js"></script>
+    <script src="/assets/activities/app.js"></script>
+</head>
+
+<body>
+    <div class="header">
+    </div>
+    <div class="maincontent">
+        <!-- Header indicating flow -->
+        <div class="main_head">
+            <p class="col-xs-11" id="title-text">Image Labelling</p>
+            <div>
+                <ul class="nav nav-pills">
+                    <li class="active naming_tabs"><a href="#create_template" class="tabs tabs_for_naming create_template_tab">01 &nbspCreate Template</a></li>
+                    <li class="naming_tabs1"><a href="#upload_image" class="tabs tabs_for_naming">02 &nbsp Upload Image</a></li>
+                    <li class="naming_tabs1"><a href="#questions" class="tabs tabs_for_naming">03 &nbsp Create Question</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- tabs content -->
+        <div class='tab-content'>
+            <!-- creating template -->
+            <div id='create_template' class='tab-pane fade in active'>
+                <div class='col-xs-12 naming_create'>
+                    <div style='padding-top:12px'>
+                        <p class="information-text col-xs-5">Let's create the template before adding the question</p>
+                        <button class='btn  continue_from_create next pull-right'>Save & Continue</button>
+                    </div>
+                </div>
+                <div class='naming_form col-xs-12'>
+                    <form class="form-horizontal row" role="form" method="POST" style="padding-top:20px;padding-bottom:50px">
+                        <div class="col-xs-9">
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding" style="margin-bottom:0px" >
+                                <label for="contentName" class="col-xs-4">Name of the Activity</label>
+                                <div class="col-xs-8" >
+                                    <input type="text" name="contentName" id="contentName" class="form-control">
+                                    <p class="text-warning">Please name the activity carefully, this name will be shown to the student</p>
+                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding" style="margin-bottom:0px" >
+                                <label for="description" class="col-xs-4">Description</label>
+                                <div class="col-xs-8">
+                                    <input type="text" name="description" id="description" class="form-control" maxlength="350">
+                                     <p class="text-warning">Maximum character limit is 350</p>
+                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="class" class="col-xs-4">Class</label>
+                                <div class="col-xs-8 select-wrap ">
+                                    <%= collection_select :tag, :class_id, @class_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"className"} %>
+                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="subject" class="col-xs-4">Subject</label>
+                                <div class="col-xs-8 select-wrap">
+                                    <%= collection_select :tag, :class_id, @subject_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"subject"} %>                                </div>
+                            </div>
+                            <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                                <label for="chapter/topicTags" class="col-xs-4">Chapter/Topic tags</label>
+                                <div class="col-xs-8 select-wrap">
+                                    <%= collection_select :tag, :class_id, @concept_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"chapter"} %>                                </div>
+                            </div>
+                            <input type="hidden" name="learning_activity_type" id="learning_activity_type" value="name_the_image">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- uploading image -->
+            <div id='upload_image' class='tab-pane fade'>
+                <div class="col-xs-12 naming_create">
+                    <div style="padding-top: 12px">
+                        <div class="back" style="margin-top:3px">
+                            <img class="pull-left " alt="Back" src="/assets/activities/back.png">
+                        </div>
+                        <p class="information-text col-xs-5" style="margin-top:-2px">Now let's add image to the activity</p>
+                        <button class='btn  continue_from_upload  pull-right' style="margin-top:-5px">Save & Continue</button>
+                    </div>
+                </div>
+                <div class='col-xs-12 naming_images' style="margin-bottom:30px">
+                    <div class="col-xs-7 create-gallery-grid create-gallery-grid-content system_upload text-center" id="dropUpload">
+                        <img id="output" alt="Upload Image" src="/assets/activities/image-upload.png" style="width:150px">
+                        <div class="gallery-group" style="padding:10px">
+                            <span style="color:#7f7f7f">Drag and drop files onto this window</span>
+                        </div>
+                        <div class="choose-file" style="padding-top:3px">
+                            <input id="imageUpload" type="file" accept=".jpg, .jpeg, .png" onchange="loadImageToServer(event)">
+                            <span>Upload a picture</span>
+                            <span style="padding-left:5px;"><img src='/assets/activities/upload.png' style="padding-bottom:3%" alt="Upload"></span>
+                        </div>
+                    </div>
+                    <div class="col-xs-5 create-gallery-grid create-gallery-grid-content text-center">
+                        <div style="padding-top: 25px;">
+                            <div id="custom-search-input">
+                                <div class="input-group col-xs-offset-2 col-xs-8">
+                                    <input type="text" class="search-query form-control" id="myText" placeholder="Search" />
+                                    <span class="input-group-btn">
+                                        <button class="btn search" type="button" >
+                                            <span class="glyphicon glyphicon-search" style="color:#ffffff"></span>
+                                    </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="myImgHolder">
+                                <img id="google" alt="Upload Image" src="/assets/activities/google-powered.png">
+                            </div>
+                            <div id="paginate_for_search"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- creating tags and questions -->
+            <div class='tab-pane fade' id='questions'>
+                <div class="col-xs-12 options_for_modals">
+                    <div class="back">
+                        <img class="pull-left" style="margin-right:15px;margin-top:5px;" alt="Back" src="/assets/activities/back.png">
+                    </div>
+                    <button type="button" class=" btn " id="DescriptionModal"><span class="glyphicon glyphicon-plus" style="margin-right:5px"></span>Add Instructions</button>
+                    <button type="button" class=" btn " id="AnswerModal"><span class="glyphicon glyphicon-plus" style="margin-right:5px"></span>Add Optionals</button>
+                    <button type="button" class=" btn " id="PreviewModal">Preview</button>
+                    <button type="button" class="btn unlock" style="margin-top:1px"><img class="unlock-image"src="/assets/activities/unlock.png">Unlock Image</button>
+                    <button type="button" class="btn lock" style="margin-top:1px;display:none"><span class="glyphicon glyphicon-lock" style="margin-right:5px"></span>Lock Image</button>
+                    <button class="btn btn-custom logo-btn"><img src="/assets/activities/ignitor_logo.png" style="width:20px;height:20px;"><span  style="margin-left:8px">Edit Logo</span> </button>
+                    <input  name="Select File" type="file" accept=".jpg, .jpeg, .png" class="logo-upload" style="display:none"/>
+
+                        <button class="btn  save next pull-right" style="margin-top:1px">Save Template</button>
+                </div>
+                <div class="mainbox col-xs-12">
+                    <div class=" col-xs-10 canvas_content" style="border-right:1px solid #adadad;">
+                       <div class="description">
+                        </div>
+                        <div id='editcanvas'>
+                       		<div id="canvas_region">
+                        	</div>
+                        </div>
+                    </div>
+                    <div class="side_menu col-xs-2">
+                        <div class="tag_options col-xs-12">
+                            <div class="col-xs-5 tagging">
+                                <p style="margin-left:-22px">Tagging</p>
+                                <div id='nametag' style="position:relative;left:-12px"></div>
+                            </div>
+                            <div class="col-xs-7 areatags">
+                                <p>Hotspot</p>
+                                <div id='areatag'></div>
+                            </div>
+                        </div>
+                        <div class="answer_options col-xs-12">
+                            <p class="optional-answers">Other Optional Answers</p>
+                            <ul class="options"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for description and adding optional answers-->
+    <div class="modal fade fadeModal" id="myModal" role="dialog" data-backdrop="false">
+        <div class="modal-dialog">
+            <!-- Modal content for tag box answers-->
+            <div class="modal-content tagbox-answer">
+                <div class="modal-body" style="padding-top:10px;padding-bottom:0px">
+                    <h4 class="modal-title modal-title-tagbox">Edit the Tag Box</h4>
+                    <div class="content-show">
+	                    <input type="text" placeholder="Add the answer into this field" class="form-control" id="input-answer">
+	                    <span class="text-warning">Maximum character limit is 60</span>
+	                    <h4 id="text_in_dialog">or</h4>
+	                    <div class="choose-file image-input" style="width:100%;margin-bottom:0px;">
+	                        <span style="padding-left:4%;">Upload a picture</span>
+	                        <input id="input-image" type="file" accept=".jpg, .jpeg, .png">
+	                        <span style="padding-left:5px;"><img src='/assets/activities/upload.png' style="padding-bottom:3%" alt="Upload"></span>
+	                    </div>
+	                    <span class="image-warning">Max Size should be 200x200 px</span>
+	            		<div class="col-xs-offset-2">
+		                    <button type="button" class="btn  modal_btns modal-addwronganswer" data-dismiss="modal" id="AddWrongAnswer" style="width:100px">Add</button>
+		                    <button type="button" class="btn  modal_btns modal-save" id="save" style="width:100px">Save</button>
+		                    <button type="button" class="btn  modal_btns" data-dismiss="modal" style="width:100px">Cancel</button>
+		                </div>
+	                </div>
+	                <div class="img-preview-modal" style="display:none">
+	                	<div class="col-xs-10 text-center image-details">
+						</div>
+						<div>
+							<button type="button" class="btn  modal_btns img-preview-cancel" data-dismiss="modal" style="width:100px;margin-top:20px">Cancel</button>
+						</div>
+	                </div>
+                </div>
+                
+            </div>
+            <!-- Modal content for description-->
+            <div class="modal-content modal-description">
+                <div class="modal-body">
+                    <h4 class="modal-title">Instructions for students</h4>
+                    <textarea class="form-control" rows="5" id="textarea-description" placeholder="Instructions for the students about this activity"></textarea>
+                </div>
+                <div class="col-xs-offset-9">
+                    <button type="button" class="btn  modal_btns" data-dismiss="modal" id="AddDescription" style="margin-left:15%">Add</button>
+                    <button type="button" class="btn  modal_btns" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal for Preview-->
+    <div class="modal fade fadeModal" id="ModalForPreview" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content for tag box answers-->
+            <div class="modal-content modal-content-preview">
+                <div class="modal-header modal-header-preview">
+                    <span class="glyphicon glyphicon-remove pull-right" style="cursor:pointer;position:relative;right:5px" data-dismiss="modal"></span>
+                    <p class="modal-title modal-title-preview">Naming the Image Preview</p>
+                </div>
+                <div class="modal-body previewBody">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	<script src="/assets/activities/save_name_the_image.js"></script>
+    <script src="/assets/activities/name_the_image.js"></script>
+    <script src="/assets/activities/play_name_the_image.js"></script>
+</body>
+
+</html>

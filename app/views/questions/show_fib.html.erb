@@ -1,0 +1,46 @@
+ 
+<%= render partial: "content_header" %>
+<div id="data">
+  <table>
+    <tr>
+      <td>
+        <div id='main'>
+
+          <div class='block' id='block-text' style="min-width:900px;width:96%;margin:2%">
+            <div class='content' style="margin:0px">
+              <div class='inner question_style' >
+                <p class='first' style="min-width: 900px;overflow-x: auto">
+                  <%= @question.questiontext_format.html_safe %>
+                  <span class='hightlight'></span>
+                </p>
+                <table align='center' class='details' width='900px'>
+                  <tbody>
+                  <%i=0%>
+                  <%@question.question_fill_blanks.each do |c| %>
+                      <tr>
+                        <td><%= c.answer.split(',').join(' or ').html_safe %></td>
+                        <td><%= c.case_sensitive ? 'Case Sensitive' : '' %></td>
+                      </tr>
+                      <%i = i+1%>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        <%= render partial: "question_metadata" %>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <!--<div class="group">-->
+    <!--<div align="center" class="field">-->
+      <!--<%#if !@question.edit_access(current_user.id)%>-->
+          <!--<a href="/questions/copy/<%#=@question.id%>" class="button big primary">Copy</a>-->
+      <!--<%# else %>-->
+          <!--<a href="/questions/copy/<%#=@question.id%>" class="button big primary">Copy</a>-->
+          <!--<a href="/questions/<%#=@question.id%>/edit" class="button big primary">Edit</a>-->
+      <!--<%# end %>-->
+    <!--</div>-->
+  <!--</div>-->
+</div>

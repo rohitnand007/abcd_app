@@ -1,0 +1,87 @@
+<div id='content_header'>
+  <h1 id='main_heading'>
+    Practice Assessments
+  </h1>
+</div>
+<div id='inner-tab-menu'>
+  <ul>
+    <li><a href="/quizzes">Assessments Home</a></li>
+    <!--<li><a href="/quizzes/edutor_assessments">Edutor Assessments</a></li>-->
+  </ul>
+</div>
+<div id='data'>
+  <table width='100%'>
+    <tr>
+      <td>
+        <div>
+          <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='assessments_list' width='100%'>
+            <thead>
+            <tr class='tr-head'>
+              <th>Name</th>
+              <!--<th>Board</th>-->
+              <th>Academic Class</th>
+              <th>Subject</th>
+              <th>Chapter</th>
+              <!--<th>Topic</th>-->
+              <!--<th>Type</th>-->
+              <th>Total Attempts</th>
+              <th>No. of Questions</th>
+              <th>Total Marks</th>
+              <!--<th>Difficulty Level</th>-->
+              <% if current_user.id == 1 %>
+                  <th>Created by / Institute</th>
+              <% else %>
+                  <th>Created by</th>
+              <% end %>
+              <th>No. of times Published</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <%i = 0%>
+            <% @quizzes.each do |q| %>
+                <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                <% else %>
+                    <tr class="tr-odd odd">
+                <% end %>
+                <td class='col'><%=q.name%></td>
+                <!--<td class='col'><%#= (q.context.try(:board).try(:name)) %></td>-->
+                <td class='col'><%= q.try(:context).try(:content_year).try(:name) %></td>
+                <td class='col'><%= q.try(:context).try(:subject).try(:name) %></td>
+                <td class='col'><%= q.try(:context).try(:chapter).try(:name) %> </td>
+                <!--<td class='col'><%#= q.try(:context).try(:topic).try(:name)%></td>-->
+                <!--<%# if q.format_type==1 %>-->
+                    <!--<td class='col'>Open Format</td>-->
+                <!--<%#else%>-->
+                    <!--<td class='col'>Normal</td>-->
+                <!--<%#end%>-->
+                <td class='col'><%= q.attempts %></td>
+                <td class='col'><%= q.questions.count %></td>
+                <td class='col'><%= q.quiz_question_instances.sum(:grade) %></td>
+                <!--<td class='col'><%#= q.difficulty_text %></td>-->
+                <% if current_user.id == 1 && q.institution_id !=1 %>
+                    <td class='col'><%= q.user.profile.try(:firstname)+'/'+Institution.find(q.institution_id).try(:profile).try(:firstname) %></td>
+                <% elsif current_user.id == 1 && q.institution_id ==1 %>
+                    <td class='col'><%= q.user.profile.try(:firstname)+'/ Edutor' %></td>
+                <% else %>
+                    <td class='col'><%= q.user.profile.try(:firstname) %></td>
+                <% end %>
+                <td class='col'><%= q.quiz_targeted_groups.count %></td>
+                <td class='col'>
+                  <%= link_to 'Show',show_practice_assessment_path(q)%>
+                </td>
+                </tr>
+                <%i = i+1%>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>
+<div class='pagination_info'>
+  <%= paginate @quizzes%>
+</div>

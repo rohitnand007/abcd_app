@@ -1,0 +1,25 @@
+%h1 Listing work space apps
+
+%table
+  %tr
+    %th User
+    %th Package name
+    %th Work space
+    %th App location
+    %th
+    %th
+    %th
+
+  - @work_space_apps.each do |work_space_app|
+    %tr
+      %td= work_space_app.user_id
+      %td= work_space_app.package_name
+      %td= work_space_app.work_space
+      %td= work_space_app.app_location
+      %td= link_to 'Show', work_space_app
+      %td= link_to 'Edit', edit_work_space_app_path(work_space_app)
+      %td= link_to 'Destroy', work_space_app, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Work space app', new_work_space_app_path

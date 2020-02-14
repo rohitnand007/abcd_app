@@ -1,0 +1,54 @@
+.analysis_box
+  %br
+  .quicktest_menu
+    - if (quicktest_downloaded_user_count(quicktest) > 0)
+      .quicktest_menubutton_active.student_response_button
+        Student response and performance
+    -else
+      .quicktest_menubutton_active.student_response_button_disabler
+        Student response and performance
+    .quicktest_menubutton_blank
+    - if (quicktest_downloaded_user_count(quicktest) > 0)
+      .quicktest_menubutton_dull.question_graph_button
+        Questions graph
+    .quicktest_menubutton_info
+      .refresh_button
+        = link_to "Refresh", quick_test_update_quick_test_info_path(quicktest), remote:true
+        .image_div
+          =image_tag "refresh_icon.png"
+          =image_tag "refreshing_icon.gif", :style=>"display: none ;"
+  .q_body_block
+    .student_response_box
+      .student_report_block
+        - @highest_score = highest_score(quicktest)
+        - @lowest_score = lowest_score(quicktest)
+        .report_box
+          = render :partial => 'quicktest_status', locals: {quicktest: quicktest}
+          .reportsview_rowcell
+            .line_div
+          = render :partial => 'aggregate_performance', locals: {quicktest: quicktest}
+        .report_box
+          = render :partial => 'studentwise_quicktest_status', locals: {quicktest: quicktest}
+      .extra_toggle.extra_toggle_show
+    - if (@quicktest_downloaded_user_count > 0)
+      .question_graph_box
+        .question_graph_block
+          - @percentages =[]
+          = render :partial => 'questionwise_barchart', locals: {quicktest: quicktest}
+          = render :partial => 'studentwise_each_question', locals: {quicktest: quicktest}
+        .extra_toggle.extra_toggle_show
+  %br
+
+:javascript
+  $("#qid_#{quicktest.id} .question_graph_box").hide();
+  $("#qid_#{quicktest.id} .student_report_block").children().eq(1).hide();
+  $("#qid_#{quicktest.id} .question_graph_block").children().eq(1).hide();
+  graph_builder("qid_#{quicktest.id}");
+
+
+
+
+
+
+
+

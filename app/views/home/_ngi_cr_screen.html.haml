@@ -1,0 +1,39 @@
+= stylesheet_link_tag "ngi_page"
+= javascript_include_tag 'ngi_quiz'
+.row
+  %h3
+    = current_user.center.name
+  -if @final_quiz_data_page1.present?
+    %table#myTable.table.table-hover.tablesorter
+      %thead
+        %tr
+          %th Scheduled Test
+          %th Published
+          %th Downloaded
+          %th Submitted
+          %th Not Submitted
+          %th Options
+      -@final_quiz_data_page1.each do |quiz_data|
+        %tr
+          %td= link_to "#{quiz_data[0]}",datewise_quiz_path(:date=>quiz_data[0]),remote:true,class:"date button"
+          %td= quiz_data[1][:published].sum
+          %td= quiz_data[1][:downloaded].sum
+          %td= quiz_data[1][:submitted].sum
+          %td= quiz_data[1][:not_submitted].sum
+          %td= link_to "Download", download_datewise_quiz_data_full_path(:date=>quiz_data[0]), class:"button"
+  -else
+    "No Quiz Data uploaded for this center"
+
+.date_quiz_data
+
+
+:javascript
+  $(document).ready(function()
+    {
+        $("#myTable").tablesorter( {sortList: [[0,0], [1,0]]} );
+    }
+  );
+  $(".date").click(function(){
+  $(".row").hide();
+  });
+

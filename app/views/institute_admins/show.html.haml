@@ -1,0 +1,37 @@
+#content_header
+  %h1#main_heading Institute Admin
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", institute_admins_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_institute_admin_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_institute_admin_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", institute_admin_path(@institute_admin)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'institution'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.institution.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @institute_admin.profile.firstname
+        %tr.even.left
+          %td= t("activerecord.attributes.institution.address", :default => t("activerecord.labels.address", :default => "Address"))
+          %td.right= @institute_admin.profile.address
+        %tr.odd.left
+          %td= t("activerecord.attributes.institution.website", :default => t("activerecord.labels.website", :default => "Website"))
+          %td.right= @institute_admin.profile.website
+        %tr.even.left
+          %td= t("activerecord.attributes.institution.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+          %td.right= @institute_admin.profile.phone
+        %tr.odd.left
+          %td= t("activerecord.attributes.institution.email", :default => t("activerecord.labels.email", :default => "Email"))
+          %td.right= @institute_admin.email
+        %tr.even.left
+          %td Logo
+          %td.right=  image_tag @institute_admin.profile.photo.url(:large)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_institute_admin_path(@institute_admin), :class => "button icon search"
+            = link_to "Delete",edit_institute_admin_path(@institute_admin), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+
+

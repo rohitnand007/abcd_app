@@ -1,0 +1,59 @@
+:javascript
+  $(document).ready(function() {
+    $("#boards").dataTable({
+                "aoColumnDefs" : [
+                                    //{"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]}
+                                    //{"bSortable":false, "aTargets":[3]},                                 
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#boards").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Board :   " },
+                "fnPreDrawCallback": function( oSettings ) {
+                  $("#boards").css("opacity", "0.4");
+                  $("#overlay").show();
+                },
+                "fnDrawCallback": function( oSettings ) {
+                  $("#boards").css("opacity", "1");
+                  $("#overlay").hide();
+                }
+    });
+    
+    var viewportHeight = $(window).height();
+    $("#boards_processing").css("font-size", 50);
+    $("#boards_processing").css("top", viewportHeight/2);
+    $("#boards_processing").css("width", 300);
+    $("#boards_processing").css("height", 70);
+    $("#boards_processing").css("color","rgb(100,0,0");
+    $("#boards_processing").css("top","430px");
+  });
+#content_header
+  %h1#main_heading Boards
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", boards_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_board_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#boards.listing.sort_table{data: boards_path(format: :json),align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.board.name", :default => t("activerecord.labels.name", :default => "Name"))
+                %th= t("activerecord.attributes.board.code", :default => t("activerecord.labels.code", :default => "Code"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+#overlay{:style => "position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; opacity:0.2; background: #000;"}

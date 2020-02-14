@@ -1,0 +1,45 @@
+#content_header
+  %h1#main_heading Test Configurations
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", test_configurations_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_test_configuration_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_test_configuration_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}",test_configuration_path(@test_configuration)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td Status
+          %td.right= @test_configuration.current_status
+        %tr.even.left
+          %td Assessment
+          %td.right=# link_to @test_configuration.assessment.name,"#"
+        %tr.odd.left
+          %td Group
+          %td.right=  @test_configuration.group.email if @test_configuration.group.email
+        %tr.even.left
+          %td Start Time
+          %td.right= @test_configuration.start_time
+        %tr.odd.left
+          %td End Time
+          %td.right=   @test_configuration.end_time
+        %tr.even.left
+          %td Topper Mark
+          %td.right= @test_configuration.topper_mark
+        %tr.odd.left
+          %td Class Average
+          %td.right= @test_configuration.class_average
+        %tr.even.left
+          %td Created At
+          %td.right= display_date_time(@test_configuration.created_at)
+        %tr.odd.left
+          %td Updated At
+          %td.right= display_date_time(@test_configuration.updated_at)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit", edit_test_configuration_path(@test_configuration), :class => "button icon edit"
+            = link_to "Delete", test_configuration_path(@test_configuration), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+

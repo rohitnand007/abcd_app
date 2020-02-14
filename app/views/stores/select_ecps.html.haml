@@ -1,0 +1,31 @@
+%h3= "You are adding Ecps to #{@store.name}"
+
+.publishers_list
+  #content_header
+    %h1#main_heading 
+    %br
+= form_for @store, url: add_ecps_store_path,method: :post do |f|
+  #data
+    %table{width: '100%'}
+      %tr
+        %td
+          %div
+            %table#publishers.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+              %thead
+                %tr.tr-head
+                  %th Name
+                  %th Email_id
+                  %th Edutor Id
+                  %th Check
+            %tbody
+              - @publishers.each do |publisher|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"publisher_#{publisher.id}"}
+                  %td.col= publisher.name
+                  %td.col= publisher.email
+                  %td.col= publisher.try(:edutorid)
+                  %td
+                    = check_box_tag "ecp_ids[]", publisher.id, @store.publisher_ids.include?(publisher.id) ? true : false , class: "add_ecps"
+  %br
+    %br
+  =f.submit "Add Ecps to Store", class: "button"
+%br

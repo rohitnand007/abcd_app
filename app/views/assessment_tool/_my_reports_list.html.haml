@@ -1,0 +1,191 @@
+#body_content_1{style: "display: block;"}
+  .assessments_layout
+    -#.assessment-header Analytics / Reports
+    .spinner-gif{:style => "display: none; position: fixed; z-index: 5; left: 45%; top: 45%"}
+      = image_tag 'spiffygif.gif'
+    %br
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      %ul#tabsul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-corner-all{role: "tablist"}
+        %li{style: "width: 4px;"}   
+        %li.ui-state-default.ui-corner-top.ui-tabs-active.ui-state-active{"aria-controls" => "tabs-1", "aria-labelledby" => "ui-id-2", "aria-selected" => "true", role: "tab", tabindex: "0"}
+          %a#ui-id-2.ui-tabs-anchor{href: "#tabs-1", role: "presentation", tabindex: "-1"} My Assessment Reports
+        %li.ui-state-default.ui-corner-top{"aria-controls" => "tabs-2", "aria-labelledby" => "ui-id-3", "aria-selected" => "false", role: "tab", tabindex: "-1"}
+          %a#ui-id-3.ui-tabs-anchor{href: "#tabs-2", role: "presentation", tabindex: "-1"} All Assessment Reports
+        %li.ui-state-default.ui-corner-top{"aria-controls" => "tabs-3", "aria-labelledby" => "ui-id-4", "aria-selected" => "false", role: "tab", tabindex: "-1"}
+          %a#ui-id-4.ui-tabs-anchor{href: "#tabs-3", role: "presentation", tabindex: "-1"} Create Assessment Reports
+      #tabs-1.ui-tabs-panel.ui-widget-content.ui-corner-bottom{"aria-expanded" => "true", "aria-hidden" => "false", "aria-labelledby" => "ui-id-2", role: "tabpanel", style: "display: block;"}
+        -#%div
+        -#  %select#classComboBox
+        -#    %option{value: ""} Class XI
+        -#    %option{value: ""} Class X
+        -#    %option{value: ""} Class XII
+        -#  %select#classComboBox
+        -#    %option{value: ""} Assessment Type
+        -#  %select#classComboBox
+        -#    %option{value: ""} Subject
+        -#%br/
+        - i = 0
+        - if @assessment_reports_tasks.empty?
+          No Reports Scheduled
+        - @assessment_reports_tasks.each do |task|
+          - i = i + 1
+          .assessment-section
+            %span.section-title
+              = task.parent_obj.quiz.name
+            %br/
+            %br/
+            %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+              %tbody
+                %tr
+                  %td{style: "width: 70%; border: 0px; padding: 0px;"}
+                    %table{cellpadding: "0", cellspacing: "0"}
+                      %tbody
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Class :
+                            -if task.parent_obj.quiz.context.nil?
+                              - ac_tg_id =  task.parent_obj.quiz.quiz_detail.academic_class_tag_id
+                              = ac_tg_id.present? ? Tag.find(ac_tg_id).value : "NA"
+                            -else
+                              = task.parent_obj.quiz.context.content_year.name
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Marks:
+                            = task.parent_obj.quiz.total_marks.to_i
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Report Status:
+                            = (task.status == "awaiting_result") ? "Still Pending" : "Successfully Generated"
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Published To:
+                            = User.find(task.parent_obj.group_id).name if task.parent_obj.to_group
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Duration:
+                            = task.parent_obj.quiz.timelimit
+                            Mins
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Scheduled :
+                            = time_ago_in_words Time.at(task.updated_at)
+                            ago
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Subject:
+                            -if task.parent_obj.quiz.context.nil?
+                              = task.parent_obj.quiz.quiz_detail.subject_tag_id.nil? ? "Multi-Subject" : Tag.find(task.parent_obj.quiz.quiz_detail.subject_tag_id).value
+                            -else
+                              = task.parent_obj.quiz.context.try(:subject).try(:name)
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Test Taken:
+                            = QuizAttempt.where(:publish_id=> task.parent_obj_id, :quiz_id => task.parent_obj.quiz.id).group_by(&:user_id).count
+                            of
+                            = task.parent_obj.group_id == 1 ?  1 : User.find(task.parent_obj.group_id).students.count
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Compared To:
+                            = pluralize task.misc.split(',').count, 'Test'
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Publish ID:
+                            = task.parent_obj.id
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Assessment ID:
+                            = task.parent_obj.quiz.id
+                          %td
+                  %td{style: "border: 0px; padding: 2px 8px 2px 8px; width:200px;"}
+                    %div{style: "float: right;"}
+                      = link_to "View Reports", assessment_get_view_report_partial_path(task) , :remote => true ,:class=> "report_buttons view-analytics"
+                      \
+                      = link_to "Publish Reports", "#" , :remote => true, :class=> "report_buttons publish_reports"
+                    %div{style: "clear: both;"}
+          %br/
+        .pagination_info
+          = paginate @assessment_reports_tasks
+          %br
+          = (page_entries_info @assessment_reports_tasks).html_safe
+        -#%span{style: "color:grey; float:right"}
+        -#  %i View More Reports ...
+        -#%span{style: "clear:both;"}
+      #tabs-2.ui-tabs-panel.ui-widget-content.ui-corner-bottom{"aria-expanded" => "false", "aria-hidden" => "true", "aria-labelledby" => "ui-id-3", role: "tabpanel", style: "display: none;"}
+        -#.assessment-section
+        -#  %p ToDo
+        -#  %br/
+        -#%div
+        -#  %select#classComboBox
+        -#    %option{value: ""} Class XI
+        -#    %option{value: ""} Class X
+        -#    %option{value: ""} Class XII
+        -#  %select#classComboBox
+        -#    %option{value: ""} Assessment Type
+        -#  %select#classComboBox
+        -#    %option{value: ""} Subject
+        -#%br/
+        - i = 0
+        - if @assessment_reports_tasks_all.empty?
+          No Reports Scheduled
+        - @assessment_reports_tasks_all.each do |task|
+          - i = i + 1
+          .assessment-section
+            %span.section-title
+              = task.parent_obj.quiz.name
+            %br/
+            %br/
+            %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+              %tbody
+                %tr
+                  %td{style: "width: 70%; border: 0px; padding: 0px;"}
+                    %table{cellpadding: "0", cellspacing: "0"}
+                      %tbody
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Class :
+                            -if task.parent_obj.quiz.context.nil?
+                              - ac_tg_id =  task.parent_obj.quiz.quiz_detail.academic_class_tag_id
+                              = ac_tg_id.present? ? Tag.find(ac_tg_id).value : "NA"
+                            -else
+                              = task.parent_obj.quiz.context.content_year.name
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Marks:
+                            = task.parent_obj.quiz.total_marks.to_i
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Report Status:
+                            = (task.status == "awaiting_result") ? "Still Pending" : "Successfully Generated"
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Published To:
+                            = User.find(task.parent_obj.group_id).name if task.parent_obj.to_group
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Duration:
+                            = task.parent_obj.quiz.timelimit
+                            Mins
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Scheduled :
+                            = time_ago_in_words Time.at(task.updated_at)
+                            ago
+                        %tr
+                          %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                            Subject:
+                            -if task.parent_obj.quiz.context.nil?
+                              = task.parent_obj.quiz.quiz_detail.subject_tag_id.nil? ? "Multi-Subject" : Tag.find(task.parent_obj.quiz.quiz_detail.subject_tag_id).value
+                            -else
+                              = task.parent_obj.quiz.context.try(:subject).try(:name)
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Test Taken:
+                            = QuizAttempt.where(:publish_id=> task.parent_obj_id, :quiz_id => task.parent_obj.quiz.id).group_by(&:user_id).count
+                            of
+                            = task.parent_obj.group_id == 1 ? 1 : User.find(task.parent_obj.group_id).students.count
+                          %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                            Compared To:
+                            = pluralize task.misc.split(',').count, 'Test'
+                  %td{style: "border: 0px; padding: 2px 8px 2px 8px; width:200px;"}
+                    %div{style: "float: right;"}
+                      = link_to "View Reports", assessment_get_view_report_partial_path(task) , :remote => true, :class=> "report_buttons view-analytics"
+                      \
+                      = link_to "Publish Reports", "#" , :remote => true, :class=> "report_buttons publish_reports"
+                    %div{style: "clear: both;"}
+          %br/
+        .pagination_info
+          = paginate @assessment_reports_tasks_all
+          %br
+          = (page_entries_info @assessment_reports_tasks_all).html_safe
+        -#%span{style: "color:grey; float:right"}
+        -#  %i View More Reports ...
+        -#%span{style: "clear:both;"}
+      = render :partial => 'create_assessment_reports'

@@ -1,0 +1,1 @@
+$("#qid_<%= @quiz.id %>").html("<%= escape_javascript(render :partial => 'full_analysis_box', locals: {quick: @quiz})%>");

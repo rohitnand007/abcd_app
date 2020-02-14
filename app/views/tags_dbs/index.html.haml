@@ -1,0 +1,17 @@
+%h2 Tags DB
+%table#tags_db_list.listing.sort_table{:align => "center", :cellpadding => "1", :cellspacing => "1", :width => "100%"}
+  %thead
+    %tr.tr-head
+      %th S.No
+      %th DB Name
+      %th Users
+      %th
+  %tbody
+    -@dbs.each_with_index do |db, i|
+      %tr{:class => cycle("tr-odd", "tr-even")}
+        %td= i+1
+        %td= db.db_name
+        %td= db.users.map(&:name).join(",")
+        %td
+          = link_to 'Update Users',"/tags_dbs/#{db.id}/edit_users", class: "button tablebutton"
+          = link_to 'Update Tags', "/tags_dbs/#{db.id}/edit_tags", class: "button tablebutton"

@@ -1,0 +1,186 @@
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+    $(document).ready(function () {
+        startCreating();
+        $('#tabMenu li').click(function () {
+            if (!$(this).hasClass('selected')) {
+                $('#tabMenu li').removeClass('selected');
+                $(this).addClass('selected');
+                $(this).css({background_color:"#fff"});
+                if ($(this)[0].getAttribute("class") == "conceptMap selected") {
+                    var top = get(selectedNode, "y");
+                    var left = get(selectedNode, "x");
+                    window.scroll((left - (window.innerWidth / 3) + (big_radiusC * 2)), (top - (window.innerHeight / 3)));
+                    $(this).children().children()[1].setAttribute("class", "polygon-right-selected");
+                    if ($('#tabMenu li').get(1).getAttribute("class") == "preview") {
+                        $('#tabMenu li').get(1).children[0].children[1].setAttribute("class", "polygon-right");
+                    }
+                    if ($('#tabMenu li').get(2).getAttribute("class") == "submitCM") {
+                        $('#tabMenu li').get(2).children[0].children[1].setAttribute("class", "polygon-right");
+                    }
+                }
+                if ($(this)[0].getAttribute("class") == "preview selected") {
+                    submit1();
+                    $(this).children().children()[1].setAttribute("class", "polygon-right-selected");
+                    if ($('#tabMenu li').get(0).getAttribute("class") == "conceptMap") {
+                        $('#tabMenu li').get(0).children[0].children[1].setAttribute("class", "polygon-right");
+                    }
+                    if ($('#tabMenu li').get(2).getAttribute("class") == "submitCM") {
+                        $('#tabMenu li').get(2).children[0].children[1].setAttribute("class", "polygon-right");
+                    }
+                }
+                if ($(this)[0].getAttribute("class") == "submitCM selected") {
+                    $(this).children()[0].children()[1].setAttribute("class", "polygon-right-selected");
+                    if ($('#tabMenu li').get(1).getAttribute("class") == "preview") {
+                        $('#tabMenu li').get(1).children[0].children[1].setAttribute("class", "polygon-right");
+                    }
+                    if ($('#tabMenu li').get(0).getAttribute("class") == "conceptMap") {
+                        $('#tabMenu li').get(0).children[0].children[1].setAttribute("class", "polygon-right");
+                    }
+                    submitForm();
+                }
+                $('.boxBody div.parent').fadeOut
+                        ('10');
+                $('.boxBody div.parent:eq(' +
+                        $('#tabMenu > li').index(this) + ')').fadeIn('10');
+            }
+        })
+    });
+
+</script>
+<%= stylesheet_link_tag "tabStyle", :media => "all" %>
+<style>
+    body {
+        font-size: 10px;
+        color: #000;
+        background-color: #ffffff;
+        z-index: 22;
+        /*width: 160%;
+        height: 160%;
+        max-width: 400%;
+        max-height: 400%;*/
+    }
+
+    a {
+        color: #ccc;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #ccc;
+        text-decoration: none
+    }
+
+    #tabMenu {
+        margin: 0;
+        padding: 0 10px 0 1px;
+        list-style: none;
+        max-width: 400%;
+        position: fixed;
+        z-index: 100;
+    }
+
+    #tabMenu li {
+        font-family: arial;
+        font-style: normal;
+        font-size: medium;
+        font-weight: bold;
+        float: left;
+        height: 50px;
+        width: 200px;
+        cursor: pointer;
+        cursor: hand;
+        text-align: center;
+        float: left;
+
+    }
+
+
+    .box {
+        background-color: white;
+        width: 160%;
+        height: 160%;
+        max-width: 400%;
+        max-height: 400%;
+    }
+
+    .boxBody {
+        background-color: white;
+        z-index: 100;
+    }
+
+    .boxBody div.parent {
+        display: none;
+    }
+
+    .boxBody div.show {
+        display: block;
+    }
+
+    .boxBody div ul {
+        margin: 0 10px 0 25px;
+        padding: 0;
+        width: 500px;
+    }
+
+    .boxBody div li {
+        cursor: hand;
+        cursor: pointer;
+        width: 227px;
+        position: fixed;
+        left: 0.1%;
+        top: 0.1%;
+        height: 30px;
+    }
+
+
+</style>
+
+<div class="box">
+  <ul id="tabMenu">
+    <li class="conceptMap selected">
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>
+          Concept Map
+        </div>
+        <div class="polygon-right-selected"></div>
+      </div>
+    </li>
+    <li class="preview">
+
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>Preview
+        </div>
+        <div class="polygon-right"></div>
+      </div>
+
+    </li>
+    <li class="submitCM" >
+      <div class="item-overlay">
+        <div class="item-info">
+          </br>Submit
+        </div>
+        <div class="polygon-right"></div>
+      </div>
+    </li>
+
+  </ul>
+
+<div class="boxBody" style="width: 100%;height: 100%;">
+
+  <div id="conceptMap" class="show parent" style="width: 100%;height: 100%;">
+    <%= render 'creator' %>
+  </div>
+
+  <div id="preview" class="parent" style="width: 100%;height: 100%;">
+    <%= render 'preview' %>
+  </div>
+
+  <div id="submitCM" class="parent" style="width: 100%;height: 100%;">
+    <%= render 'submitForm' %>
+  </div>
+
+</div>
+
+</div>

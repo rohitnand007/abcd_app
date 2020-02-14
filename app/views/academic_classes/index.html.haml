@@ -1,0 +1,14 @@
+#content_header
+  %h1#main_heading Forms
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", academic_classes_path
+    - unless current_user.is? 'EO'
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_academic_class_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        = render'academic_classes'
+
+

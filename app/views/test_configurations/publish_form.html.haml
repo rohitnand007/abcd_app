@@ -1,0 +1,26 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", test_configurations_path
+      %li.active= link_to "#{t("web-app-theme.new", :default => "New")}", new_test_configuration_path
+  .content
+    %h2.title
+      = t("web-app-theme.new", :default => "")
+      Publish test configuration
+    .inner
+      = simple_form_for @message,:url=>publish_test_configuration_path(@test_configuration), :html => { :class => :form } do |f| 
+        .inputs
+          .group
+            .field
+              = f.collection_select :group_id,asign_groups(current_user),:user_id,:firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Group'
+          .group
+            .field
+              = f.input :subject,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+          .group
+            .field
+              = f.input :body,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+          .group
+            = button_tag :publish
+            = link_to t("web-app-theme.cancel", :default => "Cancel"), test_configurations_path,:class=>'button danger icon remove'
+- content_for :sidebar, render(:partial => 'shared/sidebar')
+

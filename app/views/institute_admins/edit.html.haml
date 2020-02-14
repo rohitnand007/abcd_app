@@ -1,0 +1,17 @@
+#content_header
+  %h1#main_heading Institute Admin
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}",institute_admins_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.edit", :default => "Edit")}",edit_institute_admin_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_institute_admin_path
+    %li=  link_to "#{t("web-app-theme.show", :default => "Show")}",institute_admin_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"
+
+

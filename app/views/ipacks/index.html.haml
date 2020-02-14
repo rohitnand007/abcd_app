@@ -1,0 +1,80 @@
+= stylesheet_link_tag 'ipacks'
+= javascript_include_tag 'ipacks'
+#dialogForm
+= form_tag new_license_set_path, method: 'get',remote:true do
+  %br
+  %table#ipacksHeader
+    %tbody
+      %tr
+        %td Collection Catalogue
+        %td
+          No. of collections (
+          = @ipacks.count
+          )
+        %td
+          = image_tag "small_loading.gif",class:"loading",style:"visibility:hidden"
+          = link_to "+Create a collection", new_ipack_path, id:"createNewIpack"
+          = button_tag "Assign to school", id:"assignToSchool", remote:true
+  %br
+  #ipackList
+    %table#ipacksList
+      %thead
+        %tr
+          %th Collection Name
+          %th Schools Assigned
+          %th
+            License Information
+            %br
+            ( Utilized out of Issued )
+          %th Starts
+          %th Ends
+          %th
+      %tbody
+        - if (@ipacks.empty? || @ipacks.nil?)
+          %tr
+            %td{colspan:"100%"} No collections exist. Click on "Create Collection" to add a new collection
+        - else
+          - @ipacks.each do |ipack|
+            %tr
+              %td
+                %span.ipackHeader
+                  - if !ipack.assigned?
+                    = link_to ipack.name,edit_ipack_path(ipack), title:"Click to edit"
+                    = link_to image_tag("delete_icon_black.png"), ipack, :confirm => 'Are you sure you want t delete collection?', :method => :delete, title:"Click to delete"
+                  - else
+                    = ipack.name
+              %td
+              %td
+              %td
+              %td
+              %td
+                = radio_button_tag "ipackId", ipack.id,false,{required: "required"}
+            -#%td= link_to 'Show', ipack
+            -#%td= link_to 'Edit', edit_ipack_path(ipack)
+            -#%td= link_to 'Destroy', ipack, :confirm => 'Are you sure?', :method => :delete
+            - ipack.license_sets.each do |license_set|
+              %tr
+                %td
+                %td
+                  = license_set.school.name unless license_set.school.nil?
+                  - if license_set.users.empty?
+                    = link_to image_tag("delete_icon_black.png",size:"10x10"), license_set, :confirm => 'Are you sure you want to revoke license?', :method => :delete
+                %td= "#{license_set.utilized} out of #{license_set.licences||=0}"
+                %td= license_set.start_date
+                %td= license_set.end_date
+                %td
+            %tr
+              %td{colspan:"100%"}
+                .extendedDetail
+                  %b Details
+                  %br
+                  %br
+                  = "#{ipack.name} created on #{ipack.created_date}"
+                  = render :partial => 'ibooks/ibook_table',locals:{pack_ibooks:ipack.ibooks}
+                  .licenseInfo
+            %tr.togglerRow
+              %td{colspan:"100%"}
+                = button_tag " ▼ Details",type:"button",class:"detailToggleButton"
+
+:javascript
+  readyIndexPage()

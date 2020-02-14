@@ -1,0 +1,80 @@
+:css
+  #tsp_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#tsp_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#main_heading tsp
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", tsps_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_tsp_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#tsp_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @tsps.each do |tsp|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"tsp_#{tsp.id}"}
+                  -#%td.col=  tsp.rb.id
+                  %td.col
+                    = tsp.asset.user.name if tsp.asset
+                  %td.col
+                    = tsp.board.name if tsp.board
+                  %td.col
+                    = tsp.content_year.name if tsp.content_year
+                  %td.col
+                    = tsp.subject.name  if tsp.subject
+                  %td.col
+                    = link_to tsp.chapter.name, chapter_path(tsp.chapter)  if tsp.chapter
+                  %td.col
+                    = link_to tsp.topic.name, topic_path(tsp.topic)  if tsp.topic
+                  %td.col
+                    = tsp.name
+                  %td.col
+                    = display_date_time(tsp.created_at)
+                  %td.col
+                    = link_to_show(tsp_path(tsp))
+                    &nbsp
+                    = link_to_edit(edit_tsp_path(tsp))
+                    &nbsp;
+                    = link_to_delete(tsp_path(tsp))
+
+        - unless @tsp.blank?
+          .pagination_info
+            = paginate @tspzes
+        #tsp_configuration

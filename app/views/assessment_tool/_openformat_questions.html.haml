@@ -1,0 +1,38 @@
+%div
+  - i = 0
+  - @quiz.quiz_question_instances.each do |q|
+    %tr.tr-even.even
+      %td.col
+      %td.col.sl
+        = i+1
+      %td.col
+        %input{:name => "quiz[quiz_question_instances_attributes][#{q.id}][tag]", :size => "4", :type => "text", :value => q.question.tag}/
+      %td.col
+        - s = q.question.difficulty
+        %select{:name => "quiz[quiz_question_instances_attributes][#{q.id}][difficulty]"}
+          <option #{(s.to_i == 1) ? "selected" : ""} value="1">Easy
+          <option #{(s.to_i == 2) ? "selected" : ""} value="2">Medium
+          <option #{(s.to_i == 3) ? "selected" : ""} value="3">Hard
+      %input{:name => "quiz[quiz_question_instances_attributes][#{q.id}][id]", :size => "4", :type => "hidden", :value => q.id}/
+      %td.col
+        %input{:type=>"number", :min=>"1",:name => "quiz[quiz_question_instances_attributes][#{q.id}][grade]", :size => "4", :value => q.grade}/
+      %td.col
+        %input{:type=>"number", :min=>"0",:name => "quiz[quiz_question_instances_attributes][#{q.id}][penalty]", :size => "4", :value => q.penalty}/
+      %td.col
+        %input{:name => "quiz[quiz_question_instances_attributes][#{q.id}][options]", :size => "10", :type => "text", :value => q.question.question_answers.map(&:tag).join(",")}/
+      %td.col
+        %input{:name => "quiz[quiz_question_instances_attributes][#{q.id}][answer]", :size => "4", :type => "text", :value => (q.question.question_answers.collect{|i| i.tag if i.fraction == 1} - [nil]).join(",")}/
+      - i= i+1
+
+  - if !@quiz.asset.nil?
+    %div
+      %button#prev{:type=>'button',:onclick => "goPrevious()"} Previous
+      %button#next{:type=>'button',:onclick => "goNext()"} Next
+      \&nbsp; &nbsp;
+      %span
+        Page:
+        %span#page_num
+        \/
+        %span#page_count
+    %div{:style => "position: 'relative' ;"}
+      %canvas#the-canvas{:style => "border:1px solid black"}

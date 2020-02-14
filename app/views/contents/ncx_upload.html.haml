@@ -1,0 +1,37 @@
+#content_header
+  %h1#main_heading Upload NCX File
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = form_tag("/content/bulk_upload",:multipart => true,:method=>"post",  :class => 'form' ) do
+              .inputs
+                .group
+                  .field
+                    = label :ncx_file, "NCX File", :class=>'label'
+                    = file_field_tag :data,:class=>"text_field",:id=>'ncx_data'
+                .group
+                  .field{:align=>'center'}
+                    = submit_tag :upload ,:class=>'button',:disable_with=>"Uploading...."
+                    = link_to t("web-app-theme.cancel", :default => "Cancel"), root_path,:class=>'button danger icon remove'
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", contents_path
+      %li.active= link_to "#{t("web-app-theme.new", :default => "New")}", new_content_path
+  .content
+    %h2.title
+      = t("web-app-theme.new", :default => "New")
+      Bulk Content upload
+    .inner
+      = form_tag "/content/bulk_upload",:multipart => true,:method=>"post", :html => { :class => :form } do
+        .inputs
+          .group
+            .field
+              = file_field_tag :data,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+          .group
+            = button_tag :submit   
+
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

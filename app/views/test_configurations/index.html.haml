@@ -1,0 +1,137 @@
+:javascript
+  $(document).ready(function() {
+    $("#tcs").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Test Configurations
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", test_configurations_path
+    -#%li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_test_configuration_path
+
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#tcs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th.first Id
+                %th Test File Name
+                %th Start Time
+                %th End Time
+                %th Publish To
+                %th Top-Mark
+                %th Class Average
+                %th Status
+                %th.last &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @test_configurations.each do |test_configuration|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"test_configuration_#{test_configuration.id}"}
+                  -#%td.col= test_configuration.id
+                  %td.col
+                  %td.col
+                    =# test_configuration.start_time.strftime('%Y-' '%m-' '%d' ',%H:' '%M:' '%S')
+                  %td.col
+                    =# test_configuration.end_time.strftime('%Y-' '%m-' '%d' ',%H:' '%M:' '%S')
+                  %td.col
+                    =# test_configuration.group.fullname
+                  %td.col
+                    = test_configuration.topper_mark
+                  %td.col
+                    = test_configuration.class_average
+                  %td.col
+                    = test_configuration.current_status
+                  %td.col
+                    =# link_to_unless test_configuration.published?, 'Publish',publish_form_test_configuration_path(test_configuration)
+                    = link_to_unless test_configuration.published?, 'Publish',publish_form_test_configuration_path(test_configuration)
+                    &nbsp;
+                    = link_to image_tag('web-app-theme/themes/default/icons/evaluate.png'),evaluate_test_configuration_path(test_configuration),:title=>'Evaluate',:class=>'tipTipTop'
+                    &nbsp;
+                    = link_to_show(test_configuration_path(test_configuration))
+                    &nbsp
+                    = link_to_edit(edit_test_configuration_path(test_configuration))
+                    &nbsp;
+                    = link_to_delete(test_configuration_path(test_configuration)) unless test_configuration.status.eql?(3)
+
+        - unless @test_configurations.blank?
+          .pagination_info
+            = paginate @test_configurations
+
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active= link_to "#{t("web-app-theme.list", :default => "List")}", test_configurations_path
+      %li=# link_to "#{t("web-app-theme.new", :default => "New")}", new_test_configuration_path
+  .content
+    %h2.title
+      = t("web-app-theme.all", :default => "All")
+      Test Configurations
+    .inner
+      %table#mytable.sort_table
+        %thead
+          %tr
+            %th.first ID
+            %th
+              Test File Name
+            %th
+              Start Time
+            %th
+              End Time
+            %th
+              Publish to
+            %th
+              = t("activerecord.attributes.test_configuration.topper_mark", :default => t("activerecord.labels.topper_mark", :default => "Top-mark" ))
+            %th
+              = t("activerecord.attributes.test_configuration.class_average", :default => t("activerecord.labels.class_average",:default => "Class-average"))
+            %th
+              Status
+            %th.last &nbsp;
+        %tbody
+          - @test_configurations.each do |test_configuration|
+            %tr{:class => cycle("odd", "even")}
+              %td
+                = test_configuration.id
+              %td
+              %td
+                =# test_configuration.start_time.strftime('%Y-' '%m-' '%d' ',%H:' '%M:' '%S')
+              %td
+                =# test_configuration.end_time.strftime('%Y-' '%m-' '%d' ',%H:' '%M:' '%S')
+              %td
+                =# test_configuration.group.fullname
+              %td{:style=>'width:75px;'}
+                = test_configuration.topper_mark
+              %td{:style=>'width:75px;'}
+                = test_configuration.class_average
+              %td
+                = test_configuration.current_status
+              %td.last
+                =# link_to_unless test_configuration.published?, 'Publish',publish_form_test_configuration_path(test_configuration)
+                = link_to_unless test_configuration.published?, 'Publish',edit_test_configuration_path(test_configuration)
+                |
+                = link_to 'Evaluate',evaluate_test_configuration_path(test_configuration)
+                |
+                = link_to "#{t("web-app-theme.show", :default => "Show")}", test_configuration_path(test_configuration)
+                |
+                \#{link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_test_configuration_path(test_configuration)} |
+                \#{link_to_unless test_configuration.status.eql?(3) , "#{t("web-app-theme.delete", :default => "Delete")}", test_configuration_path(test_configuration), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"}
+      .actions-bar.wat-cf
+        .actions
+        = paginate @test_configurations
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

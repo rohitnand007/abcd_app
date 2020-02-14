@@ -1,0 +1,160 @@
+@CHARSET "UTF-8";
+
+.preview-container{
+    width:100%;
+    padding : 0px;
+}
+.konvajs-content{
+    margin-left:auto;
+    margin-right:auto;
+    width:1024px;
+}
+.description-heading {
+    color: #76c4ac;
+    font-size: 16px;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+
+.preview-container-scroll{
+    overflow-y:scroll;
+    overflow-x:hidden;
+}
+#preview-container{
+    height:500px;
+    width:100%;
+}
+.preview-content{
+    width : 100%;
+    margin-left : auto;
+    margin-right : auto;
+    /*padding-right:32px;*/
+
+}
+
+.for-preview{
+    position : relative;
+}
+
+
+.ignitor-logo{
+    position:absolute;
+    width:100px;
+    height:100px;
+    right:30px;
+    bottom:-10px;
+    opacity:0.5;
+}
+
+#scroll-top{
+   position:absolute;
+   top : 140px;
+   right:150px;
+   width : 75px;
+}
+#scroll-bottom{
+   position:absolute;
+   bottom : 30px;
+   right:150px;
+   width : 75px;
+}
+#modal-body-preview{
+    padding:0px;
+}
+
+
+.glyphicon-remove-sign {
+    font-size: 20px;
+    padding-top: 2px;
+    color: white;
+    cursor: pointer
+}
+.preview-glyph {
+    padding-right: 4px;
+}
+.activeprev {
+    background-color: #7ac9aa;
+    height: 50px;
+    padding: 15px;
+    padding-left:15px;
+    color: #ffffff;
+    font-size: 14px;
+    border-right: 1px solid white;
+}
+
+.prev {
+    background-color: #2e7c64;
+    height: 30px;
+    padding: 6px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 13px;
+    cursor:pointer;
+    border-right: 1px solid white;
+
+}
+.prev:hover{
+    background-color: #39b18d;
+}
+#reset-the-questions:hover{
+    cursor:pointer;
+}
+#reset-the-questions{
+    border-right: 0px;
+    margin-right:0px;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background:#999999;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background:#999999;
+}
+.down-arrow,.up-arrow {
+   display: inline-block;
+   position: relative;
+   background: darkcyan;
+   padding: 10px 0;
+   width:46px;
+   text-align: center;
+}
+.down-arrow:after {
+   content: '';
+   display: block;  
+   position: absolute;
+   left: 0;
+   top: 98%;
+   width: 0;
+   height: 0;
+   border-top: 22px solid darkcyan;
+   border-right: 23px solid transparent;
+   border-bottom: 0 solid transparent;
+   border-left: 23px solid transparent;
+}
+.up-arrow:after{
+   content: '';
+   display: block;  
+   position: absolute;
+   right: 0;
+   bottom: 98%;
+   width: 0;
+   height: 0;
+   border-bottom: 22px solid darkcyan;
+   border-right: 23px solid transparent;
+   border-top: 0 solid transparent;
+   border-left: 23px solid transparent;
+}

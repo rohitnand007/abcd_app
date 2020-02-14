@@ -1,0 +1,5 @@
+= stylesheet_link_tag 'ibooks'
+%p#notice= notice
+
+= render :partial => 'abridged_book_info',locals: {ibook:@ibook}
+= link_to 'My Books', ibooks_path

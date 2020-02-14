@@ -1,0 +1,42 @@
+:javascript
+  $(document).ready(function() {
+    $("#subjects").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+%div
+  %table#subjects.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.subject.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th= t("activerecord.attributes.subject.code", :default => t("activerecord.labels.code", :default => "Code"))
+        %th Board
+        %th Content Year
+        -#%th= t("web-app-theme.created_at", :default => "Created at")
+        %th{colspan: 2} &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @subjects.each do |subject|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"subject_#{subject.id}"}
+          %td.col= link_to subject.name, subject_path(subject)
+          %td.col= subject.code
+          %td.col= link_to(subject.board.name ,board_path(subject.board)) if subject.board
+          %td.col= link_to(subject.content_year.name ,content_year_path(subject.content_year)) if subject.content_year
+          -#%td.col= display_date_time(subject.created_at)
+          %td.col
+            = link_to_show(subject_path(subject))
+          %td.col
+            - if current_user.is?("CR")
+              = link_to "Manage",manage_content_path(subject)
+.pagination_info= paginate @subjects  unless @subjects.blank?

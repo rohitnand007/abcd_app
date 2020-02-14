@@ -1,0 +1,102 @@
+:css
+  #assessment_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  -#%h1#main_heading Assessments
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "My Assessments",assessments_path,{:class=>'current'}
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessments_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_path
+    %li= link_to 'Test Reports',students_test_reports_path
+    %li= link_to 'My Published Assessments',my_published_assessments_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                -#%th Publisher
+                -#%th Board
+                -#%th Content Year
+                %th Name
+                %th Status
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Created At
+                %th Last published
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @assessments.each do |assessment|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_#{assessment.id}"}
+                  - test_configurations  = current_user.test_configurations_by_assessments([assessment.try(:id)]).default_order
+                  -#%td.col=  assessment.id
+                  -#%td.col
+                    =# assessment.asset.user.name if assessment.asset
+                  -#%td.col
+                    = assessment.board.name if assessment.board
+                  -#%td.col
+                    = assessment.content_year.name if assessment.content_year
+                  %td.col
+                    = link_to assessment.name , test_configurations_assessment_path(assessment),remote: true
+                  %td.col
+                    =  display_content_status(assessment.status)
+                  %td.col
+                    = assessment.subject.try(:name)
+                  %td.col
+                    =  assessment.chapter.try(:name)
+                  %td.col
+                    = assessment.topic.try(:name)
+                  %td.col
+                    = display_date_time(assessment.created_at)
+                  %td.col
+                    = display_date_time(test_configurations.first.try(:created_at))
+                  %td.col{:class=>"tab_view_font"}
+                    =# link_to_show(assessment_path(assessment))
+                    -#= link_to_edit(edit_assessment_path(assessment))
+                    -if assessment.is_configurable?
+                      -# check for re-pushlish(i.e after first time) or configure(i.e for first time)
+                      -unless test_configurations.any? # is first time?
+                        = link_to(image_tag('web-app-theme/themes/default/icons/configure.png'),  assessment_test_configuration_path(assessment),:title=>'Configure',:class=>'tipTipTop')
+                      -else
+                        = link_to 'Re-publish',assessment_test_configuration_path(assessment,:mode=>'Re-publish'),:title=>'Re-publish',:class=>'tipTipTop'
+                    -#= link_to_delete(assessment_path(assessment))
+
+        - unless @assessments.blank?
+          .pagination_info
+            = paginate @assessments
+        #assessment_configuration
+      %td{:style=>"vertical-align:top;float:right;"}
+        .right_side_bar
+          = render(:partial => 'shared/assessment_templates')

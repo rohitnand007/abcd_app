@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/jquery.flip.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/jquery-confirm.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/play_flash_cards.css">
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-confirm.css">
+</head>
+
+<body>
+<div id="ContainerForPreview"></div>
+        <script src="js/play_for_flash_cards.js"></script>
+        <script>
+        $('#ContainerForPreview').empty();
+        var json=document.URL.split('value=')[1];
+        var finaljson=JSON.parse(decodeURIComponent(json));
+        $('#ContainerForPreview').playForFlashCards(finaljson,'download/');
+        </script>
+
+</body>
+</html>

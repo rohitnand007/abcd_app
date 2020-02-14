@@ -1,0 +1,72 @@
+<div id='content_header'>
+  <h1 id='main_heading'>
+    Question History
+  </h1>
+</div>
+<div id='inner-tab-menu'>
+  <ul>
+    <li><a href="/questions/<%=@question.id%>">Question Home</a></li>
+    <li><a href="/questionbank">Question Bank</a></li>
+  </ul>
+</div>
+<div id='data'>
+  <form id="history-filter-form" method="POST" action="/questions/history/<%=@question.id%>">
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Show used
+          </label>
+          <select name="filter_history" class="select optional" onchange="$('#history-filter-form').submit();">
+            <option <%= @filter_history=="usedbyinstitute" ? 'selected' : '' %> value="usedbyinstitute">Across the institute</option>
+            <!--<option <%= @filter_history=="all" ? 'selected' : '' %> value="all">All</option>-->
+            <option <%= @filter_history=="usedbyme" ? 'selected' : '' %> value="usedbyme">Only by me</option>
+
+          </select>
+        </div>
+      </div>
+    </div>
+  </form>
+  <table width='100%'>
+    <tr><td>Total used <%=@used.size%> time(s)</td></tr>
+    <tr>
+      <td>
+        <div>
+          <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='questions_list' width='100%'>
+            <thead>
+              <tr class='tr-head'>
+                <th>Assessment Name</th>
+                <th>Published On</th>
+                <th>Published by</th>
+                <th>Marks</th>
+                <th>Correct Attempts</th>
+                <th>Wrong Attempts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i = 0%>
+              <% @used.each do |u| %>
+                <% if i%2 == 0 %>
+                  <tr class="tr-even even">
+                  <% else %>
+                  <tr class="tr-odd odd">
+                  <% end %>
+                  <td class='col'><a href="/quizzes/<%=u[:id]%>"><%=u.name%></a></td>
+                  <td class='col'><%= display_date_time(u[:published_on]) %></td>
+                  <td class='col'><%= User.find(u[:published_by]).profile.firstname %> <%= User.find(u[:published_by]).profile.surname %></td>
+                  <td class='col'><%= u[:grade] %></td>
+                  <td class='col'><%= u.quiz_question_attempts.where(:question_id=>@question.id,:correct=>true).count %></td>
+                  <td class='col'><%= u.quiz_question_attempts.where(:question_id=>@question.id,:correct=>false).count %></td>
+                </tr>
+                <%i = i+1%>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>
+<div class='pagination_info'>
+</div>

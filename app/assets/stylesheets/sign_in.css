@@ -1,0 +1,159 @@
+/*input[type="text"],input[type="password"],input[type="text"]:focus,input[type="password"]:focus{*/
+input{
+  outline: none;
+  border:none !important;
+  box-shadow:none !important;
+  background-color: #FFFFFF;
+  border: none;
+  height: 35px;
+  margin-bottom: auto;
+  padding-left: 10px;
+  }
+
+.container.center-align{
+    margin: 5% auto;
+    font-family:sans-serif;
+    width: 30%;
+}
+
+.container{
+    width: 850px;
+    margin: 5% auto;
+    font-family:sans-serif;
+}
+
+.container>p>b{
+    color: #7BBFE8;
+}
+
+hr{
+    border-color: #7BBFE8;
+    background-color: #7BBFE8;
+}
+
+.text_field{
+    width: auto;
+    background-color: white;
+    
+}
+
+.btn{
+   float: left;
+   margin-top: 10px;
+   border-radius: 4px;
+   display: inline-block;
+   background-color: #7BBFE8;
+   border: 2px outset #7BBFE8;
+    font-family: sans-serif;
+    color: white;
+}
+
+.login_div{
+    float: left;
+    line-height: 30px;
+    width: 100px;
+}
+.icon_img{
+    float: left;
+    padding: 0 10px;;
+}
+
+.pull-right{
+    float: right;
+    font-family: sans-serif;
+    display: inline-block;
+    padding:  25px 0;
+    color: #7BBFE8;
+    text-decoration: none;
+    font-style: italic;
+}
+
+.input_div{
+    float: left;
+}
+
+.panel{
+    padding-bottom: 0px;
+}
+
+.panel-heading{
+    border-radius: 4px;
+    background-color: #7BBFE8;
+    height: 35px;
+    line-height: 35px;
+    color: white;
+    padding: 0em 0em 0em 1em;
+}
+
+.div-block{
+    height: 35px;
+    padding-bottom: 0px;
+    margin-top: 10px;
+    border: 1px solid #7BBFE8;
+    border-radius: 4px;
+}
+
+.text-center{
+    color: #7BBFE8;
+    display: inline-block;
+    text-align: center;
+}
+
+.flash{
+    display: inline-block;
+    border: 1px solid #7BBFE8;
+    color: #7BBFE8;
+}
+
+span{
+    text-decoration: underline;
+}
+
+.inputs_new{
+    width: 700px;
+    float: right;
+}
+
+.field_div{
+    display: block;
+    padding: 10px;
+}
+
+.label_div{
+    height: 35px;
+    line-height: 35px;
+    width: 20%;
+}
+
+.input_new{
+    height: 35px;
+    line-height: 35px;
+    border: 1px solid  #7BBFE8;
+    width: 75%;
+    float: right;
+}
+
+.submit_div{
+    float: right;
+    clear: right;
+}
+
+.form-group{
+    float: right;
+}
+.label{
+    width: 180px;
+    float: left;
+    padding-top: 8px;
+}
+.text_field2{
+    width: 300px;
+    float: left;
+    border: 1px solid #000 !important;
+    border-radius: 2px !important;
+    margin-top: 5px;
+}
+.free_space_right{
+    width: 400px;
+    float: left;
+}

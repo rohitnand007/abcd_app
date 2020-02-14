@@ -1,0 +1,59 @@
+<table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='users' width='100%'>
+  <thead>
+  <tr class='tr-head'>
+    <th></th>
+    <th>Question Text</th>
+    <th>Question Format</th>
+    <th>Difficulty</th>
+    <th>Skills</th>
+    <th>Marks</th>
+    <th>Penalty (positive)</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <%i=0%>
+  <% total_marks = 0 %>
+  <% questions.each do |q| %>
+      <% if i%2 == 0 %>
+          <tr class="tr-even even">
+      <% else %>
+          <tr class="tr-odd odd">
+      <% end %>
+      <td class='col'><%=q.id %></td>
+      <td class='col'><%=q.questiontext_format.gsub(/<\/?[^>]*>/, "")%></td>
+      <td class='col'><%=q.qtype%></td>
+      <td class='col'><%=q.difficulty_text%></td>
+      <td class='col'><%=q.skills%></td>
+      <%marks = @quiz.quiz_question_instances.where(:question_id=>q.id).first.grade%>
+      <input name="quiz[quiz_question_instances_attributes][<%=q.id%>][id]" type="hidden" value="<%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.id%>" size="4"/>
+      <%if @quiz.edit_access(current_user.id)%>
+          <td class='col'>
+            <input name="quiz[quiz_question_instances_attributes][<%=q.id%>][grade]" type="text" value="<%= marks %>" size="4"/>
+          </td>
+          <td class='col'>
+            <input name="quiz[quiz_question_instances_attributes][<%=q.id%>][penalty]" type="text" value="<%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.penalty%>" size="4"/>
+          </td>
+      <%else%>
+          <td class='col'><%=marks%></td>
+          <td class='col'><%=@quiz.quiz_question_instances.where(:question_id=>q.id).first.penalty%></td>
+      <%end%>
+      <td class="col">
+        <a target="_blank" href="/questions/<%=q.id%>">View Question</a>
+      </td>
+      </tr>
+      <%i= i+1%>
+      <%total_marks = total_marks+ marks%>
+  <% end %>
+  <tr class="tr-odd odd">
+    <td class='col'></td>
+    <td class='col'><b>Total Questions: <%= questions.count%></b></td>
+    <td class='col'></td>
+    <td class='col'></td>
+    <td class='col'></td>
+    <td class='col'><b>Total Marks: <%=total_marks%></b></td>
+    <td class='col'></td>
+    <td class="col"></td>
+  </tr>
+  </tbody>
+</table>

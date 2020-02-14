@@ -1,0 +1,22 @@
+%table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+
+  %tr
+    %th store.ID
+    %th storename
+    %th ecp_id
+    %th ecpname
+    %th books count
+
+  - @associated_publishers.each do |st_ecp|
+    %tr
+      %td= @store.id
+      %td= @store.name
+      %td= st_ecp.edutorid
+      %td= st_ecp.rc
+      %td= st_ecp.ibooks.count
+
+%br
+%br
+  %br
+
+    =link_to "View All Books", {:controller => :stores, :action => :store_books},{:class=> "button"}

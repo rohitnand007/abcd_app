@@ -1,0 +1,80 @@
+:css
+  #assessment_inclass_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_inclass_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#maend_heading assessment_inclass
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_inclasses_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_inclass_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_inclass_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @assessment_inclasses.each do |assessment_inclass|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_inclass_#{assessment_inclass.id}"}
+                  -#%td.col=  assessment_inclass.rb.id
+                  %td.col
+                    = assessment_inclass.asset.user.name if assessment_inclass.asset
+                  %td.col
+                    = assessment_inclass.board.name if assessment_inclass.board
+                  %td.col
+                    = assessment_inclass.content_year.name if assessment_inclass.content_year
+                  %td.col
+                    = assessment_inclass.subject.name  if assessment_inclass.subject
+                  %td.col
+                    = link_to assessment_inclass.chapter.name, chapter_path(assessment_inclass.chapter)  if assessment_inclass.chapter
+                  %td.col
+                    = link_to assessment_inclass.topic.name, topic_path(assessment_inclass.topic)  if assessment_inclass.topic
+                  %td.col
+                    = assessment_inclass.name
+                  %td.col
+                    = display_date_time(assessment_inclass.created_at)
+                  %td.col
+                    = link_to_show(assessment_inclass_path(assessment_inclass))
+                    &nbsp
+                    = link_to_edit(edit_assessment_inclass_path(assessment_inclass))
+                    &nbsp;
+                    = link_to_delete(assessment_inclass_path(assessment_inclass))
+
+        - unless @assessment_inclass.blank?
+          .pagination_info
+            = paginate @assessment_inclasses
+        #assessment_inclass_configuration

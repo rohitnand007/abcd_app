@@ -1,0 +1,56 @@
+#content_header
+  %h1#main_heading Search cdn pings
+#data
+  %table{width: "100%"}
+    %tr
+      %td
+        %div
+          %form.simple_form.form{action: "/cdn_ping_status", method: "post"}
+            .inputs
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_start_date"} Devcieid
+                    %input#cdnid.string.optional.text_field{maxlength: "255", name: "device_id", size: "50", type: "text"}/
+              .group
+                .field{:align=>'center'}
+                  %input.button.big.primary{name: "submit", type: "submit", value: "Search"}/
+
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#cdn_logs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Deviceid
+                %th Last ping
+                %th
+            %tbody
+              - @cdn_pings.each do |ping|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col= ping.device_id
+                  %td.col= ping.last_ping
+                  %td.col
+                    
+        .pagination_info
+          = paginate @cdn_pings
+:javascript
+  $(document).ready(function() {
+    $("#cdn_logs").dataTable({
+        "aoColumns": [
+                    null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+

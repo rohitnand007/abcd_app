@@ -1,0 +1,69 @@
+:javascript
+  var search_term = "#{@search_term}";
+  $(document).ready(function() {
+    $("#institutions").dataTable({
+                "aoColumnDefs" : [
+                                    {"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]},
+                                    {"bSortable":false, "aTargets":[3]},
+                                    {"bSortable":false, "aTargets":[4]},
+                                    {"bSortable":false, "aTargets":[5]},
+
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#institutions").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Institute :   " },
+                "fnServerParams": function(aoData){
+                    aoData.push({name: 'search_term', value: search_term});
+                },
+                "fnPreDrawCallback": function( oSettings ) {
+                  $("#institutions").css("opacity", "0.4");
+                  $("#overlay").show();
+                },
+                "fnDrawCallback": function( oSettings ) {
+                  $("#institutions").css("opacity", "1");
+                  $("#overlay").hide();
+                }
+    });
+    
+    var viewportHeight = $(window).height();
+    $("#institutions_processing").css("font-size", 50);
+    $("#institutions_processing").css("top", viewportHeight/2);
+    $("#institutions_processing").css("width", 300);
+    $("#institutions_processing").css("height", 70);
+    $("#institutions_processing").css("color","rgb(100,0,0");
+    $("#institutions_processing").css("top","430px");
+  });
+
+#content_header
+  %h1#main_heading Institutions
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", institutions_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_institution_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#institutions.listing.sort_table{data: institutions_path(format: :json),align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.institution.profile.firstname", :default => t("activerecord.labels.profile.firstname", :default => "Institute Name"))
+                %th= t("activerecord.attributes.institution.institute_admins", :default => t("activerecord.labels.institute_admins", :default => "Institute Admins"))
+                %th= t("activerecord.attributes.institution.profile.website", :default => t("activerecord.labels.profile.website", :default => "Website"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th Subscribed User Count
+                %th &nbsp
+            %tbody
+#overlay{:style => "position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; opacity:0.2; background: #000;"}

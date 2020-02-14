@@ -1,0 +1,30 @@
+<div id='content_header'>
+</div>
+<div id='data'>
+    <form id="select-center" class="form" method="POST" action="/quizzes/export_institute_test_results">
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Select Assessment
+            </label>
+            <select name="quiz_id[]" multiple="multiple" style="height: 120px">
+              <% @quizzes.each do |q| %>
+                <option value="<%=q.id%>"><%=q.name%> (<%=q.context.content_year.try(:name)%>)(<%=q.user.try(:center).try(:name)%>)</option>
+              <%end%>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <div align="center" class="field">
+              <input class="button big primary" data-disable-with="exporting...might take time please wait...." name="" type="submit" value="Export as CSV"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+</div>

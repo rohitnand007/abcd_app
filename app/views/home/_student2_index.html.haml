@@ -1,0 +1,17 @@
+#content_header
+  -#%h1#main_heading Home
+  #breadcrumbs
+    %ul
+      %li
+        = link_to 'Home','#',{:class=>'current'}
+
+#data
+  %table
+    %tr
+      %td
+        #user_options
+          .button-box
+            = link_to '',quizzes_student_not_attempted_assessments_path,:id=>'manage_assessment_button',:class => "option_buttons tipTip",:title=>'My Assessments'
+            =# link_to '',drm_user_contents_list_path,:id=>'manage_assessment_button',:class => "option_buttons tipTip",:title=>'Content'
+          -#.button-box
+            %a#time_table_button.option_buttons.tipTip{:href => "#", :title => "Time Table"}

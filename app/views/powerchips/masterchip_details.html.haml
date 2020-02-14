@@ -1,0 +1,50 @@
+#content_header
+  %h1#main_heading Masterchip details
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}", masterchip_list_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for @details,:url=>save_masterchip_details_path(@masterchip),:html => {:multipart=>true, :class => :form },:validate=>true do |f|
+              = f.error_messages :header_message => "Invalid details",
+                                    :message => "You'll need to fix the following fields:"
+              .inputs
+                .group
+                  .field
+                    = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                .group
+                  .field
+                    = f.input :version,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                .group
+                  .field
+                    = f.input :Course, :label_html=>{:class=>"label"} do
+                      = f.collection_select :course,Board.all,:id,:name,{:prompt=>true},{:class=>'drop_down' }
+                .group
+                  .field
+                    = f.input :class_name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                .group
+                  .field
+                    = f.input :tags,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                .group
+                  .field
+                    = f.input :masterchip_key, :input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                .group
+                  .field
+                    - file_field :masterchip,:asset,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                    .input.file.optional
+                      %label.file.optional.label{for: "masterchip_details_asset_attributes_attachment"} ENC KEYS
+                      %input#masterchip_asset.file.optional.text_field{name: "masterchip[asset]", type: "file", label: "ENC KEYS"}
+                .group
+                  .field
+                    = f.fields_for :asset do |k|
+                      = k.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} ,:label=>"Keys DB"
+
+              .group
+                .field{:align=>'center'}
+                  = f.button :submit,:class=>'big primary',:disable_with=>'Adding..'
+                  = link_to t("web-app-theme.cancel", :default => "Cancel"), masterchip_list_path,:class=>'button danger icon remove'
+

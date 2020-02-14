@@ -1,0 +1,47 @@
+= simple_form_for @subject, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Subject!",
+                        :message => "You'll need to fix the following fields:"
+  .inputs
+    - if current_user.is?'EA' or current_user.is?'CR' or current_user.is?'IA'
+      .group
+        .field
+          = f.association :board,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+          -#= f.label :board_id, "Board", :class=>'label'
+          -#= f.collection_select :board_id,Board.all,:id,:name,{:prompt => true},{:class=>"drop_down"}
+      .group
+        .field
+          = f.association :content_year,:input_html => {:class => 'drop_down'},:prompt=>true,:label_html=>{:class=>"label"}
+          -#= f.label :content_year_id, "Content Year", :class=>'label'
+          -#= f.collection_select :content_year_id,ContentYear.all,:name,:name,{:prompt => true},{:class=>"drop_down"}
+      -#.group
+        .field
+          = f.label :subject, "Subject", :class=>'label'
+          = f.collection_select :name,Subject.all,:name,:name,{:prompt => true},{:class=>"drop_down"}
+      -#.group
+        .field
+          = f.label :code, "Subject Code", :class=>'label'
+          = f.collection_select :code,Subject.all,:code,:code,{:prompt => true},{:class=>"drop_down"}
+
+      .group
+        .field
+          = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.input :code,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}    
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), subjects_path,:class=>'button danger icon remove'
+:javascript    
+  $("#subject_board_id").change(function() {
+  var selected_course = $('select#subject_board_id :selected').val();
+  var url =  '/course/get_content_years/';
+  			  var div_update = "#subject_content_year_id";
+          get_url_Data(url,selected_course,div_update);
+       });
+          $("#subject_name").change(function() {
+  			  var selected_course = $('select#subject_name :selected').val();
+  			  var url =  '/course/get_content_code/';
+  			  var div_update = "#subject_code";
+          get_url_Data(url,selected_course,div_update);
+       });

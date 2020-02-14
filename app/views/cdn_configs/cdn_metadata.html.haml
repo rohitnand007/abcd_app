@@ -1,0 +1,60 @@
+#content_header
+  %h1#main_heading Search cdn metadata
+#data
+  %table{width: "100%"}
+    %tr
+      %td
+        %div
+          %form.simple_form.form{action: "/cdn_metadata", method: "post"}
+            .inputs
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_start_date"} CdnId
+                    %input#cdnid.string.optional.text_field{maxlength: "255", name: "cdnid", size: "50", type: "text"}/
+              .group
+                .field{:align=>'center'}
+                  %input.button.big.primary{name: "submit", type: "submit", value: "Search"}/
+
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#cdn_logs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Os
+                %th Hardware
+                %th Logical Volume
+                %th Cdn
+                %th
+            %tbody
+              - @cdn_metadata.each do |metadata|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col= metadata.os
+                  %td.col= metadata.hw
+                  %td.col= metadata.logical_volume
+                  %td.col= metadata.cdnid
+                  %td.col
+                    
+        .pagination_info
+          = paginate @cdn_metadata
+:javascript
+  $(document).ready(function() {
+    $("#cdn_logs").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+

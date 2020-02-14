@@ -1,0 +1,173 @@
+/*
+*=require c3
+*/
+// Body font-color override
+body,h1,h2{
+  color: #636363;
+}
+.graySeparators{
+  border-right: 1px solid #636363;
+}
+.greenize{
+  color:#4d917a
+}
+.darkgrayize{
+  color: #636363;
+}
+.headerize{
+  font-size: 16px;
+}
+.biggest{
+  font-size: 3em;
+}
+.occupyWidth{
+  width: 100%;
+}
+
+#taskMenu {
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+  td {
+    padding: 10px;
+  }
+}
+
+#pieChartEnvelope {
+  text-align: center;
+}
+// Jquery UI Overrides
+.ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix,
+.ui-dialog-titlebar.ui-widget-header.ui-corner-all,
+.ui-dialog-titlebar.ui-widget-header {
+  background: none;
+  background-color: #60C8CD;
+  font-family: sans-serif;
+}
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all {
+  padding: 0px;
+  border-radius: 0px;
+  //  To center the dialog
+  left: 30%;
+  top: 20%;
+  .ui-dialog-titlebar {
+    border: 0px;
+    border-radius: 0px;
+    a, a.ui-state-hover {
+      background-color: transparent;
+      span.ui-dialog.ui-dialog-titlebar-close {
+        margin: 0px;
+      }
+    }
+  }
+}
+.ui-widget {
+  font-size: 14px;
+}
+
+.ui-button, .button.ui-button.ui-widget.ui-state-default.ui-corner-all {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.button.ui-button.ui-state-focus {
+  border: 1px solid #CCC !important;
+}
+
+.ui-state-hover, .normalButton.ui-state-hover {
+  border-color: #60c8cd;
+}
+.ui-state-focus {
+  color: inherit;
+  border-color: #ccc;
+}
+
+// link color overrides
+.body_content {
+  a:link, a:visited, a:active {
+    color: inherit;
+  }
+
+  a:hover {
+    color: #60c8cd;
+  }
+}
+
+
+.abridgedBookInfo {
+  > tbody > tr > td:nth-child(2) {
+    padding-left: 10px;
+  }
+}
+
+
+.abridgedBookInfo {
+  table {
+    tr {
+      td:first-child {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+//for a new collection
+
+#newIpack {
+  &::-moz-placeholder, &:-moz-placeholder {
+    font-style: italic;
+    margin-left: 10px;
+  }
+  &:-ms-input-placeholder, &::-webkit-input-placeholder {
+    font-style: italic;
+  }
+
+}
+
+.mainStatistics {
+  tr table {
+    tr:first-child td {
+      padding-top: 10px;
+    }
+    border-top: 1px solid #CCCCCC;
+  }
+  tr table {
+    tr:last-child td {
+      padding-bottom: 10px;
+    }
+    border-bottom: 1px solid #CCCCCC;
+  }
+}
+
+// for license sets and schools
+#selectSchool {
+  #instituteSchool, #centerSchool {
+    height: 200px;
+    overflow-y: auto;
+    color: #636363;
+  }
+  ul {
+    background: none !important;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+  }
+  /*border bottom in theme color blue */
+  .ui-tabs-nav {
+    border-bottom: 3px solid #60c9cd;
+  }
+  li.ui-state-active, li.ui-state-hover, li.ui-state-default {
+    background: none !important;
+    border: none;
+  }
+  li.ui-state-active {
+    border-bottom: 4px solid #60c9cd;
+  }
+}
+
+.abridgedBookInfo {
+  table {
+    td:last-child {
+      min-width: 100px;
+    }
+  }
+}

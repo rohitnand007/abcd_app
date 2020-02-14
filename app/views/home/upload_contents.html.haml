@@ -1,0 +1,15 @@
+#content_header
+  %h1#main_heading Upload Content
+  %bread_crumbs
+#user_options
+  .button-box
+    = link_to '',new_chapter_path,:id=>'upload_chapter_button',:class => "option_buttons",:title=>'Upload chapter'
+  .button-box
+    = link_to '',new_topic_path,:id=>'upload_topic_button',:class => "option_buttons",:title=>'Upload topic'
+  .button-box
+    = link_to '',new_sub_topic_path,:id=>'upload_subtopic_button',:class => "option_buttons",:title=>'Upload sub-topic'
+  .button-box
+    =# link_to '',content_manage_path,:id=>'content_manage_button',:class => "option_buttons",:title=>'View Content'
+= content_for :right_side_bar do
+  #sidebar.right_side_bar
+    = render(:partial => 'shared/sidebar')

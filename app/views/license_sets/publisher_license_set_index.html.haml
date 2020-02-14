@@ -1,0 +1,31 @@
+= stylesheet_link_tag "license_sets"
+= javascript_include_tag "license_sets"
+= form_tag revoke_license_sets_path , id:'revokeForm' do
+  = button_tag "Revoke", class:"button", id:'revokeButton'
+  %table.licenseInfoFieldsPublisher.headerInfo
+    %tr
+      %td
+      %td
+      %td Collection Name
+      %td Books
+      %td Assigned School
+      %td License info (utilized out of assigned)
+      %td Starts
+      %td Ends
+      %td Assigned on
+  #licenseInfoPublisherTableContainer
+    %table.licenseInfoFieldsPublisher
+      - @license_sets.each do |license_set|
+        %tr
+          %td{style:"color:white"}
+            = license_set.id
+          %td= radio_button_tag :id,license_set.id
+          %td= license_set.ipack.name.to_s # 
+          %td= license_set.get_books.map{|b| b.get_metadata["displayName"].to_s}.join(",")
+          %td= license_set.school.name
+          %td= "#{license_set.utilized} out of #{license_set.licenses}"
+          %td= license_set.start_date
+          %td= license_set.end_date
+          %td= license_set.assign_date
+:javascript
+  readyPublisherLicenseSetsPage();

@@ -1,0 +1,23 @@
+%table#usages.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+  %thead
+    %tr.tr-head
+      %th Content Name
+      %th Id
+      %th Start time
+      %th Duration
+      %th Uri
+      %th App Name
+
+  %tbody
+    - @usages.each do |usage|
+      %tr{:class => cycle("tr-odd", "tr-even"),:id=>"usage_#{usage.id}"}
+        %td.col=  usage.uri.split('/').last rescue ''
+        %td.col=  link_to usage.user.edutorid, get_user_usage_path(usage.user) rescue ''
+        %td.col= display_date_time(usage.start_time)
+        %td.col= show_usage_duration(usage.start_time,usage.end_time) rescue ''
+        %td.col= usage.uri
+        %td.col= usage.app_name
+
+
+.pagination_info
+  = paginate @usages unless @usages.blank?

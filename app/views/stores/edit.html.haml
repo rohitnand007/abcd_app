@@ -1,0 +1,17 @@
+= form_for @store do |f|
+  = f.label :name
+  %br
+  = f.text_field :name, required:true
+  %br
+    %br
+  = f.label :description
+  %br
+  = f.text_field :description, required:true
+  %br
+    %br
+  = f.label :store_url
+  %br
+  = f.text_field :store_url, required:true
+  %br
+    %br
+  = f.submit "update Store", class: "button"

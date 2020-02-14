@@ -1,0 +1,10 @@
+$('#messageDialog').text('Success! <%= @license_set.users.count %> people are consuming licenses now.').dialog({
+    buttons: {
+        Ok: function () {
+            $(this).dialog('close')
+        }
+    }
+});
+$('#form_wrapper_<%=@license_set.id.to_s %>').html('').closest(".detailsRow").css("background-color", "#eeffee");
+$('#update_form_wrapper_<%=@license_set.id.to_s %>').parent().html("<%= escape_javascript(render :partial => 'just_listing_all_students',locals:{license_set:@license_set}) %>");
+$('#availablity_<%=@license_set.id %>').text(<%=@license_set.available %>)

@@ -1,0 +1,35 @@
+<style type="text/css">
+.flash .notice {
+    background: url("/assets/web-app-theme/icons/messages/notice.png") no-repeat scroll 10px center #FFF1AB;
+    border: 1px solid #EFDC86;
+    color: #28485E;
+    font-size: 13px;
+    font-weight: 600;
+}
+.flash .message {
+    border-radius: 3px 3px 3px 3px;
+    margin: 0 auto 15px;
+    text-align: center;
+}
+.flash .error, .flash .alert, .flash .error-list, .flash .alert-list {
+    background: url("/assets/web-app-theme/icons/messages/error.png") no-repeat scroll 10px center #FFB2B2;
+    border: 1px solid #993624;
+    color: #28485E;
+    font-size: 13px;
+    font-weight: 600;
+}
+</style>
+<div class="content">
+  <div class="flash">
+    <% if !@message["notice"].blank? %>
+    <div id="flash_message" class="message notice">
+      <p><%=@message["notice"]%></p>
+    </div>
+    <% end %>
+    <% if !@message["error"].blank? %>
+    <div id="flash_message" class="message error">
+      <p><%=@message["error"]%></p>
+    </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+%div.lpc_tags
+	#filters
+		%h3 Filters 
+		%hr
+		%div.tags
+			%h4 Class
+			%ul#class_filters
+				-@class_tags.each do |meta_tag|
+					%li
+						=check_box_tag meta_tag.class_tag.id, meta_tag.class_tag.id, false, class: 'class_tag tag'
+						=label_tag meta_tag.class_tag.value, meta_tag.class_tag.value, class: 'class_label'
+		%div.tags
+			%h4 Subject
+			%ul#subject_filters
+				-@subject_tags.each do |meta_tag|
+					%li
+						=check_box_tag meta_tag.subject_tag.id, meta_tag.subject_tag.id, false, class: 'subject_tag tag'
+						=label_tag meta_tag.subject_tag.value, meta_tag.subject_tag.value, class: 'subject_label'
+		%button.button.get_tags Search
+
+	#concept_tags.tags
+		%h3 Tags
+		%hr
+		%br
+		%ul
+			-@concept_tags.each do |meta_tag|
+				%li
+					=check_box_tag meta_tag.concept_tag.id, meta_tag.concept_tag.id, false, class: 'concept_tag'
+					=label_tag meta_tag.concept_tag.value, meta_tag.concept_tag.value, class: 'concept_label'
+
+
+:css
+	div #concept_tags{
+		width: 40%;
+		float: left;
+	}
+	div #filters{
+		width: 40%;
+		float: left;
+		border-right: 1px solid #ccc;
+		max-height: 800px;
+		overflow-y: auto;
+	}
+	.lpc_tags > div{
+		float: left;
+		height: 400px;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+	.lpc_tags{
+		margin-left : 50px;
+	}
+	#filters > div{
+		width: 40%;
+		display: inline-table;
+		min-height: 100px;
+	}
+	.tags > ul{
+		overflow-y: auto;
+		height: 100%;
+	}
+	.tags{
+		width:33%
+	}
+
+:javascript
+	//$(".tag").change(get_tags);
+	function get_tags(){
+		var selected_tags = new Object();
+		var selected_class_tags = new Array();
+		var selected_subject_tags = new Array();
+		$("input[type='checkbox']:checked.class_tag").each(function(){
+			selected_class_tags.push($(this).val());
+		});
+		$("input[type='checkbox']:checked.subject_tag").each(function(){
+			selected_subject_tags.push($(this).val());
+		});
+		selected_tags['s_class'] = selected_class_tags;
+		selected_tags['s_subject'] = selected_subject_tags;
+		console.log(selected_tags);
+		$.get("/meta_tags/my_tags.json",selected_tags, function(data, status){
+			console.log(data);
+			replace_concept_tags(data);
+		});
+	}
+	function replace_concept_tags(concept_tags){
+		//remove all concept tags
+		var ul_concepts = $("#concept_tags > ul");
+		ul_concepts[0].innerHTML = "";
+		for(var i=0;i<concept_tags.length;i++){
+			//create a list element
+			var li = document.createElement("LI");
+			li.className = "concept_tag";
+			//create a checkbox tag
+			var checkbox_tag = document.createElement("INPUT");
+			checkbox_tag.setAttribute("type", "checkbox");
+			checkbox_tag.setAttribute("name", concept_tags[i]);
+			checkbox_tag.setAttribute("value", concept_tags[i]);
+
+			//create a label tag
+			var label_tag = document.createElement("LABEL");
+			label_tag.setAttribute("for", concept_tags[i]);
+			//create a text node for label
+			var text_node = document.createTextNode(concept_tags[i]);
+			//append checkbox and label to li
+			label_tag.appendChild(text_node);
+			li.appendChild(checkbox_tag);
+			li.appendChild(label_tag);
+			//append li to ul
+			ul_concepts.append(li);
+		}
+	}
+	function GetConceptTags(){
+		var selected_concept_tags = new Array();
+		$(".concept_tag input[type='checkbox']:checked").each(function(){
+			selected_concept_tags.push($(this).val());
+		});
+		return selected_concept_tags.toString();
+	}
+	function UncheckTags(){
+		$("#concept_tags input[type='checkbox']:checked").each(function(){
+			$(this).attr('checked', false);
+		});
+	}
+	$(".get_tags").click(get_tags);

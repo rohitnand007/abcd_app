@@ -1,0 +1,35 @@
+.div{style: 'display: none;'}
+  %iframe#op{:src => ApplicationController::CHECK_SESSION_IFRAME}
+:javascript
+  var stat = "unchanged";
+  var x = document.cookie.split(';')[1].split('=')[1].split('XXX');
+  //var mes = client_id + " " + session_state;
+  var mes = x[0] + " " + x[1]
+  function check_session()
+  {
+    var targetOrigin  = 'https://login.microsoftonline.com';
+    var win = window.parent.document.getElementById("op").contentWindow;
+    win.postMessage( mes, targetOrigin);
+  }
+
+  //setTimer = function (){
+  //  check_session();
+  //  timerID = setInterval("check_session()",3*1000);
+  //}
+
+  window.addEventListener("message", receiveMessage, false);
+
+  function receiveMessage(e)
+  {
+    var targetOrigin  = 'https://login.microsoftonline.com';
+    if (e.origin !== targetOrigin ) {return;}
+    var stat = e.data;
+
+    if(stat == "changed"){
+      location.href = 'http://portal.myedutor.com/users/sign_out';
+    }
+  }
+  setTimeout(function(){
+    check_session();
+    timerID = setInterval("check_session()",3*1000);
+  },3000);

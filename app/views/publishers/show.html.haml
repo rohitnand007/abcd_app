@@ -1,0 +1,41 @@
+#content_header
+  %h1#main_heading Publishers
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", publishers_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_publisher_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_publisher_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", publisher_path(@publisher)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.publisher.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @publisher.name
+        %tr.odd.left
+          %td= t("activerecord.attributes.publisher.address", :default => t("activerecord.labels.address", :default => "Address"))
+          %td.right= @publisher.profile.address
+        %tr.even.left
+          %td= t("activerecord.attributes.publisher.email", :default => t("activerecord.labels.email", :default => "Email"))
+          %td.right= @publisher.email
+        %tr.odd.left
+          %td= t("activerecord.attributes.publisher.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+          %td.right= @publisher.profile.phone
+        %tr.even.left
+          %td White Listed Institutions
+          %td.right= @publisher.white_institutions.map(&:name).join(',')
+        %tr.odd.left
+          %td White Listed Centers
+          %td.right= @publisher.white_centers.map(&:name).join(',')
+        -#%tr.even.left
+        -#  %td= t("activerecord.attributes.publisher.boards", :default => t("activerecord.labels.boards", :default => "Assigned Boards"))
+        -#  %td.right= @publisher.boards.map(&:name).join(',')
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_publisher_path(@publisher), :class => "button icon edit"
+            = link_to "Delete", publisher_path(@publisher), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+
+

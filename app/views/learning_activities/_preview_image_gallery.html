@@ -1,0 +1,51 @@
+<html>
+<head>
+
+	<title>Ignitor - Image Gallery</title>
+	
+	<!--  Stylesheets -->
+	<link rel="stylesheet" href="/assets/activities/bootstrap.min.css" >
+	<link rel="stylesheet"	href="/assets/activities/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/assets/activities/font-awesome.min.css">
+	<!-- Custom Stylesheets -->
+	<link rel="stylesheet" type="text/css" href="/assets/activities/play_image_gallery.css" />
+	<!-- Javascript libraries -->
+	<script type="text/javascript" src="/assets/activities/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="/assets/activities/jquery-ui.js"></script>
+	<script	src="/assets/activities/bootstrap.min.js"></script>
+</head>
+<body >
+<div class="preview_gallery_images" ></div>
+
+<script src="/assets/activities/play_image_gallery.js"></script>
+<script src="/assets/activities/jquery.bcSwipe.js"></script>
+<script src="/assets/activities/app.js"></script>
+<script>
+
+	
+	var editable = window.location.href.split('value=')[1];
+	if(true){
+        var jsonData = "";
+        $.ajax({
+            url: "/learning_activities/<%=@learning_activity.id%>/get_activity_data",
+            type: 'GET',
+            cache: false,
+            success: function(data, textStatus, jqXHR)
+            {
+                jsonData = JSON.stringify(data);
+                var finaljson = JSON.parse(decodeURIComponent(jsonData));
+                $(".preview_gallery_images").playImage_gallery(finaljson, '/learning_activities/download/');
+
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                alert("error in playing");
+            }
+        });
+//		var urlJson=JSON.parse(decodeURIComponent(editable));
+//		$(".preview_gallery_images").playImage_gallery(urlJson, 'download/');
+	}
+	$('.carousel').bcSwipe({ threshold: 10 });
+</script>
+</body>
+</html>

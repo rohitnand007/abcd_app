@@ -1,0 +1,59 @@
+:javascript
+  var search_term = "#{@search_term}";
+  $(document).ready(function() {
+    $("#centers").dataTable({
+                "aoColumnDefs" : [
+                                    {"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]},
+                                    {"bSortable":false, "aTargets":[3]},
+                                    {"bSortable":false, "aTargets":[4]}
+                                                                      
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#centers").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Center :   " },
+                "fnServerParams": function(aoData){
+                    if(typeof InstitutionId != 'undefined')
+                        aoData.push({name: 'InstitutionId', value : parseInt(InstitutionId)});
+                    aoData.push({name: 'search_term', value: search_term});
+                },
+                "fnPreDrawCallback": function( oSettings ) {
+                  $("#centers").css("opacity", "0.4");
+                  $("#overlay").show();
+                },
+                "fnDrawCallback": function( oSettings ) {
+                  $("#centers").css("opacity", "1");
+                  $("#overlay").hide();
+                }
+    });
+    
+    var viewportHeight = $(window).height();
+    $("#centers_processing").css("font-size", 50);
+    $("#centers_processing").css("top", viewportHeight/2);
+    $("#centers_processing").css("width", 300);
+    $("#centers_processing").css("height", 70);
+    $("#centers_processing").css("color","rgb(100,0,0");
+    $("#centers_processing").css("top","430px");
+  });
+
+%div
+  %table#centers.listing.sort_table{data: centers_path(format: :json),align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.center.name", :default => t("activerecord.labels.name", :default => "Center Name"))
+        %th= t("activerecord.attributes.center.cetner_admins", :default => t("activerecord.labels.cetner_admins", :default => "Center Admins"))
+        %th= t("activerecord.attributes.center.institution", :default => t("activerecord.labels.center_institutuion", :default => "Institution"))
+        %th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+#overlay{:style => "position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; opacity:0.2; background: #000;"}

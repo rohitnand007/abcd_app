@@ -1,0 +1,311 @@
+/*
+*=require 'publisher'
+*/
+.multilineRadio {
+  > span {
+    display: block;
+  }
+  input[type="radio"] {
+    vertical-align: bottom;
+  }
+}
+
+#new_license_set {
+  input:submit {
+    &:hover {
+    }
+  }
+  .ui-state-hover {
+    border: 1px solid #60C8CD;
+    text-shadow: none;
+  }
+}
+
+
+.licenseFields {
+  border-top: 1px solid #CCCCCC;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+/////////////////////////////////////////////////////////////
+
+.showAll {
+  color: #4D917A;
+  cursor: pointer;
+  margin-right: 50px;
+  font-style: italic;
+}
+.leadRow {
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #CCC;
+  }
+}
+
+.detailsRow {
+  .showStudents {
+    display: none;
+    table.occupyWidth {
+      td {
+        width: 20%;
+      }
+    }
+  }
+}
+
+.detailsRow {
+  background-color: #eeffee;
+  .allDetails {
+    box-shadow: 0px 5px 3px #CCC;
+    display: none;
+  }
+}
+
+
+.toggleBooksLicenses {
+  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 2px solid #CCCCCC;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  font-size: 14px;
+}
+
+.groundedRadio {
+  vertical-align: bottom;
+}
+
+.booksInfo {
+  padding: 10px;
+}
+
+.centerRadioGroup {
+  margin-bottom: 10px;
+}
+
+.rightAligner {
+  text-align: right;
+}
+
+.find_students {
+  padding: 10px;
+}
+
+.supportingLicenseListTable {
+  width: 100%;
+  text-align: left;
+  > tr:first-child {
+    td {
+      padding: 10px;
+    }
+    > td {
+      padding-left: 0px;
+    }
+    > td:last-child {
+      text-align: right;
+    }
+  }
+}
+
+#licenseListHeader {
+  background-color: #3e6ca8;
+  color: #fff;
+  .pagination, .pagination::after {
+    background-color: inherit;
+    display: inline-block;
+  }
+  .paginator {
+    float: right;
+    margin-right: 20px;
+    .displayinfo {
+      display: inline-block;
+      position: relative;
+      top: 5px;
+    }
+  }
+  th {
+    border: 1px solid #fff;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-weight: normal;
+    background-clip: padding-box;
+  }
+  .first, .last, .page {
+    display: none;
+  }
+  .prev, .next {
+    border: 1px solid #fff;
+    border-radius: 3px;
+    display: inline-block;
+  }
+}
+.leadRow, #licenseListHeader, .togglerRow {
+  td {
+    padding: 10px;
+  }
+  > td {
+    padding-left: 5px;
+  }
+  > td:last-child {
+    text-align: right;
+  }
+}
+
+.togglerRow {
+  > td:last-child {
+    padding-bottom: 0px;
+  }
+}
+
+#licenseList {
+  border-spacing: inherit;
+}
+
+.searchStudentsFormWrapper {
+  .academic_class_id, .section_id {
+    width: 170px;
+  }
+}
+
+.studentsListForm {
+  padding: 10px;
+}
+
+.studentTableInfo {
+  width: 100%;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  .rightAligner {
+    span {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  > > tbody > tr > td {
+    border-bottom: none;
+  }
+}
+
+.green {
+  background-color: #4d937b;
+  color: white;
+  padding: 0px 5px;
+  width: 50px;
+  font-size: 12px;
+}
+
+.teacherTable, .studentTable {
+  max-width: 900px;
+  tr:first-child {
+    color: #4D917A;
+  }
+  > tbody > tr {
+    border-bottom: 1px solid #CCC;
+  }
+
+}
+
+.booksInfo > .assignedBooks {
+  width: 100%;
+  > tbody > tr > td {
+    width: 33%;
+  }
+}
+
+.studentTable {
+  width: auto;
+  max-width: 800px;
+  .studentName {
+    width: 200px;
+  }
+  .studentCheckbox {
+    width: 20px;
+  }
+}
+
+.teacherTable {
+  width: auto;
+  max-width: 800px;
+  tr td:nth-child(odd) {
+    width: 20px;
+  }
+  .teacherName {
+    width: 200px;
+  }
+}
+
+.edid {
+  display: inline-block;
+  color: #939393;
+  font-size: 12px;
+}
+
+//styling for license set tabs
+#allLicenseSets {
+  li>a {
+    color: #3e6ca8;
+  }
+
+  #futureLicenseSets, #pastLicenseSets {
+    height: 200px;
+    overflow-y: auto;
+    color: #636363;
+  }
+  ul {
+    background: none !important;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+  }
+  /*border bottom in theme color blue */
+  .ui-tabs-nav {
+    border-bottom: 3px solid #3e6ca8;
+  }
+  li.ui-state-active, li.ui-state-hover, li.ui-state-default {
+    background: none !important;
+    border: none;
+  }
+  li.ui-state-active {
+    border-bottom: 4px solid #3e6ca8;
+  }
+}
+
+.licenseInfoFieldsPublisher.headerInfo {
+  font-weight: bold;
+  background-color: white;
+}
+
+#licenseInfoPublisherTableContainer {
+  height: 600px;
+  overflow-y: auto;
+}
+
+.licenseInfoFieldsPublisher {
+  width: 100%;
+  td {
+    word-break: break-all;
+    border-bottom: 1px #CCC solid;
+    padding: 5px;
+  }
+  td:nth-child(1) {
+    width: 30px;
+  }
+  td:nth-child(2) {
+    width: 200px;
+  }
+  td:nth-child(3) {
+    min-width: 200px;
+  }
+  td:nth-child(4) {
+    width: 200px;
+  }
+  td:nth-child(5) {
+    width: 150px;
+  }
+  td:nth-child(6), td:nth-child(7), td:nth-child(8) {
+    width: 100px;
+  }
+}

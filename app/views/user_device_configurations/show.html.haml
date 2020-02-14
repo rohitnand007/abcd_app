@@ -1,0 +1,33 @@
+%p#notice= notice
+
+%p
+  %b Config:
+  - if @user_device_configuration.config
+    - JSON.load(@user_device_configuration.config).each do |i|
+      = i.join(':')
+      %br
+%p
+  %b Workspace apps:
+  - if @user_device_configuration.workspace_apps
+    - JSON.load(@user_device_configuration.workspace_apps) do |i|
+      = i
+%p
+  %b Firewall:
+  - if @user_device_configuration.firewall
+    = @user_device_configuration.firewall
+%p
+  %b Apps:
+  - if @user_device_configuration.apps
+    - JSON.load(@user_device_configuration.apps).each do |a|
+      %br
+      - a.each do |j|
+        = j.join(':')
+        %br
+%p
+  %b Deviceid:
+  - if @user_device_configuration.deviceid
+    = @user_device_configuration.deviceid
+
+= link_to 'Edit', edit_user_device_configuration_path(@user_device_configuration)
+\|
+= link_to 'Back', user_device_configurations_path

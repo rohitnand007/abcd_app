@@ -1,0 +1,228 @@
+= javascript_include_tag 'user_assets'
+= stylesheet_link_tag 'user_assets'
+= render partial:'form',locals:{edit:false}
+
+#UserAssets
+  %ul{style:"visibility:collapse;"}
+    %li
+      %a{href:"#view1",} Available content
+    %li
+      %a{href: "#view2"} Available Books
+    %li
+      %a{href: "#view3"} Published content
+  #view1
+    %div.breadcrumb.flat{style:"position:absolute;top:15px;"}
+      %a.active{href: "#",id:"testtest"} Select Asset
+      %a{href: "#"} Select Book to Publish
+      %a{href: "#"} Select Location and Publish
+    -#%h2{style: "font-size: 15px; font-style: italic;float: left;"} Select an Asset to publish
+    = button_tag '+ Add New Content',class: "button move_right" , id: 'createNewAsset', :style=>"font-size:0.8em;"
+    %table#user_assets_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+      %thead
+        %tr.tr-head
+          %th Asset Name
+          %th Added on
+          %th Last Publish Info
+          %th Encryption Status
+          %th Asset type
+          %th
+      - @user_assets.each do |user_asset|
+        %tr{:class => cycle("tr-odd", "tr-even"), :id => "asset_#{user_asset.id}" }
+          %td= user_asset.asset_name
+          %td= Time.at(user_asset.created_at).to_formatted_s(:long)
+          %td
+            - content = ContentDelivery.where(user_asset_id: user_asset.id).last
+            - if content
+              = "Last Published to"
+              - ibook = Ibook.find_by_id(content.ibook_id)
+              %b=ibook.get_metadata["displayName"] unless ibook.nil?
+              %br
+              = "as"
+              %b=content.published_as
+              ="on"
+              %b=Time.at(content.created_at).to_formatted_s(:long)
+            %br
+          %td= user_asset.is_encrypted
+          %td= user_asset.asset_type
+          %td
+            = link_to 'Add to a book',user_assets_path(asset_id: user_asset.id, p: 1), class: "button tablebutton"
+            = link_to 'Delete', user_asset, class: "button tablebutton", :confirm => 'Asset once deleted cannot be retrieved!', :method => :delete
+  #view2
+    = render partial: "available_books", locals: {asset_id: @asset_id}
+  #view3
+    %h2{style:"position:absolute;top:-5px"} Published Content Information
+    %div#overlay{:style => "position:fixed; top:0; left:0; width:100%; height:100%; z-index:10; opacity:0.2;"}
+    %table#listing_content_deliveries.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+      %thead
+        %tr.tr-head
+          %th Published on
+          %th Asset Display Name
+          - unless current_user.is? "ET"
+            %th Asset Name
+          %th Book Title
+          %th Chapter
+          %th Topic
+          %th Sub Topic
+          -#%th Message
+          %th Asset Type
+          %th Status
+          %th Roll No
+      - @content_deliveries.each_with_index do |content_delivery,i|
+        %tr{:class => cycle("tr-odd","tr-even")}
+          %td= Time.at(content_delivery.created_at).to_formatted_s(:long)
+          %td= content_delivery.uri.split("/").last if content_delivery.uri.present?
+          %td= content_delivery.user_asset.asset_name if content_delivery.user_asset.present?
+          %td= content_delivery.ibook.get_title_and_class if content_delivery.ibook.present?
+          - location = content_delivery.uri.split("/")
+          - location.pop; location.shift
+          %td
+
+            = location[0]
+          %td
+            - if (location[1]== nil)
+              %i NA
+            - else
+
+              = location[1]
+          %td
+            - if (location[2]== nil)
+              %i NA
+            - else
+
+              = location[2]
+          %td= content_delivery.published_as
+          %td= content_delivery.message_id.nil? ? "Not Published" : "Published"
+          - p = content_delivery.group_id if content_delivery.group_id.present?
+          %td{:style => 'text-overflow: ellipsis  ;white-space: nowrap; overflow:hidden !important;display:inline-block;width:100px;'}
+            - if p== nil
+              =  link_to content_delivery.recipients,"#",class:"userAssetInfo",data:{cdid:content_delivery.id}
+            -else
+              = link_to User.find(p).name,"#",class:"userAssetInfo",data:{cdid:content_delivery.id}
+
+
+:javascript
+  $( document ).ready(function() {
+  $("#overlay").hide();
+
+  function studentTable(data){
+    var stringTable = "<table  align = 'center' width = '100%' cellpadding = 10 cellspacing = 1 class = listing ><thead><tr class = tr-head><th>Student Id</th><th>Student Name</th><th>Downloaded status</th></tr></thead>";
+    for(var i=0;i<data.length;i++){
+      stringTable+="<tr align = 'center' >"+"<td>"+data[i].id+"</td>"+"<td>"+data[i].name+"</td>"+"<td>"+data[i].downloaded+"</td>"+"</tr>";
+    }
+    return stringTable+"</table>"
+  }
+
+  $(".userAssetInfo").live("click",function(){
+  $("#overlay").show();
+  var content_delivery_id = $(this).data("cdid");
+    $.ajax({
+            url: "/content_deliveries/"+content_delivery_id+".json",
+            success: function (data) {
+                var studenttable = studentTable(data);
+                $("<div>"+studenttable+"</div>").dialog({title: "Students Downloaded Info",
+            dialogClass: 'userAssetDownload',
+            width: "auto",
+            height: "auto",
+            resizable: true,
+            draggable: true,
+            modal: true,
+            zIndex:500});
+            $("#overlay").hide();
+            },
+            type: "GET",
+            dataType: "JSON"
+        });
+
+  });
+  $("#UserAssets").tabs();
+  $("#UserAssets").tabs().removeClass("ui-widget-content");
+
+  $("#UserAssets").tabs({
+
+  active: #{@p}
+    });
+     var ele = #{@p};
+      if (ele == 2) {
+         $("#ui-id-3").show();
+          $("#ui-id-1").hide();
+          $("#ui-id-2").hide();
+      } else {
+        $("#ui-id-3").show();
+      };
+  });
+
+  function hideform(){  $(document).ready(function(){
+    $("#new_user_asset").hide();})};
+
+
+  hideform();
+  $("#createNewAsset").click(function () {
+        $("#new_user_asset").dialog({title: "Upload a new Asset",
+            dialogClass: 'createNewAsset',
+            width: "auto",
+            height: "auto",
+            resizable: false,
+            draggable: false,
+            modal: true});})
+
+  $("#assetbox").change(function(){
+    var value = $(this).find("option:selected").attr("value");
+    $("#attachment").show();
+     switch (value){
+        case "weblink":
+          $("#weblink").html("<input class=\"text_box\" id=\"name\" name=\"user_asset[weblink_url]\" type=\"text\" value=\"\">")
+          $("#weblink").show();
+          $("#attachment").hide();
+          break;
+
+        case "":
+        $("#msg").show();
+        $("#weblink").hide();
+
+        break;
+
+        case "animation":
+        case "text-book":
+        case "assessment-quiz":
+        case "assessment-practice-tests":
+        case "concept-map":
+        case "audio":
+        case "video-lecture":
+          $("#msg").hide();
+          $("#weblink").hide();
+
+          break;
+
+
+        default:
+        $("#msg").hide();
+        $("#weblink").hide();
+        break;
+        }
+      });
+
+
+:css
+  .userAssetDownload{
+    border-radius: 7px;
+    margin:30px auto 0;
+    padding:6px;
+    // here it comes
+    position:absolute;
+    width:800px;
+    top: 76px;
+    left: 890px;
+    margin-left: -400px;
+    margin-top: -40px;
+  }
+  .ui-dialog .ui-dialog-content{
+  max-height: 500px;
+  overflow-y: scroll;
+  }
+
+  #overlay{
+
+  background: #000000 url("/assets/blue_loading.gif") no-repeat fixed center;
+  }
+
+

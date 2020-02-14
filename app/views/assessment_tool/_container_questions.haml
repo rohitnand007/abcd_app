@@ -1,0 +1,13 @@
+-#Expects @assessment variable
+- container.direct_questions.each do |question|
+  - if question.qtype=="passage"
+    - child_questions = question.questions.select{|child_question| @assessment.question_ids.include? child_question.id}
+    %div{style:"border: 1px solid #ccc; padding:10px;"}
+      %div= question.questiontext_format.html_safe
+      %div
+        - child_questions.each do |child_question|
+          = render partial: 'question_level_key_correction',locals:{question:child_question}
+  - else
+    = render :partial => 'question_level_key_correction',locals:{question:question}
+    %br
+

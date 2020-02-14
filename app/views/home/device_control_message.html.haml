@@ -1,0 +1,107 @@
+= simple_form_for @message,:html => { :class => :form,:multipart => true,:onsubmit=>"return validate_reg();" } do |f|
+  .inputs
+    .group
+      .field
+        = f.error_messages :header_message=>nil
+    .group
+      .field
+        = f.hidden_field :message_type,:value=>"Control Message"
+    .group#recipient
+      .field
+        = f.input :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:"
+    .group{:id=>'general_message_subject'}
+      .field
+        = f.input :subject,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group{:id=>'ctrl_message_subject',:style=>'display:none;'}
+      .field
+        = f.input :control_message_subject,:as=>:select,:collection=>Message::CONTROL_MESSAGE_TYPES,:include_blank => false,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Subject'
+    .group
+      .field
+        = f.input :body,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+        = f.hidden_field :sender_id,:value=>current_user.id
+
+    .group
+      .field
+        =f.simple_fields_for :assets do |a|
+          = render 'asset_fields', :f => a
+    .add_more{:style=>'margin-left:30%',:align=>'center'}
+      = link_to_add_association '+Add Attachment', f, :assets
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary'
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), messages_path+user_path(current_user),:class=>'button danger icon remove'
+
+:javascript
+  $(document).ready(function(){
+      $("input[name$='message_to']").click(function(){
+          var radio_value = $(this).val();
+          if(radio_value=='individual') {
+              $("#recipient").show("slow");
+              $("#group").hide();
+          }
+          else if(radio_value=='group') {
+              $("#message_multiple_recipient_ids").tokenInput('clear');
+              $(".token-input-dropdown").remove();
+              $(".token-input-list").remove();
+              $("#token-input-multiple_recipient_ids").remove();
+              $(function() {
+                 $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+                 queryParam: 'term',
+                 minChars: '3',
+                 hintText: 'Type first 3-letters of users surname/firstname/roll number',
+                 crossDomain: false,
+                 preventDuplicates:true,
+                 prePopulate: $("#message_multiple_ids").data("pre"),
+                 theme: ""
+                });
+              });
+              $("#group").show("slow");
+              $("#recipient").hide();
+          }
+      });
+       $("#recipient").show();
+       $("#group").show();
+
+      $("#message_message_type").click(function(){
+             var selected_value = $(this).val();
+             if (selected_value == 'Centerreport') {
+                 $('#message_severity').val(2);
+             }
+             else{ $('#message_severity').val(1);}
+             if (selected_value == 'Control Message'){
+                 $('#ctrl_message_subject').show();
+                 $('#general_message_subject').hide();
+             }else{
+                 $('#ctrl_message_subject').hide();
+                 $('#general_message_subject').show();
+             }
+         });
+
+         $("#message_control_message_subject").click(function(){
+             var selected_value = $(this).val();
+
+             if (selected_value == 'WiFi Settings') {
+                 $('#message_body').val("SSID: enter ssid ,PASSWORD: enter password ,IS_PROXY: true/false, PROXY_NAME: proxy name, PORT: enter port");
+             }
+             else if(selected_value == 'Configuration Settings') {
+                 $('#message_body').val("key: KEY ,value: VALUE ,type: TYPE");
+             }
+             else{
+                 $('#message_body').val("");
+             }
+         });
+
+        $(function() {
+          $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+          queryParam: 'term',
+          minChars: '3',
+          hintText: 'Type first 3-letters of users surname/firstname/roll number',
+          crossDomain: false,
+          preventDuplicates:true,
+          prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+          theme: ""
+          });
+        });
+  });
+
+

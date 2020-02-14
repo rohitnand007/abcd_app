@@ -1,0 +1,39 @@
+#content_header
+  -#%h1#main_heading Assessments
+  #breadcrumbs
+    %ul
+      %li
+        = link_to 'My Assessments',assessments_path
+      %li
+        = link_to 'Show','#',{:class=>'current'}
+#inner-tab-menu
+  %ul
+    -unless current_user.is? 'EST'
+      %li= link_to "#{t("web-app-theme.list", :default => "List")}",assessments_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_path
+      %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_path(@assessment)
+    -else
+      %li= link_to "#{t("web-app-theme.list", :default => "List")}",contents_path(:status=>1)
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_path(@assessment)
+#data
+  #application-list
+    .heading= @assessment.name
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.assessment.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @assessment.name
+        %tr.even.left
+          %td
+          - if current_user.role.name.eql?('Support Team')
+            %td.right= link_to "Download", est_download_content_path(@assessment) ,:title=>'Download Attachement',:class=>'tipTipRight'
+          - else
+            %td.right= link_to "Download", download_zip_content_path(@assessment) ,:title=>'Download Attachement',:class=>'tipTipRight'
+
+        %tr.tr-blank
+        -unless current_user.is? 'EST'
+          %tr
+            %td{:colspan=>'2'}
+              = link_to 'Edit',edit_assessment_path(@assessment), :class => "button icon edit"
+              = link_to 'Delete',assessment_path(@assessment), :method => "delete",:class => "button danger icon remove", :confirm => "Are you sure?"
+

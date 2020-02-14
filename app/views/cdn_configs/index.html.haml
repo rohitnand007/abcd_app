@@ -1,0 +1,31 @@
+%h1 Listing cdn_configs
+
+%table{border:"1"}
+  %tr
+    %th Cdn name
+    %th Description
+    %th Support emails
+    %th User
+    %th Password
+    %th Device
+    %th
+    %th
+    %th
+    %th
+
+  - @cdn_configs.each do |cdn_config|
+    %tr
+      %td= cdn_config.cdn_name
+      %td= cdn_config.description
+      %td= cdn_config.support_emails
+      %td= cdn_config.cdn_user.edutorid
+      %td= cdn_config.cdn_user.plain_password
+      %td= cdn_config.cdn_user.devices.first.deviceid
+      %td= link_to 'Show', cdn_config
+      %td= link_to 'Edit', edit_cdn_config_path(cdn_config)
+      %td= link_to 'Destroy', cdn_config, :confirm => 'Are you sure?', :method => :delete
+      %td= link_to 'cdn_centers', cdn_centers_cdn_config_path(cdn_config)
+
+%br
+
+= link_to 'New Cdn config', new_cdn_config_path

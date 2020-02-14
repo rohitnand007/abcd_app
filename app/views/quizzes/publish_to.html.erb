@@ -1,0 +1,321 @@
+<div id="content_header">
+  <h1 id="main_heading">Publish Assessment</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "All Assessments", :controller => "quizzes", :action => "index" %></li>
+    <li><%=link_to "My Published Assessments", :controller => "quizzes", :action => "myquizzes" %></li>
+    <li><%=link_to "My Unpublished Assessments", :controller => "quizzes", :action => "myunpublishedquizzes" %></li>
+  </ul>
+</div>
+<div id="data">
+  <%= simple_form_for @target,:html => { :class => :form }, :url => { :action => "publish",:id=>@quiz.id },:validate=>true do |c| %>
+      <%= c.error_messages %>
+      <div class="group">
+        <div class="field">
+          <%= c.input :Assessment_to,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"} do %>
+              <%= radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual" %>
+              <%= 'Individual' %>
+              <%= radio_button_tag :message_to, 'group',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Group" %>
+              <%= 'Group' %>
+          <%end%>
+         </div>
+       </div>
+      <div class="group" id="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            <abbr title="required">*</abbr>
+            Select Group
+          </label>
+          <select name="quiz_targeted_group[group_id]">
+            <% asign_groups(current_user).each do |g|%>
+              <option value="<%=g.user_id%>"><%=g.try(:section_name)%></option>
+            <%end%>
+          </select>
+        </div>
+      </div>
+    </div>
+      <input name="quiz_targeted_group[to_group]" type="hidden" value="1" id="to_group"/>
+    <div class="group"id="recipient">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            Individual
+          </label>
+              <%= text_field :message, :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:" %>
+         </div>
+        </div>
+     </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Assessment Location
+            </label>
+            <%= c.select :extras,options_for_select(Assessment::LOCATION,Assessment::LOCATION),:prompt=>true,:class=>"string required text_field"%>
+          </div>
+        </div>
+      </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            <abbr title="required">*</abbr>
+            Assessment Type
+          </label>
+          <%= c.select :assessment_type,["Please select",""],:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Start Time<br/>
+            <span style="font-size:12px">After which assessment can be started.</span>
+          </label>
+          <%= c.datetime_select :timeopen,:as=>:datetime,:start_year=>1970,:default => 43.years.ago,:order=>[:day,:month,:year],:class=>"string required text_field"%>
+          <% if !@target.errors.get(:timeopen).nil? %>
+            <span style="color:red"><%= @target.errors.get(:timeopen) %></span>
+          <%end%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            End Time<br/>
+            <span style="font-size:12px">After which assessment cannot be started.</span>
+          </label>
+          <%= c.datetime_select :timeclose,:as=>:datetime,:start_year=>2012,:default => 30.days.from_now,:order=>[:day,:month,:year],:class=>"string required text_field"%>
+          <% if !@target.errors.get(:timeclose).nil? %>
+            <span style="color:red"><%= @target.errors.get(:timeclose) %></span>
+          <%end%>
+        </div>
+      </div>
+    </div>
+  <% if @quiz.format_type != 1 %>
+    <div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Shuffle Questions
+          </label>
+          <select name="quiz_targeted_group[shufflequestions]">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Shuffle Options
+          </label>
+          <select name="quiz_targeted_group[shuffleoptions]">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  <%else%>
+  <input type="hidden" name="quiz_targeted_group[shufflequestions]" value="0"/>
+  <input type="hidden" name="quiz_targeted_group[shuffleoptions]" value="0"/>
+<div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Allow Multiple Option Selection
+          </label>
+          <select name="quiz_targeted_group[allow_multiple_options]">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  <%end%>
+    <div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Allow pausing<br/>
+            <span style="font-size:12px">If selected assessment can be paused.</span>
+          </label>
+          <select id="quiz_targeted_group_pause" name="quiz_targeted_group[pause]">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            Password<br/>
+            <span style="font-size:12px">Leave it blank for no restriction.</span>
+          </label>
+          <%= c.text_field :password,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Show Scores after(in hours)<br/>
+            <span style="font-size:12px">Enter 0 for no restriction.</span>
+          </label>
+          <%= c.text_field :show_score_after,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Show solutions after(in hours)<br/>
+            <span style="font-size:12px">Enter 0 for no restriction.</span>
+          </label>
+          <%= c.text_field :show_answers_after,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Notification Message Subject
+          </label>
+          <%= c.text_field :subject,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Notification Message Body
+          </label>
+          <%= c.text_field :body,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div align="center" class="field">
+        <input class="button big primary" data-disable-with="Publishing..." name="commit" type="submit" value="Publish" id='submit_form'/>
+        <a href="/quizzes" class="button danger icon remove">Cancel</a>
+      </div>
+    </div>
+  <% end %>
+</div>
+<script>
+    $(document).ready(function(){
+    $("#quiz_targeted_group_extras").change(function() {
+        var selected_value = $('select#quiz_targeted_group_extras :selected').val();
+
+        if (selected_value == "homework") {
+            $("#quiz_targeted_group_assessment_type").empty().append('<option  value=2>Regular</option>');
+        }
+        else if (selected_value == "institute")  {
+            $("#quiz_targeted_group_pause").val("0");
+            $("#quiz_targeted_group_pause").attr("disabled", true);
+            $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=3>Assignment</option>').append('<option  value=4>Inclass</option>');
+        }
+        else if (selected_value == "practice")  {
+            $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=2>Regular</option>').append('<option  value=5>HOT/IIT</option>').append('<option  value=6>Olympiad</option>');
+        }
+        else if (selected_value == "quiz")  {
+            $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=1>Quiz</option>');
+        }
+        else if (selected_value == ""){
+            $("#quiz_targeted_group_assessment_type").empty()
+        }
+        if (selected_value != "institute")
+          $("#quiz_targeted_group_pause").attr("disabled", false);
+        
+    });
+
+    var selected_value = $('select#quiz_targeted_group_extras :selected').val();
+
+    if (selected_value == "homework") {
+        $("#quiz_targeted_group_assessment_type").append('<option  value="">Please select</option>').empty().append('<option  value=2>Regular</option>');
+    }
+    else if (selected_value == "institute")  {
+        $("#quiz_targeted_group_pause").val("0");
+        $("#quiz_targeted_group_pause").attr("disabled", true);
+        $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=3>Assignment</option>').append('<option  value=4>Inclass</option>');
+    }
+    else if (selected_value == "practice")  {
+        $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=2>Regular</option>').append('<option  value=5>HOT/IIT</option>').append('<option  value=6>Olympiad</option>');
+    }
+    else if (selected_value == "quiz")  {
+        $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=1>Quiz</option>');
+    }
+    else if (selected_value == ""){
+        $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>');
+    }
+    if (selected_value != "institute")
+        $("#quiz_targeted_group_pause").attr("disabled", false);
+
+    $("input[name$='message_to']").click(function(){
+
+
+
+    var radio_value = $(this).val();
+    if(radio_value=='individual') {
+        $("#to_group").val("0");
+        $("#recipient").show("slow");
+        $("#group").hide();
+    }
+    else if(radio_value=='group') {
+        $("#to_group").val("1");
+        $("#message_multiple_recipient_ids").tokenInput('clear');
+        $(".token-input-dropdown").remove();
+        $(".token-input-list").remove();
+        $("#token-input-multiple_recipient_ids").remove();
+        $(function() {
+            $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+                queryParam: 'term',
+                minChars: '3',
+                hintText: 'Type first 3-letters of users surname/firstname/roll number',
+                crossDomain: false,
+                preventDuplicates:true,
+                prePopulate: $("#message_multiple_ids").data("pre"),
+                theme: ""
+            });
+        });
+        $("#group").show("slow");
+        $("#recipient").hide();
+    }
+    });
+    $("#recipient").hide();
+    $("#group").show();
+
+    $(function() {
+        $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+            theme: ""
+        });
+    });
+
+    });
+</script>

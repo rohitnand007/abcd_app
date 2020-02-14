@@ -1,0 +1,71 @@
+:javascript
+  $(document).ready(function() {
+    $("#devices").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Devices
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}",devices_path
+    -if current_user.is? 'EA' or current_user.is? 'IA'
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_device_path
+      %li= link_to "#{t("web-app-theme.move_devices", :default => "Move devices")}", move_devices_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#devices.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Device-Id
+                %th Mac-Id
+                %th= t("activerecord.attributes.device.model", :default => t("activerecord.labels.model", :default => "Model"))
+                %th= t("activerecord.attributes.device.institution", :default => t("activerecord.labels.institution", :default => "Institution"))
+                %th= t("activerecord.attributes.device.center", :default => t("activerecord.labels.center", :default => "Center"))
+                %th= t("activerecord.attributes.device.status", :default => t("activerecord.labels.status", :default => "Status"))
+                %th= t("activerecord.attributes.device.device_type", :default => t("activerecord.labels.device_type", :default => "Device Type"))
+                %th= t("activerecord.attributes.device.device_users", :default => t("activerecord.labels.device_users", :default => "Assigned To"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @devices.each do |device|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"device_#{device.id}"}
+                  %td.col= device.deviceid
+                  %td.col= device.mac_id
+                  %td.col= link_to device.model, device_path(device) if device.model
+                  %td.col= device.institution.try(:name)
+                  %td.col= device.center.try(:name)
+                  %td.col= device.status
+                  %td.col= device.device_type
+                  -if device.users.size>4
+                    %td.col= device.users.size.to_s+" members"
+                  -else
+                    %td.col
+                      - @i = ""
+                      - device.users.each do |user|
+                        = @i
+                        = link_to user.name,user_path(user)
+                        - @i = ","
+                  %td.col= display_date_time(device.created_at)
+                  %td.col{:style=>'white-space:nowrap'}
+                    = link_to_show( device_path(device))
+                    = link_to 'Reset',reset_device_device_path(device),:confirm=>'Do you want to reset mac and android id of this device?' if (current_ea or current_ia or current_cr) and !device.is_already_reset?
+                    = link_to 'Sync' ,device_sync_path(device)
+        .pagination_info= paginate @devices unless @devices.blank?
+
+

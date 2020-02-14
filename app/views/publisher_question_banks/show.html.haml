@@ -1,0 +1,21 @@
+-#= link_to "Edit", edit_publisher_question_bank_path(@publisher_question_bank)
+%h2
+  = @publisher_question_bank.question_bank_name
+%h4
+  = @publisher_question_bank.description
+
+%h4 Fixed Tags
+%table#hardTags.listing
+  %tr
+    %th
+      Tag Name
+    %th
+      Tag Value
+  -["blooms_taxonomy","difficulty_level","specialCategory","qsubtype"].each do |subtype_name|
+    %tr
+      %td= subtype_name.capitalize
+      %td
+    - @publisher_question_bank.tags.where(:name=>subtype_name).each_with_index do |tag,index|
+      %tr
+        %td= index+1
+        %td= tag.value

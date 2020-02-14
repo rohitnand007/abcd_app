@@ -1,0 +1,186 @@
+/*
+*=require 'publisher'
+*/
+.abridgedBookInfoParent{
+  border-right: 1px solid #ddd
+}
+.fullDetailArea {
+  .firstDetailTable {
+    > tbody {
+      > tr > td:first-child {
+        width: 40%;
+      }
+    }
+  }
+  .toggleBar{
+    text-align: right;
+    border-bottom: 1px solid #CCCCCC;
+    height: 2px;
+    .detailToggleButton {
+      top: -30px;
+    }
+  }
+  .hideDetail {
+    display: block;
+    text-align: right;
+    padding-right: 5px;
+  }
+  hr{
+    margin-top: 0
+  }
+
+}
+
+.accordion {
+  ul {
+    width: 400px;
+    padding: 0px;
+    list-style: none;
+    max-height: 20px;
+    overflow: hidden;
+    transition: max-height 2s ease-out 10s;
+    -moz-transition: max-height 2s ease-out 10s;
+    h4 > .right {
+      float: right;
+    }
+    &:hover {
+      h4 {
+        .expand {
+          visibility: hidden;
+          transition: visibility 0.1s ease 0s;
+        }
+      }
+      max-height: 1000px;
+      transition: max-height 1s ease-in;
+      -moz-transition: max-height 1s ease-in;
+    }
+    h4 {
+      background-color: #E5F4FB;
+      margin: 0;
+      padding-left: 5px;
+      .expand {
+        visibility: visible;
+        transition: visibility 0.1s ease 10s;
+      }
+
+    }
+    li {
+      padding-left: 5px;
+    }
+  }
+}
+
+.moreBookInfo {
+  > tbody {
+    > tr {
+      > td:first-child {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.firstDetailTable {
+  > tbody {
+    > tr {
+      > td:last-child {
+        width: 5%;
+        text-align: right;
+      }
+    }
+  }
+}
+
+#booksHeader {
+  border-bottom: 1px solid #CCCCCC;
+  border-top: 1px solid #CCCCCC;
+  padding: 10px;
+  background-color: #fff;
+}
+
+#booksList {
+  height: 500px;
+  overflow-y: scroll;
+  cursor: default;
+}
+
+.extendedDetail.occupyWidth {
+  background-color: #f9f9f9;
+  display: table;
+  .stats {
+    border-top: 1px solid #CCCCCC;
+    display: table-row;
+    .accordionEnvelope, .licenceUtilizedPieChart {
+      display: table-cell;
+      border-top: 1px solid #CCCCCC;
+    }
+    .accordionEnvelope {
+      padding-left: 15px;
+    }
+    .licenceUtilizedPieChart {
+      text-align: center;
+    }
+  }
+}
+
+#existingCollections {
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.eachCollection {
+  background-color: #CCCCCC;
+  font-family: sans-serif;
+  color: #FFFFFF;
+  font-weight: bold;
+  padding: 5px;
+  margin: 2px;
+}
+
+#newIpack {
+  padding-left: 5px;
+}
+
+// for toc
+.tocTree {
+  display: table-row;
+  .contentsWrapper {
+    display: table-cell;
+    padding-bottom: 10px;
+    h4 {
+      padding: 15px;
+      padding-bottom: 5px;
+      cursor: pointer;
+    }
+  }
+}
+
+.contents {
+  display: none;
+  background-color: #ffffff;
+  border: 1px solid #CCCCCC;
+  padding: 5px;
+  margin-top: 10px;
+  margin-left: 50px;
+  .chapters {
+    padding-left: 25px;
+  }
+  .topics {
+  }
+  .subtopics {
+  }
+  .subsubtopics {
+  }
+  .subsubsubtopics {
+  }
+  li {
+    padding-left: 3px;
+    cursor: pointer;
+    color: #487F70;
+    list-style-image: image-url('ArrowIcon.png');
+  }
+  ul {
+    padding-right: 0px;
+    padding-left: 10px;
+  }
+}

@@ -1,0 +1,51 @@
+#content_header
+  %h1#main_heading Institutions
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", institutions_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_institution_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_institution_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", institution_path(@institution)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.institution.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @institution.profile.firstname
+        %tr.even.left
+          %td= t("activerecord.attributes.institution.address", :default => t("activerecord.labels.address", :default => "Address"))
+          %td.right= @institution.profile.address
+        %tr.odd.left
+          %td= t("activerecord.attributes.institution.website", :default => t("activerecord.labels.website", :default => "Website"))
+          %td.right= @institution.profile.website
+        %tr.even.left
+          %td= t("activerecord.attributes.institution.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+          %td.right= @institution.profile.phone
+        %tr.odd.left
+          %td= t("activerecord.attributes.institution.email", :default => t("activerecord.labels.email", :default => "Email"))
+          %td.right= @institution.email
+        %tr.even.left
+          %td Institute Admins
+          %td.right=  institute_admins_with_links(@institution.institute_admins)
+        -#%tr.odd.left
+        -#  %td Assigned Boards
+        -#  %td.right=  @institution.boards.map(&:name).join(',')
+        %tr.odd.left
+          %td Logo
+          %td.right=  image_tag @institution.profile.photo.url(:large)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_institution_path(@institution), :class => "button icon edit"
+            -#= link_to "Delete", institution_path(@user), :method => "delete", :class => "button", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+
+    .heading.hr
+      Centers
+      .right
+        = link_to "Add Center" ,new_center_path(institution_id: @institution.id)  ,:class=>'button icon add'
+    = render 'centers/centers'
+
+:javascript
+  var InstitutionId = #{@institution.id};
+

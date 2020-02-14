@@ -1,0 +1,186 @@
+#content_header
+  %h1#main_heading Search Students
+  %br
+  %br
+#data{:style=>"margin-top: 3%;"}
+  .form{:style=>'padding-bottom: 20px;'}
+    - if current_user.is? "EA"
+      %span{:id=>'institution'}=select("student", "institution_id", Institution.includes(:profile).collect {|p| [ p.name, p.id ] }, {:prompt => 'Select Institution'})
+      %span{:id=>'center',:style=>'display:none'}=select("student", "center_id",[], {:prompt => 'Select Center'})
+      %span{:id=>'academic_class',:style=>'display:none'}=select("student", "academic_class_id",[], {:prompt => 'Select Class'})
+      %span{:id=>'section',:style=>'display:none'}=select("student", "section_id",[], {:prompt => 'Select Section'})
+    -elsif current_user.is? "IA"
+      = hidden_field_tag "institution_id",:vlaue=>current_user.institution_id,:id=>'institution'
+      %span{:id=>'center'}=select("student", "center_id",Center.includes(:profile).where(:institution_id=>current_user.institution_id).collect {|p| [ p.name, p.id ]}, {:prompt => 'Select Center'})
+      %span{:id=>'academic_class',:style=>'display:none'}=select("student", "academic_class_id",[], {:prompt => 'Select Class'})
+      %span{:id=>'section',:style=>'display:none'}=select("student", "section_id",[], {:prompt => 'Select Section'})
+    -elsif current_user.is? "CR"  or current_user.is? "ET"
+      = hidden_field_tag "institution_id",current_user.institution_id,:id=>'institution_id'
+      = hidden_field_tag "institution_id",current_user.center_id, :id=>'center_id'
+      %span{:id=>'academic_class'}=select("student", "academic_class_id",AcademicClass.includes(:profile).where(:center_id=>current_user.center_id).collect {|p| [ p.name, p.id ]}, {:prompt => 'Select Class'})
+      %span{:id=>'section',:style=>'display:none'}=select("student", "section_id",[], {:prompt => 'Select Section'})
+
+  %span{:id=>'loading',:style=>'display:none'}=image_tag('ajax-loader.gif');
+  #progress-indicator.progress-indicator= image_tag('progress-indicator.gif')
+  #users_list
+    = render 'users/users' unless @users.blank?
+:javascript
+  $("#student_institution_id").change(function() {
+      var institution = $('select#student_institution_id :selected').val();
+      $.ajax({//  // to get centers under institute
+          type: "GET",
+          url: '/institution/get_centers/' + institution ,
+          beforeSend:  function() {
+              $("#loading").show();
+              $("#center").hide();
+              $("#academic_class").hide();
+              $("#section").hide();
+          },
+          success: function(data){
+              $("#loading").hide();
+              $('#progress_progress-indicator').remove(); // remove the progress-indicator
+              if (data.length == 0) {
+                  alert('No Centers found');
+              }
+              else {
+                  populateDropdownWithPrompt($("#student_center_id"), data,"Please Select Center");
+                  $("#center").show();
+              }
+          }
+      });
+      $.ajax({//Make the progress Request
+          type: "POST",
+          url: '/student_search/list_students?institution_id='+institution  ,
+          beforeSend:  function() {
+              $("#progress-indicator").show();
+              $("#users_list").css('opacity',0.70);
+          },
+          success: function(data){
+              $("#progress-indicator").hide();
+              $("#users_list").css('opacity','');
+          }
+      });
+  });
+  
+  
+  $("#student_center_id").change(function() {
+         if (("<%= current_user.is? 'IA' %>") ||("<%= current_user.is? 'MOE' %>") || ("<%= current_user.is? 'CR' %>") ||("<%= current_user.is? 'ET' %>")) {
+                var institution = $('#institution_id').val();
+         }
+         else{
+            var institution = $('select#student_institution_id :selected').val();
+         }
+        var center = $('select#student_center_id :selected').val();
+
+      $.ajax({//  // to get centers under institute
+          type: "GET",
+          url: '/institution/get_academic_classes/' +institution+'/'+ center  ,
+          beforeSend:  function() {
+              $("#loading").show();
+              $("#academic_class").hide();
+              $("#section").hide();
+          },
+          success: function(data){
+              $("#loading").hide();
+              if (data.length == 0) {
+                  alert('No Classess found');
+              }
+              else {
+                  populateDropdownWithPrompt($("#student_academic_class_id"), data,"Please Select Class");
+                  $("#academic_class").show();
+              }
+          }
+      });
+      $.ajax({//Make the progress Request
+          type: "POST",
+          url: '/student_search/list_students?institution_id='+institution+"&center_id="+center,
+          beforeSend:  function() {
+              $("#progress-indicator").show();
+              $("#users_list").css('opacity',0.70);
+          },
+          success: function(data){
+              $("#progress-indicator").hide();
+              $("#users_list").css('opacity','');
+          }
+      });
+  });
+  
+  
+  $("#student_academic_class_id").change(function() {
+      if (("<%= current_user.is? 'CR' %>") || ("<%= current_user.is? 'ET' %>")) {
+        var institution = $('#institution_id').val();
+        var center = $('#center_id').val();
+      }
+      else if (("<%= current_user.is? 'IA' %>") || ("<%= current_user.is? 'MOE' %>"))  {
+              var institution = $('#institution_id').val();
+              var center = $('select#student_center_id :selected').val();
+      }
+      else {
+        var institution = $('select#student_institution_id :selected').val();
+        var center = $('select#student_center_id :selected').val();
+      }
+      var academic_class = $('select#student_academic_class_id :selected').val();
+      $.ajax({//  // to get centers under institute
+          type: "GET",
+          url: '/institution/get_sections/' +institution+'/'+ center +'/'+academic_class ,
+          beforeSend:  function() {
+              $("#loading").show();
+              $("#section").hide();
+          },
+          success: function(data){
+              $("#loading").hide();
+              if (data.length == 0) {
+                  alert('No Sections found');
+              }
+              else {
+                  populateDropdownWithPrompt($("#student_section_id"), data,"Please Select Section");
+                  $("#section").show();
+              }
+          }
+      });
+      $.ajax({//Make the progress Request
+          type: "POST",
+          url: '/student_search/list_students?institution_id='+institution+"&center_id="+center+"&academic_class_id="+academic_class,
+          beforeSend:  function() {
+              $("#progress-indicator").show();
+              $("#users_list").css('opacity',0.70);
+          },
+          success: function(data){
+              $("#progress-indicator").hide();
+              $("#users_list").css('opacity','');
+          }
+      });
+  });
+  
+  $("#student_section_id").change(function() {
+      if (("<%= current_user.is? 'CR' %>") || ("<%= current_user.is? 'ET' %>")) {
+        var institution = $('#institution_id').val();
+        var center = $('#center_id').val();
+      }
+      else if (("<%= current_user.is? 'IA' %>") || ("<%= current_user.is? 'MOE' %>"))  {
+              var institution = $('#institution_id').val();
+              var center = $('select#student_center_id :selected').val();
+
+      }
+      else {
+        var institution = $('select#student_institution_id :selected').val();
+        var center = $('select#student_center_id :selected').val();
+      }
+      var academic_class = $('select#student_academic_class_id :selected').val();
+      var section = $('select#student_section_id :selected').val();
+  
+      $.ajax({//Make the progress Request
+          type: "POST",
+          url: '/student_search/list_students?institution_id='+institution+"&center_id="+center+"&academic_class_id="+academic_class+"&section_id="+section,
+          beforeSend:  function() {
+              $("#loading").show();
+              $("#progress-indicator").show();
+              $("#users_list").css('opacity',0.70);
+          },
+          success: function(data){
+              $("#loading").hide();
+              $("#progress-indicator").hide();
+              $("#users_list").css('opacity','');
+          }
+      });
+  });

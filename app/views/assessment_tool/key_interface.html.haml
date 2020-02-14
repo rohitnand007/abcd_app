@@ -1,0 +1,121 @@
+= javascript_include_tag "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js"
+:javascript
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    },
+    TeX: {extensions: ["mhchem.js"]}
+  });
+:css
+  #leafSections .ui-accordion-header{
+    padding:10px;
+    background:none;
+    font-weight:normal;
+    font-size: 16px;
+  }
+  #leafSections .ui-corner-top , #leafSections .ui-corner-all{
+    border-radius: 0;
+  }
+  #leafSections .ui-widget-content{
+    background-color:#ddd;
+  }
+  #leafSections .ui-accordion-header.ui-state-focus,
+  #leafSections .ui-accordion-header.ui-state-hover,
+  #leafSections .ui-accordion-header.ui-state-active{
+    border:1px solid #ccc;
+    color: #2FB38E;
+  }
+  .bold{
+    display: inline;
+    font-weight: bold;
+  }
+- if @assessment.questions.empty?
+  %h3 This assessment contains no questions
+-else
+  = form_tag assessment_tool_change_key_and_publish_path do
+    = link_to "Cancel", assessment_tool_publish_path(@publish.quiz), class:'button'
+    = submit_tag "Re-evaluate", class:'button',style:'float:right;',disable_with:"Submitting..."
+    = link_to "Reset", assessment_tool_key_interface_path(@publish.id), class:'button'
+    = hidden_field_tag :publish_id, @publish.id
+    - if @publish.assessment_reevaluation_tasks.present?
+      %h4{style:'color:#39b18d'}
+        .bold Last re-evaluation status
+        = @publish.assessment_reevaluation_tasks.last.humanized_status
+    %h4{style:'color:#39b18d'}
+      .bold Group name:
+      = User.find(@publish.group_id).name if @publish.group_id.present?
+    %h4{style:'color:#39b18d'}
+      .bold No. of sections:
+      - if @assessment.leaf_sections.empty?
+        = "This assessment contains no sections"
+      - else
+        = @assessment.leaf_sections.size
+    %h4{style:'color:#f48e8e'}
+      .bold Important:
+      %ul{style:'list-style-position:inside; padding:0;'}
+        %li Previous updates are shown in the green region above each question.
+    - if @assessment.leaf_sections.empty?
+      = render partial:'container_questions',locals:{container:@assessment}
+    - else
+      #leafSections
+        - @assessment.leaf_sections.each do |section|
+          %h4= section.name
+          .sectionQuestions
+            = render partial:'container_questions',locals:{container:section}
+:javascript
+  function turn_radio_handler(e){
+    var group = "input:checkbox[name='"+$(e.target).attr("name")+"']";
+    $(group).attr("checked",false);
+    $(e.target).attr("checked",true);
+    }
+  function turn_radio($container){
+    $container.on('click',":checkbox",turn_radio_handler);
+  }
+  function revert_back($simpleQuestion){
+    try{
+    correct_answer_ids = $simpleQuestion.find(".hidden_data :hidden").val().split(",")
+    $simpleQuestion.find(":checkbox").attr("checked",false);
+    $simpleQuestion.find(":checkbox").each(function(){
+      if (correct_answer_ids.indexOf($(this).val())>=0){
+        $(this).attr("checked",true)
+        }
+      });
+    }
+    catch(err){
+     // Do nothing. Silently fails for non- mcqs
+    }
+  }
+  turn_radio($('.question_flags.smcq').closest('.simpleQuestion'));
+  $('.question_flags :radio').click(function(){
+    if ($(this).closest(".question_flags").hasClass("smcq")){
+      if ($(this).val()=='or'){
+      $(this).closest('.simpleQuestion').off('click',':checkbox',turn_radio_handler);
+      }
+      else{
+      turn_radio($(this).closest('.simpleQuestion'));
+      revert_back($(this).closest('.simpleQuestion'));
+      }
+    }
+  });
+  //$(".question_flags label").click(function(e){e.stopPropagation();});
+  $(".question_flags .clear").click(function(e){
+    $(this).closest('.simpleQuestion').find(":radio").removeAttr("checked");
+    revert_back($(this).closest('.simpleQuestion'));
+    if ($(this).closest('.question_flags').hasClass("smcq")){
+      turn_radio($(this).closest('.simpleQuestion'));
+    }
+
+  })
+  $("#leafSections").accordion({
+        icons:false,
+        autoHeight:false,
+        animated:"slide",
+        collapsible:true,
+        activate: function( event, ui ) {
+              if(!$.isEmptyObject(ui.newHeader.offset())) {
+                  $('html:not(:animated), body:not(:animated)').animate({ scrollTop: ui.newHeader.offset().top-50 }, 'slow');
+              }
+          }
+    });
+

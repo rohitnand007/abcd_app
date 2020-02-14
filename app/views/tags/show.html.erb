@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+<%# @tag.name %>  <%#@tag.value%>
+
+<br/>
+<div style="width:70%;height:100px;    text-align:center;
+        position:relative;font-size: 2em;color:#636363;
+        padding-top:20px;background:#f9f9f9;margin:40px auto;box-shadow: 0 10px 6px -6px #777;">
+  Name:
+  <%= @tag.proper_name%>
+  <br/>
+  Value:
+  <%= @tag.value %>
+</div>
+
+<br>
+<br>
+<% if !@tag.standard %>
+	<%= link_to 'Edit', edit_tag_path(@tag) %> |
+<% end %>
+<%= link_to 'Back', tags_path %>

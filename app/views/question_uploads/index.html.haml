@@ -1,0 +1,20 @@
+%h2 List
+%table.table-hover.listing.sort_table{:align => "center", :width => "100%"}
+  %thead
+    %tr.tr-head
+      %th S No
+      %th Question Upload Name
+      %th Status
+      %th 
+  %tbody
+    - @question_uploads.each_with_index do |question_upload, index|
+      %tr{question_upload_id: question_upload.id}
+        %td
+          = index
+        %td
+          = question_upload.name
+        %td 
+          = question_upload.package_status
+        %td
+          -if question_upload.current_state != :rejected && question_upload.current_state != :windows_server_error && question_upload.current_state > :finished_delayed_job
+            = link_to "Check","/question_uploads/#{question_upload.id}/package_details", class: "button"

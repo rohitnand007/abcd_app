@@ -1,0 +1,73 @@
+<%i = 0%>
+<% attempts.each do |t| %>
+    <% if i%2 == 0 %>
+        <tr class="tr-even even">
+    <% else %>
+        <tr class="tr-odd odd">
+    <% end %>
+    <% question = Question.includes(:question_answers,:question_fill_blanks).find(t.question_id)%>
+    <td class="col">
+     <%= question.questiontext_format_new.gsub(/<\/?[^>]*>/, "").gsub('#DASH#',' _______ ').html_safe%>
+    </td>
+    <% if question.qtype == 'fib'%>
+    <% attempts = FibQuestionAttempt.where(:quiz_question_attempt_id=>t.id)%>
+        <%f_ans = []%>
+        <%question.question_fill_blanks.each do |q|
+          if q.case_sensitive
+            f_ans << q.answer.split(',').join(' or ')
+          else
+            f_ans << "#{q.answer.upcase.split(',').join(' or ')} (or) #{q.answer.downcase.split(',').join(' or ')}"
+          end
+        end
+        %>
+        <% if t.correct? %>
+            <td class="col"><img src="/assets/web-app-theme/icons/tick.png" alt="Correct"/></td>
+        <%elsif attempts.first.nil? || !attempts.first.selected %>
+            <td class="col">Not Attempted</td>
+        <%else%>
+            <td class="col"><img src="/assets/web-app-theme/icons/cross.png" alt="Wrong"/></td>
+        <%end%>
+        <% if attempts.present? %>
+          <td class="col"><%= JSON.load(JSON.load(attempts.first.fib_question_answer.to_json)).join(',') if attempts.first.selected rescue attempts.first.fib_question_answer  %></td>
+        <% else %>
+          <td>  </td>
+        <% end %>
+        <td class="col"><%= f_ans.join(',') %></td>
+    <%else%>
+        <% attempts = McqQuestionAttempt.where(:quiz_question_attempt_id=>t.id)
+           ans = []
+           if attempts.size ==1 && attempts.first.question_answer_id ==0
+             ans << "Not Attempted"
+           else
+             attempts.each do |a|
+               qans = QuestionAnswer.find_by_id(a.question_answer_id)
+               if qans
+                ans << qans.answer_format
+               end
+             end
+           end
+        %>
+        <% correct_answers = QuestionAnswer.where(:question=>t.question_id,:fraction=>1)
+           c_ans = []
+           correct_answers.each do |a|
+             c_ans << a.answer_format
+           end
+        %>
+        <% if t.correct? %>
+            <td class="col"><img src="/assets/web-app-theme/icons/tick.png" alt="Correct"/></td>
+        <%elsif ans.empty?%>
+            <td class="col">Not Attempted</td>
+        <%else%>
+            <td class="col"><img src="/assets/web-app-theme/icons/cross.png" alt="Wrong"/></td>
+        <%end%>
+
+        <td class="col"><%= ans.join(",").html_safe %></td>
+        <td class="col"><%= c_ans.join(",").html_safe %></td>
+    <%end%>
+    <td class="col"><%= t.marks%></td>
+    <td class="col"><%= (t.time_taken)%></td>
+    <td>
+      <%=link_to "View Question", :controller => "questions", :action => "show",:id=>t.question_id %></td>
+    </tr>
+    <%i = i+1%>
+<%end%>

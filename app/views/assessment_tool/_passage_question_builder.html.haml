@@ -1,0 +1,30 @@
+.nested-fields.passage_question.basic_container
+  %table.parent_question{cellpadding:"0", cellspacing:"0",  style:"padding-left: 8px; width:100%;"}
+    %tr.ui-widget-content
+      %td.parent_question_number{style: " padding: 20px; border: 1px solid #CCC;text-align: center; font-weight: bold;"}
+        1
+      %td{style: " padding: 8px; border: 1px solid #CCC;  text-align: left;overflow:hidden;"}
+        = f.text_area :questiontext, class:"full_text"
+        = f.hidden_field :createdby, value: current_user.id
+      %td{style: " padding: 8px; border: 1px solid #CCC; text-align: center;"}
+        = f.hidden_field :qtype, value:"passage"
+        = f.hidden_field :institution_id , value: current_user.institution_id.nil? ? 1 : current_user.institution_id
+        = f.hidden_field :center_id , value: current_user.center_id.nil? ? 0 :  current_user.center_id
+        %center
+          Marks
+          %br
+          = f.hidden_field :defaultmark, value:"0", step: 0.01
+          = number_field_tag  "summarks", 0 , disabled: "disabled"
+          %br
+      %td{style: " margin: 0px; padding: 4px; text-align: center;background-color:white"}
+        %center
+          /{style: " margin: 0px; background-color:#f9f9f9; border: 1px solid #CCC;"}
+          = link_to image_tag("reset.svg", alt:"Reset",style:"height:30px;width:30px",title:"Reset Passage Question" ),"#", id:"reset_passage_question"
+      %td{style: "width:100px; margin: 0px; padding: 4px; text-align: center;background-color:white"}
+        =# render :partial => 'multimedia_container'
+  %br
+  .instructions
+    %b
+  #parent{style:"visibility:hidden;"}
+    = link_to_add_association "Add Question" , f , :questions , partial:"question_builder",   id:"questionAdder"#,style:"display:none"
+

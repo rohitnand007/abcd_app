@@ -1,0 +1,51 @@
+:javascript
+  $(document).ready(function() {
+    $("#masterchips").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading MasterChip List
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", user_powerchip_list_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#masterchips.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.masterchip.name", :default => t("activerecord.labels.name", :default => "User"))
+                %th= t("activerecord.attributes.masterchip.author", :default => t("activerecord.labels.code", :default => "Edutorid"))
+                %th= t("activerecord.attributes.masterchip.author", :default => t("activerecord.labels.code", :default => "Device"))
+                %th= t("web-app-theme.created_at", :default => "Powerchip")
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @list.each do |list|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"masterchip_#{list.id}"}
+                  %td.col= list.user.name
+                  %td.col= list.user.edutorid
+                  %td.col= list.device.deviceid
+                  %td.col= link_to list.powerchip.name, powerchip_path(list.powerchip_id)
+                  %td.col= display_date_time(list.created_at)
+                  %td.col
+                    = link_to "Delete",delink_user_powerchip_path(list)
+
+        - unless @list.blank?
+          .pagination_info
+            = paginate @list

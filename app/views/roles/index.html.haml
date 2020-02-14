@@ -1,0 +1,45 @@
+:javascript
+  $(document).ready(function() {
+    $("#roles").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Roles
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}",roles_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_role_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#roles.listing.sort_table{align: 'role' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.role.name", :default => t("activerecord.labels.name", :default => "Name"))
+                %th= t("activerecord.attributes.role.rc", :default => t("activerecord.labels.name", :default => "Code"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @roles.each do |role|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"role_#{role.id}"}
+                  %td.col= link_to role.name, role_path(role)
+                  %td.col= role.rc
+                  %td.col= display_date_time(role.created_at)
+                  %td.col
+                    = link_to_show(role_path(role))
+        .pagination_info= paginate @roles unless @roles.blank?

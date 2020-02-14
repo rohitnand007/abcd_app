@@ -1,0 +1,14 @@
+= form_for @question, remote:true ,url:{ :controller => "assessment_tool", :action => "independently_update_individual_question"} do |f|
+  = f.fields_for f.object.questions.build do |pqf|
+    - if current_user.is? "ECP" or current_user.institution.user_configuration.use_tags
+      = render :partial => 'tags_builder', locals:{f:pqf}
+    - else
+      = render :partial => 'context_builder', locals:{f:pqf}
+  = render :partial => 'question_components_editor' , locals:{f:f}
+  = hidden_field_tag "page_number", @page_number
+  = f.submit "Update",id:"changeQuestion"
+  = image_tag "small_loading.gif", id:"loading",style:"visibility:hidden;",align:"top"
+:javascript
+  $("#changeQuestion").click(function(){
+    $("#loading").css("visibility", "visible")
+  })

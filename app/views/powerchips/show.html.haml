@@ -1,0 +1,51 @@
+%p#notice= notice
+
+%p
+  %b Masterchip:
+  = @powerchip.masterchip_id
+%p
+  %b Csd:
+  = @powerchip.csd
+%p
+  %b Cid:
+  = @powerchip.cid
+%p
+  %b Name:
+  = @powerchip.name
+%p
+  %b Manfid:
+  = @powerchip.manfid
+%p
+  %b Type:
+  = @powerchip.chip_type
+%p
+  %b Oemid:
+  = @powerchip.oemid
+%p
+  %b Serial:
+  = @powerchip.serial
+%p
+  %b Uevent:
+  = @powerchip.uevent
+%p
+  %b Scr:
+  = @powerchip.scr
+%p
+  %b Date:
+  = @powerchip.date
+%p
+  %b Erase size:
+  = @powerchip.erase_size
+%p
+  %b Fwrev:
+  = @powerchip.fwrev
+%p
+  %b Hwrev:
+  = @powerchip.hwrev
+%p
+  %b Preferred erase size:
+  = @powerchip.preferred_erase_size
+
+=# link_to 'Edit', edit_powerchip_path(@powerchip)
+\|
+= link_to 'Back', powerchips_path

@@ -1,0 +1,63 @@
+= stylesheet_link_tag 'publisher'
+= javascript_include_tag "publisher"
+
+/defining variables
+- my_books = current_user.ibooks.size
+- my_collections = current_user.ipacks.size
+- my_schools = current_user.white_schools.size
+- license_consumed_percentage = current_user.percentage_licenses_consumed
+- licenses_issued = current_user.licenses_issued
+- licenses_utilized = current_user.licenses_utilized
+
+-#%br
+
+%table.mainStatistics
+  %tbody
+    %tr
+      %td
+        %table.occupyWidth.graySeparators
+          %tr
+            %td= my_books
+          %tr
+            %td= link_to "My Books", ibooks_path
+      %td
+        %table.occupyWidth.graySeparators
+          %tr
+            %td= my_collections
+          %tr
+            %td= link_to "My Collections", ipacks_path
+      %td
+        %table.occupyWidth
+          %tr
+            %td= my_schools
+          %tr
+            %td= link_to "My Schools",schools_publisher_path(current_user.id)
+%br
+#licensesConsumed
+  = "#{licenses_issued} licenses issued. #{licenses_utilized} utilized (#{license_consumed_percentage}%)."
+#pieChartEnvelope
+  #pieChartSpace
+%br
+%table#taskMenu
+  %tbody
+    %tr
+      %td.graySeparators
+        = link_to new_ibook_path do
+          %span#createBook
+            = render "shared/add_button"
+            Add Books
+      %td
+        = link_to new_ipack_path do
+          %span#createCollection
+            = render "shared/add_button"
+            Create a collection
+%br
+:javascript
+  // call the beautification functions
+  prettifyAggregates();
+  prettifyLicencingInfo();
+  prettifyTaskMenu();
+  createDonut("pieChartSpace","#4d917a", "#636363", #{license_consumed_percentage}, 100, "Licenses Utilized", "Licences not yet Utilized");
+
+
+

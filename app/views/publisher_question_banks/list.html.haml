@@ -1,0 +1,15 @@
+%table.table.table-hover
+  %tr
+    %th Question Bank
+    %th Question Count
+    %th
+  - @publisher_question_banks.each do |qb|
+    %tr
+      %td
+        = qb.question_bank_name
+      %td
+        = qb.questions.count
+      %td
+        = link_to "slice", slice_qb_publisher_question_bank_path(qb.id)
+    %tr
+  %br

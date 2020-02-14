@@ -1,0 +1,18 @@
+<% if @launch_file_status  %>
+   <% if @commit == "Create Asset"%>
+        $("#form_add").html("<%=j(render partial: "toc_launch" )%>")
+        $("#new_user_asset").html("");
+    <% else%>
+    $("#new_user_asset").html("<%=j(render partial: "launch" )%>")
+    <% end %>
+<% elsif @commit == "Create Asset" %>
+var text1 = "<span><%=@user_asset.asset_name%></span>" + "<a href=\"/user_assets?p=1\" style=\"font-size: 12px; font-style: italic;color: red;\">" + "X" + "</a>";
+var text2 = "<input type=\"hidden\" name=\"asset_id\" value=\"" + <%=@user_asset.id%> + "\">";
+$(".selected_book").html(text1);
+$("#asset").html(text2);
+$('.ui-dialog-content').dialog('close');
+<% else %>
+    $('.ui-dialog-content').dialog('close');
+    window.location.href = "/user_assets";
+<%end%>
+//$('.ui-dialog-content').dialog('close');

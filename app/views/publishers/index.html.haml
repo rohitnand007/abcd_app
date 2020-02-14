@@ -1,0 +1,55 @@
+:javascript
+  $(document).ready(function() {
+    $("#publishers").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Publishers
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", publishers_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_publisher_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#publishers.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.publisher.name", :default => t("activerecord.labels.name", :default => "Name"))
+                %th= t("activerecord.attributes.publisher.email", :default => t("activerecord.labels.email", :default => "Email"))
+                %th= t("activerecord.attributes.publisher.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+                %th Edutor Id
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @publishers.each do |publisher|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"publisher_#{publisher.id}"}
+                  %td.col= link_to publisher.name, publisher_path(publisher)
+                  %td.col= publisher.email
+                  %td.col= publisher.profile.try(:phone)
+                  %td.col= publisher.try(:edutorid)
+                  %td.col= display_date_time(publisher.created_at)
+                  %td.col
+                    = link_to_show(publisher_path(publisher))
+                    &nbsp
+                    -#= link_to_edit(edit_publisher_path(publisher))
+                    -#= link_to_delete(publisher_path(publisher))
+
+        - unless @publishers.blank?
+          .pagination_info
+            = paginate @publishers

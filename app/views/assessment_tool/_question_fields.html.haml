@@ -1,0 +1,77 @@
+.question_container.basic_container.nested-fields{style:"width:100%"}
+  %br
+  %table.question_table{cellpadding:"0", cellspacing:"0",  style:"padding-left: 8px; width:inherit;"}
+    /question data
+    %tr.question_type_select
+      %td
+      %td
+        .fib_help_info{style:"float:left;display:none"}
+          Click on the &nbsp;
+          = image_tag "dash.gif" ,style:"margin-bottom:-5px"
+          &nbsp; icon in text editor to add a blank
+        .styled-select{style:"float:right"}
+          = f.select(:qtype, options_for_select([['Multiple Choice', "multichoice"], ['True False', "truefalse"],
+         ['Fill in the Blanks',"fib"],['Very Short Answer',"vsaq"],['Long Answer',"laq"],['Short Answer',"saq"]], 0),{},{class:"question_selector drop_down",style:"float:right"})
+      - 3.times do
+        %td
+    %tr.ui-widget-content
+      %td.question_number{style: " padding: 20px; border: 1px solid #CCC;text-align: center; font-weight: bold;height:267px;"}
+        1
+      %td{style: "border: 1px solid #CCC;  text-align: left;overflow:hidden;width:80%; max-width:700px"}
+        = f.text_area :questiontext, class:"full_text"
+        = f.hidden_field :createdby, value: current_user.id
+      %td{style: " padding: 8px; border: 1px solid #CCC; text-align: center;"}
+        %center
+          Marks
+          %br
+          = f.number_field :defaultmark, min:1,step: 0.01,value:1
+          %br
+      %td{style: " margin: 0px; padding: 0px; text-align: center;background-color:white"}
+        %center{style: " padding: 5px; background-color:#f9f9f9; border: 1px solid #CCC;"}
+          Negative Marks
+          %br
+          = f.number_field :penalty, min:0 ,step: 0.01,class:"penalty_marks"
+      %td{style: " margin: 0px; padding: 0px; text-align: center;background-color:white;"}
+        =# render :partial => 'multimedia_container'
+    / for rendering answer lines
+    = render :partial => 'answer_lines', locals:{f:f, display:"none"}
+    /for mcq type
+    = render :partial => 'mcq_option_set', locals:{f:f}
+    /for true false type
+    = render :partial => 'tf_option_set', locals:{f:f}
+    /for fib type
+    = render :partial => 'fib_option_set', locals:{f:f}
+    %tr.extra_explanation{style:"display:none"}
+      %td{style: "border: 1px solid #CCC; text-align: center;"}
+        Explanation:
+        = f.hidden_field :institution_id , value: current_user.institution_id.nil? ? 1 : current_user.institution_id
+        = f.hidden_field :center_id , value: current_user.center_id.nil? ? 0 :  current_user.center_id
+      %td{colspan: "2", style: "padding: 8px; border: 1px solid #CCC; text-align: left;"}
+        = f.text_area :generalfeedback, placeholder:"Add Explanation here ...", class:"full_text"
+    %tr.add_hint{style:"display:show"}
+      %td{style: "border: 1px solid #CCC; text-align: center;"}
+      -#Hint:
+      = f.hidden_field :institution_id , value: current_user.institution_id.nil? ? 1 : current_user.institution_id
+      = f.hidden_field :center_id , value: current_user.center_id.nil? ? 0 :  current_user.center_id
+    -#%td{colspan: "2", style: "padding: 8px; border: 1px solid #CCC; text-align: left;"}
+    -#  = f.text_area :hint, placeholder:"Add hint here ...", class:"full_text"
+    %tr.extra_info
+      %td
+      %td
+        = link_to 'Reset',"#", class:"reset_question"
+        = link_to 'Show Explanation',"#", class:"show_explanation_field"
+        = link_to_add_association "Add Option", f , :question_answers ,class:"mcq_option_set",
+                "data-association-insertion-method"=>"before",
+                "data-association-insertion-node"=>".question_container",
+                "data-association-insertion-traversal"=>"closest",
+                "data-association-insertion-node-down"=>".extra_explanation",
+                "data-association-insertion-traversal-down"=>"find"
+        = link_to_add_association "Add blank answer", f , :question_fill_blanks ,class:"fib_blank_set", :style=>"display:none",
+                        "data-association-insertion-method"=>"before",
+                        "data-association-insertion-node"=>".question_container",
+                        "data-association-insertion-traversal"=>"closest",
+                        "data-association-insertion-node-down"=>".extra_explanation",
+                        "data-association-insertion-traversal-down"=>"find"
+        = link_to_remove_association "Remove Question", f, class:"remove_questions"
+    %tr
+      %td{colspan: "3", style: "height: 4px; margin: 0px; padding: 0px; border: 0px; vertical-align: top;"}

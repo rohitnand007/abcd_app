@@ -1,0 +1,18 @@
+#content_header
+  %h1#main_heading Upload Content zip File
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = form_tag("/drm/content_zip_upload",:multipart => true,:method=>"post",  :class => 'form' ) do
+              .inputs
+                .group
+                  .field
+                    = label :ncx_file, "Zip File", :class=>'label'
+                    = file_field_tag :data,:class=>"text_field",:id=>'zip_data'
+                .group
+                  .field{:align=>'center'}
+                    = submit_tag :upload ,:class=>'button',:disable_with=>"Uploading...."
+                    = link_to t("web-app-theme.cancel", :default => "Cancel"), root_path,:class=>'button danger icon remove'

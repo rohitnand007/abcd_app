@@ -1,0 +1,38 @@
+= simple_form_for @content_year, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Content Year!",
+                      :message => "You'll need to fix the following fields:"
+  .inputs
+    - unless current_user.is?'EA'
+      .group
+        .field
+          = f.association :board,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+          -#= f.label :course_id, "Board", :class=>'label'
+          -#= f.collection_select :board_id,Board.all,:id,:name,{:prompt=>true},{:class=>"drop_down"}
+      .group
+        .field
+          = f.label :course_id, "Content Year", :class=>'label'
+          = f.collection_select :name,ContentYear.all,:name,:name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.fields_for :asset do |a|
+            = a.hidden_field :publisher_id,:value=>current_user.id
+    - else
+      .group
+        .field
+          = f.association :board,:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+          -#= f.label :course_id, "Board", :class=>'label'
+          -#= f.collection_select :board_id,Board.all,:id,:name,{:prompt=>true},{:class=>"drop_down"}
+      .group
+        .field
+          = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.input :code,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.fields_for :asset do |a|
+            = a.hidden_field :publisher_id,:value=>current_user.id
+    .group
+      .field{align: 'center'}
+        = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), institutions_path,:class=>'button danger icon remove'

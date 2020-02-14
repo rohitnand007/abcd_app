@@ -1,0 +1,131 @@
+:css
+  #top-menu-bar ul li a span.no-menu:hover {
+    text-decoration: underline;
+  }
+%ul
+  %li= link_to content_tag(:span,"Home",:class=>'no-menu') ,root_path ,:style=>''
+  -if user_signed_in? && (current_user.role.name=="Edutor Admin")
+    %li
+      = link_to_
+      menu("Users")
+      %ul.top-menu-bar
+        %li= link_to "Institutions",institutions_path
+        %li= link_to "Centers",centers_path
+        %li= link_to "Classes", academic_classes_path
+        %li= link_to "Sections", sections_path
+        %li= link_to "Groups", groups_path
+        %li= link_to "Teachers", teachers_path
+        %li= link_to "Students", users_path
+        %li= link_to "Student Search", student_search_path
+        %li= link_to "Publishers", publishers_path
+        %li= link_to "Roles", roles_path
+        %li= link_to "Upload Students", upload_csv_file_path
+    %li
+      = link_to_menu("Content")
+      %ul.top-menu-bar
+        %li= link_to "Boards", boards_path
+        %li= link_to "Content Years", content_years_path
+        %li= link_to "Subjects", subjects_path
+        %li= link_to "Chapters", chapters_path
+        %li= link_to "Topics", topics_path
+        %li= link_to "Sub Topics", sub_topics_path
+        %li= link_to "Web Links",web_links_path
+        %li= link_to "Usages",usages_path
+        -#%li= link_to "Test Configurations", test_configurations_path
+        %li= link_to 'Upload Ncx file' ,ncx_upload_path
+        %li= link_to "Question Bank",questionbank_path
+        %li= link_to "Assessments",quizzes_path
+    %li= link_to content_tag(:span,"Devices",:class=>'no-menu'),devices_path
+  -elsif user_signed_in? && (current_user.role.name=="Institute Admin")
+    %li
+      = link_to_menu("Users")
+      %ul.top-menu-bar
+        %li= link_to "Centers",centers_path
+        %li= link_to "Classes", academic_classes_path
+        %li= link_to "Sections", sections_path
+        %li= link_to "Groups", groups_path
+        %li= link_to "Teachers", teachers_path
+        %li= link_to "Students", users_path
+    %li
+      = link_to_menu("Content")
+      %ul.top-menu-bar
+        -#%li= link_to "Boards", boards_path
+        %li= link_to "Content Years", content_years_path
+        %li= link_to "Subjects", subjects_path
+        %li= link_to "Chapters", chapters_path
+        %li= link_to "Topics", topics_path
+        %li= link_to "Sub Topics", sub_topics_path
+        %li= link_to "Usages",usages_path
+        %li= link_to "Web Links",web_links_path
+        -#%li= link_to "Test Configurations", test_configurations_path
+        %li= link_to 'Upload Ncx file' ,ncx_upload_path
+        %li= link_to "Question Bank",questionbank_path
+        %li= link_to "Assessments",quizzes_path
+        %li
+          - if current_user.institution.user_configuration.is_admin_privilege
+            = link_to "Device Messages",device_messages_path
+    %li= link_to content_tag(:span,"Devices",:class=>'no-menu'),devices_path
+  -elsif user_signed_in? && (current_user.role.name=="Edutor Content Publisher")
+    %li
+      = link_to_menu("Content")
+      %ul.top-menu-bar
+        %li= link_to "Boards", boards_path
+        %li= link_to "Content Years", content_years_path
+        %li= link_to "Subjects", subjects_path
+        %li= link_to "Chapters", chapters_path
+        %li= link_to "Topics", topics_path
+        %li= link_to "Sub Topics", sub_topics_path
+        %li= link_to "Web Links",web_links_path
+        %li= link_to "Store", store_index_path
+        %li= link_to "All Contents", contents_path
+        %li= link_to "Manage Content", content_manage_path
+    %li
+      = link_to_menu("Licences")
+      %ul.top-menu-bar
+        %li= link_to "License Settings", profile_path(current_user.profile)
+        %li= link_to "License Keys", publisher_licenses_path
+  -elsif user_signed_in? && (current_user.role.name=="Center Representative")
+    %li
+      = link_to_menu("Users")
+      %ul.top-menu-bar
+        %li= link_to "Classes", academic_classes_path
+        %li= link_to "Sections", sections_path
+        %li= link_to "Groups", groups_path
+        %li= link_to "Teachers", teachers_path
+        %li= link_to "Students", users_path
+    %li
+      = link_to_menu("Content")
+      %ul.top-menu-bar
+        %li= link_to "Boards", boards_path
+        %li= link_to "Content Years", content_years_path
+        %li= link_to "Subjects", subjects_path
+        %li= link_to "Chapters", chapters_path
+        %li= link_to "Topics", topics_path
+        %li= link_to "Sub Topics", sub_topics_path
+        %li= link_to "Usages",usages_path
+        %li= link_to "Web Links",web_links_path
+        %li= link_to "Home Work",assessment_home_works_path
+        -#%li= link_to "Test Configurations", test_configurations_path
+        %li= link_to 'Upload Ncx file' ,ncx_upload_path
+        %li= link_to "Question Bank",questionbank_path
+        %li= link_to "Assessments",quizzes_path
+    %li= link_to content_tag(:span,"Devices",:class=>'no-menu'),devices_path
+    -#%li= link_to content_tag(:span,"Send Alerts",:class=>'no-menu'),new_message_path
+    -#%li= link_to "Message acknowledgments", message_acknowledgs_path
+  -elsif user_signed_in? && (current_user.role.name=="Teacher")
+    %li
+      = link_to content_tag(:span,"Menu #{content_tag(:em,image_tag('web-app-theme/themes/default/menubar-downarrow.png'))}".html_safe) ,"#"
+      %ul.top-menu-bar
+        %li= link_to "My Subjects", my_subjects_teachers_path
+        %li= link_to "My Classes", teacher_path(current_user)
+        -#%li= link_to "Usages",usages_path
+        %li= link_to "Web Links",web_links_path
+        %li= link_to "Give Home Work",assessment_home_works_path
+        %li= link_to "Question Bank",questionbank_path
+        %li= link_to "Assessments",quizzes_path
+  -else
+  -#%li
+    = link_to_menu("Change Theme")
+    %ul.top-menu-bar
+      %li= link_to "Nature", change_theme_path(name: 'green')
+      %li=  link_to "Sky", change_theme_path(name: 'default')

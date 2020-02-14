@@ -1,0 +1,28 @@
+%table{cellpadding: "0", cellspacing: "0", width: "90%",height:"100px"}
+  %tr
+    %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+      Assessment Name:
+      = quiz.name
+    %td{style: "border-left: 0px; padding: 2px 8px 2px 8px;"}
+      Total Questions:
+      %font{color: "grey"}
+      = quiz.total_questions
+    %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+      Total Sections:
+      =total_sections(quiz)
+  %tr
+    %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+      Class:
+      %font{color: "grey"}
+      - if quiz.context
+        = quiz.context.content_year.try(:name)
+      - else
+        = Tag.find(quiz.quiz_detail.academic_class_tag_id).value if quiz.quiz_detail.academic_class_tag_id && Tag.find(quiz.quiz_detail.academic_class_tag_id)
+    %td{style: "border-left: 0px; padding: 2px 8px 2px 8px;"}
+      Total Marks:
+      %font{color: "grey"}
+        = quiz.quiz_question_instances.sum(:grade)
+    %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+      Duration:
+      = quiz.timelimit
+      (Mins)

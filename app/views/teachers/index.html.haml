@@ -1,0 +1,10 @@
+
+#content_header
+  %h1#main_heading Teachers
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", teachers_path
+    - unless current_user.is? 'EO'
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_teacher_path
+#data
+  = render 'teachers/teachers'

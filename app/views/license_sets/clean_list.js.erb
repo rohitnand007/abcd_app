@@ -1,0 +1,2 @@
+$('#update_form_wrapper_<%=@license_set.id.to_s %>').parent().html("<%= escape_javascript(render :partial => 'just_listing_all_students',locals:{license_set:@license_set}) %>");
+$('#update_form_wrapper_<%=@license_set.id.to_s %>').closest(".detailsRow").css("background-color", "#eeffee");

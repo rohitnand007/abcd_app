@@ -1,0 +1,26 @@
+%h2= "#{@center.name} has #{@books_list.size} books"
+= form_tag cdn_books_upload_cdn_configs_path do
+  = hidden_field_tag "cdn_user", @cdn_user.id
+  %table{border: 1}
+    %tr
+      %th Book Guid
+      %th Book Id
+      %th Book Name
+      %th Subject
+      %th Form
+      %th Upload selector
+    - @books_list.each do |book|
+      %tr
+        %td= book.ibook_id
+        %td= book.id
+        %td= book[:metadata]["displayName"]
+        %td= book.subject
+        %td= book.form
+        -#%td= check_box_tag "book_ids[]", book.id
+        -if @cdn_books.include?(book.id)
+          %td= "uploaded"
+        -else
+          %td= check_box_tag "book_ids[]", book.id
+
+
+  = submit_tag "Upload Books", class:"button"

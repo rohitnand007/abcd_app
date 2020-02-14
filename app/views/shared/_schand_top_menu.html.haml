@@ -1,0 +1,92 @@
+-if current_user.is?("IA") or current_user.is?("CR") or current_user.is?("ET")
+  #header_home.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "home.png"), root_path
+    .nav_text
+      %label
+        Dashboard
+  #header_manage_users.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "manage_users.png"),"#"
+    .nav_text.drop
+      %label
+        Manage Users
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Users", users_path
+      -if !current_user.is?("ET")
+        %li= link_to "Centers", centers_path
+        %li= link_to "Classes", academic_classes_path
+      %li= link_to "Sections", sections_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_assessments.nav_icon_block
+    .nav_icon_image
+      = image_tag "assessments.png"
+    .nav_text.drop
+      %label
+        Assessments
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Quick Test", controller:"quick_test",action:"new"
+      %li= link_to "Assessment", "/assessment_tool/all_assessments"
+      -#%li= link_to "Question Bank",assessment_tool_manage_questions_path
+
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_analytics.nav_icon_block
+    .nav_icon_image
+      = image_tag "analytics_icon.png"
+    .nav_text.drop
+      %label
+        Analytics
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Usages Analytics", usage_statistics_path
+      %li= link_to "Assessment Reports", assessment_tool_assessment_reports_all_path
+      -#%li= link_to "Assessment Analytics", "/assessment_tool/all_assessments"
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_question_bank.nav_icon_block
+    .nav_icon_image
+      = image_tag "question_bank.png"
+    .nav_text
+      %label
+        Question bank
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+      %li= link_to "Search Questions", assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_contents_new.nav_icon_block
+    .nav_icon_image
+      = image_tag "content.png"
+    .nav_text
+      %label
+        Content
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Content Catalogue", user_assets_path
+      %li= link_to "Publish Content", user_assets_path(:p => 1)
+      %li= link_to "Publish History", user_assets_path(:p => 2)
+      %li= link_to "User Statistics", publish_stats_users_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+-else
+  #header_home.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "home.png"), root_path
+    .nav_text
+      %label
+        Home
+  #header_assessments.nav_icon_block
+    .nav_icon_image
+      = image_tag "assessments.png"
+    .nav_text.drop
+      %label
+        Assessments
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Assessment", "/quizzes/student_attempted_assessments/"
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+
+:javascript
+  //var upload = getElementById('UploadNewContent')
+
+

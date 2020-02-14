@@ -1,0 +1,17 @@
+#content_header
+  %h1#main_heading
+#inner-tab-menu
+  %h2 404
+  %div
+    %h3 The page you were looking for doesn't exist.
+    %p
+      You may have mistyped the address or the page may have moved.
+    %p
+      You tried to access '#{request.url}', which is not a valid page.
+    %p
+      Want to
+      %a{href: root_path} go back to our home page
+      and try again?
+
+
+

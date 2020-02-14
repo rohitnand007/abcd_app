@@ -1,0 +1,37 @@
+#content_header
+  %h1#main_heading Forms
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", academic_classes_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_academic_class_path
+    - unless current_user.is? 'EO'
+      %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_academic_class_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", academic_class_path(@academic_class)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.academic_class.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @academic_class.name
+        -#%tr.odd.left
+        -#  %td Assigned Boards
+        -#  %td.right= display_boards(@academic_class)
+        %tr.odd.left
+          %td Created At
+          %td.right= display_date_time(@academic_class.created_at)
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to 'Edit',edit_academic_class_path(@academic_class), :class => "button icon edit"
+            - unless current_user.is? 'EO'
+              = link_to "Add Section", new_section_path, :class => "button icon add"
+    .heading.hr
+      Sections
+      - unless current_user.is? 'EO'
+        .right
+          - params_hash = {institution_id: @academic_class.institution.try(:id),
+                           center_id: @academic_class.center.try(:id),
+                           academic_class_id: @academic_class.id}
+        = link_to "Add Section" ,new_section_path(params_hash) ,:class=>'button icon add'
+    = render 'sections/sections'

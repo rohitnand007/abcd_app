@@ -1,0 +1,21 @@
+<% case  params[:mode]%>
+<%when 'institution'%>
+$("#centers").html("<%= escape_javascript(build_checkbox_tags(@centers,"center")) %>");
+$("#academic_classes").html("");
+$("#sections").html("");
+$("#users_list").html("<%= escape_javascript(render 'users/users') %>");
+<%when 'center'%>
+$("#academic_classes").html("<%= escape_javascript(build_checkbox_tags(@academic_classes,"academic_class")) %>")
+$("#sections").html("");
+$("#users_list").html("<%= escape_javascript(render 'users/users') %>");
+<%when 'academic_class'%>
+$("#sections").html("<%= escape_javascript(build_checkbox_tags(@sections,"section")) %>")
+$("#users_list").html("<%= escape_javascript(render 'users/users') %>");
+<%when 'section'%>
+$("#users_list").html("<%= escape_javascript(render 'users/users') %>");
+<%end%>
+$('#progress-indicator').hide();
+$("#users_list").css('opacity','');
+$(".filters :input").attr("disabled", false);
+
+

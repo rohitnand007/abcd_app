@@ -1,0 +1,22 @@
+= simple_form_for @ibook, html:{ :multipart => true } do |f|
+  = f.error_notification
+  .inputs
+    = f.hidden_field :publisher_id, value:current_user.id
+    %table
+      - if edit.blank?
+        %tr
+          %td Upload the Info Package:
+          %td= f.file_field :info_file
+      %tr
+        - if edit.blank?
+          %td Upload Encrypted Content (Optional):
+        %td= f.file_field :encrypted_content
+      %tr
+        - button_text = edit.blank? ? "Create Book" : "Upload Encrypted Content"
+        %td{style:"padding-top:15px;"}= f.button :submit, button_text, class:'normalButton',id:'createNewBooks'
+        - unless current_user.is? "ET"
+          %td
+            %i{style:"color:#60C8CD"} Note: Only zip files are accepted
+
+
+

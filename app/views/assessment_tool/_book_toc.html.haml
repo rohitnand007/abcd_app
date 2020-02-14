@@ -1,0 +1,243 @@
+%div.chapters
+  %h1.toc_font Chapters (#{@chapter_arr.count})
+  %div{style: "overflow: auto; max-height: 380px; padding-left: 5px;"}
+    -@chapter_arr.each_with_index do |chapter, index|
+      %div.sidelist
+        - @chap = chapter[0] if index==0
+        = label_tag do
+          -if @new_book
+            = radio_button_tag "quiz_targeted_group[quiz_ibook_location_attributes][uri]", [chapter[1]+"$"+chapter[2]+"$"+chapter[3]], (index==0), id: "#{chapter[0]}", onclick: "buttonID(this.id);"
+          -else
+            = radio_button_tag "quiz_targeted_group[quiz_ibook_location_attributes][uri]", chapter[1], (index==0), id: "#{chapter[0]}", onclick: "buttonID(this.id);"
+          = chapter[0]
+          -#= radio_button_tag "quiz_targeted_group[quiz_ibook_location_attributes][uri]", chapter[1], (index==0), id: "#{chapter[0]}", onclick: "buttonID(this.id);"
+          -#= chapter[0]
+%div.section
+  %h1.toc_font Topics
+  %div.toc_section#topics
+
+
+:javascript
+     var topic_json = #{@topic_arr.to_json};
+     var sub_json = #{@sub_arr.to_json};
+     var new_id = "#{"input[id='"+@chap+"']"}"
+     $(new_id).click();
+     function buttonID(id){
+     $("#topics").html("");
+        var obj1 = topic_json[id];
+        for(var i in obj1){
+         text1 = "<label><input id=\"" +i+"\" name=\"quiz_targeted_group[quiz_ibook_location_attributes][uri]\" type=\"radio\" value=\""+obj1[i]+"\">"+i+"</label>"
+         $("#topics").append(text1);
+         var obj2 = sub_json[i];
+           for(var j in obj2){
+             text2 = "<label style= \"padding-left: 30px;display: inline-block;width: 280px;height: 30px;\"><input id=\"" +j+"\" name=\"quiz_targeted_group[quiz_ibook_location_attributes][uri]\" onclick=\"subsubID(this.id);\" type=\"radio\" value=\""+obj2[j]+"\">"+j+"</label>"
+             $("#topics").append(text2);
+           }
+       $("#topics").append("<hr/>")}
+     }
+     function subID(id){
+        $("#subtopics").html("");
+           var obj = sub_json[id];
+           for(var i in obj){
+             text = "<label><input id=\"" +i+"\" name=\"quiz_targeted_group[quiz_ibook_location_attributes][uri]\" onclick=\"subsubID(this.id);\" type=\"radio\" value=\""+obj[i]+"\">"+i+"</label>"
+            $("#subtopics").append(text);
+           }
+          }
+     $(".user_asset").show();
+         $("#available_assets").hide();
+         $("#ImportContent").click(function () {
+             $(".inception").dialog({title: "Upload a new Asset",
+              dialogClass: 'createNewAsset',
+              width: "auto",
+              resizable: false,
+              draggable: true,
+              modal: true});
+                 });
+     $(".publish_info").hide();
+     $(".toc_font").show();
+       $("#AssetPublish").click(function(){
+         $(".publish_info").dialog({title: "Publish Information",
+                   dialogClass: 'PubInfo',
+                   width: "600px",
+                   resizable: false,
+                   draggable: false,
+                   modal: true});
+                   });
+
+     $("#form_submit").click(function(){
+     var ele = $(".publish_info")
+     $("#new_content_delivery").append(ele)
+     $("#new_content_delivery").submit();
+     $(".PubInfo").hide();
+     });
+    $("#clear").click(function(evt){
+        evt.preventDefault();
+        $("#name").val("").focus();
+        });
+  $("#AssetPublishh").hide();
+  $("#ImportContent").click(function(){
+  $("#AssetPublishh").show();
+  $("#AssetPublishh").removeAttr('class')
+  $("#AssetPublishh").attr('class','button tablebuttonn');
+  });
+
+  $("#AssetPublishh").click(function(){
+         $(".publish_info").dialog({title: "Publish Information",
+                   dialogClass: 'PubInfo',
+                   width: "600px",
+                   resizable: false,
+                   draggable: false,
+                   modal: true});
+                   });
+
+
+
+
+:css
+    .chapters>label{
+  float:left;
+  clear:left;}
+  .chapters>input{
+  float:left;}
+  .chapters {
+  display: table-cell;
+  vertical-align: top;
+  width: 26%;
+  border: 1px rgb(238, 238, 238) solid;
+  height: 420px;
+  color: #636363;
+  }
+  .section {
+  display: table-cell;
+  width: 47%;
+  border: 1px rgb(238, 238, 238) solid;
+  height: 420px;
+  color: #636363;
+  }
+  .toc_font{
+  text-align: center;
+  margin: 0px 0px;
+  font-size: 15px;
+  /*border-bottom: 1px rgb(171, 160, 160) solid;*/
+  background: #eee;
+  padding: 8px;
+  color: #2fb38e;
+  height: 17px;
+  }
+  .sidelist{
+  border-bottom: 1px rgb(171, 160, 160) solid;
+  margin-top: 9px;
+  height: 30px;}
+
+  .toc_section>label{
+  display: inline-block;
+  width: 480px;
+  height: 30px;
+  }
+  .toc_section{
+  display: block;
+  padding-top: 10px;
+  padding-left: 10px;
+  overflow: auto;
+  height: 375px;
+  max-height: 375px;
+  /*border-bottom: 1px dashed grey;*/
+  }
+  .publish_info{
+   padding: 32px 95px;
+  }
+  .publish_info>label{
+    display: inline-block;
+    width: 133px;
+    height: 30px;
+  }
+  .scrollbox{
+  overflow: auto;
+  height: 152px;
+  width: 389px;
+  margin-bottom: 8px;
+  }
+  .scrollbox>label{
+  display: inline-block;
+      width: 170px;
+      height: 30px;
+  }
+  .short{
+  left: 0% !important;
+  padding: 0.5em 1.5em;
+  top: 2px;
+  }
+  .wireframe{
+    border: 1px solid #636363;
+    background-color: white;
+    color: #636363;
+    left: 0%;
+    position: relative;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 3px;
+    cursor: default;
+  }
+  #createNewAsset{
+  position: relative;
+  left: 89.5%;
+  }
+  .right{
+  float: right;
+  top: -6px;}
+
+  #ImportContent{
+  position: relative;
+  top: -7px;
+  padding: 11px 21px 10px 16px;
+  left: 92%;
+  font-size: 13px;
+  }
+  #ImportCont{
+  position: relative;
+  top: -7px;
+  padding: 11px 21px 10px 16px;
+  left: 92%;
+  font-size: 13px;
+  }
+  .move_text{
+  position: relative;
+  left: 68.5%;
+  top: -14px;
+  padding: 11px 21px 10px 16px;
+  color: #636363;}
+  #AssetPublish{
+  position: relative;
+  left: 62%;
+  top: 412px
+  }
+  #AssetPublishh{
+  position: relative;
+  top: 370px;
+  left: 61%;
+  }
+  #asset{
+  color: red;}
+  .disable{
+  background: grey;
+  }
+  .disable:hover{
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      cursor: default;
+      }
+  .cleartext{
+  text-decoration: none;
+  color: black;
+  position: relative;
+  top: -24px;
+  float: right;
+  right: 5px;}
+
+  .tablebuttonn{
+  color:rgb(122, 201, 170);
+  zoom: 1.1;
+  padding: 0.6em 1.2em;
+  border: 1px solid rgb(122, 201, 170);
+  background-color: inherit;}

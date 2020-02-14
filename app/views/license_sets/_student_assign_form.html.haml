@@ -1,0 +1,85 @@
+= form_for @license_set, url: assign_license_set_path, remote:true do |f|
+  -# Manage Old students
+  - if action_type!="add"
+    .centerRadioGroup
+      %span.showAll Show all
+      - centers.each do |center|
+        %label
+          = radio_button_tag "center",center.id,false,class:"groundedRadio"
+          = center.name
+    %table.studentTable
+      %tr
+        %td{colspan:"100%"}
+      - students.each_slice(4) do |students|
+        %tr
+          -students.each do |student|
+            %td.studentCheckbox
+              = check_box_tag "license_set[user_ids][]",student.id,true
+            %td.studentName
+              = student.name
+              .edid= link_to student.edutorid, user_path(student), target:"_blank" if student.edutorid.present?
+            %td.studentCenter{style:"display: none;"}
+              = student.center_id
+    %br
+    - if teachers.size > 0
+      %table.teacherTable
+        %tr
+          %td{colspan:"100%"} Teachers:
+        -teachers.each_slice(4) do |teachers|
+          %tr
+            - teachers.each do |teacher|
+              %td= check_box_tag "license_set[user_ids][]",teacher.id,true
+              %td.teacherName
+                = teacher.name
+                .edid= teacher.edutorid if teacher.edutorid.present?
+    %br
+    = image_tag "small_loading.gif", style:"display: none",class:"small_loading"
+    %br
+    = f.submit "Update", class:"button"
+    = link_to "Cancel", clean_list_license_set_path(@license_set),style:"font-style:italicize", class: "cleanList", remote:true
+  - else
+    -# New Students
+    %table.studentTable
+      %tr
+        %td{colspan:"100%"}
+          %table.studentTableInfo
+            %tr
+              %td
+                = "Number of Students: #{students.size}"
+              %td.rightAligner
+                %span.deselectall Deselect all
+                |
+                %span.selectall Select all
+      - students.each_slice(4) do |students|
+        %tr
+          -students.each do |student|
+            %td.studentCheckbox
+              - if @license_set.users.include?(student)
+                = image_tag "filled_checkbox.png"
+              - else
+                = check_box_tag "license_set[user_ids][]",student.id, false
+            %td.studentName
+              = student.name
+              .edid= link_to student.edutorid,user_path(student), target:"_blank" if student.edutorid.present?
+    %br
+    - if teachers.size > 0
+      %table.teacherTable
+        %tr
+          %td{colspan:"100%"} All the teachers in the center:
+        -teachers.each_slice(4) do |teachers|
+          %tr
+            - teachers.each do |teacher|
+              %label
+                %td
+                  - if @license_set.users.include?(teacher)
+                    = image_tag "filled_checkbox.png"
+                  - else
+                    = check_box_tag "license_set[user_ids][]",teacher.id,false
+                %td.teacherName
+                  = teacher.name
+                  .edid= teacher.edutorid if teacher.edutorid.present?
+    %br
+    = f.submit "Add", class:"button", confirm:"Are you sure you want to assign licenses to these users?"
+
+:javascript
+  $('input:radio[name=center]:first').trigger('click')

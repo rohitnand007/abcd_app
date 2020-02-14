@@ -1,0 +1,61 @@
+.nested-fields.question_set
+  .q_typemenu
+    .question_attribute_button.labeler
+      Multiple Choice
+    .question_attribute_button.image_inserter
+      = link_to_add_association 'Insert image', f, :question_images,
+      "data-association-insertion-method"=>"append",
+      "data-association-insertion-node"=>".nested-fields",
+      "data-association-insertion-traversal"=>"closest",
+      "data-association-insertion-node-down"=>".q_textcell",
+      "data-association-insertion-traversal-down"=>"find"
+
+    .question_attribute_button.delete_question
+      = link_to_remove_association image_tag("empty.png"), f
+  = render "question_text_fragment", :f=>f
+
+  %br
+  = f.hidden_field  :qtype, value:"multichoice"
+  - doesnt_contain_options = f.object.question_answers.empty?
+  - 4.times{f.object.question_answers.build} if doesnt_contain_options
+  .q_optionblock
+    - @count = 1
+    = f.fields_for :question_answers do |b|
+      .q_optionrow
+        .option_cell1
+          = b.label "answer "+@count.to_s
+        .option_cell2
+          = b.text_field :answer, placeholder:"Type your answer here ...",required:"required"
+        .option_cell3
+          - if (@count==1) and(doesnt_contain_options)
+            = b.check_box :fraction, value:"1", checked:true
+          - else
+            = b.check_box :fraction, value:"1"
+          This is the correct answer
+      - @count+=1
+    .q_optionrow.explanation_row
+      .option_cell1
+        Explanation
+      .option_cell2
+        = f.text_field :generalfeedback, placeholder:"Optional"
+      .option_cell3
+    .q_optionrow.additional_options
+      %i
+        = link_to_add_association "+ Add more options", f, :question_answers,
+                          "data-association-insertion-method"=>"before",
+                          "data-association-insertion-node"=>".question_set",
+                          "data-association-insertion-traversal"=>"closest",
+                          "data-association-insertion-node-down"=>".explanation_row",
+                          "data-association-insertion-traversal-down"=>"find"
+
+  %br
+  %hr
+  %br
+
+:javascript
+  $(".q_optionblock a").click(function(){
+     if ($(this).closest(".q_optionblock").children(".q_optionrow").length==7)
+      {
+        $(this).hide();
+      }
+    });

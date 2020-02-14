@@ -1,0 +1,73 @@
+= simple_form_for @assessment_home_work, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+    .group
+      .field
+        = f.input :subject_id ,:label=>"Subject",:label_html=>{:class=>"label"}  do
+          = f.collection_select :subject_id,get_contents,:id,:name_with_content_year,{:prompt=>true},{:class=>'drop_down' }
+    .group
+      .field
+        = f.association :chapter,:label=>"Chapter",:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    .group
+      .field
+        = f.association :topic,:label=>"Topic",:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -# disabled is lock functionality till it completes the development.
+    -#.group
+      .field
+        = f.input :is_locked,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}     
+    -#.group
+      .field
+        =# f.input :status,:collection=>[["processed",4],["Raw",1]], :as => :radio,:checked => ,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Content Type"
+    = f.hidden_field :status,:value=>0
+    .group
+      .field
+        = f.simple_fields_for :asset do |a|
+          = render 'asset_fields', :f => a
+          = a.hidden_field :publisher_id,:value=>current_user.id
+    .group
+      .field#content_profile
+        =f.simple_fields_for :content_profile do |a|
+          = a.input :expiry_date,:as=>:datetime,:default=>1.week.from_now,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"SubmitTime"
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:value=>"Upload Home Work" ,:disable_with=>'Uploading...'
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), assessment_home_works_path,:class=>'button danger icon remove'
+
+:javascript
+  $("#assessment_home_work_board_id").change(function() {
+      var selected_value = $('select#assessment_home_work_board_id :selected').val();
+      var url = "/course/get_content_years/"
+      var div_update = "#assessment_home_work_content_year_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_home_work_content_year_id").change(function() {
+      var selected_value = $('select#assessment_home_work_content_year_id :selected').val();
+      var url = "/content_years/get_subjets/"
+      var div_update = "#assessment_home_work_subject_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_home_work_subject_id").change(function() {
+      var selected_value = $('select#assessment_home_work_subject_id :selected').val();
+      var url = "/subjects/get_chapters/"
+      var div_update = "#assessment_home_work_chapter_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#assessment_home_work_chapter_id").change(function() {
+      var selected_value = $('select#assessment_home_work_chapter_id :selected').val();
+      var url = "/chapters/get_topics/"
+      var div_update = "#assessment_home_work_topic_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_home_works_topic_id").change(function() {
+      var selected_value = $('select#assessment_home_work_topic_id :selected').val();
+      var url = "/topics/get_subtopics/"
+      var div_update = "#assessment_home_work_sub_topic_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $(document).ready(function() {
+       $("#assessment_home_work_chapter_id").attr('disabled', 'disabled');
+       $("#assessment_home_work_topic_id").attr('disabled', 'disabled');
+  });

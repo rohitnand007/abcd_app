@@ -1,0 +1,227 @@
+%br
+#quicktest_block
+  .quicktest_menu
+    .quicktest_menubutton_active
+      Create New Quick Test
+    .quicktest_menubutton_blank
+    .quicktest_menubutton_dull
+      = link_to "Manage Quick Tests",action:"manage"
+    .quicktest_menubutton_info
+
+
+  .q_body_block{:style=>"padding-top:0"}
+    %br
+    %p{:style=>"color: #0090d4;font-size: 14px;font-style: italic; margin-top:0px;"}
+      Let us start by adding recipients
+    .div_header
+      = @quiz.name
+      | No of questions
+      = @quiz.questions.count
+    = form_for :user,{:url=>"/quick_test/publish/#{@quiz.id}"} do |f|
+      .div_work_area
+        - @user = current_user
+        - if current_user.is?'EA'
+          .group
+            .field
+              #instution
+                = f.label :institution_id, "Institution", :class=>'label'
+                .styled-select
+                  = f.collection_select :institution_id,Institution.includes(:profile),:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+          .group
+            .field
+              #centers
+                = f.label :center_id, "Center", :class=>'label'
+                .styled-select
+                  = f.collection_select :center_id,[@user.center].compact,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+          .group
+            .field
+              #academic_class
+                = f.label :academic_class_id, "Academic Class", :class=>'label'
+                .styled-select
+                  = f.collection_select :academic_class_id,[@user.academic_class].compact,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+          .group
+            .field
+              #sections
+                = f.label :section_id, "Section", :class=>'label'
+                .styled-select
+                  = f.collection_select :section_id,[@user.section].compact,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+        -elsif current_user.is? 'IA'
+          .group
+            .field
+              = f.label :institution_id, "Institution", :class=>'label'
+              .styled-select
+                = f.collection_select :institution_id,[current_user.institution],:id_with_build_info,:name,{},{:class=>"drop_down"}
+          .group
+            .field
+              #centers
+                = f.label :center_id, "Center", :class=>'label'
+                .styled-select
+                  = f.collection_select :center_id,current_user.centers,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+          .group
+            .field
+              #academic_class
+                = f.label :academic_class_id, "Academic Class", :class=>'label'
+                .styled-select
+                  = f.collection_select :academic_class_id,[@user.academic_class].compact,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+          .group
+            .field
+              #sections
+                = f.label :section_id, "Section", :class=>'label'
+                .styled-select
+                  = f.collection_select :section_id,[@user.section].compact,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+        -elsif current_user.is?'CR'
+          .group
+            .field
+              = f.label :institution_id, "Institution", :class=>'label'
+              .styled-select
+                = f.collection_select :institution_id,[current_user.institution],:id_with_build_info,:name,{},{:class=>"drop_down"}
+          .group
+            .field
+              #centers
+                = f.label :center_id, "Center", :class=>'label'
+                .styled-select
+                  = f.collection_select :center_id,[current_user.center],:id_with_build_info,:name,{},{:class=>"drop_down"}
+          .group
+            .field
+              #academic_class
+                = f.label :academic_class_id, "Academic Class", :class=>'label'
+                .styled-select
+                  = f.collection_select :academic_class_id,current_user.academic_classes,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+          .group
+            .field
+              #sections
+                = f.label :section_id, "Section", :class=>'label'
+                .styled-select
+                  = f.collection_select :section_id,[@user.section].compact,:id_with_build_info,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+        -else
+          .group
+            .field
+              = f.label :institution_id, "Institution", :class=>'label'
+              = current_user.type.eql?("Institution") ? current_user.name : current_user.institution.name
+          .group
+            .field
+              - if current_user.center or current_user.type.eql?('Center')
+                = f.label :center_id, "  Center", :class=>'label'
+                = current_user.type.eql?("Center") ? current_user.name : current_user.center.name
+          .group
+            .field
+              #sections
+                = f.label :group, "Group", :class=>'label'
+                .styled-select
+                  = f.collection_select :section_id,new_build_groups(@user),:id_with_build_info,:firstname,{:prompt=>'Select'},{:class=>"drop_down"}
+      .div_message_area
+        .q_textblock{style:"border: 2px solid #d1d2d4;"}
+          .q_textcell
+            = text_field :publish, :subject, :class => "text_field",required:true, placeholder:"Subject"
+        %br 
+        .q_textblock{style:"border: 2px solid #d1d2d4;"}
+          .q_textcell
+            = text_area  :publish,:message, :class => "text_field",required:true, placeholder:"Hi, Message ..."
+        %br
+        .q_publishdiv
+          = f.submit "Publish", class:"publish_button",style:"fdat:right; margin-left:77%" ,id:'submit_button'
+
+:css
+    .label{
+      width: 15em;
+      display: inline-block;
+          }
+    .group{
+      line-height: 2em;
+    }
+    .drop_down{
+      background: transparent;
+         width: 268px;
+         padding: 5px;
+         font-size: 16px;
+         line-height: 1;
+         border: 0;
+         border-radius: 0;
+         height: 34px;
+         -webkit-appearance: none;
+    }
+:javascript
+  $(document).ready(function(){
+      if ($('select#user_role_id :selected').val()==5)
+      {
+          $('#class_teacher_status').show();
+      }
+     var groups = $('#user_group_ids');
+      var INST = $('select#user_institution_id :selected').val().split("|")[1];
+      var CENT = $('select#user_center_id :selected').val().split("|")[1];
+      // alert($('select#user_center_id :selected').val());
+      $(groups).tokenInput(getSearchURL("user"), { preventDuplicates:true,prePopulate: $(groups).data('pre'),
+          theme: '' ,crossDomain: false });
+      //for user forms
+      // $("#user_center_id").attr('disabled', 'disabled');
+      $("#user_institution_id").change(function() {
+          set_default($("#user_center_id"));
+          set_default($("#user_academic_class_id"));
+          set_default($("#user_section_id"));
+          var institution = $('select#user_institution_id :selected').val().split("|")[0];
+          if(institution==""){
+           institution=0;
+           $("#user_academic_class_id").attr('disabled','disabled');
+           $("#user_section_id").attr('disabled','disabled');
+          }
+          var url = '/institution/get_centers/' + institution + "?build_info=true"
+          var div_update = "#user_center_id"
+          get_url_Data_for_multiparams(url,div_update);
+
+     });
+
+      $("#user_center_id").change(function() {
+          set_default($("#user_academic_class_id"));
+          set_default($("#user_section_id"));
+          var institution = $('select#user_institution_id :selected').val().split("|")[0];
+          var center = $('select#user_center_id :selected').val().split("|")[0];
+          if(institution=="") { institution=0;}
+          if(center==""){
+           center=0;
+           $("#user_section_id").attr('disabled','disabled');
+          }
+          var url = '/institution/get_academic_classes/' +institution+'/'+ center + "?build_info=true"
+          var div_update = "#user_academic_class_id"
+          get_url_Data_for_multiparams(url,div_update);
+          $("#user_academic_class_id").removeAttr('disabled');
+
+          $(groups).tokenInput('clear');
+          $(".token-input-dropdown").remove();
+          $(".token-input-list").remove();
+          $("#token-input-user_group_ids").remove();
+          $(groups).tokenInput(getSearchURL("user"), { preventDuplicates:true,
+              theme: '' ,crossDomain: false });
+          $(groups).tokenInput('clear');
+
+      });
+
+      $("#user_academic_class_id").change(function() {
+          set_default($("#user_section_id"));
+          var institution = $('select#user_institution_id :selected').val().split("|")[0];
+          var center = $('select#user_center_id :selected').val().split("|")[0];
+          var academic_class = $('select#user_academic_class_id :selected').val().split("|")[0];
+          if(institution=="") { institution=0;}
+          if(center=="") { center=0;}
+          if(academic_class=="") { academic_class=0;}
+          var url = '/institution/get_sections/' +institution+'/'+ center+'/'+academic_class + "?build_info=true"
+          var div_update = "#user_section_id"
+          get_url_Data_for_multiparams(url,div_update);
+          $("#user_section_id").removeAttr('disabled');
+
+      });
+
+      $("#submit_button").click(function(){
+          var academic_class = $('select#user_academic_class_id :selected').val().split("|")[0];
+          var build_info = $('select#user_academic_class_id :selected').val().split("|")[1];
+          var section= $('select#user_section_id :selected').val().split("|")[0];
+          if (section == "" && academic_class == ""){
+            alert("please select academic class") ;
+            return false
+          }
+          else if (section =="" && build_info == "1.0"){
+              alert(" This academic class has students who use different build tabs. Please select a section to proceed.");
+              return false
+          }
+      }) ;
+
+  });

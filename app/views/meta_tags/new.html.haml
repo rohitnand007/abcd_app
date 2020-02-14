@@ -1,0 +1,137 @@
+%h1 Add Tags to tags DB
+-# = render 'form'
+-# = link_to 'Back', '/meta_tags'
+
+%div.lpc_tags
+	#concept_tags
+		%h4 Tags
+		.field
+			%div
+				= label_tag :concepts
+			%div
+				= text_field_tag :concepts, nil, {:placeholder => "Enter concept names", :class => "concept_input"}
+		.field
+			%div
+				= label_tag :user_id
+			%div
+				= text_field_tag :user_id, nil, {:placeholder => "Enter user id", :class => "user_id_input"}
+	#meta_tags
+		%div.tags
+			%b Class
+			%ul#class_filters
+				-@class_tags.each do |class_tag|
+					%li
+						=check_box_tag class_tag.id, class_tag.id, false, class: 'class_tag tag'
+						=label_tag class_tag.value, class_tag.value, class: 'class_label'
+		%div.tags
+			%b Subject
+			%ul#subject_filters
+				-@subject_tags.each do |subject_tag|
+					%li
+						=check_box_tag subject_tag.id, subject_tag.id, false, class: 'subject_tag tag'
+						=label_tag subject_tag.value, subject_tag.value, class: 'subject_label'
+		%button.button.add_tags Add
+
+
+:css
+	div #concept_tags{
+		width: 20%;
+		float: left;
+	}
+	div #meta_tags{
+		width: 60%;
+		float: left;
+	}
+	.lpc_tags > div{
+		float: left;
+		height: 400px;
+		border-right: 1px solid black;
+		padding-left: 20px;
+	}
+	.lpc_tags{
+		margin-left : 50px;
+	}
+	#meta_tags > div{
+		width: 40%;
+		display: inline-table;
+	}
+	.add_tags{
+		display: block;
+		margin: 20px;
+	}
+	.concept_input, .user_id_input{
+		height: 25px;
+		margin: 10px;
+	}
+	.tags > ul{
+		overflow-y: auto;
+		height: 320px;
+	}
+
+:javascript
+	$(".user_id_input").change(validate_user_id);
+	$(".add_tags").click(validate_and_send_tags);
+	function get_selected_tags(){
+		var selected_tags = new Object();
+		var selected_class_tags = new Array();
+		var selected_subject_tags = new Array();
+		$("input[type='checkbox']:checked.class_tag").each(function(){
+			selected_class_tags.push($(this).val());
+		});
+		$("input[type='checkbox']:checked.subject_tag").each(function(){
+			selected_subject_tags.push($(this).val());
+		});
+		selected_tags['s_class'] = selected_class_tags;
+		selected_tags['s_subject'] = selected_subject_tags;
+		console.log(selected_tags);
+		return selected_tags;
+	}
+	function get_concept_tags(){
+		return $(".concept_input").val();
+	}
+	function get_user_id(){
+		return $(".user_id_input").val();
+	}
+	function verify_data(selected_tags, concept_tags, user_id){
+		//check atleast one class and one subject tag is checked
+		if((selected_tags['s_class'].length==0) || selected_tags['s_subject'].length==0){
+			alert("Please select atleast one academic class and one subject tag");
+			return false;
+		}
+		//check concept value is present
+		if(concept_tags.length==0){
+			alert("Please enter concept tags");
+			return false;
+		}
+		//check user id is present
+		//validate user id as integer
+		var validate_user = validate_user_id();
+		return validate_user;
+	}
+	function validate_user_id(){
+		var user_id = $(".user_id_input").val();
+		if(user_id == parseInt(user_id))
+			return true;
+		else{
+			alert("Please eneter a valid user id");
+			return false;
+		}
+	}
+	function validate_and_send_tags(){
+		var selected_tags = get_selected_tags();
+		var concept_tags = get_concept_tags();
+		var user_id = get_user_id();
+		if(verify_data(selected_tags, concept_tags, user_id)){
+			console.log("data is proper");
+			$.post("/meta_tags.json",{'meta_tags': selected_tags, 'concept_tags':concept_tags, 'user_id': user_id},
+			 function(data, status){
+				console.log(data);
+				if(data['tags_added']==true){
+					alert("Tags updated successfully.");
+					window.location.pathname = "/meta_tags";
+				}
+				else
+					alert("Please check the data");
+			});
+		}
+	}

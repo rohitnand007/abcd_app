@@ -1,0 +1,36 @@
+%p#notice= notice
+
+%p
+  %b Institution:
+  = @ip_table_override.institution_id
+%p
+  %b Center:
+  = @ip_table_override.center_id
+%p
+  %b User:
+  = @ip_table_override.user_id
+%p
+  %b Domain:
+  = @ip_table_override.domain
+%p
+  %b Ip:
+  = @ip_table_override.ip
+%p
+  %b Status:
+  = @ip_table_override.status
+%p
+  %b Added at:
+  = @ip_table_override.added_at
+%p
+  %b Modified at:
+  = @ip_table_override.modified_at
+%p
+  %b Added by:
+  = @ip_table_override.added_by
+%p
+  %b Modified by:
+  = @ip_table_override.modified_by
+
+= link_to 'Edit', edit_ip_table_override_path(@ip_table_override)
+\|
+= link_to 'Back', ip_table_overrides_path

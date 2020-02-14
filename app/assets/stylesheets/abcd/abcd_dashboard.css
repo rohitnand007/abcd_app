@@ -1,0 +1,192 @@
+/*css related to moe main page are written belo untill that of partial comes*/
+.right_items{
+    display: inline-block;
+}
+.navbar-inverse {
+    min-height: 30px;
+}
+
+.navbar-default{
+    background-color: #FFFFFF;
+    min-height: 70px;
+}
+.navbar-brand {
+    padding: 0px;
+}
+.navbar-brand>img {
+    height: 120%;
+    padding: 15px 10px 0px 30px;
+    width: auto;
+}
+
+.font-size-10{
+    font-size: 11px;
+}
+.nav.navbar-nav > li > a{
+    padding: 25px 10px 0px 25px;
+}
+.left_aligner{
+    position: relative;
+    right:65px;
+}
+.notification_aliner{
+    position: relative;
+    left: 30px;
+    height: 50px;
+    display: inline-block;
+}
+.searchbar_aliner{
+    display: inline-block;
+    height: 50px;
+    position: relative;
+    top: 15px;
+    left:125px;
+}
+.user_icon_aliner{
+    display: inline-block;
+    height: 50px;
+    position: relative;
+}
+.notification_button > img{
+    height: 50px;
+    width: auto;
+    padding: 5px 0px 5px 0px  ;
+    position: relative;
+    left: 50px;
+    top: 4px;
+
+}
+.badge-notify{
+    background:red;
+    position:relative;
+    top: -65px;
+    left: 54px;
+}
+.searchbar{
+    height: 25px;
+    width: 10px;
+}
+.search_symbol{
+    top: 0px;
+    right:7px;
+}
+/*abcd moe partial completed related css from below*/
+.panel-heading{
+    z-index: 100000000000 !important;
+}
+.inline_header{
+    display: inline-block;
+    width: 30%;
+    text-align: center;
+    color: #767676;
+}
+.row-bottom-margin{
+    margin-bottom:0px !important;
+}
+.panel-heading{
+    height: 45px;
+}
+.first_img > img{
+    position: relative;
+    height: 50px;
+    top: -13px;
+    left: -12px;
+}
+.first_header{
+    color:white;
+    vertical-align: middle;
+    position: relative;
+    top:-10px;
+}
+.second_img > img{
+    position: relative;
+    top: -13px;
+    left: 75px;
+    height: 50px;
+    vertical-align: middle;
+}
+.nav_icons > img {
+    height: 30px;
+    position: relative;
+    bottom: 10px;
+}
+.circles_container{
+    padding: 5% 5% 5% 25%;
+    background-color: white;
+    column-rule: #767676;
+    z-index: -1;
+}
+.graphs_container{
+    padding: 5% 5% 5% 5%;
+    background-color: white;
+}
+.inline_graph{
+    display: inline-block;
+    width: 30%
+}
+.circle{
+    text-align: center ;
+    line-height: 100px;
+    display:inline-block;
+    padding: 10px 30px 0px 0px;
+    color: #767676;
+}
+.count{
+    font-size: 18px;
+}
+
+#circle1 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #ef466d;
+    color:white;
+    /*background: radial-gradient(circle at 100px 100px, #c50fc3, navajowhite)*/
+
+}
+#circle2 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #3f6cad;
+    display:inline-block;
+    color:white;
+    /*background: radial-gradient(circle at 100px 100px, #194f90, navajowhite)*/
+}
+#circle3 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #f37e3b;
+    display:inline-block;
+    color:white;
+    /*background: radial-gradient(circle at 100px 100px, #c12f05, #c12f05)*/
+}
+#circle4 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #0e934d;
+    display:inline-block;
+    color:white;
+    /*background: radial-gradient(circle at 100px 100px, #0e934d, navajowhite)*/
+}
+/*graph related css here below  */
+#teachers_graph.c3 .tick, #books_graph.c3 .tick, .c3-axis-y .tick, .c3-axis-y2 .tick {
+    display:none;
+}
+.c3-axis-x text{
+    font-size:12px;
+    fill: #767676;
+}
+::-webkit-scrollbar {
+    display: none;
+}

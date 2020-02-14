@@ -1,0 +1,38 @@
+:javascript
+  $(document).ready(function() {
+    $("#academic_class_rooms").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+%div
+  %table#academic_class_rooms.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th=  t("activerecord.attributes.academic_class.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th=  t("activerecord.attributes.academic_class.center", :default => t("activerecord.labels.center", :default => "Center"))
+        %th=  t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @academic_classes.each do |academic_class|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"academic_class_#{academic_class.id}"}
+          %td.col= link_to academic_class.name, academic_class_path(academic_class)
+          %td.col= academic_class.center.try(:name)
+          %td.col= display_date_time(academic_class.created_at)
+          %td.col
+            = link_to_show(academic_class_path(academic_class))
+            = link_to "Download CSV",download_csv_academic_class_path(academic_class)
+            -#= link_to_edit(edit_academic_class_path(academic_class))
+            -#= link_to (academic_class.is_activated ? "#{t("web-app-theme.delete", :default => "Deactivate")}":"#{t("web-app-theme.delete", :default => "Activate")}"),  academic_class_path(academic_class), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}",:style=>academic_class.is_activated ? "":"color:red;"*/
+.pagination_info= paginate @academic_classes unless @academic_classes.blank?

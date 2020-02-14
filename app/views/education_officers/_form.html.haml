@@ -1,0 +1,40 @@
+= simple_form_for @education_officer, :html => { :class => :form } do |f|
+  .inputs
+  .group
+    .field
+      = f.association :institution,:collection=>Institution.includes(:profile),:input_html => { :class => 'drop_down' },:prompt=>true,:label_html=>{:class=>"label"}
+  .group
+    .field
+      =f.simple_fields_for :profile do |p|
+        .group
+          .field
+            = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Name'
+        .group
+          .field
+            = p.input :address,:input_html=>{:class=>"text_area", :rows=>5},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :website,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :phone,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Logo'
+    .group
+      .field
+        = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :rollno,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :password,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :password_confirmation,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      %br
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), education_officers_path,:class=>'button danger icon remove'

@@ -1,0 +1,67 @@
+.block#block-login{:style=>'width:100%;margin-top:3%;margin-bottom:2%;'}
+  %h2{:style=>'text-align:left;color:#252629;'}
+    %btn.btn-primary
+      Change Password
+  .content.login{:style=>'margin:initial;margin-top:2%;'}
+    = simple_form_for(resource, :as => resource_name, :url => users_path, :html => { :method => :put,:class => "form login" }) do |f|
+      -#= f.error_notification
+      = f.error_messages
+      .group.wat-cf{:style=>'margin-left:0%;'}
+        .label= f.label :email,:style=>'width:200px;padding-top:0px;color:#666; font-size:16px;', :label=>'Email'
+        .text_field2= f.text_field :email, :required => true, :autofocus => true,:style=>'width:auto;margin-top:1%;', :readonly=>'true'
+        .free_space_right
+      .group.wat-cf{:style=>'margin-left:0%;'}
+        .label= f.label :current_password, :style=>'width:170px;padding-top:0px; color:#666; font-size:16px;', :label=>'Current Password'
+        .text_field2= f.password_field :current_password, :hint => "we need your current password to confirm your changes", :required => true,:class=> "" ,:style=>'width:auto; margin-top:1%;'
+        .free_space_right
+      .group.wat-cf{:style=>'margin-left:0%;'}
+        .label= f.label :password, :style=>'width:170px;padding-top:0px;color:#666; font-size:16px;',:label=>'New Password'
+        .text_field2= f.password_field :password, :hint => "leave it blank if you don't want to change it", :required => false,:class=> "" ,:style=>'width:auto;margin-top:1%;'
+        .free_space_right
+      .group.wat-cf{:style=>'margin-left:0%;'}
+        .label= f.label :password_confirmation, :style=>'width:170px;padding-top:0px;color:#666; font-size:16px;', :label=>'Password Confirmation'
+        .text_field2= f.password_field :password_confirmation, :required => false,:class=> "" ,:style=>'width:auto;margin-top:1%;'
+        .free_space_right
+      .group.wat-cf
+        %button{ :class=>'btn white_grey_bg ' }
+          = link_to "Back", :back, :style=>'color: #252629; text-decoration: none;'
+        %button{ :type => "submit", :class=>'btn green_white_bg' }
+          Update
+
+-# if current_user.role.name == "Edutor Admin" or current_user.role.name == "Institute Admin" or current_user.role.name == "Center Representative"
+  %h3 Cancel my account
+  -%p
+    Unhappy? #{link_to "Cancel my account", user_path(current_user), :confirm => "Are you sure?", :method => :delete}.
+
+
+:css
+  .btn.white_grey_bg{
+  margin-left: 0%;
+  float: left;
+  margin-top: 10px;
+  padding: 7px 10px 7px 10px;
+  background-color: #fff;
+  border: 1px solid #252629;
+  border-radius: 4px;
+  }
+
+  .btn.white_grey_bg:hover{
+  background-color: #d9dee4;
+  }
+
+  .btn.green_white_bg:hover{
+  background-color: #fff;
+  color: #0f9b4d;
+  }
+
+  .btn.green_white_bg{
+  margin-left: 15%;
+  float: left;
+  margin-top: 10px;
+  padding: 7px 10px 7px 10px;
+  background-color: #0f9b4d;
+  border: 1px solid #0f9b4d;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 4px;
+  }

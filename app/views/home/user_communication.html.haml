@@ -1,0 +1,33 @@
+#content_header
+#inner-tab-menu
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          = simple_form_for :user_communication ,:url=>user_communication_path, html: {novalidate: true} do |f|
+            .inputs
+              .group
+                .field
+                  = f.input :user_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Select User"
+              .group
+                .field
+                  = f.input :message_type,as: :check_boxes,:collection=>[['Messages',1],['Test Results',4],['Usage Stats',6],['Device Messages',12],['Get Devise Config',14],['Push Firewall',6]],:label=>"Select:"
+              .group
+                .field
+                  = f.button :submit,'Send',:class=>'big primary'
+
+:javascript
+  $(document).ready(function(){
+     $(function() {
+              $("#user_communication_user_ids").tokenInput("/profile_users.json", {
+              queryParam: 'term',
+              minChars: '3',
+              hintText: 'Type first 3-letters of users surname/firstname/roll number',
+              crossDomain: false,
+              preventDuplicates:true,
+              prePopulate: $("#user_communication_user_ids").data("pre"),
+              theme: ""
+              });
+            });
+  });

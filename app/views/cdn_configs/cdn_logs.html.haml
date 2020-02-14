@@ -1,0 +1,74 @@
+#content_header
+  %h1#main_heading Search cdn logs
+#data
+  %table{width: "100%"}
+    %tr
+      %td
+        %div
+          %form.simple_form.form{action: "/cdn_logs", method: "post"}
+            .inputs
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_start_date"} CdnId
+                    %input#cdnid.string.optional.text_field{maxlength: "255", name: "cdnid", size: "50", type: "text"}/
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_end_date"} UserID
+                    %input#userid.string.optional.text_field{maxlength: "255", name: "userid", size: "50", type: "text"}/
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_end_date"} Report Type
+                    %input#userid.string.optional.text_field{maxlength: "255", name: "report", size: "50", type: "text"}/
+              .group
+                .field{:align=>'center'}
+                  %input.button.big.primary{name: "submit", type: "submit", value: "Search"}/
+
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#cdn_logs.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th ID
+                %th CdnId
+                %th ReportType
+                %th UserRequestUrl
+                %th UserId
+                %th Created At
+                %th
+            %tbody
+              - @logs.each do |log|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col= log.id
+                  %td.col= log.CdnId
+                  %td.col= log.ReportType
+                  %td.col= log.UserRequestUrl
+                  %td.col= log.UserId
+                  %td.col= log.created_at
+                  %td.col
+                    = link_to "View",show_cdn_log_path(log)
+        .pagination_info
+          = paginate @logs
+:javascript
+  $(document).ready(function() {
+    $("#cdn_logs").dataTable({
+        "aoColumns": [
+                    null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+

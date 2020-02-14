@@ -1,0 +1,43 @@
+#content_header
+  %h1#main_heading Books
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "New")}",new_book_path
+
+#data
+  %table
+    - @books.each_slice(2) do |books|
+      %tr
+        - books.each do |book|
+          %td{width:"25%; padding: 1%"}
+            %table{:style=>"border: 1px solid #5B88B1;height: 150px;width: 100%;border-radius: 8px 8px 8px 8px;padding: 1%"}
+              %tr
+                %td{:style=>"border: 1px solid #5B88B1;height: 130px;width: 130px;border-radius: 8px 8px 8px 8px; text-align:center"}
+                  = link_to (book.name),book_path(book),:class => 'option_buttons tipTip',:title=>book.name
+                %td
+                  %table{:style=>"width: 250px; padding-left: 50px"}
+                    %tr
+                      %td
+                        ISBN :
+                      %td
+                        = book.isbn
+                    %tr
+                      %td
+                        UID  :
+                      %td
+                        = book.uid
+                    %tr
+                      %td
+                        Version :
+                      %td
+                        = book.version
+                    %tr
+                      %td
+                        Status :
+                      %td
+                        = book.status
+                    %tr
+                      %td= link_to 'Edit', edit_book_path(book)
+                      %td= link_to 'Delete Book', book, :confirm => 'Are you sure?', :method => :delete
+
+

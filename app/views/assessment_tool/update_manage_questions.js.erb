@@ -1,0 +1,15 @@
+var page = "<%=  @page_number  %>"
+var data = "page="+page+"&"+ $('#live_tags_selector').serialize();
+console.log(data);
+$.ajax({//Make the Ajax Request
+    type: "POST",
+    url: '/assessment_tool/get_questions_by_live_tags',
+    data: data,
+
+    success: $("#editQuestion").html("Successfully updated the question.")
+    })
+//$("#search_for_questions").click();
+
+
+
+

@@ -1,0 +1,11 @@
+%tr.nested-fields.fib_option_set
+  %td.answer_number{style: "border: 1px solid #CCC;text-align: center;"}
+    Ans.
+  %td{colspan: "2", style: "position: relative; height:40px; padding-right: 8px; border: 1px solid #CCC; text-align: left;"}
+    = f.text_field :answer, class:"full_text_camouflage"
+    = link_to_remove_association image_tag("del_option.png") , f, style:"position:absolute; top: 1px; right: 0px"
+  %td{style: "width: 40px!important; margin: 0px; padding: 0px; border: 0px; vertical-align: center; text-align: center;"}
+    %center
+    = f.check_box :case_sensitive, value:"1"
+  %td
+    Case Sensitive

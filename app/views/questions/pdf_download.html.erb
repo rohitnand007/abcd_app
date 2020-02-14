@@ -1,0 +1,131 @@
+<style>
+    #listing{
+        background: #F3F3F3;
+        border-radius:10px;
+        -moz-border-radius:10px;
+        -webkit-border-radius:10px;
+        padding:20px 20px 20px; margin-bottom:5px;
+    }
+    .odd{
+        height:auto;
+        font: bold 1em/1.5em arial,helvetica,sans-serif;
+        background: #e1ebf4;
+        margin-right:5px;
+    }
+    .odd td{
+        font-weight:bold;
+        padding:10px 10px 10px 10px;
+    }
+    .right{
+        width: 450px;
+        text-align: left;
+    }
+    .left{
+        width: 17px;
+        text-align: right;
+    }
+    .even{
+        height:auto;
+        background: #c7d9e9;
+        margin-right:5px;
+    }
+    .even td{
+        font: bold 1em/1.5em arial,helvetica,sans-serif;
+        padding:10px 10px 10px 10px;
+    }
+    #profile{
+        font: bold 24px arial,helvetica,sans-serif;
+        color: #FFFFFF;
+        text-align: left;
+        padding:0 0 0 20px
+
+    }
+    .img{
+        margin-left: 10px;
+        padding:5px;
+        width: auto;
+        height: auto;
+    }
+    .answer {
+        text-align:left;
+        padding:10px;
+    }
+    .page-break {
+        display:block; clear:both;
+    }
+   .page {
+       page-break-after:always;
+   }
+    table, tr, td, th, tbody, thead, tfoot {
+        page-break-inside: avoid !important;
+    }
+
+</style>
+</head>
+<body>
+<div class="page">
+<table id="listing" align="center" width="80%" height="0"cellpadding="1" cellspacing="1" style="background:#99cc00">
+    <tbody>
+      <tr>
+          <td align="right" width="22%"><b>Class</b></td>
+          <td width="1%">:</td>
+          <td align="left"width="24%"><span><%=@context.try(:content_year).try(:name)%></span></td>
+          <td align="right" width="24%"><b>Subject</b></td>
+          <td width="1%">:</td>
+          <td align="left"width="24%"><span><%=@context.try(:subject).try(:name)%></span></td>
+      </tr>
+      <tr>
+          <td align="right"width="24%"><b>Chapter</b></td>
+          <td width="1%">:</td>
+          <td align="left"width="24%"><%=@context.try(:chapter).try(:name)%></td>
+          <td align="right"width="24%"><b>Topic</b></td>
+          <td width="1%">:</td>
+          <td align="left" width="24%"><%=@context.try(:topic).try(:name)%></td>
+      </tr>
+    </table>
+<table align="center" width="750">
+    <% i = 1 %>
+    <% @questions.each do |question| %>
+        <tr>
+            <td>
+                <!--Question No.in edutor DataBase:-->
+                <%= question.id %>.&nbsp;
+                <%= question.pdf_questiontext_format.gsub("<p>","").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-left:25px;">
+                <%if question.qtype == 'fib'%>
+                    <%= question.question_fill_blanks.collect{|i|i.answer}.join(",")%>
+                <%else%>
+                  <table width="100%">
+                    <% a = ("a".."z").to_a  %>
+                    <% n = 0 %>
+                    <% question.question_answers.each do |c| %>
+                        <tr>
+                          <td class="left" align="left">
+                            <%= a[n] %>. &nbsp;
+                          </td>
+                          <td class="right" align="left" valign="middle">
+                            <%= c.pdf_answer_format.gsub("<p>","").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+                            <b><%= (c.fraction==1)? "(Answer)":""%></b>
+                          </td>
+                          <% n= n+1 %>
+                        </tr>
+                    <%end%>
+                  </table>
+                <%end%>
+            </td>
+        </tr>
+    <tr>
+      <td>
+        <%= question.generalfeedback.html_safe%>
+      </td>
+    </tr>
+    <%i = i+1 %>
+    <%end%>
+
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+%p#notice= notice
+
+%p
+  %b Time:
+  = @device_property.TIME
+%p
+  %b Board:
+  = @device_property.BOARD
+%p
+  %b Bootloader:
+  = @device_property.BOOTLOADER
+%p
+  %b Brand:
+  = @device_property.BRAND
+%p
+  %b Cpu abi:
+  = @device_property.CPU_ABI
+%p
+  %b Cpu abi2:
+  = @device_property.CPU_ABI2
+%p
+  %b Device:
+  = @device_property.DEVICE
+%p
+  %b Display:
+  = @device_property.DISPLAY
+%p
+  %b Fingerprint:
+  = @device_property.FINGERPRINT
+%p
+  %b Hardware:
+  = @device_property.HARDWARE
+%p
+  %b Host:
+  = @device_property.HOST
+%p
+  %b Id:
+  = @device_property.ID
+%p
+  %b Manufacturer:
+  = @device_property.MANUFACTURER
+%p
+  %b Model:
+  = @device_property.MODEL
+%p
+  %b Product:
+  = @device_property.PRODUCT
+%p
+  %b Radio:
+  = @device_property.RADIO
+%p
+  %b Serial:
+  = @device_property.SERIAL
+%p
+  %b Tags:
+  = @device_property.TAGS
+%p
+  %b Type:
+  = @device_property.TYPE
+%p
+  %b Unknown:
+  = @device_property.UNKNOWN
+%p
+  %b User:
+  = @device_property.USER
+%p
+  %b Version codename:
+  = @device_property.VERSION_CODENAME
+%p
+  %b Radio version:
+  = @device_property.radio_version
+
+= link_to 'Edit', edit_device_property_path(@device_property)
+\|
+= link_to 'Back', device_properties_path

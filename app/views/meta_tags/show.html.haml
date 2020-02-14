@@ -1,0 +1,22 @@
+%p#notice=notice
+%br
+%div{:style => "width:70%;text-align:center;position:relative;font-size: 2em;color:#636363;padding-top:20px;padding-bottom:20px;background:#f9f9f9;margin:40px auto;box-shadow: 0 10px 6px -6px #777;"}
+  Academic Class:
+  = @meta_tag.class_tag.value
+  %br/
+  Subject:
+  = @meta_tag.subject_tag.value
+  %br/
+  Concept Name:
+  = @meta_tag.concept_tag.value
+  %br/
+  User Id:
+  = @meta_tag.user_id
+  %br/
+  User Name:
+  = @meta_tag.user.name
+  %br/
+%br
+  %br
+    = link_to 'Edit', edit_meta_tag_path(@meta_tag)
+    = link_to 'Back', meta_tags_path

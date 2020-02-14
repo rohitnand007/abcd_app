@@ -1,0 +1,67 @@
+= simple_form_for @profile, :html => { :class => :form } do |f|
+  = f.error_messages
+  .inputs
+    -if (!@profile.nil? and @profile.user.is?'ECP')
+      =f.simple_fields_for :user do |p|
+        .group
+          .field
+            = f.input :website,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"License Keys API Link"
+    -elsif (!@profile.nil? and !@profile.user.is?'IG' and  !@profile.user.is?'CG')
+      =f.simple_fields_for :user do |p|
+        .group
+          .field
+            = p.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.input :web_screen_name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Web Login Name"
+      .group
+        .field
+          = f.input :surname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Surname"
+      .group
+        .field
+          = f.input :middlename,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Middle Name"
+      .group
+        .field
+          = f.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"First Name"
+      .group
+        .field
+          = f.input :address,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.input :gender, :as => :radio,:label_html=>{:class=>"label"}, :collection => [["Male", "Male"], ["Female", "Female"]]
+      .group
+        .field
+          = f.input :phone,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.input :alternateemail,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Alternate Email"
+      -#.group
+      -#  .field
+      -#    = f.input :height,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      -#.group
+      -#  .field
+      -#    = f.input :weight,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      -#.group
+      -#  .field
+      -#    = f.input :blood_group,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      -#.group
+      -#  .field
+      -#    = f.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    -else
+      =f.simple_fields_for :user do |p|
+        .group
+          .field
+            = p.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      .group
+        .field
+          = f.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Name'
+      .group
+        .field
+          = f.input :address,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+      -#.group
+      -#  .field
+      -#    = f.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Logo'
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), (f.object.nil? ? root_path : profile_path(f.object.id)),:class=>'button danger icon remove'

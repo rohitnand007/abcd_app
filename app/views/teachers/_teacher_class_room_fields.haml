@@ -1,0 +1,130 @@
+
+.nested-fields.nested_attributes
+  -#setting the content year in edit mode
+  -#- year = f.object.try(:content).try(:type).eql?('ContentYear') ? f.object.try(:content) : nil
+  -#- if year.nil?
+  -#  -year = f.object.try(:content).try(:type).eql?('Subject') ? f.object.try(:content).try(:content_year) : nil
+  - if current_user.is?'CR'
+    .group
+      .field
+        = f.label :group_id, "Section/Group" ,:class=>'label'
+        - if f.object_name.gsub(/[^0-9]+/,'').eql?'0'
+          = f.collection_select :group_id,get_sections_or_groups_to_teacher,:id,:section_with_class,{:include_blank=>true},{:class=>'drop_down section',:disabled=>true}
+        -else
+          = f.collection_select :group_id,get_sections_or_groups_to_teacher,:id,:section_with_class,{:include_blank=>true},{:class=>'drop_down section'}
+  - elsif current_user.is?'IA'
+    .group
+      .field
+        = f.label :group_id, "Section/Group" ,:class=>'label'
+        - if f.object_name.gsub(/[^0-9]+/,'').eql?'0'
+          = f.collection_select :group_id,get_sections_or_groups_to_teacher,:id,:section_with_class,{:include_blank=>true},{:class=>'drop_down section',:disabled=>true}
+        -else
+          = f.collection_select :group_id,get_sections_or_groups_to_teacher,:id,:section_with_class,{:include_blank=>true},{:class=>'drop_down section'}
+  - elsif current_user.is?'EA'
+    .group
+      .field
+        = f.label :group_id, "Section/Group" ,:class=>'label'
+        - if f.object_name.gsub(/[^0-9]+/,'').eql?'0'
+          = f.collection_select :group_id,get_sections_or_groups_to_teacher,:id,:section_with_class,{:include_blank=>true},{:class=>'drop_down section',:disabled=>true}
+        -else
+          = f.collection_select :group_id,get_sections_or_groups_to_teacher,:id,:section_with_class,{:include_blank=>true},{:class=>'drop_down section'}
+  -#.group
+  -#  .field
+  -#    = f.label :board_id, "board",:class=>'label'
+  -#    - board = year.nil? ? nil : year.board
+  -#    = f.collection_select :board_id,get_boards_to_teacher,:id,:name,{:include_blank=>true,:selected=>(board.id unless board.nil?)},{:class=>'board_drop_down drop_down'}
+  -#.group
+  -#  .field
+  -#    = f.label :year_id, "year",:class=>'label'
+  -#    = f.collection_select :year_id,[year].compact,:id,:name,{:include_blank=>true,:selected=>(year.id unless year.nil?)},{:class=>'year_drop_down drop_down'}
+  -#.group
+  -#  .field
+  -#    = f.label :class_teacher, "Class Teacher", :class => "label"
+  -#    = f.check_box :class_teacher,{:class=>'class_teacher',:checked=>f.object.try(:content).try(:type).eql?('ContentYear')}
+  -#.group
+  -#  .field
+  -#    = f.label :content_id, "Subject",:class=>'label',:label=>false
+  -#    = f.collection_select :content_id,[],:id,:name,{:include_blank=>true},{:class=>'drop_down'}
+  -#.group
+    .field
+      = f.input :period,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Period'
+  .group.remove_field
+    .field
+      = link_to_remove_association "Remove Section", f
+:javascript
+//  $(".board_drop_down").change(function() {
+  var r = /\d+/;
+  var dynamic_id = this.id.match(r);
+  $("#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_year_id").val("");
+  $("#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id").val("");
+
+  var div_update = "#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_year_id";
+  var selected_value = $("select#"+this.id+" :selected").val();
+   if (selected_value==""){selected_value=0;}
+   var url = "/course/get_content_years/" ;
+   get_url_Data(url,selected_value,div_update);
+  });
+
+  $(".year_drop_down").change(function() {
+   var r = /\d+/;
+   var dynamic_id = this.id.match(r);
+   $("#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id").val("");
+   var div_update = "#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id";
+   var selected_value = $("select#"+this.id+" :selected").val();
+   if (selected_value==""){selected_value=0;}
+   var url = "/content_years/get_subjets/";
+   get_url_Data(url,selected_value,div_update);
+  });
+
+  $(".class_teacher").click(function() {
+   var r = /\d+/;
+   var dynamic_id = this.id.match(r);
+   var check_box_tag = "#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_class_teacher";
+   var is_class_teacher = $(check_box_tag).is(':checked');
+   var label_for_value = "teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id";
+    if(is_class_teacher == true){
+     $("label[for="+label_for_value+"]").hide('slow');
+     $("#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id").hide('slow');
+     $("select#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id").val("");
+    }
+    else{
+     $("label[for="+label_for_value+"]").show('slow');
+     $("#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_content_id").show('slow');
+    }
+  });
+  //to populate the sections or groups in adding of classes to teacher
+  $(".section").click(function(){
+     if($(this).hasClass("section")) {
+      var div_update1 = "#"+$(this).attr('id');
+
+      //if($(div_update1+" option").length <= 1 ){
+      var institution = $('select#teacher_institution_id :selected').val();
+      var center = $('select#teacher_center_id :selected').val();
+      if(institution==""){institution=0;}
+      if(center==""){center=0;}
+      var url1 = '/institution/get_sections/' +institution+'/'+ center+'/'+'classes'
+
+      //$("[id^=teacher_teacher_class_rooms_attributes_]").filter("[id$=_group_id]").each( function() {
+
+      get_url_Data_for_multiparams(url1,div_update1);
+      //}
+       $(this).removeClass('section');
+       $(this).addClass('section_new');
+      }
+  });
+  //to populate the boards based on section
+  $(".section_new").live('change',function(){
+    var r = /\d+/;
+    var dynamic_id = this.id.match(r);
+
+    var div_update = "#teacher_teacher_class_rooms_attributes_"+dynamic_id+"_board_id";
+    var selected_value = $("select#"+this.id+" :selected").val();
+    if (selected_value==""){selected_value=0;}
+
+    var center = $('select#teacher_center_id :selected').val();
+    if(center==""){center=0;}
+
+    var url = "/get_boards/?center_id="+center;
+    get_url_Data_for_multiparams(url,div_update);
+  });
+

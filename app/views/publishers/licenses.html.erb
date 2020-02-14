@@ -1,0 +1,54 @@
+<div id="content_header">
+  <h1 id="main_heading">Listing Licenses</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Upload Licenses", :controller => "publishers", :action => "upload_licenses" %></li>
+  </ul>
+</div>
+<div id="data">
+  <table width="100%">
+    <tr>
+      <td>
+        <div>
+          <table id="licenses" class="listing" align="center" width="100%" cellspacing="1" cellpadding="1">
+            <thead>
+              <tr class="tr-head">
+                <th>Android ID</th>
+                <th>License Key</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>License Status</th>
+                <th>License Type</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% i = 1 %>
+              <%@licenses.each do |license|%>
+              <% if i%2 == 0 %>
+              <tr class="tr-even even">
+              <% else %>
+              <tr class="tr-odd odd">
+              <% end %>
+                  <td class="col">
+                    <% if license.device_id %>
+                      <%=license.device.android_id%>
+                    <% end %>
+                  </td>
+                  <td class="col"><%=license.license_key%></td>
+                  <td class="col"><%=display_date_time(license.start_date)%></td>
+                  <td class="col"><%=display_date_time(license.end_date)%></td>
+                  <td class="col"><%=license.license_status%></td>
+                  <td class="col"><%=license.license_type%></td>
+                  <td class="col"><%=link_to "Edit", :controller => "publishers", :action => "edit_license", :id => license%></td>
+              </tr>
+              <% i = i+1 %>
+              <%end%>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>

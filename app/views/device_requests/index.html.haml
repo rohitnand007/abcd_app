@@ -1,0 +1,36 @@
+%h1 Listing device_requests
+
+%table
+  %tr
+    %th Request ID
+    %th Edutor
+    %th Device
+    %th Url
+    %th Request type
+    %th Success
+    %th Data
+    %th Session
+    %th Ip
+    %th
+    %th
+    %th
+
+  - @device_requests.each do |device_request|
+    %tr
+      %td= link_to device_request.id, :controller=>'device_responses', :action=>'show1', :request_id=>device_request.id
+      %td= device_request.edutor_id
+      %td= device_request.device_id
+      %td= device_request.url
+      %td= device_request.request_type
+      %td= device_request.success
+      %td= device_request.data
+      %td= device_request.session_id
+      %td= device_request.ip
+      %td= link_to 'Show', device_request
+      %td= link_to 'Edit', edit_device_request_path(device_request)
+      %td= link_to 'Destroy', device_request, :confirm => 'Are you sure?', :method => :delete
+
+%br
+.pagination_info
+  = paginate @device_requests
+= link_to 'New Device request', new_device_request_path

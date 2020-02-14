@@ -1,0 +1,60 @@
+if ("<%= @target_action %>" == "add_new") {
+    $("#search_form_wrapper_<%= @license_set.id.to_s %>").find(".small_loading").hide();
+    var $form_wrapper = $("#form_wrapper_<%= @license_set.id.to_s %>");
+    if (<%= @students.empty? %> == true
+)
+    {
+        if (<%= @no_students%>==true
+    )
+        {
+            alert(" There are no students in the selected class / section");
+        }
+    else
+        {
+        alert("Can't display all students at once. Please select an academic class or a section.");
+        }
+    }
+else
+    {
+        $form_wrapper.html("<%= escape_javascript(render partial:'student_assign_form',
+        locals:{students:@students,action_type:"add",
+        centers:@centers,teachers:@teachers})%>");
+    }
+}
+else {
+    $("#update_form_wrapper_<%= @license_set.id.to_s %>").html("<%= escape_javascript(render partial:'student_assign_form',locals:{students:@students,action_type:"update",centers:@centers,teachers:@teachers})%>")
+    $("#start_link_<%= @license_set.id.to_s %>").hide();
+    $theForm = $("#update_form_wrapper_<%= @license_set.id.to_s %> form");
+    $theForm.closest(".detailsRow").css("background-color", "#ffeeee");
+    clean = $theForm.serialize();
+    $theForm.submit(function (e) {
+        currentForm = $(this);
+        var dirty = currentForm.serialize();
+        if (clean != dirty) {
+            //Are you sure you want to assign licenses to these users?
+            $("<div> Are you sure you want to update licenses to these users? </div>").dialog({
+                show: {effect: "clip", duration: 1000},
+                hide: {effect: "explode", duration: 1000},
+                close: function () {
+                    $(this).dialog('destroy');
+                },
+                buttons: {
+                    'confirm submit': function (e) {
+                        currentForm.unbind("submit").submit();
+                        $(this).dialog('destroy');
+                        currentForm.find(".small_loading").show();
+                    }
+                }
+            })
+        } else {
+            $("<div> Please modify student assignments before updating </div>").dialog({
+                show: {effect: "clip", duration: 1000},
+                hide: {effect: "explode", duration: 1000},
+                close: function () {
+                    $(this).dialog('destroy');
+                }
+            });
+        }
+        return false;
+    })
+}

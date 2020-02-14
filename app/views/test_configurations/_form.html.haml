@@ -1,0 +1,39 @@
+= simple_form_for(@test_configuration, :html => {:multipart => true,:class => :form },:validate=>true) do |f|
+  -#.inputs
+    - if f.object.new_record?
+      = f.hidden_field :content_id,:value=>params[:id]
+      = f.hidden_field :created_by, :value => current_user.id
+    .group
+      .field
+        = f.input :test_type,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Test Name'
+    .group
+      .field
+        = f.input :start_time,:as=>:datetime,:input_html=>{:class=>"text_field",:style=>'display:inline;'},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :end_time,:as=>:datetime,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        - unless f.object.published
+          = f.input :status,:collection=>[["Publish Now",2],["Publish Later",1]], :as => :radio,:checked =>7 ,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:label=>''
+    .group
+      .field
+        = f.label :Group, "Group", :class => "label"
+        = f.collection_select :group_id, asign_groups(current_user),:user_id,:firstname,{:include_blank=>true} ,{:class=>'drop_down'}
+    .group
+      .field
+        = f.input :subject,:input_html=>{:class=>"text_field",:value=>(f.object.new_record? ? '' :f.object.body_message.split(':')[0])},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :body_message,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+  -#commente the above normal form code and used the assessments/test_config partial for redundancy
+  = render :partial=>'assessments/test_configuration_fields',:locals => {:f=>f}
+  = f.hidden_field :content_id,:value=>params[:id]
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:value=> params[:mode]||'Publish',:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), assessments_path,:class=>'button danger icon remove'

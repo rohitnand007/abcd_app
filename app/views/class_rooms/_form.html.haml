@@ -1,0 +1,50 @@
+= simple_form_for @class_room, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+    .group
+      .field
+        = f.label :teacher_id, "Teacher", :class=>'label'
+        = f.collection_select :teacher_id,Center.find(current_user.id).teachers.includes(:profile),:id,:name,{:prompt=>'select'},{:class=>"text_field"}
+    .group
+      .field
+        = f.label :academic_class, "Academic Classes", :class=>'label'
+        - if @class_room.new_record?
+          = collection_select :academic,:class,[],:id,:name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        -else
+          = collection_select :academic,:class,[@class_room.section.academic_class],:id,:name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.label :group_id, "Sections", :class=>'label'
+        = f.collection_select :group_id,[@class_room.section].compact,:id,:name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field  
+        =# f.association :content,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        = f.label :content_id, "Subject", :class=>'label'
+        = f.collection_select :content_id,Subject.all,:id,:name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.label :period, "Time Table", :class=>'label'
+        = f.text_field :period, :input_html=>{:class=>"text_field", :enabled=>false}
+    .group
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), class_rooms_path,:class=>'button danger icon remove'
+
+:javascript
+  $("#class_room_teacher_id").change(function(){
+     var selected_teacher = $('select#class_room_teacher_id :selected').val();
+     var url1 = "/teachers/get_academic_classes/" ;
+     var div_update1 = "#academic_class";
+     get_url_Data(url1,selected_teacher,div_update1);
+  });
+  $("#academic_class").change(function(){
+     var selected_value = $('select#academic_class :selected').val();
+     var url1 = "/academic_classes/get_sections/";
+     var div_update1 = "#class_room_group_id"
+
+     get_url_Data(url1,selected_value,div_update1);
+
+  });
+  
+  
+        
+    
+  

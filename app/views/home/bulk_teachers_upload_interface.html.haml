@@ -1,0 +1,16 @@
+=form_tag(post_bulk_teachers_upload_path,{:multipart=>true,:method=>:post}) do
+  %h2 Upload Teachers
+  %br
+  %b
+    %i Note:
+    User_group_ids should be a string with comma seperated ids.
+  %div{style:"background-color: #f9f9f9;padding:10px;"}
+    %h4 Please generate the following in Excel like program and save it as CSV file type.
+    %b institution_id,center_id,academic_class_id,section_id,email,Surname,Middlename,FirstName,Gender,Address,DOB,password,rollno,user_group_ids
+    %br
+    XXXXX,XXXXX,XXXXX,XXXXX,foo@bar.com,Bhonsle,Chatrapati,Sivaji,m,Shivaneri Maharashtra,19:02:1630,XXXXX,15568,"12443,18864,14432,,18445"
+  %br/
+  %br/
+  =label_tag :file,"Enter formatted csv file"
+  =file_field_tag :csv_file
+  =submit_tag "Upload"

@@ -1,0 +1,137 @@
+li.preview.selected {
+    color: #fff;
+    background-color: #000;
+}
+
+li.submitCM.selected {
+    color: #fff;
+    background-color: #000;
+}
+
+li.conceptMap.selected {
+    color: #fff;
+    background-color: #000;
+}
+
+li.preview {
+    background-color: #cccccc;
+    z-index: 100;
+}
+
+li.submitCM {
+    background-color: #cccccc;
+    z-index: 100;
+}
+
+li.conceptMap {
+    background-color: #cccccc;
+    z-index: 100;
+
+}
+
+.conceptMap .item-overlay {
+    z-index: 1;
+    position: absolute;
+    width: 227px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.conceptMap .item-overlay .item-info {
+    width: 200px;
+    height: 100%;
+    float: left;
+
+}
+
+.conceptMap .item-overlay .polygon-right {
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: solid 25px transparent;
+    border-bottom: solid 25px transparent;
+    border-left: solid 25px #ccc;
+    position: relative;
+}
+
+.conceptMap .item-overlay .polygon-right-selected {
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: solid 25px transparent;
+    border-bottom: solid 25px transparent;
+    border-left: solid 25px #000;
+    position: relative;
+}
+
+
+.preview .item-overlay {
+    z-index: 1;
+    position: absolute;
+    width: 227px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.preview .item-overlay .item-info {
+    width: 200px;
+    height: 100%;
+    float: left;
+
+}
+
+.preview .item-overlay .polygon-right {
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: solid 25px transparent;
+    border-bottom: solid 25px transparent;
+    border-left: solid 25px #ccc;
+    position: relative;
+}
+
+.preview .item-overlay .polygon-right-selected{
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: solid 25px transparent;
+    border-bottom: solid 25px transparent;
+    border-left: solid 25px #000;
+    position: relative;
+}
+
+
+.submitCM .item-overlay {
+    z-index: 1;
+    position: absolute;
+    width: 227px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.submitCM .item-overlay .item-info {
+    width: 200px;
+    height: 100%;
+    float: left;
+
+}
+
+.submitCM .item-overlay .polygon-right {
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: solid 25px transparent;
+    border-bottom: solid 25px transparent;
+    border-left: solid 25px #ccc;
+    position: relative;
+}
+
+.submitCM .item-overlay .polygon-right-selected{
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: solid 25px transparent;
+    border-bottom: solid 25px transparent;
+    border-left: solid 25px #000;
+    position: relative;
+}

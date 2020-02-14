@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Asset name:
+  = @user_asset.asset_name
+%p
+  %b User:
+  = @user_asset.user
+
+= link_to 'Edit', edit_user_asset_path(@user_asset)
+\|
+= link_to 'Back', user_assets_path

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_concept_map.css">
+    <script src="/assets/activities/konva.js"></script>
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.3.2/tinymce.min.js"></script>
+    <script src="/assets/activities/jquery-ui.js"></script>
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script src="/assets/activities/app.js"></script>
+</head>
+
+<body>
+<div id="ContainerForPreview" style="border:1px solid #76c4ac;height:100%"></div>
+<div id="content" class="hidden"></div>
+<script src="/assets/activities/play_concept_map.js"></script>
+<script>
+    var jsonData = "";
+    $.ajax({
+        url: "/learning_activities/<%=@learning_activity.id%>/get_activity_data",
+        type: 'GET',
+        cache: false,
+        success: function(data, textStatus, jqXHR)
+        {
+            jsonData = JSON.stringify(data);
+            var finaljson = JSON.parse(decodeURIComponent(jsonData));
+            $('#ContainerForPreview').previewConceptMap(finaljson, '/learning_activities/download/');
+
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+            alert("error in playing");
+        }
+    });
+
+</script>
+</body>
+</html>

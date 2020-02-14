@@ -1,0 +1,6 @@
+%tr.nested-fields
+  %td{style:"position:relative"}
+    = f.text_field :name,class:"form-first-name",style: "width: 160px;float:right",placeholder:"Type sub-section name ...",required:"required"
+    %br
+    = f.text_field :intro,class:"form-last-name",style: "width: 160px;float:right",placeholder:"Add instructions if any ...",required:"required"
+    = link_to_remove_association image_tag("minus.png", style:"position:absolute; left: 185px; top: -4px;"), f

@@ -1,0 +1,39 @@
+= simple_form_for (@license),:url => url_for(:action => 'save_license', :controller => 'publishers'), :method => :post, :html => { :class => :form } do |f|
+  = f.error_messages
+  .inputs
+    = f.input :id, :as => :hidden
+    .group
+      .field
+        = f.input :license_key,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :license_status,:as=>:select,:collection=>[['active','active'],['expired','expired']],:include_blank => false,
+            :input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :license_type,:as=>:select,:collection=>[['open','open'],['closed','closed'],['sharable','sharable']],:include_blank => false,
+            :input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :action_on_expiry,:as=>:select,:collection=>[['delete','delete'],['warn','warn'],['allow','allow'],['preview','preview']],:include_blank => false,
+            :input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :start_date,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :end_date,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :message_on_expiry,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:value => "Save"
+
+:javascript
+  $(function() {
+    var pickerOpts = {dateFormat: $.datepicker.TIMESTAMP};
+    $( "#power_chip_start_date" ).datepicker(pickerOpts);
+    $( "#power_chip_end_date" ).datepicker(pickerOpts);
+  });

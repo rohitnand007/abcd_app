@@ -1,0 +1,13 @@
+//$("#users_list").html("<%#= escape_javascript(render 'users/users') %>");
+
+<%unless params[:user_ids].split(',').empty?%>
+ <%params[:user_ids].split(',').each do |user_id|%>
+  <%is_enrolled = User.find(user_id).try(:is_activated)%>
+  <%status =  (is_enrolled) ? image_tag('web-app-theme/icons/tick.png') : image_tag('web-app-theme/icons/cross.png') %>
+  enroll_status = "#enroll_status_<%=user_id%>"
+  $(enroll_status).html("<%= escape_javascript status %>");
+  <% link_status = (is_enrolled) ? "De-Activated" : "Activated" %>
+  enroll_status_link = "#enroll_status_link_<%=user_id%>"
+  $(enroll_status_link).html("<%= escape_javascript(link_to  link_status, students_update_activation_status_path(:mode=>'ACT',:status=>link_status,:user_ids=>user_id), :id=>"enroll_status_link_#{user_id}", :remote=>true,:confirm => "Are you sure?")%>");
+ <%end%>
+<%end%>

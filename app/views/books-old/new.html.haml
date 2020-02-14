@@ -1,0 +1,13 @@
+#content_header
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}",books_path
+    %li.inner_tab_selected=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_book_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render 'form'
+

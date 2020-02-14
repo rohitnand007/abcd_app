@@ -1,0 +1,80 @@
+:css
+  #assessment_olympiad_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_olympiad_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#maend_heading assessment_olympiad
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_olympiads_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_olympiad_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_olympiad_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @assessment_olympiads.each do |assessment_olympiad|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_olympiad_#{assessment_olympiad.id}"}
+                  -#%td.col=  assessment_olympiad.rb.id
+                  %td.col
+                    = assessment_olympiad.asset.user.name if assessment_olympiad.asset
+                  %td.col
+                    = assessment_olympiad.board.name if assessment_olympiad.board
+                  %td.col
+                    = assessment_olympiad.content_year.name if assessment_olympiad.content_year
+                  %td.col
+                    = assessment_olympiad.subject.name  if assessment_olympiad.subject
+                  %td.col
+                    = link_to assessment_olympiad.chapter.name, chapter_path(assessment_olympiad.chapter)  if assessment_olympiad.chapter
+                  %td.col
+                    = link_to assessment_olympiad.topic.name, topic_path(assessment_olympiad.topic)  if assessment_olympiad.topic
+                  %td.col
+                    = assessment_olympiad.name
+                  %td.col
+                    = display_date_time(assessment_olympiad.created_at)
+                  %td.col
+                    = link_to_show(assessment_olympiad_path(assessment_olympiad))
+                    &nbsp
+                    = link_to_edit(edit_assessment_olympiad_path(assessment_olympiad))
+                    &nbsp;
+                    = link_to_delete(assessment_olympiad_path(assessment_olympiad))
+
+        - unless @assessment_olympiad.blank?
+          .pagination_info
+            = paginate @assessment_olympiads
+        #assessment_olympiad_configuration

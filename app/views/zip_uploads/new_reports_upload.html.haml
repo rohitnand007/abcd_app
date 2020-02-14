@@ -1,0 +1,14 @@
+%h1 Upload assessment reports
+= simple_form_for @zip_upload, :url => {:action => 'save_reports_upload'}, :html => { :multipart => true, :class => :form } do |f|
+	.file_upload
+		=f.file_field :asset 
+	.submit_button
+		=f.submit "Submit", disable_with: 'Uploading', class: 'button'
+
+:css
+	.form > div{
+		margin: 10px;
+		.submit_button{
+			margin-left: 20px;
+		}
+	}

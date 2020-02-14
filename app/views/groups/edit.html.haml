@@ -1,0 +1,31 @@
+#content_header
+  %h1#main_heading Groups
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}", groups_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.edit", :default => "Edit")}",edit_group_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_group_path
+    %li=  link_to "#{t("web-app-theme.show", :default => "Show")}",group_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for @group,:url=>{:action=>'update'}, :html => { :class => :form },:validate=>true do |f|
+              = render "form" ,:f=>f,:button_name=>'Update Group'
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", groups_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_group_path
+      %li.active= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_group_path
+  .content
+    %h2.title
+      = t("web-app-theme.edit", :default => "Edit")
+      Group
+    .inner
+      = simple_form_for @group,:url=>{:action=>'update'}, :html => { :class => :form } do |f|
+        = render "form" ,:f=>f,:button_name=>'Update Group'
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

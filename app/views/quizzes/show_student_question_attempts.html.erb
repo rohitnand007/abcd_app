@@ -1,0 +1,239 @@
+<script type="text/javascript" src="../../javascripts/pdf.js"></script>
+<div id="content_header">
+  <h1 id="main_heading">Assessment Report For <%=User.find(@question_attempts.first.user_id).profile.firstname%> <%=User.find(@question_attempts.first.user_id).profile.surname%></h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "student_attempted_assessments" %></li>
+  </ul>
+</div>
+<div id="data">
+  <div id='application-list'>
+    <table align='center' class='details' width='700px'>
+      <tbody>
+        <tr class='odd left'>
+          <td>Assessment Name</td>
+          <td class='right'><%= @quiz.name%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Assessment Institute Id</td>
+          <td class='right'><%= @quiz.institute_test_id%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Description</td>
+          <td class='right'><%= @quiz.intro.gsub(/<\/?[^>]*>/, "")%></td>
+        </tr>
+        <!--<tr class='even left'>
+          <td>Time Taken (minutes)</td>
+          <td class='right'><%= @question_attempts.sum(:time_taken)/60%></td>
+        </tr>-->
+        <tr class='odd left'>
+          <td>Total Questions</td>
+          <td class='right'><%= @quiz.questions.count%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Correct Attempts</td>
+          <td class='right'><%= @question_attempts.where(:correct=>true).count%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Wrong Attempts</td>
+          <td class='right'><%= @question_attempts.where(:correct=>false).count%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Total Marks</td>
+          <% sum_marks = @question_attempts.sum(:marks) %>
+          <td class='right'><%= sum_marks%>/<%=@total_marks%></td>
+        </tr>
+        <tr class='tr-blank'></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class='label heading hr'>
+    <div id="container1" class="test_section" style="padding-left: 2px;float: left;width: 73%;overflow: hidden;height: auto;min-height: 600px">
+      <h3 class="question-title" style="color:#555555;text-align: right">Attempted Questions <span id="no_attempted"></span> of <%=@quiz.questions.count%></h3>
+      <!--<object data="/quizzes/download_catchall/<%=@quiz.id%>" type="application/pdf" width="100%" height="90%">
+          <p>It appears you don't have a PDF plugin for this browser.</p>
+        </object>-->
+      <div>
+        <button id="prev" onclick="goPrevious()">Previous</button>
+        <button id="next" onclick="goNext()">Next</button>
+        &nbsp; &nbsp;
+        <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+      </div>
+
+      <div style="position: relative;">
+        <canvas id="the-canvas" style="border:1px solid black"></canvas>
+      </div>
+      <script type="text/javascript">
+          //
+          // NOTE:
+          // Modifying the URL below to another server will likely *NOT* work. Because of browser
+          // security restrictions, we have to use a file server with special headers
+          // (CORS) - most servers don't support cross-origin browser requests.
+          //
+          //var url = 'http://cdn.mozilla.net/pdfjs/tracemonkey.pdf';
+          var url = '/quizzes/download_catchall/<%=@quiz.id%>';
+          //
+          // Disable workers to avoid yet another cross-origin issue (workers need the URL of
+          // the script to be loaded, and currently do not allow cross-origin scripts)
+          //
+          PDFJS.disableWorker = true;
+
+          var pdfDoc = null,
+                  pageNum = 1,
+                  scale = 1.0,
+                  canvas = document.getElementById('the-canvas'),
+                  ctx = canvas.getContext('2d');
+
+          //
+          // Get page info from document, resize canvas accordingly, and render page
+          //
+          function renderPage(num) {
+              // Using promise to fetch the page
+              pdfDoc.getPage(num).then(function(page) {
+                  var viewport = page.getViewport(scale);
+                  canvas.height = viewport.height;
+                  canvas.width = viewport.width;
+
+                  // Render PDF page into canvas context
+                  var renderContext = {
+                      canvasContext: ctx,
+                      viewport: viewport
+                  };
+                  page.render(renderContext);
+              });
+
+              // Update page counters
+              document.getElementById('page_num').textContent = pageNum;
+              document.getElementById('page_count').textContent = pdfDoc.numPages;
+          }
+
+          //
+          // Go to previous page
+          //
+          function goPrevious() {
+              if (pageNum <= 1)
+                  return;
+              pageNum--;
+              renderPage(pageNum);
+          }
+
+          //
+          // Go to next page
+          //
+          function goNext() {
+              if (pageNum >= pdfDoc.numPages)
+                  return;
+              pageNum++;
+              renderPage(pageNum);
+          }
+
+          //
+          // Asynchronously download PDF as an ArrayBuffer
+          //
+          PDFJS.getDocument(url).then(function getPdfHelloWorld(_pdfDoc) {
+              pdfDoc = _pdfDoc;
+              renderPage(pageNum);
+              $("body").removeClass("loading");
+              $("#modal").hide();
+              myFunction();
+          });
+      </script>
+    </div>
+    <div style="display: none;text-align: center;font-size: 22px;font-weight: 600;color:#555555;padding-top: 100px;" class="paused_message">Test has been paused. Please click Resume button to Resume the test.....</div>
+  </div>
+  </div>
+  <div>
+    <h1>Questionwise Attempt Details</h1>
+  </div>
+  <div>
+    <table width='100%'>
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='publish_groups' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th>Question</th>
+                  <th>Attempt</th>
+                  <th>Option selected</th>
+                  <th>Correct Answer(s)</th>
+                  <th>Marks</th>
+                  <%if @quiz.format_type == 0 %>
+                    <th>Time Taken</th>
+                    <th></th>
+                  <%end%>
+                </tr>
+              </thead>
+              <tbody>
+              <%i=0%>
+                  <% if @quiz.format_type == 0 %>
+                      <% unless @quiz.quiz_sections.empty? %>
+                         <%@quiz.quiz_sections.each do |section|%>
+                            <tr><td><%= section.name%></td></tr>
+                            <%= render "quizzes/question_attempts", :attempts=>@question_attempts.where(:question_id=>section.questions.map(&:id)) %>
+                         <%end%>
+                      <%else%>
+                          <%= render "quizzes/question_attempts", :attempts=>@question_attempts%>
+                      <%end%>
+                  <%else %>
+
+                      <% @question_attempts.each do |t| %>
+                        <% if i%2 == 0 %>
+                          <tr class="tr-even even">
+                          <% else %>
+                          <tr class="tr-odd odd">
+                          <% end %>
+                          <td class="col"><%= Question.find(t.question_id).tag%></td>
+                          <% if t.correct? %>
+                            <td class="col"><img src="/assets/web-app-theme/icons/tick.png" alt="Correct"/></td>
+                          <%else%>
+                            <td class="col"><img src="/assets/web-app-theme/icons/cross.png" alt="Wrong"/></td>
+                          <%end%>
+                          <% attempts = McqQuestionAttempt.where(:quiz_question_attempt_id=>t.id)
+                          ans = []
+                          if attempts.size ==1 && attempts.first.question_answer_id ==0
+                            ans << "Not Attempted"
+                          else
+                            attempts.each do |a|
+                              qans = QuestionAnswer.find(a.question_answer_id).tag
+                              ans << qans
+                            end
+                          end
+                        %>
+                          <% correct_answers = QuestionAnswer.where(:question=>t.question_id,:fraction=>1)
+                          c_ans = []
+                          correct_answers.each do |a|
+                            c_ans << a.tag
+                          end
+                        %>
+                          <td class="col"><%= ans.join(",").html_safe %></td>
+                          <td class="col"><%= c_ans.join(",").html_safe %></td>
+                          <td class="col"><%= t.marks%></td>
+                        </tr>
+                        <%i = i+1%>
+                      <%end%>
+                <%end%>
+                <% if i%2 == 0 %>
+                  <tr class="tr-even even">
+                  <% else %>
+                  <tr class="tr-odd odd">
+                  <% end %>
+                  <td class="col"></td>
+                  <td class="col"></td>
+                  <td class="col"></td>
+                  <td class="col"></td>
+                  <td class="col">Total Marks = <%=sum_marks%></td>
+                  <%if @quiz.format_type == 0 %>
+                    <td class="col"></td>
+                    <td class="col"></td>
+                  <%end%>
+                </tr>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

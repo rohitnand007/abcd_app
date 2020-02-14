@@ -1,0 +1,85 @@
+/*
+*=require 'publisher'
+*/
+.ipackHeader {
+  margin-top: 5px;
+  background-color: #e5f4fb;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 7px;
+  a {
+    text-decoration: none;
+  }
+}
+
+#ipacksHeader {
+  border-bottom: 1px solid #CCCCCC;
+  border-top: 1px solid #CCCCCC;
+  padding: 10px;
+}
+.togglerRow {
+  text-align: right;
+  td {
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 0px;
+  }
+}
+
+.detailsHeader {
+  h4 {
+    margin: 12px;
+  }
+  td {
+    border-top: 1px solid #cccccc;
+  }
+}
+
+.assignedBooks {
+  margin-top: 15px;
+}
+
+.extendedDetail {
+  margin: 20px;
+  border-top: 1px solid #CCCCCC;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+#ipackList {
+  height: 500px;
+  overflow-y: scroll;
+  cursor: default;
+}
+
+#ibookList {
+  height: 320px;
+  overflow-y: scroll;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+  padding-top: 20px;
+  background-color: #f9f9f9;
+}
+
+.thirtyThree {
+  width: 33%;
+  position: relative;
+  .overlappingCheckbox {
+    position: absolute;
+  }
+}
+
+.rightPuller {
+  text-align: right;
+}
+
+.occupyWidth {
+  h3 {
+    color: #636363;
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+}
+
+#ipack_name {
+  padding: 10px;
+}

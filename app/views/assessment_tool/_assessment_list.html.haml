@@ -1,0 +1,73 @@
+.ui-tabs-panel.ui-corner-bottom
+  - @assessments.each do |assessment|
+    %br
+    .assessment-section.ui-widget-content
+      %span.section-title= assessment.name
+      %br
+      %br
+      %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+        %tr
+          %td{style: "width: 50%; border: 0px; padding: 0px;"}
+            %table{cellpadding: "0", cellspacing: "0"}
+              %tr
+                %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                  Duration:
+                  = assessment.timelimit
+                  Mins
+                %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                  Total marks:
+                  = assessment.quiz_question_instances.sum(:grade)
+                %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                  Total Questions:
+                  = assessment.total_questions
+              %tr
+                %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                  Created on:
+                  =  Time.at(assessment.timecreated).strftime(" %d/%b/%Y , %l:%M:%S %p")
+                %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                  Created by:
+                  = User.find(assessment.createdby).name
+                %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                  Type:
+                  =  assessment.format_type != 1 ? "Normal" : "Open Format"
+              %tr
+                %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+                  Last Published:
+                  =  assessment.quiz_targeted_groups.length != 0 ? Time.at(assessment.quiz_targeted_groups.last.published_on).strftime(" %d/%b/%Y , %l:%M:%S %p") : "Not Applicable"
+                %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                  Status:
+                  =  assessment.quiz_targeted_groups.length != 0 ? "Published" : "Not published"
+                %td{style: "border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                  ID:
+                  = assessment.id
+
+
+          %td{style: "border: 0px; padding: 2px 8px 2px 8px; width:100px;"}
+            %div#assessment_options{style: "float: right;"}
+              = link_to "&nbsp;  Assessment PDF".html_safe, "#", :class=>"utility_button download-btn"
+              .downloads_dropdown
+                - if assessment.format_type == 1 or assessment.format_type == 5
+                  = link_to "Download Assessment PDF", download_catchall_testpaper_path(assessment,{:format => :pdf}), :class=>"download_assessment_link" ,:id=>"download_pdf"
+                -else
+                  = link_to "Download PDF", assessment_pdf_download_path(assessment,:format=>:pdf), :class=>"download_assessment_link green_bg" ,:id=>"download_pdf", :style => "margin-bottom: 15px;"
+                  = link_to "Download PDF with key".html_safe, assessment_pdf_download_path(assessment,:format=>:pdf, "key" => true), :class=>"download_assessment_link green_bg", :style => "padding:0em;"
+              = link_to "Duplicate",duplicate_assessment_path(assessment), :class=>"utility_button duplicate-test-btn" #unless current_user.is? "ECP"
+              - if assessment.quiz_targeted_groups.length == 0
+                = link_to "Edit", assessment_tool_edit_path(assessment), :class=>"utility_button edit-btn"
+                - unless assessment.quiz_question_instances.empty?
+                  = link_to "Publish", assessment_tool_publish_path(assessment), :class=>"utility_button publish-btn"
+              - else
+                -unless current_user.is? "ECP"
+                  = link_to "Republish", assessment_tool_publish_path(assessment), :class=>"utility_button re-publish-btn"
+                  = link_to "Analytics",  "#", :class=>"utility_button view-analytics-btn"
+
+                .analytics_dropdown
+                  = link_to "Go to Reports",assessment_tool_assessment_reports_path(assessment),class:"analytics_links", style: "margin-bottom: 15px;"
+                  = link_to "View Analytics",assessment_tool_assessment_statistics_path(assessment),class:"analytics_links"
+            %div{style: "clear: both;"}
+%br
+
+.pagination_info
+  = paginate @assessments
+  %br
+  = (page_entries_info @assessments).html_safe

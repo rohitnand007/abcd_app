@@ -1,0 +1,24 @@
+.ui-widget-content{style: "padding-left: 16px;"}
+  %table{cellpadding: "0", cellspacing: "0", width: "90%"}
+    %tr
+      %td{colspan: "3", style: "border-left: 0px; padding: 2px 8px 0px 0px;"}  
+    %tr
+      %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+        Section:
+        = name(assessment_div).titleize
+      %td{style: "border-left: 0px; padding: 2px 8px 2px 8px;"}
+        Questions:
+        = assessment_div.total_questions
+
+
+      %td{style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+        Marks:
+        = assessment_div.quiz_question_instances.sum(:grade)
+    %tr
+      %td{colspan: "3", style: "border-left: 0px; padding: 2px 8px 0px 0px;"}  
+    %tr
+      %td{colspan: "3", style: "border-left: 0px; padding: 2px 8px 0px 0px;"}
+        Section Instructions:
+        = assessment_div.intro.html_safe
+  %br
+  %br

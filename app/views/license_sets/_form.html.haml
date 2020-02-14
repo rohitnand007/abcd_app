@@ -1,0 +1,34 @@
+= stylesheet_link_tag 'license_sets'
+= javascript_include_tag 'license_sets'
+= simple_form_for @license_set do |f|
+  = f.error_notification
+  - ipack = @ipack
+  = f.association :ipack, as: :hidden
+  #selectSchool
+    %ul
+      %li
+        %a{href: "#instituteSchool"} Institution
+      %li
+        %a{href: "#centerSchool"} Center
+    #instituteSchool
+      = f.association :institution, as: :radio, collection: current_user.white_institutions, wrapper_html:{class:"multilineRadio"},label:false
+    #centerSchool
+      = f.association :center, as: :radio, collection: current_user.white_centers , wrapper_html:{class:"multilineRadio"},label:false
+  .actions.licenseFields
+    %table
+      %tr
+        %td No. of Licenses
+        %td= f.input :licences, as: :integer,input_html:{min:1},label:false
+      %tr
+        %td Starts
+        %td= f.datetime_select :starts ,:as=>:datetime,:start_year=>2012,:default => 1.minute.from_now,:order=>[:day,:month,:year]
+      %tr
+        %td Ends
+        %td=f.datetime_select :ends ,:as=>:datetime,:start_year=>2012,:default => 1.year.from_now,:order=>[:day,:month,:year]
+
+    %br
+  = f.button :submit
+  = image_tag "small_loading.gif",class:"loading",style:"visibility:hidden"
+:javascript
+  readyForm()
+  $("#selectSchool").tabs().tabs("select",1).removeClass("ui-widget-content");

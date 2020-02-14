@@ -1,0 +1,75 @@
+#content_header
+  #breadcrumbs
+    = bread_crumb_test_evaluate_page
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "List")}", assessments_path
+    %li= link_to "#{t("web-app-theme.new", :default => "Download CSV")}", download_csv_test_results_path(@test_configuration)
+
+#data{:style => "overflow-x: scroll;"}
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#listing.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th User
+                %th Marks
+                %th Percentage
+                %th Rank
+            %tbody
+              - @test_results.each do |result|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col= result.user.fullname
+                  %td.col= result.marks
+                  %td.col= result.percentage
+                  %td.col= result.rank
+        - unless @test_results.blank?
+          .pagination_info
+            = paginate @test_results
+
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active= link_to "#{t("web-app-theme.list", :default => "List")}", test_configurations_path
+      %li=# link_to "#{t("web-app-theme.new", :default => "New")}", new_test_configuration_path
+  .content
+    %h2.title
+      = t("web-app-theme.all", :default => "All")
+      Test Results
+    .inner
+      %table#mytable.sort_table
+        %thead
+          %tr
+            %th.first ID
+            %th
+              User
+            %th
+              Marks
+            %th
+              Percentage
+            %th
+              Rank  
+            %th.last
+              Test Name &nbsp;
+        %tbody    
+          - @test_results.each do |result|
+            %tr{:class => cycle("odd", "even")}
+              %td
+                = result.id
+              %td
+                = result.user.fullname
+              %td
+                = result.marks
+              %td
+                = result.percentage
+              %td
+                = result.rank
+              %td.last{:style=>'text-align:left;'}
+                = result.display_name
+      .actions-bar.wat-cf
+        .actions
+        = paginate @test_results
+- content_for :sidebar, render(:partial => 'shared/sidebar')

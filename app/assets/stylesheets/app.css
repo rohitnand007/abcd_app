@@ -1,0 +1,47 @@
+#tree1 {
+    margin: 20px;
+    padding: 20px;
+    width: 100%;
+}
+#tree1 ul{
+    position: relative;
+}
+#tree1 ul li{
+    position: relative;
+    margin: 10px;
+    /*border :1px solid red;*/
+    font-size:medium;
+    border-radius: 10px;
+    padding: 5px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+#tree1 li{
+
+}
+.stats_box {
+    width:200px;
+    height:auto;
+    background:#1B5992;
+    border:1px solid #C7D9E9;
+    border-radius:8px;
+    margin-bottom:10px;
+    padding-bottom:10px;}
+.stats_box_btm { width:200px; height:auto;  background:#e8ffff; border:1px solid #C7D9E9; border-radius:8px;  margin-bottom:10px;  padding-bottom:10px;}
+.box_top{ width:auto; height:20px; background:#1B5A92; font-family:HelveticaNeueLTStd55Roman,Arial, sans-serif; font-size:14px; border-top-left-radius:7px; border-top-right-radius:7px; text-align:center; font-weight:bold; line-height:15px; padding:5px 5px 2px;
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#C7D9E9', EndColorStr='#5B88B1')";color: #fff;}
+.box_top_btm{ width:auto; height:20px; font-family:HelveticaNeueLTStd55Roman,Arial, sans-serif; font-size:14px; border-top-left-radius:7px; border-top-right-radius:7px; text-align:center; font-weight:bold; color:#fff; line-height:15px; padding:5px 5px 2px; background:#1b5a92;}
+
+.cont {display:inline-block; font-family: HelveticaNeueLTStd55Roman,Arial, sans-serif; font-size:12px; font-weight:normal; line-height:15px;text-align:left;  padding:6px 10px;}
+
+.num{float:right;text-align:right; font-weight:bold; text-decoration:underline; padding:6px 10px 6px;font-family:HelveticaNeueLTStd55Roman,Arial, sans-serif; font-size:14px; font-weight:normal; line-height:15px;}
+.num a { text-align:right; font-weight:bold; text-decoration:none; color:#000;}
+.num a:hover { text-align:right; font-weight:bold; text-decoration:none; color:#1b5a92;}
+
+.content_box{width:auto; height:auto; background:#fff;  border-bottom:1px dotted #5B88B1;}
+.content_box_btm{width:auto; height:auto; font-family:HelveticaNeueLTStd55Roman,Arial, sans-serif; font-size:14px; font-weight:normal; line-height:15px; padding:6px 5px 6px 15px; text-align:center; border-bottom:1px dotted #5B88B1;}
+.content_box_btm { text-align:left; font-weight:bold; text-decoration:none;}
+.content_box_btm a { text-align:left; font-weight:bold; text-decoration:underline; color:#000;}
+.content_box_btm a:hover { text-align:left; font-weight:bold; text-decoration:none; color:#1b5a92;}
+

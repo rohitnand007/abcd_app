@@ -1,0 +1,30 @@
+= simple_form_for(@device_property) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :TIME
+    = f.input :BOARD
+    = f.input :BOOTLOADER
+    = f.input :BRAND
+    = f.input :CPU_ABI
+    = f.input :CPU_ABI2
+    = f.input :DEVICE
+    = f.input :DISPLAY
+    = f.input :FINGERPRINT
+    = f.input :HARDWARE
+    = f.input :HOST
+    = f.input :ID
+    = f.input :MANUFACTURER
+    = f.input :MODEL
+    = f.input :PRODUCT
+    = f.input :RADIO
+    = f.input :SERIAL
+    = f.input :TAGS
+    = f.input :TYPE
+    = f.input :UNKNOWN
+    = f.input :USER
+    = f.input :VERSION_CODENAME
+    = f.input :radio_version
+
+  .actions
+    = f.button :submit,:class=>'big primary'

@@ -1,0 +1,40 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#tags_list").dataTable({
+                "aoColumnDefs" : [
+                                    {"bSortable":false, "aTargets":[0]},
+                                    {"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]}                                                             
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#tags_list").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Tag :   " },
+    });
+  });
+</script>
+<h1>Listing tags</h1>
+
+<table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='tags_list' width='100%' data=<%= tags_path(format: :json) %> >
+  <thead>
+  <tr class="tr-head">
+    <th>Tag Category</th>
+    <th>Tag Value</th>
+    <th>Tags DB</th>
+  </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<br />
+<% if current_user.rc == 'EA' %>
+  <%= link_to 'New Tag', new_tag_path %>
+<% end %>

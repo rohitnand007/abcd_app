@@ -1,0 +1,5 @@
+= form_tag assessment_tool_send_solutions_path(@publish.id), "data-validate" => "true", :enctype => "multipart/form-data", :method => "post", :novalidate => "novalidate" do
+  = file_field_tag "asset", presence:true
+  %br
+  %br
+  = submit_tag "Upload solutions", class:'button'

@@ -1,0 +1,111 @@
+:css
+  .filters-cont {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-bottom: 1px solid #D5F3FB;
+    color: #000;
+    height: 150px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+= form_tag(filter_search_path,:id=>'filter_search',:method=>:post) do
+  = hidden_field_tag :mode ,:value=>''
+  .filters
+    .filters-main-head
+      Refine your results
+    -if current_user.is?'EA'
+      %div
+        .filters-head
+          .filter-head-text
+            Institutions
+          .reset-filter
+            Reset
+        .filter-toggle
+        #institution.filters-cont
+          = build_checkbox_tags(institutions,"institution")
+    -# -unless current_user.is?'CR'
+    -if current_user.is?'EA' or current_user.is?'IA'
+      %div
+        .filters-head
+          .filter-head-text
+            Centers
+          .reset-filter
+            Reset
+        .filter-toggle
+        #centers.filters-cont
+          =  build_checkbox_tags(centers,"center")
+    %div
+      .filters-head
+        .filter-head-text
+          Classes
+        .reset-filter
+          Reset
+      .filter-toggle
+      #academic_classes.filters-cont
+        = build_checkbox_tags(academic_classes,"academic_class")
+    %div
+      .filters-head
+        .filter-head-text
+          Sections
+        .reset-filter
+          Reset
+      .filter-toggle
+      #sections.filters-cont
+        = build_checkbox_tags(sections,"section")
+
+
+
+
+-#= form_tag(filter_search_path,:id=>'filter_search',:method=>:post) do
+  = hidden_field_tag :mode ,:value=>''
+  -if current_user.is?'EA'
+    #institutions{:style=>"width:200;height:100;overflow:auto;border:1px solid"}
+      = build_checkbox_tags(institutions,"institution")
+  -unless current_user.is?'CR'
+    %br
+    #centers{:style=>"width:200;height:100;overflow:auto;border:1px solid"}
+      = build_checkbox_tags(centers,"center")
+  %br
+  #academic_classes{:style=>"width:200;height:100;overflow:auto;border:1px solid"}
+    = build_checkbox_tags(academic_classes,"academic_class")
+  %br
+  #sections{:style=>"width:200;height:100;overflow:auto;border:1px solid"}
+    = build_checkbox_tags(sections,"section")
+
+
+
+
+
+:javascript
+    var mode;
+    function mode_type(type){
+      mode = type;
+    }
+    $('.filter_value').live("click", function(){
+       $('#mode').val(mode);
+        var formData = $('#filter_search').serialize();
+        $.ajax({//Make the Ajax Request
+            type: "POST",
+            url: '/home/filter_search/',
+            data: formData,
+            beforeSend:  function() {
+            $('#progress-indicator').show();
+            $("#users_list").css('opacity',0.6);
+            $(".filters :input").attr("disabled", true);
+            goToByScroll("users_list");
+              if (mode=='institution'){
+              }else if (mode=='center'){
+
+              }else if(mode=='academic_class') {
+
+              }
+            },
+            success: function(html){//html = the server response html code
+             goToByScroll("users_list");
+             $('#progress-indicator').hide();
+             $(".filters :input").attr("disabled", false);
+             $("#users_list").css('opacity','');
+            }
+        });
+       // $(this).submit();
+    });

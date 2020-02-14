@@ -1,0 +1,13 @@
+= form_for @publisher_question_bank do |f|
+  = f.label :question_bank_name
+  %br
+  = f.text_field :question_bank_name
+  %br
+    %br
+  = f.label :description
+  %br
+  = f.text_field :description
+  = f.hidden_field :publisher_id, :value => current_user.id
+  %br
+    %br
+  = f.submit "create new question bank", class: "button"

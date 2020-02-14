@@ -1,0 +1,46 @@
+#content_header
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "New collection")}",new_collection_path
+
+%h1 Listing collections
+
+#data
+  - @collections.each do |collection|
+    %table{:style=>"border: 1px solid #5B88B1;height: 150px;width: 100%;border-radius: 8px 8px 8px 8px;padding: 1%;margin: 2%"}
+      %tr
+        %td
+          %table
+            %tr
+              %td
+                Name :
+              %td
+                = collection.name
+            %tr
+              %td
+                No of books :
+              %td
+                = collection.books.count
+            %tr
+              %td
+                Books:
+              %td
+                - c = ""
+                - collection.books.each do|onebook|
+                  = c
+                  = link_to onebook.name, book_path(onebook)
+                  -c = ","
+            %tr
+              %td
+                Assigned to:
+              %td
+                - c = ""
+                - collection.users.each do |user|
+                  = c
+                  = user.name
+                  - c = ","
+            %tr
+            %tr
+              %td= link_to 'Edit', edit_collection_path(collection)
+              %td= link_to 'Delete collection', collection, :confirm => 'Are you sure?', :method => :delete
+

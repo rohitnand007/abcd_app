@@ -1,0 +1,38 @@
+%b Question Bank Name: #{@publisher_question_bank.question_bank_name}
+%br
+%ul{style:"color: red;"}
+  %li New added question tags will be reflected only after half an hour
+  %li Questions once added should be manually removed from the question bank
+  %li **Please select Class and corresponding Subjects to slice it in subject Level(Academic Class should be selected Always)
+= form_for @publisher_question_bank, url: add_questions_to_qb_publisher_question_bank_path,method: :post do |f|
+  %ul
+  - @class_subject_tags.each do |tag|
+    %li{style: "list-style: none;"}
+      = check_box_tag "tag_ids[]", tag[:class].id, @publisher_question_bank.tags.include?(tag), class: "academic_class"
+      = tag[:class].name_value
+      %div.subject_tags
+        -tag[:subject].each do |sub|
+          = check_box_tag "sub_tag_ids[]", [tag[:class].id, sub.id] , @publisher_question_bank.tags.include?(sub), class: "academic_subject"
+          = sub.name_value
+  %br
+    %div.styled-select
+      = collection_select "", :qb_id, @all_question_banks,:id, :question_bank_name, {prompt: "Select question bank to add questions"}, {:class => "drop_down",:required => true}
+  %br
+    %br
+  =f.submit "Add questions to question bank", class: "button"
+
+:javascript
+  
+  $('.edit_publisher_question_bank').on('submit', function (e) {
+    if ($("input[name$='tag_ids[]']:checked").length === 0) {
+        e.preventDefault();
+        alert('Select atleast one academic class');
+        return false;
+    }
+    else if ($("input[class$='academic_class']:checked").length === 0 && $("input[class$='academic_subject']:checked").length !== 0){
+        alert('Select atleast one academic class and then Subject');
+        return false;
+    }
+  });
+
+

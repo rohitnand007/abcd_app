@@ -1,0 +1,34 @@
+.simpleQuestion.question_style{style:"background:#fff; padding: 10px;"}
+  - serialized_key_questions_present = @serialized_key_questions.present? && @serialized_key_questions.has_key?(question.id.to_s)
+  - if ["multichoice","truefalse"].include? question.qtype
+    %div= render partial:'question_flags', locals:{question:question}
+    %div= question.questiontext_format.html_safe
+    - correct_answer_ids = []
+    - if serialized_key_questions_present
+      - new_correct_choice_ids = @serialized_key_questions[question.id.to_s]["question_answers"].present? ? @serialized_key_questions[question.id.to_s]["question_answers"] : {}
+    - else
+      - new_correct_choice_ids = {}
+    %div
+      - question.question_answers.each do |qa|
+        - if serialized_key_questions_present
+          - fraction = new_correct_choice_ids.include?(qa.id.to_s) ? true : false
+        - else
+          - fraction = qa.fraction==0 ? false : true
+        - correct_answer_ids << qa.id if fraction
+        %label{style:'display:block'}
+          = check_box_tag "questions[#{question.id}]question_answers[]", qa.id, fraction
+          %div{style:"display:inline-block"}= qa.answer_format.gsub('<p>','').gsub('</p>','').html_safe
+    .hidden_data= hidden_field_tag "questions[#{question.id}]original_correct_choice", correct_answer_ids.join(",")
+  - elsif question.qtype=="fib"
+    %div= render partial:'question_flags', locals:{question:question}
+    %div= question.questiontext_format.gsub("#DASH#","_______").html_safe
+    - new_correct_choice_hash = serialized_key_questions_present ? @serialized_key_questions[question.id.to_s]["question_fill_blanks"] : {}
+    %div
+      - question.question_fill_blanks.each do |qfb|
+        - if serialized_key_questions_present
+          = text_field_tag "questions[#{question.id}]question_fill_blanks[#{qfb.id}]", new_correct_choice_hash[qfb.id.to_s]
+        - else
+          = text_field_tag "questions[#{question.id}]question_fill_blanks[#{qfb.id}]", qfb.answer
+  - else
+    %div= render partial:'question_flags', locals:{question:question}
+    %div= question.questiontext_format.html_safe

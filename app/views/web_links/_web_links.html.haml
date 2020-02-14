@@ -1,0 +1,49 @@
+:javascript
+  $(document).ready(function() {
+    $("#web_links").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+%div
+  %table#web_links.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.web_link.publisher", :default => t("activerecord.labels.publisher", :default => "Publisher"))
+        %th= t("activerecord.attributes.web_link.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th= t("activerecord.attributes.web_link.board", :default => t("activerecord.labels.board", :default => "Board"))
+        %th= t("activerecord.attributes.web_link.year", :default => t("activerecord.labels.year", :default => "Content Year"))
+        %th= t("activerecord.attributes.web_link.subject", :default => t("activerecord.labels.subject", :default => "Subject"))
+        %th= t("activerecord.attributes.web_link.subject", :default => t("activerecord.labels.subject", :default => "chapter"))
+        %th= t("activerecord.attributes.web_link.subject", :default => t("activerecord.labels.subject", :default => "Topic"))
+
+        -#%th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @web_links.each do |web_link|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"web_link_#{web_link.id}"}
+          %td.col= web_link.publisher.fullname if web_link.publisher
+          %td.col= link_to web_link.name, web_link_path(web_link)
+          %td.col= link_to(web_link.board.name,board_path(web_link.board)) if web_link.board
+          %td.col= link_to(web_link.content_year.name ,content_year_path(web_link.content_year))if web_link.content_year
+          %td.col= link_to(web_link.subject.name,subject_path(web_link.subject))  if web_link.subject
+          %td.col= link_to(web_link.chapter.name, chapter_path(web_link.chapter))  if web_link.chapter
+          %td.col
+            = link_to(web_link.topic.name, topic_path(web_link.topic))  if web_link.topic
+          -#%td.col= display_date_time(web_link.created_at)
+          %td.col
+            = link_to_show(web_link_path(web_link))
+            = link_to_publish(web_link_publish_path(web_link),"publish")
+.pagination_info= paginate @web_links unless @web_links.blank?

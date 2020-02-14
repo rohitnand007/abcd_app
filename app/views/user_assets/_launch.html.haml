@@ -1,0 +1,19 @@
+- path = @user_asset.attachment.path.split("/")
+- path.pop
+- @files = Dir.entries(path.join("/") + "_extract").select{|file| File.extname(file) != ""}
+= 'Asset Successfully uploaded. Now, select a launch page.'
+%br
+
+= simple_form_for @user_asset,method: :put, html:{ :multipart => true,style: "border: 1px solid (171, 160, 160);" } do |f|
+  - @files.each do |file|
+    = label_tag do
+      = f.radio_button "launch_file",file
+      = file
+      %br
+  = f.submit "Update", class:"button right",id:"newassetbutton", disable_with: "Updating.."
+  %br
+
+:css
+  .italic{
+  font-style: italic;
+  }

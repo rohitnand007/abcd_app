@@ -1,0 +1,134 @@
+:javascript
+  $(document).ready(function() {
+    if(user_role=='ET'){
+      $("#users").dataTable({
+          "aoColumns": [null,null,null,null,null,null,null,null,null,null],
+          "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+          "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+          "bPaginate": false,
+          "bFilter": true,
+          "bInfo": false,
+          "bRetrieve": true,
+          "bDestroy": true,
+          "oLanguage": { "sSearch": "Search Page:" }
+
+      });
+    }else{
+      $("#users").dataTable({
+          "aoColumns": [{"bSortable": false},null,null,null,null,null,null,null,null,null,null,{"bSortable": false}],
+          "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+          "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+          "bPaginate": false,
+          "bFilter": true,
+          "bInfo": false,
+          "bRetrieve": true,
+          "bDestroy": true,
+          "oLanguage": { "sSearch": "Search Page:" }
+
+      });
+    }
+    addtipTip();// on ajax update recall
+  });
+%table{cellpadding:1,cellspacing: 1}
+  -if(current_user.is? 'EA' or current_user.is? 'IA' or current_user.is? 'CR')
+    %tr
+      %td{style: 'padding-left: 9px;'}= check_box_tag "select_all",''
+      %td
+        .button-group
+          = button_to_function "Enroll", "update_all_activation_status('Activate');",:class=>'button',:id=>'enroll_all'
+          = button_to_function "De-Enroll", "update_all_activation_status('De-Activate');",:class=>'button',:id=>'de_enroll_all'
+  %div
+  %table#users.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        -if(current_user.is? 'EA' or current_user.is? 'IA' or current_user.is? 'CR' or current_user.is? 'ET')
+          %th
+        %th= t("activerecord.attributes.user.email", :default => t("activerecord.labels.email", :default => "Name"))
+        %th Roll No
+        %th Form
+        %th Section
+        %th Device Id
+        %th Serial Number
+        - unless current_user.is? "ET"
+          %th School Tag
+          %th Enrolled?
+          %th Last Sign in at
+          %th SignIn Count
+          -if(current_user.is? 'EA' or current_user.is? 'IA' or current_user.is? 'CR'  or current_user.is? 'EO')
+            %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @users.each do |user|
+        %tr{:class => cycle("tr-odd", "tr-even")}
+          -if(current_user.is? 'EA' or current_user.is? 'IA' or current_user.is? 'CR' or current_user.is? "ET" or current_user.is? 'EO' )
+            %td.col= check_box_tag("check",user.id)
+          %td.col= link_to user.fullname, user_path(user)
+          %td.col= user.rollno
+          %td.col= user.academic_class.name if user.academic_class
+          %td.col= user.section.name if user.section
+          %td.col= user.edutorid
+          %td.col= raw user.devices.uniq.map(&:deviceid).join('<br/>') if user.devices
+          %td.col= user.school_uid
+          %td.col{:id=>"enroll_status_#{user.id}"}
+            -if user.is_activated
+              /%span.green_label Enrolled
+              = image_tag('web-app-theme/icons/tick.png',:alt => 'Yes')
+            -else
+              /%span.red_label De-Enrolled
+              = image_tag('web-app-theme/icons/cross.png',:alt=>'No')
+          %td.col= display_date_time(user.last_sign_in_at)
+          %td.col= user.sign_in_count
+          -if(current_user.is? 'EA' or current_user.is? 'IA' or current_user.is? 'CR')
+            %td.col
+              = link_to_edit(edit_user_path(user))
+              =# link_to 'Monthly Report',user_monthly_report_path(:id=>user.id,:format => :pdf)
+              &nbsp;
+              =link_to(image_tag('web-app-theme/themes/default/icons/send.png'),  user_reset_password_instructions_path(user),:title => "Send Password Reset Instructions",:class=>'tipTipTop',:alt=>'Send Password Reset Instructions' )if current_user.id!=user.id and (current_user.is?'EA' or current_user.is?'IA')
+              &nbsp;
+              - if user.is_activated
+                = link_to  "De-Enroll", students_update_activation_status_path(:mode=>'ACT',:status=>'De-Activate',:user_ids=>user), :id=>"enroll_status_link_#{user.id}",:confirm=>'Are you sure?',:remote=>true unless (user.edutorid =~ /ES-/).nil?
+              -else
+                = link_to  "Enroll", students_update_activation_status_path(:mode=>'ACT',:status=>'Activate',:user_ids=>user), :id=>"enroll_status_link_#{user.id}",:confirm=>'Are you sure?', :remote=>true unless (user.edutorid =~ /ES-/).nil?
+
+  .pagination_info
+    = (paginate @users,:remote=>['users','home'].include?(controller.controller_name) ? true : false) unless @users.blank?
+
+:javascript
+  $("#select_all").click(function()
+  {
+      var checked_status = this.checked;
+      $("input[name=check]").each(function()
+      {
+          this.checked = checked_status;
+      });
+  });
+  function update_all_activation_status(status){
+      var values = $("input:checked[name=check]").map(function() {
+          return $(this).val();
+      }).get().join();
+      $.ajax({//Make the Ajax Request
+            type: "POST",
+            url: '/students/update_activation_status/?mode=ACT',
+            data: {status: status,user_ids: values},
+            beforeSend:  function() {
+              $('#progress-indicator').show();
+              $("#users_list").css('opacity',0.6);
+              $(".filters :input").attr("disabled", true);
+            },
+            success: function(html){//html = the server response html code
+              $('#progress-indicator').hide();
+              $("#users_list").css('opacity','');
+               $(".filters :input").attr("disabled", false);
+            }
+        });
+  }
+
+  $(document).ready(function() {
+      $('.pagination a').live('click', function() {
+         goToByScroll("users_list");
+         $("#progress-indicator").show();
+         $("#users_list").css('opacity',0.6);
+          $(".filters :input").attr("disabled", true);
+      });
+
+  });

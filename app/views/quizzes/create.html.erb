@@ -1,0 +1,455 @@
+<div id="content_header">
+  <h1 id="main_heading">Add/Remove Questions</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Create New Question", :controller => "questions", :action => "new" %></li>
+    <li><%=link_to "Search and Add Questions", :controller => "quizzes", :action => "show_questions",:id=>@quiz.id %></li>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "show",:id=>@quiz.id %></li>
+    <li><%=link_to "Publish Assessment", :controller => "quizzes", :action => "publish_to",:id=>@quiz.id %></li>
+  </ul>
+</div>
+<div id="data">
+  <form id="select-database" class="form" method="POST" action="/quizzes/edit_questions/<%=@quiz.id%>">
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Select Database
+          </label>
+          <select id="database_value" name="filter_database" onchange="$('#hidden_filter_database').val($('#database_value').val());$('#select-database').submit();">
+            <% @databases.each do |key,value| %>
+              <option <%= @filter_database.to_i==key ? 'selected' : '' %> value="<%=key%>"><%=value%></option>
+            <%end%>
+          </select>
+        </div>
+      </div>
+    </div>
+  </form>
+  <%= form_for @context,:html => { :class => :form }, :url => { :action => "edit_questions" ,:id=>@quiz.id} do |c| %>
+    <div class='label heading hr'>
+      <span style="font-size:20px">Filter questions by below Parameters</span>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Board
+          </label>
+          <%= c.collection_select("board_id",@boards.to_a,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Class
+          </label>
+          <%= c.collection_select("content_year_id",@context.board.try(:content_years).to_a,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Subject
+          </label>
+          <%= c.collection_select("subject_id",@context.content_year.try(:subjects).to_a,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Chapter
+          </label>
+          <%= c.collection_select("chapter_id",@context.subject.try(:chapters).to_a ,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Topic
+          </label>
+          <%= c.collection_select("topic_id",@context.chapter.try(:topics).to_a ,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Question Format
+          </label>
+          <select name="filter_qtype" class="select optional">
+            <option value="">All</option>
+            <option <%= @filter_qtype=="multichoice" ? 'selected' : '' %> value="multichoice">MCQ</option>
+            <option <%= @filter_qtype=="truefalse" ? 'selected' : '' %> value="truefalse">True/False</option>
+            <option <%= @filter_qtype=="parajumble" ? 'selected' : '' %> value="parajumble">Parajumble</option>
+            <option <%= @filter_qtype=="match" ? 'selected' : '' %> value="match">Match the following</option>
+            <option <%= @filter_qtype=="fib" ? 'selected' : '' %> value="fib">FIB</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Course
+          </label>
+          <select name="filter_course" class="select optional">
+            <option value="">All</option>
+            <option <%= @filter_course=="0" ? 'selected' : '' %> value="0">Regular</option>
+            <option <%= @filter_course=="1" ? 'selected' : '' %> value="1">IIT</option>
+            <option <%= @filter_course=="2" ? 'selected' : '' %> value="2">Olympiad</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Difficulty
+          </label>
+          <select name="filter_difficulty" class="select optional">
+            <option value="">All</option>
+            <option <%= @filter_difficulty=="1" ? 'selected' : '' %> value="1">Easy</option>
+            <option <%= @filter_difficulty=="2" ? 'selected' : '' %> value="2">Medium</option>
+            <option <%= @filter_difficulty=="3" ? 'selected' : '' %> value="3">Hard</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Show only my questions
+          </label>
+          <input type="checkbox" name="filter_myquestions" <%=@filter_myquestions==1 ? 'checked' : ''%>/>
+        </div>
+      </div>
+    </div>
+    <div class='label heading hr'>
+      <span style="font-size:20px">Filter by Skills</span>
+    </div>
+    <table style="width:900px">
+      <tr>
+        <td>
+          Vocabulary
+          <input type="checkbox" name="filter_vocab_skill" <%=@filter_vocab_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Comprehension
+          <input type="checkbox" name="filter_comprehension_skill" <%=@filter_comprehension_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Speaking
+          <input type="checkbox" name="filter_speaking_skill" <%=@filter_speaking_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Listening
+          <input type="checkbox" name="filter_listening_skill" <%=@filter_listening_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Problem Solving
+          <input type="checkbox" name="filter_prob_skill" <%=@filter_prob_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Data Interpretation
+          <input type="checkbox" name="filter_data_skill" <%=@filter_data_skill==1 ? 'checked' : ''%>/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Use of It
+          <input type="checkbox" name="filter_useofit_skill" <%=@filter_useofit_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Creativity
+          <input type="checkbox" name="filter_creativity_skill" <%=@filter_creativity_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Formulae
+          <input type="checkbox" name="filter_formulae_skill" <%=@filter_formulae_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Knowledge
+          <input type="checkbox" name="filter_knowledge_skill" <%=@filter_knowledge_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Application
+          <input type="checkbox" name="filter_application_skill" <%=@filter_application_skill==1 ? 'checked' : ''%>/>
+        </td>
+        <td>
+          Grammer
+          <input type="checkbox" name="filter_grammer_skill" <%=@filter_grammer_skill==1 ? 'checked' : ''%>/>
+        </td>
+      </tr>
+    </table>
+    <br/>
+    <br/>
+    <div class="group">
+      <div class="field">
+        <div class="input select required">
+          <label class="select required label" for="">
+            Search for any keyword
+          </label>
+          <input id="common-search" type="text" class="input string optional" name="common_search" value="<%=@common_search%>" size="59"/>
+        </div>
+      </div>
+    </div>
+    <input id="hidden_filter_database" type="hidden" name="filter_database" value="<%=@filter_database%>"/>
+    <div class="group">
+      <div align="center" class="field">
+        <input class="button big primary" data-disable-with="Filtering..." name="commit" type="submit" value="Filter Questions"/>
+        <a type="button" id="reset-filter" class="button danger icon remove">Reset Filter</a>
+      </div>
+    </div>
+  <%end%>
+  <table width='100%'>
+
+    <tr>
+    <td id='questions_list' valign='top'>
+      <table cellpadding='1' cellspacing='1'>
+        <% t =  (@questions.num_pages == 1) ? @questions.size : @questions.num_pages*25%>
+        <% diff = t - (@questions.current_page - 1)*25 + 1 %>
+        <% if diff > 25 %>
+          <% to =  (@questions.current_page - 1)*25 + 25%>
+        <%else%>
+          <% to = t - (@questions.current_page - 1)*25 %>
+        <%end%>
+        <% if @questions.size > 0 %>
+          <% start = (@questions.current_page - 1)*25 + 1 %>
+        <%else%>
+          <%start = 0%>
+        <%end%>
+        <tr><td>Showing <%=start%>-<%=to%> question(s) of <%=t%> questions</td></tr>
+        <tr><td><%=paginate @questions%></td></tr>
+        <form id="add_questions_form" method="POST" action="/quizzes/add_questions/<%=@quiz.id%>">
+          <% unless @quiz.quiz_sections.empty? %>
+              <div class="filters">
+                <div class='filters-main-head'>
+                  Sections
+                </div>
+                <div class='filters-cont' id='quiz_sections'>
+                  <%@quiz.quiz_sections.each do |section|%>
+                      <%= radio_button_tag "section",section.id%>
+                      <%= section.name %><br/>
+                  <%end%>
+                </div>
+              </div>
+          <%end%>
+          <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='users' width='100%'>
+            <thead>
+              <tr class='tr-head'>
+                <th></th>
+                <th>Question Text</th>
+                <th>Format</th>
+                <th>Course</th>
+                <!--<th>Last Used</th>-->
+                <th>Marks/<br/>Penalty (positive)</th>
+                <th>Skills</th>
+                <th>Difficulty</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i=0%>
+              <% @questions.each do |q| %>
+                <% if i%2 == 0 %>
+                  <tr class="tr-even even">
+                  <% else %>
+                  <tr class="tr-odd odd">
+                  <% end %>
+                  <td class='col'><input name="quiz_question_instances[question_id][]" type="checkbox" value="<%=q.id%>" /></td>
+                  <td class='col'><%=q.questiontext_format_new.html_safe%></td>
+                  <td class='col'><%=q.qtype%></td>
+                  <td class='col'><%=q.course_text%></td>
+                  <%#
+                  used = Quiz.joins(:questions).where("quizzes.createdby = ? AND questions.id= ?",current_user.id,q.id).order('quizzes.timecreated DESC').first
+                  if used.present?
+                    text = '<a href="'+'/quizzes/'+used.id.to_s+'">'+used.name+'</a> on '+display_date_time(used.timecreated)
+                  else
+                    text = 'Not used'
+                  end%>
+                  <!--<td class='col'><%#=text.html_safe%></td>-->
+                  <td class='col'><input name="quiz_question_instances[grade][<%=q.id%>]" type="text" value="<%=q.defaultmark%>" size="4"/><br/><input name="quiz_question_instances[penalty][<%=q.id%>]" type="text" value="<%=q.penalty%>" size="4"/></td>
+                  <td class='col' style="width:50px !important"><%=q.skills %></td>
+                  <td class='col'><%=q.difficulty_text %></td>
+                  <td class='col'><a target="_blank" href="/questions/<%=q.id%>">View Question</a></td>
+                </tr>
+                <tr><input type="hidden" name="common_search" value="<%=@common_search%>"/></tr>
+              <%i= i+1%>
+            <% end %>
+            </tbody>
+          </table>
+          <br/>
+          <input type="hidden" name="context[board_id]" value="<%= @context.board_id.nil? ? '' : @context.board_id%>"/>
+          <input type="hidden" name="context[content_year_id]" value="<%= @context.content_year_id.nil? ? '' :  @context.content_year_id%>"/>
+          <input type="hidden" name="context[subject_id]" value="<%=@context.subject_id.nil? ? '' : @context.subject_id%>"/>
+          <input type="hidden" name="context[chapter_id]" value="<%=@context.chapter_id.nil? ? '' : @context.chapter_id%>"/>
+          <input type="hidden" name="context[topic_id]" value="<%=@context.topic_id.nil? ? '' : @context.topic_id%>"/>
+          <input type="hidden" name="filter_qtype" value="<%=@filter_qtype.nil? ? '' : @filter_qtype%>"/>
+          <input type="hidden" name="filter_course" value="<%=@filter_course.nil? ? '' : @filter_course%>"/>
+          <input type="hidden" name="filter_difficulty" value="<%=@filter_difficulty.nil? ? '' : @filter_difficulty%>"/>
+          <input type="hidden" name="filter_vocab_skill" value="<%=@filter_vocab_skill.nil? ? '' : @filter_vocab_skill%>"/>
+          <input type="hidden" name="filter_comprehension_skill" value="<%=@filter_comprehension_skill.nil? ? '' : @filter_comprehension_skill%>"/>
+          <input type="hidden" name="filter_speaking_skill" value="<%=@filter_speaking_skill.nil? ? '' : @filter_speaking_skill%>"/>
+          <input type="hidden" name="filter_listening_skill" value="<%=@filter_listening_skill.nil? ? '' : @filter_listening_skill%>"/>
+          <input type="hidden" name="filter_prob_skill" value="<%=@filter_prob_skill.nil? ? '' : @filter_prob_skill%>"/>
+          <input type="hidden" name="filter_data_skill" value="<%=@filter_data_skill.nil? ? '' : @filter_data_skill%>"/>
+          <input type="hidden" name="filter_useofit_skill" value="<%=@filter_useofit_skill.nil? ? '' : @filter_useofit_skill%>"/>
+          <input type="hidden" name="filter_creativity_skill" value="<%=@filter_creativity_skill.nil? ? '' : @filter_creativity_skill%>"/>
+          <input type="hidden" name="filter_formulae_skill" value="<%=@filter_formulae_skill.nil? ? '' : @filter_formulae_skill%>"/>
+          <input type="hidden" name="filter_knowledge_skill" value="<%=@filter_knowledge_skill.nil? ? '' : @filter_knowledge_skill%>"/>
+          <input type="hidden" name="filter_application_skill" value="<%=@filter_application_skill.nil? ? '' : @filter_application_skill%>"/>
+          <input type="hidden" name="filter_grammer_skill" value="<%=@filter_grammer_skill.nil? ? '' : @filter_grammer_skill%>"/>
+          <input type="hidden" name="filter_myquestions" value="<%=@filter_myquestions.nil? ? '' : @filter_myquestions%>"/>
+          <input type="hidden" name="filter_database" value="<%=@filter_database%>"/>
+          <input class="button big primary" data-disable-with="Adding..." name="edit_question" id="submit_form" type="submit" value="Add Selected Questions to Assessment >>"/>
+        </form>
+        <div class='pagination_info'>
+          <%=paginate @questions%>
+        </div>
+      </table>
+    </td>
+    </tr>
+    <tr>
+      <form method="POST" action="/quizzes/remove_questions/<%=@quiz.id%>">
+        <td valign='top' width="20%">
+          <div class='filters' style="width:90%;margin:auto;">
+            <div class='filters-main-head'>
+              <a href="<%=@quiz.id%>"><%=@quiz.name%></a>
+            </div>
+            <div class='filters-cont' id='institution'>
+              Total Questions: <%=@quiz.questions.size%>
+              <br/>
+              Total Marks: <%=@quiz.quiz_question_instances.sum(:grade)%>
+            </div>
+            <div>
+              <div class='filters-head'>
+                <div class='filter-head-text'>
+                  <a href="<%=@quiz.id%>">Questions</a>
+                </div>
+              </div>
+              <div class='filters-cont' id='institution'>
+                <% unless @quiz.quiz_sections.empty? %>
+                    <%@quiz.quiz_sections.each do |section|%>
+                        <%i=0%>
+                        <div class='filters-head'>
+                          <div class='filter-head-text'>
+                            <a href="<%=@quiz.id%>"><%= section.name%></a>
+                          </div>
+                        </div>
+                        <% unless section.questions.nil? %>
+                            <% section.questions.each do |question|%>
+                                <label class='filters-list'>
+                                  <input class="filter_value" name="quiz_question_instances[]" type="checkbox" value="<%=question.id%>"/>
+                                  <span><%=question.questiontext.gsub(/<\/?[^>]*>/, "")%> </span></label>
+                                <%i=i+1%>
+                            <%end%>
+                        <%end%>
+                    <%end%>
+                <%else%>
+                    <%i=0%>
+                    <% @quiz.questions.each do |qa| %>
+                        <label class='filters-list'>
+                          <input class="filter_value" name="quiz_question_instances[]" type="checkbox" value="<%=qa.id%>"/>
+                          <span><%=qa.questiontext.gsub(/<\/?[^>]*>/, "")%> </span></label>
+                        <%i=i+1%>
+                    <%end%>
+                <%end%>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <input type="hidden" name="context[board_id]" value="<%= @context.board_id.nil? ? '' : @context.board_id%>"/>
+          <input type="hidden" name="context[content_year_id]" value="<%= @context.content_year_id.nil? ? '' :  @context.content_year_id%>"/>
+          <input type="hidden" name="context[subject_id]" value="<%=@context.subject_id.nil? ? '' : @context.subject_id%>"/>
+          <input type="hidden" name="context[chapter_id]" value="<%=@context.chapter_id.nil? ? '' : @context.chapter_id%>"/>
+          <input type="hidden" name="context[topic_id]" value="<%=@context.topic_id.nil? ? '' : @context.topic_id%>"/>
+          <input type="hidden" name="common_search" value="<%=@common_search.nil? ? '' : @common_search%>"/>
+          <input type="hidden" name="filter_qtype" value="<%=@filter_qtype.nil? ? '' : @filter_qtype%>"/>
+          <input type="hidden" name="filter_course" value="<%=@filter_course.nil? ? '' : @filter_course%>"/>
+          <input type="hidden" name="filter_difficulty" value="<%=@filter_difficulty.nil? ? '' : @filter_difficulty%>"/>
+          <input type="hidden" name="filter_vocab_skill" value="<%=@filter_vocab_skill.nil? ? '' : @filter_vocab_skill%>"/>
+          <input type="hidden" name="filter_comprehension_skill" value="<%=@filter_comprehension_skill.nil? ? '' : @filter_comprehension_skill%>"/>
+          <input type="hidden" name="filter_speaking_skill" value="<%=@filter_speaking_skill.nil? ? '' : @filter_speaking_skill%>"/>
+          <input type="hidden" name="filter_listening_skill" value="<%=@filter_listening_skill.nil? ? '' : @filter_listening_skill%>"/>
+          <input type="hidden" name="filter_prob_skill" value="<%=@filter_prob_skill.nil? ? '' : @filter_prob_skill%>"/>
+          <input type="hidden" name="filter_data_skill" value="<%=@filter_data_skill.nil? ? '' : @filter_data_skill%>"/>
+          <input type="hidden" name="filter_useofit_skill" value="<%=@filter_useofit_skill.nil? ? '' : @filter_useofit_skill%>"/>
+          <input type="hidden" name="filter_creativity_skill" value="<%=@filter_creativity_skill.nil? ? '' : @filter_creativity_skill%>"/>
+          <input type="hidden" name="filter_formulae_skill" value="<%=@filter_formulae_skill.nil? ? '' : @filter_formulae_skill%>"/>
+          <input type="hidden" name="filter_knowledge_skill" value="<%=@filter_knowledge_skill.nil? ? '' : @filter_knowledge_skill%>"/>
+          <input type="hidden" name="filter_application_skill" value="<%=@filter_application_skill.nil? ? '' : @filter_application_skill%>"/>
+          <input type="hidden" name="filter_grammer_skill" value="<%=@filter_grammer_skill.nil? ? '' : @filter_grammer_skill%>"/>
+          <input type="hidden" name="filter_myquestions" value="<%=@filter_myquestions.nil? ? '' : @filter_myquestions%>"/>
+          <input type="hidden" name="filter_database" value="<%=@filter_database%>"/>
+
+          <input class="button big primary" data-disable-with="Removing..." name="edit_question" type="submit" value=" << Remove Selected Questions from Assessment"/>
+        </td>
+      </form>
+    </tr>
+  </table>
+</div>
+<script>
+  $("#reset-filter").click(function() {
+    window.location = "/quizzes/edit_questions/<%=@quiz.id%>";
+  })
+  $('#submit_form').click(function(){
+      var len =  $("#quiz_sections" ).length
+      if($("#quiz_sections" ).length == 0) {
+           return true
+      }
+      else{
+          if (!$("input[name='section']:checked").val()) {
+              alert('Select any section');
+              $(document).scrollTop( $("#quiz_sections").offset().top );
+              return false;
+          }
+          else {
+              return true
+          }
+      }
+
+
+
+  });
+  //<![CDATA[
+  $("#context_board_id").click(function() {
+    var selected_value = $('select#context_board_id :selected').val();
+    var url = "/course/get_content_years/"
+    var div_update = "#context_content_year_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#context_content_year_id").change(function() {
+    var selected_value = $('select#context_content_year_id :selected').val();
+    var url = "/content_years/get_subjets/"
+    var div_update = "#context_subject_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#context_subject_id").change(function() {
+    var selected_value = $('select#context_subject_id :selected').val();
+    var url = "/subjects/get_chapters/"
+    var div_update = "#context_chapter_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+  $("#context_chapter_id").change(function() {
+    var selected_value = $('select#context_chapter_id :selected').val();
+    var url = "/chapters/get_topics/"
+    var div_update = "#context_topic_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+  //]]>
+</script>

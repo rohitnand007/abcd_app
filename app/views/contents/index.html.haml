@@ -1,0 +1,57 @@
+:javascript
+  $(document).ready(function() {
+    $("#content_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  #breadcrumbs
+    %ul
+      %li= link_to 'Home',root_path
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.list", :default => "List")}", contents_path
+    %li=link_to 'Manage', '/content/manage'
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#content_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.content.vendor_id", :default => t("activerecord.labels.vendor_id", :default => "Publisher"))
+                %th Status
+                %th Type
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th.last &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @contents.each do |content|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"content_#{content.id}"}
+                  %td.col=  link_to content.name, content_path(content)
+                  %td.col= display_content_status(content.status)
+                  %td.col= content.type
+                  %td.col= display_date_time(content.created_at)
+                  %td.col
+                    = link_to_show(content_path(content))
+                    &nbsp
+                    = link_to_edit(edit_content_path(content))
+                    &nbsp;
+                    = link_to_delete(content_path(content)) unless test_configuration.status.eql?(3)
+
+        - unless @contents.blank?
+          .pagination_info
+            = paginate @contents

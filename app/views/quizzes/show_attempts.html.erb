@@ -1,0 +1,495 @@
+<style>
+    #data > .progress-indicator {
+        top: 65%;
+        left: 58%;
+    }
+</style>
+<div id="content_header">
+  <h1 id="main_heading">Assessment Results </h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "show",:id=>@quiz.id %></li>
+  </ul>
+</div>
+<div id="data">
+  <div id="progress-indicator" class="progress-indicator">
+    <%= image_tag('progress-indicator.gif') %>
+   </div>
+  <div id='application-list'>
+    <table align='center' class='details' width='700px'>
+      <tbody>
+        <tr class='odd left'>
+          <td>Assessment Name</td>
+          <td class='right'><%= @quiz.name%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Assessment Institute Id</td>
+          <td class='right'><%= @quiz.institute_test_id%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Description</td>
+          <td class='right'><%= @quiz.intro.gsub(/<\/?[^>]*>/, "")%></td>
+        </tr>
+        <!--<tr class='even left'>
+          <td>Available From</td>
+          <td class='right'><%= display_date_time(@quiz.timeopen)%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Available Till</td>
+          <td class='right'><%= display_date_time(@quiz.timeclose)%></td>
+        </tr>-->
+        <tr class='even left'>
+          <td>Board</td>
+          <td class='right'><%= @quiz.context.board.try(:name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Class</td>
+          <td class='right'><%= @quiz.context.content_year.try(:name) rescue ""%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Subject</td>
+          <td class='right'><%= @quiz.context.subject.try(:name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Chapter</td>
+          <td class='right'><%= ((@quiz.context.chapter.nil?) ? '' : @quiz.context.chapter.name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Topic</td>
+          <td class='right'><%= ((@quiz.context.topic.nil?) ? '' : @quiz.context.topic.name) rescue ""%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Created By</td>
+          <td class='right'><%= @quiz.user.profile.firstname%> <%= @quiz.user.profile.surname%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Center Name</td>
+          <td class='right'>
+            <%if @quiz.user.id==1%>
+                <%= "Edutor"%>
+            <%elsif @quiz.user.is? 'IA'%>
+                <%= ''%>
+            <%else%>
+                <%=@quiz.user.center.name  %>
+            <%end%>
+          <%#= @quiz.user.id==1?'Edutor':@quiz.user.center.name%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Date Created</td>
+          <td class='right'><%= display_date_time(@quiz.timecreated)%></td>
+        </tr>
+        <!--<tr class='odd left'>
+          <td>Shuffle Questions</td>
+          <td class='right'><% if @quiz.shufflequestions ==1 %>
+          <%='Yes'%>
+        <% else %>
+          <%='No'%>
+        <% end %></td>
+        </tr>-->
+        <tr class='even left'>
+          <td>Duration (minutes)</td>
+          <td class='right'><%= @quiz.timelimit%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Total Questions</td>
+          <td class='right'><%= @quiz.questions.count%></td>
+        </tr>
+        <tr class='even left'>
+          <td>Total Marks</td>
+          <td class='right'><%= @quiz.quiz_question_instances.sum(:grade)%></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Published on</td>
+          <td class='right'><span><%= display_date_time(@publish.published_on)%></span></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Published to</td>
+          <%if !@publish.to_group? %>
+          <td class='right'><span><%=User.find(@publish.recipient_id).profile.firstname%></span></td>
+          <%else%>
+          <td class='right'><span><%=User.find(@publish.group_id).profile.firstname%></span></td>
+          <%end%>
+          
+        </tr>
+        <tr class='odd left'>
+          <td>Published as</td>
+          <% types={1=>"Quiz",2=>"Practice-Test",3=>"Institute-Test",4=>"Home Work",5=>"Assignment"} %>
+          <td class='right'><%=types[@publish.assessment_type]%></td>
+        </tr>
+
+        <tr class='even left'>
+          <td>Total Attempts</td>
+          <td class='right'><span><%=@publish.total_attempts%></span></td>
+        </tr>
+        <tr class='odd left'>
+          <td>Difficulty Level</td>
+          <%difficulty = 'Easy'%>
+          <%if @quiz.difficulty ==1%>
+            <% difficulty = 'Medium' %>
+          <%end%>
+          <%if @quiz.difficulty ==2%>
+            <% difficulty = 'Hard' %>
+          <%end%>
+          <td class='right'><%= difficulty%></td>
+        </tr>
+        <tr class='tr-blank'></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class='label heading hr'>
+  </div>
+  <div>
+    <%=link_to "All attempts",quiz_all_attempts_path(@publish),:target=>"balnk"%>
+    <h1>Students first attempts</h1> <br/>
+    <form method="POST" action="/quizzes/export_student_results/<%=@publish.id%>">
+      <select name="mode">
+      <option value="1">Only first attempt</option>
+      <option value="0">All attempts</option>
+      <option value="2">Only last attempt</option>
+      </select>
+      <input type="submit" name="export_type" value="Export as CSV"/>
+      <input type="submit" name="export_type" value="Export (Questionwise table) csv"/>
+      <input type="submit" name="export_type" value="Export(Questionwise) as CSV"/>
+    </form>
+    <p>
+        <%= check_box_tag "select_all",'' %> Select All
+        <%= button_to_function "Send Report to parent email", "send_quiz_report_parent('email',#{@quiz.id},#{@publish.id})",:class=>'button' ,:id=>"send_email_report"%>
+        <%= button_to_function "Send Report to student", "send_quiz_report_parent('message',#{@quiz.id},#{@publish.id})",:class=>'button' ,:id=>"send_message_report"%>
+       <!-- <%#= button_to "Download Reports", { :action => "download_students_reports", :quiz_id => @quiz.id,:publish_id=>@publish.id },:class=>'button' ,:id=>"send_message_report" %>-->
+      <%if @quiz.format_type == 3 %>
+        <%= button_to "Send DA Test Results",openformat_multiple_path(@publish.id),:class=>'button' ,:id=>"send_message_report" %>
+        <%= button_to "Download DA Test Results",download_openformat_multiple_path(@publish.id),:class=>'button' ,:id=>"send_message_report" %>
+      <%end%>
+      <%if @quiz.format_type == 0 or @quiz.format_type == 4 or @quiz.format_type == 8 %>
+          <%= button_to "Download Results (EI format)",down_submitted_options_path(@publish.id),:class=>'button' ,:id=>"send_message_report" %>
+      <%end%>
+      </p>
+    <div id="response_message" style="margin:8px;font-size:16px;color:green;">
+  </div>
+
+  </div>
+  <% if @publish.to_group %>
+  <div>
+    <table width='100%' class="attempts">
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='student-attempts' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th></th>
+                  <th>Edutor Id</th>
+                  <th>Student Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <!--<th>Time Taken(mins)</th>-->
+                  <th>Correct</th>
+                  <th>Wrong</th>
+                  <th>Marks</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <%  @first_attempts.each do |t| %>
+                  <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                    <% else %>
+                    <tr class="tr-odd odd">
+                    <% end %>
+                  <td  class='col'><%= check_box_tag("report",t.id)%></td>
+                  <td class='col'>
+                      <%=User.find(t.user_id).edutorid%>
+                    </td>
+                    <td class='col'>
+                      <%=link_to User.find(t.user_id).name,user_path(t.user_id)%>
+                    </td>
+                    <td class="col"><%= display_date_time(t.timestart)%></td>
+                    <td class="col"><%= display_date_time(t.timefinish)%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>true).count%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>false).count%></td>
+                    <td class="col"><%= t.sumgrades%>/<%=@total_marks%></td>
+                    <td>
+                      <%=link_to "View Details", :controller => "quizzes", :action => "show_question_attempts",:id=>t.id %></td>
+                  </tr>
+                  <%i = i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+<% if !@other_group_attempts.empty? %>
+<div class='label heading hr'>
+  </div>
+  <div>
+    <h1>Other Group Student Attempts</h1> <br/>
+    <table width='100%' class="attempts">
+      <tr>
+        <td id='publish_list1' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='student-attempts1' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th></th>
+                  <th>Edutor Id</th>
+                  <th>Student Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <!--<th>Time Taken(mins)</th>-->
+                  <th>Correct</th>
+                  <th>Wrong</th>
+                  <th>Marks</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <% @other_group_attempts.each do |t| %>
+                  <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                    <% else %>
+                    <tr class="tr-odd odd">
+                    <% end %>
+                  <td  class='col'><%= check_box_tag("report",t.id)%></td>
+                  <td class='col'>
+                      <%=User.find(t.user_id).edutorid%>
+                    </td>
+                    <td class='col'>
+                      <%=link_to User.find(t.user_id).name,user_path(t.user_id) %>
+                    </td>
+                    <td class="col"><%= display_date_time(t.timestart)%></td>
+                    <td class="col"><%= display_date_time(t.timefinish)%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>true).count%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>false).count%></td>
+                    <td class="col"><%= t.sumgrades%>/<%=@total_marks%></td>
+                    <td>
+                      <%=link_to "View Details", :controller => "quizzes", :action => "show_question_attempts",:id=>t.id %></td>
+                  </tr>
+                  <%i = i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+<%end%>
+<div class='label heading hr'>
+  </div>
+  <div>
+    <h1>Student who have not yet Attempted</h1> <br/>
+    <table width='100%' class="attempts">
+      <tr>
+        <td id='publish_list2' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='student-attempts2' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th></th>
+                  <th>Edutor Id</th>
+                  <th>Student Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <!--<th>Time Taken(mins)</th>-->
+                  <th>Correct</th>
+                  <th>Wrong</th>
+                  <th>Marks</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <% @not_attempted.each do |t| %>
+                  <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                    <% else %>
+                    <tr class="tr-odd odd">
+                    <% end %>
+                  <td  class='col'></td>
+                  <td class='col'>
+                      <%=User.find(t).edutorid%>
+                    </td>
+                    <td class='col'>
+                      <%=link_to User.find(t).name,user_path(t) %>
+                    </td>
+                    <td class="col">-</td>
+                    <td class="col">-</td>
+                    <td class="col">-</td>
+                    <td class="col">-</td>
+                    <td class="col">-</td>
+                    <td class="col">-</td>
+                    <td class='col'>
+                        <%=link_to 'sync results',user_sync_path(t,{:m=>4}) %>
+                    </td>
+                    </tr>
+                  <%i = i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<%else%>
+     <br/>
+      <table width='100%' class="attempts">
+        <tr>
+          <td id='publish_list3' valign='top'>
+            <table cellpadding='1' cellspacing='1'>
+              <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='student-attempts3' width='100%'>
+                <thead>
+                <tr class='tr-head'>
+                  <th>Edutor Id</th>
+                  <th>Student Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <!--<th>Time Taken(mins)</th>-->
+                  <th>Correct</th>
+                  <th>Wrong</th>
+                  <th>Marks</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <%i=0%>
+                <% @other_group_attempts.each do |t| %>
+                    <% if i%2 == 0 %>
+                        <tr class="tr-even even">
+                    <% else %>
+                        <tr class="tr-odd odd">
+                    <% end %>
+                    <td  class='col'><%=User.find(t.user_id).edutorid %></td>
+                    <td class='col'>
+                      <%=link_to User.find(t.user_id).name,user_path(t.user_id) %>
+                    </td>
+                    <td class="col"><%= display_date_time(t.timestart)%></td>
+                    <td class="col"><%= display_date_time(t.timefinish)%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>true).count%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>false).count%></td>
+                    <td class="col"><%= t.sumgrades%>/<%=@total_marks%></td>
+                    <td>
+                      <%=link_to "View Details", :controller => "quizzes", :action => "show_question_attempts",:id=>t.id %></td>
+                    </tr>
+                    <%i = i+1%>
+                <%end%>
+                </tbody>
+              </table>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+<%end%>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#student-attempts").dataTable({
+      "aaSorting": [[ 5, "desc" ]],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+                   null,null,null,null,null,null,null,null,
+                    {"bSortable": false }
+                     ]
+    });
+    $("#student-attempts1").dataTable({
+      "aaSorting": [[ 5, "desc" ]],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+                   null,null,null,null,null,null,null,null,
+                    {"bSortable": false }
+                     ]
+    });
+    $("#student-attempts2").dataTable({
+      "aaSorting": [[ 5, "desc" ]],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+                   null,null,null,null,null,null,null,null,null,
+                    {"bSortable": false }
+                     ]
+    });
+    $("#student-attempts3").dataTable({
+      "aaSorting": [[ 5, "desc" ]],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+          null,null,null,null,null,null,null,
+          {"bSortable": false }
+      ]
+    });
+    addtipTip();// on ajax update recall
+  });
+  $("#select_all").click(function()
+  {
+      var checked_status = this.checked;
+
+      $("input[name=report]").each(function()
+      {
+          this.checked = checked_status;
+      });
+
+  });
+  function send_quiz_report_parent(type,quiz,publish){
+      var values = $("input:checked[name=report]").map(function() {
+          return $(this).val();
+      }).get().join();
+      if (values.length == 0) {
+         alert("please select");
+         return false;
+      }
+      var select_all = $("#select_all").is(":checked");
+
+      $.ajax({//Make the Ajax Request
+          type: "POST",
+          url: '/quiz/send_parent_report',
+          data: {type:type,attempt_ids: values,quiz:quiz,publish:publish,select_all:select_all},
+          beforeSend:  function() {
+
+              $(this).button("disable");
+
+              $('#progress-indicator').show();
+              $("#data").css('opacity',0.6);
+              $("#data :input").attr("disabled", true);
+          },
+          success: function(html){//html = the server response html code
+              $('#progress-indicator').hide();
+              $("#data").css('opacity','');
+              $(this).button("enable")
+              $("#data :input").attr("disabled", false);
+          }
+
+      });
+  }
+  function download_reports(quiz,publish){
+      $.ajax({//Make the Ajax Request
+          type: "POST",
+          url: '/quiz/send_parent_report',
+          data: {quiz:quiz,publish:publish},
+          beforeSend:  function() {
+
+              $(this).button("disable");
+
+              $('#progress-indicator').show();
+              $("#data").css('opacity',0.6);
+              $("#data :input").attr("disabled", true);
+          },
+          success: function(html){//html = the server response html code
+              $('#progress-indicator').hide();
+              $("#data").css('opacity','');
+              $(this).button("enable")
+              $("#data :input").attr("disabled", false);
+          }
+
+      });
+
+  }
+</script>

@@ -1,0 +1,31 @@
+#content_header
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td
+            Title
+          %td.right= @content.title
+        %tr.even.left
+          %td
+            subject
+          %td.right= @content.subject
+        %tr.odd.left
+          %td
+            syllabus
+          %td.right= @content.syllabus
+        %tr.even.left
+          %td
+            Class
+          %td.right= @content.academic_class
+        - if !@content.drm_assets.empty?
+          %tr.odd.left
+            %td Attachments
+            %td.right
+              - @content.drm_assets.each do |asset|
+                = link_to asset.attachment_file_name,asset.attachment.url
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2',:align=>'right'}

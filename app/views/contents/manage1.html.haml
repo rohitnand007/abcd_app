@@ -1,0 +1,204 @@
+.block
+  .content
+    .inner
+      .manage-list
+        - @contents.each do |content|
+          %ul
+            = content.name
+            %li
+              = content.chapters.count
+              
+                   
+- content_for :sidebar, render(:partial => 'shared/sidebar')
+
+
+
+
+<div id="content_header">
+  <h1 id="main_heading">Manage Content</h1>
+  <h3 id="sub_heading"></h3>
+</div>
+<div id="inner-tab-menu">
+  <uL>
+    <li><%=  link_to "#{t("web-app-theme.list", :default => "List")}", contents_path %></li>
+    <li class="inner_tab_selected"><%= link_to 'Manage', '/content/manage' %></li>
+  </uL>
+</div>
+
+<div id="data">
+  <table width="80%" align="center">
+    <tr>
+      <td>
+        <div class="button-group">
+          <input name="Check All" id="checkall" value="check all" type="submit" class="button">
+          <input name="UnCheck All" id="uncheckall" value="un check all" type="submit" class="button">
+          <% link_to "Generate xml", generate_xml_content_path(@contents.first) ,:class => 'button' %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="tree1">
+          <% @contents.each do |subject| %>
+              <ul id="<%= subject.type%>_<%= subject.id%>" class="ui-sortable">
+                <li id="<%= subject.type%>_<%= subject.name%>_<%= subject.id%>" class="ui-state-default"><%= check_box_tag "content[]" %>
+                  <%= subject.name %>
+                  <ul id="<%= subject.type%>_<%= subject.id%>">
+                    <% subject.chapters.order("play_order asc").each do |chapter|%>
+                        <li id="<%= chapter.type%>_<%= chapter.name%>_<%= chapter.id%>"class="ui-state-default"><%= check_box_tag "content[]" %>
+                          <%= chapter.name %>
+                          <div style="float:right;">
+                            <%= content_lock(chapter.is_locked)%>
+                          </div>
+                          <div style="clear:both;"></div>
+
+                        </li>
+                    <%end%>
+                  </ul>
+                </li>
+              </ul>
+          <%end%>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="button-group">
+          <input name="toArray" id="toArray" value="Commit" type="submit" class="button">
+          <input name="tolock" class="clicked button icon lock" id="tolock" value="lock" type="submit" >
+          <input name="to unlock" class="clicked button danger icon unlock" id="tolock" value="unlock" type="submit">
+
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <% unless @contents.blank? %>
+            <div class="pagination_info" style="float: left;">
+              <%= paginate @contents %>
+            </div>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+
+</div>
+<!--
+<div class="block">
+  <div class="content">
+    <input name="Check All" id="checkall" value="check all" type="submit">
+    <input name="UnCheck All" id="uncheckall" value="un check all" type="submit">
+    <%= link_to "Generate xml", generate_xml_content_path(@contents.first)%>
+    <div class="inner">
+      <div id="tree1">
+        <% @contents.each do |subject| %>
+            <ul id="<%= subject.type%>_<%= subject.id%>" class="ui-sortable">
+              <li id="<%= subject.type%>_<%= subject.name%>_<%= subject.id%>" class="ui-state-default"><%= check_box_tag "content[]" %>
+    <%= subject.name %>
+                <ul id="<%= subject.type%>_<%= subject.id%>">
+                  <% subject.chapters.order("play_order asc").each do |chapter|%>
+
+                      <li id="<%= chapter.type%>_<%= chapter.name%>_<%= chapter.id%>"class="ui-state-default"><%= check_box_tag "content[]" %>
+        <%= chapter.name %>
+                        <div style="float:right;">
+                          <%= content_lock(chapter.is_locked)%>
+                        </div>
+                        <div style="clear:both;"></div>
+                      </li>
+                  <%end%>
+                </ul>
+              </li>
+            </ul>
+        <%end%>
+      </div>
+    </div>
+  </div>
+  <input name="toArray" id="toArray" value="Commit" type="submit">
+  <input name="tolock" class="clicked" id="tolock" value="lock" type="submit">
+  <input name="to unlock" class="clicked" id="tolock" value="unlock" type="submit">
+</div>
+
+<%= paginate @contents %>
+<div id="sidebar">
+  <%= content_for :sidebar, render(:partial => 'shared/sidebar') %>
+</div>-->
+<script type="text/javascript">
+
+
+    // Applaying checkbox to the #tree
+    $('#tree1').checkboxTree({
+        onCheck: { ancestors: 'checkIfFull', descendants: 'check' },
+        onUncheck: { ancestors: 'uncheck' }
+    });
+
+    $('#checkall').click(function(){ $('#tree1').checkboxTree('checkAll'); });
+    $('#uncheckall').click(function(){ $('#tree1').checkboxTree('uncheckAll'); });
+
+
+    //Applaying sortable
+
+    $('#tree1 li').sortable({
+        placeholder: "ui-state-highlight",
+        tolerance:'intersect',
+        cursor:'pointer',
+        items:'li',
+        nested:'ul'
+    });
+
+    $( "#tree1 li" ).disableSelection();
+
+    //On click function for saving the play order to the database
+
+    $('#toArray').click(function(e){
+        var order = $("#tree1 li").sortable('toArray');
+        var subject = new Array();
+        $("#tree1 li[id^=Subject]").each(function() {
+
+            var a = $(this).attr('id');
+
+            var s = $("#"+a+" li");
+            var childs= "";
+            for(var i=0; i<s.length; i++){
+
+                childs = childs + ($(s[i]).attr('id').split("_")[2]) + ',';
+
+            }
+            subject.push(a+":"+childs);
+        });
+
+        $.post("/content/position_update",{subject : subject},
+                function(data){
+                    success: var url =  window.location
+                    $(location).attr('href', url);
+                });
+
+    });
+
+    //On click function for locking and unlocking the elements
+
+    $('.clicked').click(function(e){
+        var values = new Array();
+        $.each($("input[name='content[]']:checked"), function() {
+            values.push($(this).parent().attr('id').split("_")[2]);
+        });
+        var a = $(this).attr('value');
+        if (a == "lock"){
+            var url = "/content/lock"
+        }
+        else {
+            var url = "/content/unlock"
+        }
+        if (values.length != 0) {
+            $.post(url,{ids : values},
+                    function(data) {
+                        success:
+                                var url = window.location
+                        $(location).attr('href', url);
+                    });
+        }
+        else{
+            alert('select item to lock or unlock')
+        }
+
+    });
+</script>

@@ -1,0 +1,31 @@
+.nested-fields{:style => "border : 1px solid lightgray;"}
+  .assessment_publish_input_block_row
+    .assessment_publish_input_block_col1
+    Books:
+    .assessment_publish_input_block_col3
+      = f.collection_select :ibook_id, @ibooks,:id,:get_title_and_class,{:include_blank=>"Please Select"}, {:required => true, :id => "publish_book_id"}
+      %img{:src => "/assets/small_loading.gif", :class => "book_loading", :height => "25", :style => "visibility: hidden; position: relative; top:-6px; left:10px", :width => "25", :align => "middle"}
+
+  #book_toc
+:javascript
+   $("#publish_book_id").change(function() {
+             $(".book_loading").css("visibility","visible")
+             var book_id = $('select#publish_book_id :selected').val();
+             if (book_id==''){
+                $("#book_toc").html('')
+             }
+             $.ajax({//  // to get centers under institute
+                 type: "GET",
+                 url: '/get_ibook_toc/' + book_id ,
+                 beforeSend:  function() {
+                     $("#loading").show();
+                 },
+                 success: function(data){
+                     $("#loading").hide();
+                     $(".book_loading").css("visibility","hidden")
+                     if (data.length == 0) {
+                         alert('Toc not found');
+                     }
+                 }
+             });
+         });

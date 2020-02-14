@@ -1,0 +1,57 @@
+%div
+  %table{cellpadding: "0", cellspacing: "0"}
+    %tbody
+      - index = 0
+      - @publishes.each do |quiz_targeted_group|
+        - index+= 1
+        %tr{style: "border: 1px solid #CCC;"}
+          %td{style: "border: 0px; padding: 2px 8px 2px 8px;"}
+            %input{:value=>quiz_targeted_group.id,:name => "quizTargetedGroupsIds",  style: "vertical-align: middle;", type: "checkbox"}/
+          %td{id:"comparisonList#{quiz_targeted_group.id}"}
+            %table{cellpadding: "0", cellspacing: "0"}
+              %tbody
+                %tr{style: "border: 1px solid #CCC;"}
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    = quiz_targeted_group.quiz.name
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    = User.find(quiz_targeted_group.group_id).name
+                  /%td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"} Mathematics
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    Publish ID:
+                    = quiz_targeted_group.id
+                    /Duration:
+                    /= show_duration(@assessment.timelimit*60)
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    Assessment ID:
+                    = quiz_targeted_group.quiz_id
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    Total Marks:
+                    = quiz_targeted_group.quiz.total_marks
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    Test taken:
+                    = Quiz.get_quiz_attempts(quiz_targeted_group).size
+                    of
+                    = Quiz.get_quiz_targeted_group_student_size(quiz_targeted_group)
+                  %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                    Published On:
+                    - publish_date = Time.at(quiz_targeted_group.published_on)
+                    = publish_date.strftime("#{publish_date.day.ordinalize}" " %B" " %Y")
+                %tr{style: "border: 0px;"}
+                  %td{colspan: "8"} &nbsp;
+.pagination_info
+  = paginate @publishes, :remote => true
+
+:javascript
+  $("input[name='quizTargetedGroupsIds']").click(function(){
+          var item = this.value.toString();
+         // alert(question_array);
+          if($(this).prop('checked') ){
+                  assesment_compare_array.push(item)
+                  clickComparisonCheckboxs(item)
+           } else {
+                assesment_compare_array.splice( $.inArray(item, assesment_compare_array),1)
+                 unclickComparisonCheckboxs(item)
+                     }
+       });
+
+

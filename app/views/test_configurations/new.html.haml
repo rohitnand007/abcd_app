@@ -1,0 +1,22 @@
+#content_header
+
+  #breadcrumbs
+    %ul
+      %li= link_to 'Home',root_path
+      %li= link_to 'My Assessments',assessments_path
+      %li= link_to  params[:mode]||'Publish','#',{:class=>'current'}
+
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}", assessments_path
+    -#%li.inner_tab_selected=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_test_configuration_path
+%h1#main_heading Assessment "#{Content.find(params[:id]).name}"
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"
+
+

@@ -1,0 +1,75 @@
+#content_header
+  -#%h1#main_heading Publish Home Work
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "Give HomeWork",assessment_home_works_path
+      %li
+        = link_to "Publish",'#',{:class=>'current'}
+
+-##inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}", test_configurations_path
+    %li.inner_tab_selected=link_to link_to "#{t("web-app-theme.new", :default => "New")}", test_configurations_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for @message,:url=>publish_assessment_home_work_path(@test_configuration), :html => { :class => :form } do |f|
+              .inputs
+                - unless @recipient
+                  .group
+                    .field
+                      = f.input :message_to,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Publish' do
+                        = radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Individual"
+                        = 'Individual'
+                        = radio_button_tag :message_to, 'group',:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Group"
+                        = 'Group'
+                  .group#recipient
+                    .field
+                      = f.input :receiver_name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:"
+                      = f.hidden_field :recipient_id
+                  .group#group
+                    .field
+                      = f.input :group_id ,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"} do
+                        = f.collection_select :group_id,asign_groups(current_user),:user_id,:firstname,{:include_blank => false,:prompt=>"select group"} ,{:class=>"drop_down"}
+                - else
+                  .group
+                    .field
+                      = f.label :recipient_to,:input_html=>{:class=>"text_field"},:style=>"color:#666;font-size:1.2em",:label_html=>{:class=>"label"},:label=>"Publish"
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      = @recipient.fullname
+                      = hidden_field_tag :content_id, @content.id
+                      = f.hidden_field :recipient_id,:value=>@recipient.id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"To:"
+                .group
+                  .field
+                    = f.input :subject,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+                    = f.hidden_field :sender_id,:value=>current_user.id
+                .group
+                  .field
+                    = f.input :body,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+                .group
+                  .field{:align=>'center'}
+                    = button_tag :publish ,:class=>'button big',:disable_with=>'publishing...'
+                    = link_to t("web-app-theme.cancel", :default => "Cancel"), test_configurations_path,:class=>'button danger icon remove'
+
+:javascript
+  $(document).ready(function(){
+      $("input[name$='message_to']").click(function(){
+          var radio_value = $(this).val();
+          if(radio_value=='individual') {
+              $("#recipient").show("slow");
+              $("#group").hide();
+          }
+          else if(radio_value=='group') {
+              $("#group").show("slow");
+              $("#recipient").hide();
+          }
+      });
+       $("#recipient").hide();
+       $("#group").show();
+       });

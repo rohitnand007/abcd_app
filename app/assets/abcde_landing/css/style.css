@@ -1,0 +1,788 @@
+/* Custom Stylesheet */
+
+/*
+@font-face {
+    font-family: vani;
+    src: url(../fonts/vani.ttf);
+}
+*/
+
+body        {  
+    font-family: 'Roboto', sans-serif; line-height: 1.2!important; overflow-x: hidden;
+}
+
+.clear      {  clear: both; }
+
+
+/* Standard css Start */
+
+h1                  {  color: #252629;  }
+h2                  { font-weight: bold; font-size: 70px; padding: 70px 0 40px; line-height: 1.1 !important;  margin: 0; color: #252629;}
+h2:after            { content:"\A";
+    width: 120px;
+    height: 12px;
+    /* border-radius:50%; */
+    background: #8F489C;
+    display: block; margin-top: 25px;}
+h3                  {   color: #252629;  }
+h4                  { font-weight: 600; font-size: 24px; padding: 0 0 40px 0;  margin: 30px 0 0 0; color: #252629; }
+h4:before            { content:"\A";
+    width: 120px;
+    height: 12px;
+   
+    background: #8F489C;
+    display: block; margin-bottom: 20px;}
+h5                  {   }
+
+p                   { font-size: 20px !important; font-weight: 300 !important; color: #555555 !important;  }
+
+.greyback           { background: #f1f1f1;  }
+.blockpaddingbtm     {padding-bottom: 33px;}
+
+video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
+
+.marginzero     { margin: 0 !important;  }
+
+
+/* Standard css end */
+
+
+/* divTobar Start */
+
+.divTobar      {
+    
+    background: url("../images/topbarback.png") no-repeat center 0;   
+    min-height: 829px;
+    z-index: 250;
+    position: relative;
+}
+
+/* divTobar end */
+
+
+/* logo Start */
+
+.logo       {
+    width: 74%;
+    margin-top: 0;
+    float:right;
+}
+
+
+/* logo end */
+
+
+/* topbarcontent Start */
+
+.topbarcontent  {
+    margin-top: 100px;   
+}
+
+.topbarcontent h1  {
+    font-size: 60px;
+    font-weight: 200;
+    color: #fff;
+    margin: 0;
+}
+
+.topbarcontent h3  {
+    padding-top: 200px;
+    font-size: 30px;
+    font-weight: 200;
+    color: #fff;
+    margin: 0;
+    font-style: italic;
+    text-align: right;
+    padding: 225px 20px 0;
+}
+
+.topbarimg      {
+    margin-top: 160px !important;
+    width: 100%;
+}
+
+/* topbarcontent end */
+.video   {
+                  width: 100%;
+                  position: absolute;
+                  margin-top: 150px;
+                  /*!  */
+               }
+
+
+
+
+/* divTobar Start */
+
+.divTabbar      {
+    
+    background: url("../images/tabbarback.jpg") no-repeat;  
+    min-height: 820px;
+    z-index: -1;
+    margin-top: -55px;
+}
+
+.divTabbar h4      {
+    padding: 0 20% 0 0;
+    font-weight: 300;
+    font-size: 26px;
+    margin-top: 340px;
+    color: #fff;
+}
+.divTabbar h4:before      {
+       display: none;
+}
+
+/* divTobar end */
+
+/* divDcurriculum Start */
+
+.divDcurriculum         {
+    
+}
+
+.paddingleft        {
+    
+}
+
+.paddingleft p        {
+    padding-left: 10%;
+    padding-right: 8%;
+}
+
+#playbtn                {
+    width: 89.5%;
+    margin: 103px 11% 0 40px;
+    /* background-color: #fff; */
+    z-index: 325;
+    position: relative;
+}
+#playbtn img        {
+ width: 100%;
+margin-bottom: 2px;
+}
+#nslateclip      {
+    width: 90%;
+    /*! margin-top: 5px; */
+    /*! margin-left: 42px; */
+    /* margin: 125px 0px  0px 0; */
+    background-color: #fff;
+    /*! padding: 45px 0 0; */
+    z-index: 324;
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    padding: 22px 0;
+}
+#nslateclip video         {
+    
+    width: 100%;
+}
+
+#movie      {
+    display: none;
+    width: 90.5%;
+    margin: 104px 11% 0 40px;
+    background-color: #0b0302;
+    padding: 16px 0;
+}
+.divDcurriculum video         {
+    
+    width: 100%;
+}
+
+/*
+.divDcurriculum video         {
+    
+    width: 78%;
+    margin: 115px 11% 0 11%;
+    background-color: #fff;
+    padding: 16px 0;
+}
+*/
+
+.Dcurimg           {
+    /* margin: 91px 1px 0px 41px; */
+    margin-top: -40px;
+    /*! margin-left: 48px; */
+    width: 100%;
+    position: absolute;
+    z-index: 0;
+}
+
+.Dcurrimg           {
+    margin-top: 60px;
+    width: 96%;
+    position: absolute;
+    z-index: 0;
+}
+
+.Dcurrcontent           {
+    
+}
+
+.Dcurrcontent span    {
+    float: left;
+    /* margin-right: 10px; */
+    text-align: center;
+    width: 14.28571%;
+    font-size: 13px;
+    /* margin-bottom: 10px; */
+}
+
+.Dcurrcontent span:last-child    {
+    margin-right: 0;
+}
+
+.Dcurrcontent img     {
+    margin-bottom: 10px;
+       
+}
+
+
+.Dcurrcontent span span    {
+    width: 100%;
+       
+    margin-bottom: 10px;
+}
+
+.Dcurrcontent p    {
+    margin: 60px 0 130px;
+}
+
+/* divDcurriculum end */
+
+
+/* divQuote Start */
+
+.divQuote           {
+    background: #8F489C;
+    text-align: center;
+    padding: 25px 0;
+}
+
+.divQuote img       {
+    border: 5px solid #fff;
+    border-radius: 50%;
+}
+
+.quoteright     {
+    float: right;    
+}
+
+.quoteleft      {
+    float: left;
+}
+
+.Qcontent              {
+    /* margin: 30px 0; */
+    padding: 14px 30px 10px 30px;
+}
+
+.Qcontent p           {
+    color: #fff !important;
+       
+}
+
+.Qcontent p i          {
+    padding-bottom: 22px;
+       
+    line-height: 1.6;
+}
+
+.Qcontent p strong         {
+       
+}
+
+.Qcontent img         {
+       border: 0;
+    border-radius: 0;
+       margin-right: 6px;
+       margin-top: -20px;
+}
+
+
+
+
+/* divQuote end */
+
+/* divRassesment start */
+
+.divRassesment          {
+    background: #fff;
+}
+
+.divRassesment img      {
+    width: 96%;
+    margin-top: -50px;
+    float: right;
+}
+
+
+/* divRassesment end */
+
+/* carousel Start */
+
+.carousel       {    }
+
+.carousel-control.left {      
+       display: none;
+}
+
+.carousel-control.right {      
+       display: none;
+}
+
+.carousel-indicators .active {
+  margin: 0 5px;
+  width: 18px;
+  height: 18px;
+  background-color: #8F489C;
+}
+
+.carousel-indicators li {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin:0 5px;
+  text-indent: -999px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #000 \9;
+  background-color: #ccc;
+}
+
+.carousel-indicators li {
+  border: 0;
+}
+
+.carousel-indicators {
+  position: relative;
+  bottom: 0;
+ left: 0;
+  z-index: 15;
+  width: 100%;
+  margin-left: 0;
+  padding-left: 0;
+  padding: 18px 0 50px;
+  list-style: none;
+  text-align: center;
+  background-color: #fff;
+  margin-bottom: 0;
+  height: 68px;
+  overflow: hidden;
+}
+
+
+
+
+/* carousel end */
+
+/* divTspblock Start */
+
+.divTspblock h2                 {  
+    text-align: center;
+}
+.divTspblock h2:after            { 
+    content:"\A";
+    width: 120px;
+    margin: 0 auto;
+    height: 12px;
+    /* border-radius:50%; */
+    background: #8F489C;
+    display: block; margin-top: 25px;
+}
+
+.divTspblock p                 {
+    padding: 0 6%;
+ 
+    
+    text-align: justify;
+}
+
+/* divTspblock end */
+
+
+/* divEdtablet Start */
+
+.divEdtablet            {
+    
+}
+.divEdtablet h4         {
+    font-size: 30px !important;
+    font-weight: 800 !important;
+}
+.divEdtablet h5            {
+    font-size: 26px;
+    text-align: center;
+    margin: 0;
+    font-weight: 300;
+    margin-bottom: 60px;
+    color: #7c7c7c;
+}
+.divEdtablet img            {
+    width: 100%;
+}
+
+@media screen and (min-width: 990px){
+.textright         {
+    padding: 30px 30px 30px 53px;
+  
+}
+.textright h4         {
+  float: right;
+}
+.textright p         {
+  float: right;
+  text-align: right;
+  padding: 0;
+}
+.textleft         {
+    padding: 30px 53px 30px 30px;
+  
+}
+.textleft h4         {
+  
+}
+.textleft p         {
+    padding: 0;
+  
+    text-align: left;
+}
+    
+.textright h4:before {
+  content: "";
+  width: 100%;
+  height: 12px;
+  background:url("../images/blueback.jpg") !important;
+  background-position: right !important;
+  background-repeat: no-repeat !important;
+  background-color: #fff !important;
+  display: block !important;
+  margin-bottom: 20px !important;
+  
+  /* float: right; */
+}
+    
+
+    
+.divAnal p        {
+    padding: 0 20%;
+}
+    
+}
+/* divEdtablet end */
+
+/* divAnal start */
+
+.divAnal        {
+    background-color: #282828;
+    
+}
+.divAnal h2        {
+    color: #fff !important;
+    
+}
+.divAnal h2:after        {
+    background: #8F489C !important;
+    
+}
+.divAnal p        {
+    margin-bottom: 50px;
+    
+    color: #fff !important;
+    text-align: center;
+}
+.divAnal img        {
+    width: 100%;
+    
+}
+/* divAnal end */
+
+/*Footer start*/
+
+.footer     {
+    background-image:url("../images/footertop.jpg");
+    background-position: top;
+    background-repeat: repeat-x;
+    background-color: #252629;
+    background-size: 100%;
+}
+.footer h3  {
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 40px;
+    margin-top: 70px;
+    color: #fff;
+}
+.footer h3:after            { 
+    content:"\A";
+    width: 120px;
+    height: 12px;
+    /* border-radius:50%; */
+    background: #8F489C;
+    display: block; 
+    margin-top: 20px;
+}
+.footer p       {
+    margin-bottom: 22px;
+    color: #fff !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+
+.footer p a       {
+    color: #fff;
+}
+
+.footer p strong        {
+    font-size: 20px;   
+    line-height: 1;
+}
+.footer span        {
+  color: #fff;   
+  margin-bottom: 70px;
+  font-size: 13px;
+}
+/*Footer end*/
+
+
+/*divBanner start*/
+
+.divBanner      {
+    background: #282828;
+    background-image: url("../images/sliderback.jpg");
+    background-position: bottom;
+    background-repeat: repeat-x;
+}
+
+.ana {text-align: center;width: 74%;margin: 0 auto;margin-top: 30px;}
+.carousel-caption img       {
+    width:100%;   
+}
+
+.banner     {
+    width: 89%;
+    margin: 0 auto;
+    margin-top: -465px;
+}
+
+.divtab     {
+    width: 100%;
+    z-index: 55;
+}
+
+.carousel-caption {
+  position: relative; 
+   left: 0; 
+  right: 0%; 
+ bottom: 0; 
+  z-index: 10;
+   padding-top: 0; 
+  padding-bottom: 0;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.carousel-caption {
+  left: 0; 
+  right: 0; 
+  padding-bottom: 0; 
+}
+
+.topbarimg          {
+    background: url("../images/videoback.png");   
+    width: 96%;
+    background-size: 100%;
+    height: 460px;
+    background-repeat: no-repeat;
+    position: absolute;
+    z-index: 286;
+}
+
+/*divBanner end*/
+
+
+
+
+@media screen and (max-width: 1450px) {
+
+.divTabbar {
+    background-position: -350px; 
+}
+.divTabbar h4 {
+   
+}
+    
+}
+
+@media screen and (max-width: 1200px) {
+
+.divTabbar {
+    background-position: -600px !important; 
+    margin-top: -57px;
+}
+.divTabbar h4 {
+    padding: 10%;
+   
+    background-color: rgba(0,0,0,0.9);
+    color: #fff;
+    font-size: 22px;
+    border-radius: 10px;
+}
+    
+}
+
+
+
+
+
+@media screen and (min-width: 1600px) {
+    
+.divTabbar {
+   background-size: 100%;
+} 
+.divTobar  {
+    background-size: 100%;
+}
+    
+}
+
+@media screen and (min-width: 990px) {
+    
+
+
+.footer p span {
+  margin-top: 98px;
+}
+    
+}
+
+
+.divTspblock p {
+    
+    
+}
+
+.footerspan {
+    margin-top: 22px;
+}
+
+
+
+@media screen and (max-width: 1024px ) {
+    
+    .Dcurimg   {
+                      margin-top: 172px;
+                      margin-left: 39px;
+                      width: 87%;
+                }
+    
+    .Dcurrimg {
+    margin-top: 138px;
+    width: 97% !important;
+}
+    
+    #playbtn {
+    width: 91.5% !important;
+    margin: 172px 11% 0 34px !important;
+}
+     
+    .divtab     {
+                }
+     .ana            {
+                    }
+    
+    #nslateclip {
+                           margin-top: -333px !important;
+        }
+     .Dcurimg        {
+                           margin-left: 0;
+                           width: 87%;
+                           position: relative;
+                    }
+    
+     .text   { text-align: center;}
+    .video {
+        
+position: relative;
+        
+margin-top: -20px;
+    }
+    
+    
+    }
+
+
+
+
+
+
+
+
+
+    
+
+/*Navbar CSS Start*/
+
+
+.brand           {height: auto;}
+
+.brand > img     {
+                  display: block;
+                  height: 40px;
+                  float: left;
+                  margin-bottom: 30px;
+                 }
+
+.down a          {
+                   padding-right: 30px;
+                   
+                   padding-bottom: 30px;
+                   float: right;
+                  
+                   
+                 }
+
+.ab              { margin-top: 30px;}
+
+.btn-default {
+                  color: #fff;
+                  background-color: #f37f3c;
+                  border-color: #f37f3c;
+}
+
+.login .btn-default {
+                  color: #fff;
+                  background-color: #0f9b4d;
+                  border-color: #0f9b4d;
+}
+
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 18px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+/*Navbar CSS End*/

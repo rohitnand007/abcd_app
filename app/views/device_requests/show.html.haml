@@ -1,0 +1,33 @@
+%p#notice= notice
+
+%p
+  %b ID:
+  = @device_request.id
+%p
+  %b Edutor:
+  = @device_request.edutor_id
+%p
+  %b Device:
+  = @device_request.device_id
+%p
+  %b Url:
+  = @device_request.url
+%p
+  %b Request type:
+  = @device_request.request_type
+%p
+  %b Success:
+  = @device_request.success
+%p
+  %b Data:
+  = @device_request.data
+%p
+  %b Session:
+  = @device_request.session_id
+%p
+  %b Ip:
+  = @device_request.ip
+
+= link_to 'Edit', edit_device_request_path(@device_request)
+\|
+= link_to 'Back', device_requests_path

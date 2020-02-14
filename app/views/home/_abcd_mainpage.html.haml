@@ -1,0 +1,282 @@
+= javascript_include_tag 'jquery.stickysectionheaders'
+= stylesheet_link_tag 'jquery.stickysectionheaders'
+= stylesheet_link_tag "c3.css"
+= javascript_include_tag "d3.min.js"
+= javascript_include_tag "c3.min.js"
+- colors = {blue:{darkest:"#194f90",dark:"#3f6cad",medium:"#3f6cad",light:"#e2e7f0"},
+pink:{darkest:"#ef466d",dark:"#3f6cad",medium:"#3f6cad",light:"#fce6ec"},
+orange:{darkest:"#f37e3b",dark:"#3f6cad",medium:"#3f6cad",light:"#faceb5"}}
+.sticky-list
+  %ul
+    %li.bucket
+      .bucket-header{style:"background:#{colors[:blue][:darkest]}"} Container Header 1
+      .bucket-body{style:"background:#{colors[:blue][:light]}"}
+        .circles_container
+          = "Information: ABCD Institute"
+          - 3.times do
+            %br
+          .circle{style:"text-align:center"}
+            #circle1 07
+            .circle_text{style:"bottom:30px;position:relative;"}
+              CAMPUSES
+          .circle
+            #circle2 6450
+            .circle_text{style:"bottom:30px;position:relative;"}
+              STUDENTS
+          .circle
+            #circle3 125
+            .circle_text{style:"bottom:30px;position:relative;"}
+              TEACHERS
+          .circle
+            #circle4 74000
+            .circle_text{style:"bottom:30px;position:relative;"}
+              BOOKS
+        %br
+        %br
+        %br
+        .graphs_container
+          = "Campuses Basic Information"
+          %br
+          %br
+          #students_graph.inline_graph{data:{x:['Students', 's1','s2','s3','s4','s5','s6'],y:['value', 2000, 4400, 3500, 600, 1100, 1200,900]}.to_json}
+          #teachers_graph.inline_graph{data:{x:['Teachers', 's1','s2','s3','s4','s5','s6'],y:['value', 30, 40, 77, 66, 90, 110,25]}.to_json}
+          #books_graph.inline_graph{data:{x:['Books', 's1','s2','s3','s4','s5','s6'],y:['value', 3000, 4500, 500, 1600, 7000, 1800,3000]}.to_json}
+
+    %li
+      .bucket-header{style:"background:#{colors[:pink][:darkest]}"} Container Header 2
+      .bucket-body{style:"background:#{colors[:pink][:light]}"}
+        .circles_container
+          .circle
+            #circle1 06
+          .circle
+            #circle2 6450
+          .circle
+            #circle3 125
+          .circle
+            #circle4 74000
+    %li
+      .bucket-header{style:"background:#{colors[:orange][:darkest]}"} Container Header 3
+      .bucket-body{style:"background:#{colors[:orange][:light]}"}
+        .circles_container
+          .circle
+            #circle1 06
+          .circle
+            #circle2 6450
+          .circle
+            #circle3 125
+          .circle
+            #circle4 74000
+    %li
+      .bucket-header{style:"background:#0e9b4b"} Container Header 4
+      .bucket-body{style:"background:#e2e7f0"}
+        .circles_container
+          .circle
+            #circle1 06
+          .circle
+            #circle2 6450
+          .circle
+            #circle3 125
+          .circle
+            #circle4 74000
+
+:css
+  .inline_graph{
+  display: inline-block;
+  width: 30%
+  }
+  .circles_container{
+  padding: 5% 5% 5% 25%;
+  background-color: white;
+  column-rule: #767676;
+  }
+  .graphs_container{
+  padding: 5% 5% 5% 5%;
+  background-color: white;
+  }
+  .circle{
+  text-align: center ;
+  line-height: 100px;
+  display:inline-block;
+  padding-left: 10px;
+  color: #767676;
+  }
+
+  #circle1 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #ef466d;
+    color:white;
+
+  }
+   #circle2 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #3f6cad;
+    display:inline-block;
+    color:white;
+  }
+   #circle3 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #f37e3b;
+    display:inline-block;
+    color:white;
+  }
+   #circle4 {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    background: #0e934d;
+    display:inline-block;
+    color:white;
+  }
+
+  /*graph related css here below  */
+  #teachers_graph.c3 .tick, #books_graph.c3 .tick, .c3-axis-y .tick, .c3-axis-y2 .tick {
+    display:none;
+  }
+:javascript
+  //javascript for sticky headers
+  $('.sticky-list').stickySectionHeaders({
+    stickyClass     : 'sticky',
+    headlineSelector: '.bucket-header'
+  });
+
+  function generateHorizontalTiles(){
+    var students_graph = generateHorizontalGraph('#students_graph', {padding:{left: 60}},{colors:{x:'#7ca0c5',value: '#3f6cad'}},{x:{type: 'category'}})
+    var teachers_graph = generateHorizontalGraph('#teachers_graph', {colors:{x:'#7ca0c5',value: '#f37e3b'}},{})
+    var books_graph = generateHorizontalGraph('#books_graph',{},{colors:{x:'#7ca0c5',value: '#767676'}},{})
+
+  }
+  function generateHorizontalGraph(selector,gen_options,data_options,axis_options){
+    var cdata = $.parseJSON($(selector).attr('data'))
+    var default_data_options = {
+        X: 'x',
+        columns:[cdata.x,cdata.y],
+        type: 'bar',
+        labels: {
+          format: function (v, id, i, j) {
+              if (v == 10.001)
+                 return "N/S";
+              else if (v == 10.002)
+                 return "N/A";
+              else
+                 return v;
+          }
+      }
+      }
+    var default_axis_options = {
+        rotated: true,
+        x: {
+          type: 'category',
+          tick: {
+            format: function(x) { return '';}
+          }
+        },
+        y2: {
+        //label:{text:'schools', position:'inner-middle'},
+        show: true
+        }
+        }
+    return c3.generate($.extend({
+      bindto: selector,
+      data: $.extend(default_data_options,data_options),
+      axis: $.extend(default_axis_options,axis_options)
+      },gen_options)
+    );
+  }
+  generateHorizontalTiles()
+
+  //var chart = c3.generate({
+  //  bindto: '#students_graph',
+  //  data: {
+  //      columns: [
+  //          ['data1', 30,'data2', 130,'data3', 130],
+  //          ['data4', 130],
+  //          ['data5', 60]
+  //      ],
+  //      type: 'bar',
+  //      labels: {
+  //        format: function (v, id, i, j) {
+  //            if (v == 10.001)
+  //               return "N/S";
+  //            else if (v == 10.002)
+  //               return "N/A";
+  //            else
+  //               return v;
+  //        },
+  //
+  //  },
+  //  axis:{
+  //      rotated: true,
+  //      x: {
+  //        type: 'category',
+  //        tick: {
+  //          format: function(x) { return '';}
+  //        }
+  //      },
+  //      y2: {
+  //      //label:{text:'schools', position:'inner-middle'},
+  //      show: true
+  //      },
+  //  bar: {
+  //      width: {
+  //          ratio: 0.5 // this makes bar width 50% of length between ticks
+  //      }
+  //      // or
+  //      //width: 100 // this makes bar width 100px
+  //  }
+  //})
+
+  //var chart = c3.generate({
+  //bindto: "#teachers_graph",
+  //  data: {
+  //    columns: [
+  //      ['data1', 30,'data2', 130,'data3', 130],
+  //      ['data4', 130],
+  //      ['data5', 60]
+  //    ],
+  //    type: 'bar',
+  //
+  //  },
+  //  axis:{rotated: true},
+  //  bar: {
+  //    width: {
+  //      ratio: 0.5 // this makes bar width 50% of length between ticks
+  //    }
+  //  // or
+  //  //width: 100 // this makes bar width 100px
+  //  }
+  //})
+  //
+  //var chart = c3.generate({
+  //  bindto: "#books_graph",
+  //  data: {
+  //    columns: [
+  //      ['data1', 30,'data2', 130,'data3', 130],
+  //      ['data4', 130],
+  //      ['data5', 60]
+  //    ],
+  //    type: 'bar',
+  //
+  //  },
+  //  axis:{rotated: true},
+  //  bar: {
+  //    width: {
+  //      ratio: 0.5 // this makes bar width 50% of length between ticks
+  //    }
+  //  // or
+  //  //width: 100 // this makes bar width 100px
+  //  }
+  //})

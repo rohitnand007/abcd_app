@@ -1,0 +1,160 @@
+= stylesheet_link_tag "assessment_tool"
+= javascript_include_tag "assessment_tool"
+- is_publisher = (current_user.rc == "ECP" )
+-#- is_edutor_admin = (current_user.role.name=="Edutor Admin") Edutor admin has
+.spinner-gif{:style => "display: none; position: fixed; z-index: 5; left: 45%; top: 45%"}
+  = image_tag 'spiffygif.gif'
+%h1
+  Manage Questions
+#manageQuestions
+  %ul#listOfActions
+    %li
+      %a{href:"#searchDatabase"} Search Database
+    %li
+      %a{href: "#addQuestionTabs-2"} Create Question
+    %li
+      %a{href: "#previewQuestions"} Preview Added Questions
+    %li
+      %a{href:"#editQuestion"} Edit Question
+  #searchDatabase
+    = render :partial => 'import_questions'
+  #addQuestionTabs-2
+    #createQuestionTabs
+      %ul#questionMode
+        %li
+          %a{href: "#multipleQuestions",id:"multiple_questions"} Multiple Questions
+        %li
+          %a{href: "#individualQuestion"} Individual Question
+      #multipleQuestions
+        = form_for @quiz,as: :quiz1, remote:true ,url:{ :controller => "assessment_tool",
+         :action => "create_and_add_multiple_questions"} do |qf|
+          = qf.fields_for qf.object.questions.build do |pqf|
+            - if is_publisher or current_user.institution.user_configuration.use_tags
+              = render :partial => 'tags_builder', locals: {f:pqf}
+            - else
+              = render :partial => 'context_builder', locals:{f:pqf}
+            = render :partial => 'question_builder' , locals:{f:pqf} # the below partial also a
+          %br
+          %hr
+          %br
+          .right
+            = qf.submit "Create Questions",:id=>'question_save_add'
+
+      #individualQuestion
+        = form_for @quiz,as: :quiz2, remote:true ,url:{ :controller => "assessment_tool",
+         :action => "create_and_add_individual_question"} do |qf|
+          = qf.fields_for qf.object.questions.build do |pqf|
+            - if is_publisher or current_user.institution.user_configuration.use_tags
+              = render :partial => 'tags_builder', locals: {f:pqf}
+            - else
+              = render :partial => 'context_builder', locals:{f:pqf}
+            = render :partial => 'question_fields' , locals:{f:pqf} # the below partial also a
+          %br
+          %hr
+          %br
+          .right
+            = qf.submit "Create Question",:id=>'question_save_add'
+
+  #previewQuestions
+    %table#status.listing{style: "width: 600px"}
+      %thead{style: "border: 1px solid black;"}
+        %tr.tr-head{style: "border: 1px solid black;"}
+          %th Status
+          %th Question Type
+          %th Question Id
+      %tbody{style: "background-color: #f9f9f9;"}
+  #editQuestion
+    Please choose a question to edit from "Search Database" tab
+:javascript
+  //automatically_clear_search_by_id();
+  $(document).ready(function() {
+    window.loadTinyMCEEditor = loadTinyMCEEditor;
+    var question_array = [];
+  //  $('form').bind('form-pre-serialize', function(e) {
+  //  tinyMCE.triggerSave();
+  //});
+  // exclusively for multiple questions rendering as per requuirements of abcde institute
+    function multipleQuestionContainerNumberer(){
+     $("#multipleQuestions").live("cocoon:after-insert",function(event,inserted_item){
+     load_Tiny_mce(event,inserted_item);
+     do_numbering(inserted_item);
+     });
+     }
+    $("#multiple_questions").one("click",function(){
+    for (count = 1; count < 5; count++ ){
+    $("#question_multiplier").click();
+    }
+    })
+    multipleQuestionContainerNumberer()
+    //multipleQuestionContainerNumberer()
+  // end of code for --- abcde exclusive feature
+  $("#search_for_questions").button();
+  $("#manageQuestions").tabs().removeClass("ui-widget-content");
+  $("#manageQuestions").tabs({
+         active: "#{@p}"
+       });
+  $(".loading").hide();
+  stylizeButtons();
+  $("#createQuestionTabs").tabs().tabs("select",1).removeClass("ui-widget-content");
+    $('.question_editor').live('ajax:success',
+       function(e, data, textStatus, jqXHR){
+         $object = $("#editQuestion .basic_container")
+         apply_Tiny_mce($object);
+         do_numbering($object);
+       }
+     );
+     $(".question_selector").live("change",reset_options);
+        /* Load tiny mce editor on text areas after newly
+          adding a field on both passage questions and individual question, add quesiton numbering for child */
+         $(".nested-fields.basic_container").live("cocoon:after-insert",function(event,inserted_item){
+           load_Tiny_mce(event,inserted_item);
+           do_numbering(inserted_item);
+         });
+
+         //identify the objects to be renumbered before removing nested items
+           $(".nested-fields.basic_container").live("cocoon:before-remove",function(event,removed_item){
+
+             if (removed_item.hasClass("mcq_option_set"))
+             {removed_item.closest(".question_container").addClass("marked_for_renumbering");}
+           });
+
+         // Renumber after removal
+          $(".nested-fields.basic_container").live("cocoon:after-remove",function(event,removed_item){
+             var $marked_for_renumbering = $(".marked_for_renumbering")
+             do_numbering($marked_for_renumbering);
+             $marked_for_renumbering.removeClass("marked_for_renumbering");
+          })
+       /* load tiny MCE editor on loaded text areas */
+
+     $("#individualQuestion .question_container").find(".mcq_option_set").each(function(){do_numbering($(this))});
+     $("#multipleQuestions .question_container").find(".mcq_option_set").each(function(){do_numbering($(this))});
+
+    //$("#groupQuestion .question_container:last-child tr.ui-widget-content td.question_text_area").live('click',function(){
+    //                $("#questionAdder")[0].click();
+    //              });
+
+
+   $('#createQuestionTabs').on('ajax:beforeSend',function(){
+     $('.spinner-gif').show();
+     //$("#createQuestionTabs :input").attr("disabled", true);
+    });
+
+      $('#createQuestionTabs').on('ajax:success',function(){
+     $('.spinner-gif').hide();
+     //$("#createQuestionTabs :input").attr("disabled", true);
+    });
+   /* load tiny MCE editor on loaded text areas */
+      preload_Tiny_mce();
+
+  $("#reset_passage_question").click(function(){
+      reset_passage_question($(this));
+    });
+  attachLiveEventsForDynamicEntities();
+  setupEventsForStaticEntities();
+  //$("#questionAdder")[0].click();
+  associateAjaxCallForChangeDatabaseSelectBox();
+  //$('form').bind('form-pre-serialize', function(e) {
+  //  tinyMCE.triggerSave();
+  //});
+  }
+    );

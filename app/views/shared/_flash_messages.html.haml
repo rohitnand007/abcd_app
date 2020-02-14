@@ -1,0 +1,14 @@
+- flash.each do |type, message|
+  %div{:class => "message #{type}",:id=>"flash_message"}
+    %p
+      = message
+      %span{style: 'float:right;cursor:pointer'}
+        %a{:id=>'close_flash',:title=>'Close',:style=>"text-decoration:underline;" ,:class=>'tipTipTop'} X
+
+
+:javascript
+  $('#close_flash').click(function(){
+     $('#flash_message').fadeOut('slow');//hides the div with effect
+    // $('#flash_message').remove();
+   //  $('#flash_message').fadeOut('slow',function(){$(this).remove()});//hides & removes the div with effect
+   });

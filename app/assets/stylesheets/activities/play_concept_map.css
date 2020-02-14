@@ -1,0 +1,44 @@
+.main-body{
+    margin-left: 0px;
+    margin-right: 0px;
+}
+#previewCanvas{
+    min-width:595px;
+    border-right: 1px solid grey;
+    padding-left:5px;
+    padding-right:5px;
+    height:100%;
+
+}
+#previewDescription{
+    min-width:407px;
+    overflow-y:auto;
+    word-break:break-word;
+    background-color:#f0f0f0;
+    height:100%;
+}
+.previewElementName{
+    font-weight:bold;
+    padding-top:10px;
+}
+#previewDescription img{
+    max-width:92%;
+}
+.preview-title{
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    height: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #2fb38e;
+    margin-bottom:0px;
+    color:white;
+}
+.logo{
+    height:100px;
+    width:100px;
+    position: absolute;
+    opacity:0.5;
+    bottom:8px;
+    right:15px;
+}

@@ -1,0 +1,25 @@
+.question_flags{style:"background:#2FB38E;color:#fff;padding:5px;font-size:14px",class:"#{["multichoice","truefalse"].include?(question.qtype) ? (question.multiple_answer? ? 'mmcq' : 'smcq') : ""}"}
+  %span{class:'clear',style:'cursor:pointer;text-decoration:underline;font-style:italic'}= "Clear Actions"
+  %span= " |  ".html_safe
+  - previous_evaluation = nil
+  - if @serialized_key_questions.present? && @serialized_key_questions.has_key?(question.id.to_s)
+    - if @serialized_key_questions[question.id.to_s].has_key?(:flag)
+      - previous_evaluation = @key_update[question.id.to_s][:flag].downcase
+  %label
+    = radio_button_tag "questions[#{question.id}]flag","full",previous_evaluation=='full' ? true : false,style:'margin-top:-2px;vertical-align:middle;'
+    Award Full Marks
+  %label
+    = radio_button_tag "questions[#{question.id}]flag","zero",previous_evaluation=='zero' ? true : false,style:'margin-top:-2px;vertical-align:middle;'
+    Award Zero Marks
+  - if !(question.qtype=="fib" or question.multiple_answer?)
+    %label
+      = radio_button_tag "questions[#{question.id}]flag","or",previous_evaluation=='or' ? true : false,style:'margin-top:-2px;vertical-align:middle;'
+      Award Full Marks for either option
+  %div{style:'float:right;'}
+    - if @key_update.present? && @key_update.has_key?(question.id.to_s)
+      = image_tag "clock.png", style:'vertical-align:middle'
+      - if @key_update[question.id.to_s].has_key?(:flag)
+        - rules = {'or'=>"Conditional Evaluation",'zero'=>"Award zero marks",'full'=>"Award full marks"}
+        = "Results re-evaluated using the following rule #{rules[@key_update[question.id.to_s][:flag]].upcase}"
+      - else
+        = "Results re-evaluated after key update from #{question.human_readable_answer} to #{question.changed_answer(@key_update[question.id.to_s])}"

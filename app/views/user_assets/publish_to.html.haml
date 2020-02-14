@@ -1,0 +1,66 @@
+= form_for @content_delivery,:html => { :class => :form }, :url => { :action => "publish"} do |c|
+  = radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label=>"Individual"
+  = 'Individual'
+  =  radio_button_tag :message_to, 'group',"true",:input_html=>{:class=>"text_field"},:label=>"Group"
+  = 'Group'
+#group.content_publish_input_block_row
+  .content_publish_input_block_col1 Select Group:
+  .content_publish_input_block_col2
+    %select{name:"quiz_targeted_group[group_id]"}
+      - asign_groups(current_user).each do |g|
+        %option{value: g.user_id}
+          = g.try(:section_name).encode('UTF-8', :invalid => :replace, :undef => :replace)
+#recipient.content_publish_input_block_row{style:"height:auto"}
+  .content_publish_input_block_col1 Individual:
+  .content_publish_input_block_col2
+    = text_field :message, :multiple_recipient_ids,:label=>"To:"
+  %div{style:"float:right"}
+    =c.submit 'Publish' ,disable_with:'Publishing',id:"submit_button"
+    = link_to "Cancel", assessment_tool_my_assessments_path, id: "cancel_button"
+  %br
+
+%br
+%br
+:javascript
+    $("input[name$='message_to']").click(function(){
+      var radio_value = $(this).val();
+      if(radio_value=='individual') {
+        $("#to_group").val("0");
+        $("#recipient").show("slow");
+        $("#group").hide();
+      }
+      else if(radio_value=='group') {
+        $("#to_group").val("1");
+        $("#message_multiple_recipient_ids").tokenInput('clear');
+        $(".token-input-dropdown").remove();
+        $(".token-input-list").remove();
+        $("#token-input-multiple_recipient_ids").remove();
+        $(function() {
+          $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_ids").data("pre"),
+            theme: ""
+          });
+        });
+        $("#group").show("slow");
+        $("#recipient").hide();
+    }
+    });
+    $("#recipient").hide();
+    $("#group").show();
+
+    $(function() {
+        $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+            theme: ""
+        });
+    });

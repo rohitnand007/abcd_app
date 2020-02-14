@@ -1,0 +1,12 @@
+= form_for @ignitor_time do |f|
+  = f.label :name
+  %br
+  = f.text_field :name, required:true
+  %br
+    %br
+  = f.label :ignitor_web_url
+  %br
+  = f.text_field :ignitor_web_url, required:true
+  %br
+    %br
+  = f.submit "create new ignitor_time", class: "button",id:"ignitor_web_url_creator"

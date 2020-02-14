@@ -1,0 +1,59 @@
+:javascript
+  var search_term = "#{@search_term}"
+  $(document).ready(function() {
+    $("#teachers").dataTable({
+                "aoColumnDefs" : [  
+                                    {"bSortable":false, "aTargets":[1]},
+                                    {"bSortable":false, "aTargets":[2]},
+                                    {"bSortable":false, "aTargets":[3]},
+                                    {"bSortable":false, "aTargets":[4]},
+                                    {"bSortable":false, "aTargets":[5]}
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#teachers").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Teacher :   " },
+                "fnServerParams": function(aoData){
+                    if(typeof sectionId != 'undefined')
+                        aoData.push({name: 'sectionId', value : parseInt(sectionId)});
+                        aoData.push({name: 'search_term', value: search_term});
+                },
+                "fnPreDrawCallback": function( oSettings ) {
+                  $("#teachers").css("opacity", "0.4");
+                  $("#overlay").show();
+                },
+                "fnDrawCallback": function( oSettings ) {
+                  $("#teachers").css("opacity", "1");
+                  $("#overlay").hide();
+                }
+    });
+    
+    var viewportHeight = $(window).height();
+    $("#teachers_processing").css("font-size", 50);
+    $("#teachers_processing").css("top", viewportHeight/2);
+    $("#teachers_processing").css("width", 300);
+    $("#teachers_processing").css("height", 70);
+    $("#teachers_processing").css("color","rgb(100,0,0");
+    $("#teachers_processing").css("top","430px");
+  });
+%div
+  %table#teachers.listing.sort_table{data:teachers_path(format: :json), align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.teacher.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th= t("activerecord.attributes.teacher.center", :default => t("activerecord.labels.center", :default => "Center"))
+        %th= t("activerecord.attributes.teacher.edutorid", :default => t("activerecord.labels.edutorid", :default => "Edutor-Id"))
+        %th= t("activerecord.attributes.teacher.rollno", :default => t("activerecord.labels.rollno", :default => "Roll-No"))
+        %th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+#overlay{:style => "position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; opacity:0.2; background: #000;"}

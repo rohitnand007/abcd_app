@@ -1,0 +1,25 @@
+= simple_form_for @usage, :html => { :class => :form } do |f|
+
+  .inputs
+    .group
+      .field
+        = f.input :content_id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Content'
+    .group
+      .field
+        = f.input :duration,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Duration'
+    .group
+      .field
+        = f.input :user_id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'User'
+    .group
+      .field
+        = f.input :count,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Count'
+    .group
+      .field
+        = f.input :last_used_time,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :last_used_duration,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+
+  .actions
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)

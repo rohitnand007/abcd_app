@@ -1,0 +1,143 @@
+:css
+  #assessment_home_work_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#assessment_home_work_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  -#%h1#maend_heading HomeWorks
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "Give HomeWork",assessment_home_works_path,{:class=>'current'}
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", assessment_home_works_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_home_work_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#assessment_home_work_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Name
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Created At
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @assessment_home_works.each do |assessment_home_work|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"assessment_home_work#{assessment_home_work.id}"}
+                  %td.col
+                    = assessment_home_work.name
+                  %td.col
+                    = assessment_home_work.board.try(:name)
+                  %td.col
+                    = assessment_home_work.content_year.try(:name)
+                  %td.col
+                    = assessment_home_work.subject.try(:name)
+                  %td.col
+                    = assessment_home_work.chapter.try(:name)
+                  %td.col
+                    = assessment_home_work.topic.try(:name)
+                  %td.col
+                    = display_date_time(assessment_home_work.created_at)
+                  %td.col{:style=>"white-space:nowrap",:class=>"tab_view_font"}
+                    = link_to_show(assessment_home_work_path(assessment_home_work))
+                    &nbsp;
+                    -#= link_to_edit(edit_assessment_home_work_path(assessment_home_work))
+                    -#= link_to_delete(assessment_home_work_path(assessment_home_work))
+                    = link_to (assessment_home_work.status == 0 ? "Publish" :"Republish"), publish_form_assessment_home_work_path(assessment_home_work)
+
+        -# unless @assessment_home_work.blank?
+        .pagination_info
+          = paginate @assessment_home_works
+        #assessment_home_work_configuration
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", assessment_home_work_templates_path
+      %li.first.active= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_home_work_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_home_work_path
+  .content
+    %h2.title
+      = t("web-app-theme.all", :default => "All")
+      assessment_home_work
+    .inner
+      %table.table
+        %tr
+          %th.first ID
+          %th
+            publisher
+          %th
+            Board
+          %th
+            Content Year
+          %th
+            Subject
+          %th
+            Chapter
+          %th
+            Topic  
+          %th
+            = t("activerecord.attributes.assessment_home_work.rb.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %th= t("web-app-theme.created_at", :default => "Created at")
+          %th.last &nbsp;
+        - @assessment_home_work.each do |assessment_home_work.rb|
+          %tr{:class => cycle("odd", "even")}
+            %td
+              = assessment_home_work.rb.id
+            %td
+              = assessment_home_work.rb.publisher.fullname if assessment_home_work.rb.publisher
+            %td
+              = assessment_home_work.rb.course.name if assessment_home_work.rb.board
+            %td
+              = assessment_home_work.rb.content_year.name if assessment_home_work.rb.content_year
+            %td
+              = assessment_home_work.rb.subject.name  if assessment_home_work.rb.subject
+            %td
+              = link_to assessment_home_work.rb.chapter.name, chapter_path(assessment_home_work.rb.chapter)  if assessment_home_work.rb.chapter
+            %td
+              = link_to assessment_home_work.rb.topic.name, topic_path(assessment_home_work.rb.topic)  if assessment_home_work.rb.topic
+            %td
+              = link_to assessment_home_work.rb.name, assessment_home_work_path(assessment_home_work.rb)
+            %td
+              = assessment_home_work.rb.created_at
+            %td.last
+              = link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_home_work_path(assessment_home_work.rb)
+              |
+              \#{link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_home_work_path(assessment_home_work.rb)}
+              |
+              = link_to "Configure",  assessment_home_work_test_configuration_path(assessment_home_work.rb) if assessment_home_work.rb.status == 4 or assessment_home_work.rb.status == 2
+              |
+              \#{link_to "#{t("web-app-theme.delete", :default => "Delete")}", assessment_home_work_path(assessment_home_work.rb), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"}
+      .actions-bar.wat-cf
+        .actions
+        = paginate @assessment_home_work
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

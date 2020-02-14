@@ -1,0 +1,282 @@
+
+<style>
+
+  .panel {
+    position: fixed;
+    top: 100px;
+    left: 0;
+    display: none;
+    background: #000000;
+    border:1px solid #111111;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    width: 200px;
+    height: auto;
+    padding: 30px 30px 30px 30px;
+    filter: alpha(opacity=60);
+    opacity: .60;
+  }
+
+  .panel p{
+    margin: 0 0 15px 0;
+    padding: 0;
+    color: #cccccc;
+  }
+
+  .panel a, .panel a:visited{
+    margin: 0;
+    padding: 0;
+    color: #9FC54E;
+    text-decoration: none;
+    border-bottom: 1px solid #9FC54E;
+  }
+
+  .panel a:hover, .panel a:visited:hover{
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+    text-decoration: none;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  a.trigger{
+    position: fixed;
+    text-decoration: none;
+    top: 80px; left: 0;
+    font-size: 16px;
+    letter-spacing:-1px;
+    font-family: verdana, helvetica, arial, sans-serif;
+    color:#fff;
+    padding: 20px 40px 20px 15px;
+    font-weight: 700;
+    background:#333333 url(../../assets/plus.png) 85% 55% no-repeat;
+    border:1px solid #444444;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    display: block;
+  }
+
+  a.trigger:hover{
+    position: fixed;
+    text-decoration: none;
+    top: 80px; left: 0;
+    font-size: 16px;
+    letter-spacing:-1px;
+    font-family: verdana, helvetica, arial, sans-serif;
+    color:#fff;
+    padding: 20px 40px 20px 20px;
+    font-weight: 700;
+    background:#222222 url(../../assets/plus.png) 85% 55% no-repeat;
+    border:1px solid #444444;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    display: block;
+  }
+
+  a.active.trigger {
+    background:#222222 url(../../assets/minus.png) 85% 55% no-repeat;
+  }
+
+  .option_tag {
+    color: blue
+  }
+
+  .scrollable {
+    height:400px; overflow-y:auto; overflow-x:hidden; clip-rect:(0px, 300px, 400px, 0px); }
+  .q_status td {
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .marked_question {
+    color: yellow;
+  }
+</style>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(".trigger").click(function(){
+      $(".panel").toggle("fast");
+      $(this).toggleClass("active");
+      return false;
+    });
+    myFunction();
+    countAttempted();
+    //$("#q_status").height($("#container").height());
+  });
+  function save_state() {
+    countAttempted();
+    $.post("/quizzes/save_assessment_state", $("#omr_form").serialize());
+  }
+  function myFunction()
+  {
+    setInterval(function(){myTimer()},1000);
+  }
+
+  function countAttempted() {
+    var c = 0;
+    var e = '';
+    $('input:checked').each(function() {
+      if($(this).attr("class") == e){
+      }
+      else{
+        e = $(this).attr("class");
+        c++;
+      }
+    });
+    $("#no_attempted").html(c);
+  }
+
+  function mark_question(e) {
+    $(e).toggleClass('option_tag');
+  }
+
+  min_save = 0
+  paused = false;
+
+  function pause_resume() {
+    if($("#pause_button").val()=="Pause")
+      pause();
+    else resume();
+    return false;
+  }
+  function pause() {
+    paused = true;
+    $(".test_section").hide();
+    $(".test_section").hide();
+    $(".paused_message").show();
+    $(":submit").attr("disabled", true);
+    save_state();
+    $("#pause_button").val("Resume");
+  }
+  function resume() {
+    paused = false;
+    $(".test_section").show();
+    $(".test_section").show();
+    $(".paused_message").hide();
+    $("#pause_button").val("Pause");
+    $(":submit").removeAttr("disabled");
+  }
+  function myTimer()
+  {
+    var t = $("#time_left").val()
+    if(t <= 2) {
+      $("#omr_form").submit();
+    }
+    if (t > -1 && !paused) {
+      var seconds = t % 60
+      var minutes = (t-seconds)/60
+      $("#minutes").html(minutes);
+      $("#seconds").html(seconds);
+      $("#time_left").val(t-1);
+    }
+    min_save++;
+    if (min_save % 30 ==0 && !paused)
+      save_state();
+  }
+</script>
+<div id='content_header'>
+  <h1 id='main_heading'>
+    <%=@quiz.name%>
+  </h1>
+</div>
+<div id='data'>
+  <form id="omr_form" action="/quizzes/submit_assessment/<%=@publish.id%>" method="POST">
+    <div class="group">
+      <div align="center" class="field">
+        <% if @time_left > -1 %>
+          <span style="padding-right: 20px;font-size: 14px;font-weight: bold">Questions Attempted</span><span id="no_attempted" style="font-size: 24px;font-weight: bold"></span>&nbsp;out of&nbsp;<span style="font-size: 24px;font-weight: bold;padding-right: 50px"><%=@quiz.questions.count%></span>
+          <span style="padding-right: 20px;font-size: 14px;font-weight: bold">Time Left</span><span id="minutes" style="font-size: 24px;font-weight: bold"></span>&nbsp;m&nbsp;<span style="font-size: 24px;font-weight: bold">:&nbsp;</span><span style="font-size: 24px;font-weight: bold;" id="seconds"></span>&nbsp;<span style="padding-right: 80px;">s</span>
+        <% end %>
+        <input class="button big primary" data-disable-with="please wait..." name="submit_test" type="submit" value="Submit Test"/>
+        <input onclick="pause_resume();" id="pause_button" class="button big primary" type="button" value="Pause"/>
+
+      </div>
+    </div>
+    <input type="hidden" name="quiz_id" value="<%=@quiz.id%>"/>
+    <input type="hidden" name="publish_id" value="<%=@publish.id%>"/>
+    <input id="time_left" type="hidden" name="time_left" value="<%=@time_left%>"/>
+    <br/>
+    <div id='wrapper' style='text-align:center;'>
+      <div id="q_status" class="test_section" style="padding-left: 0px;float: left;width: 15%">
+        <table class="q_status">
+          <th colspan="4">Marked Questions</th>
+          <%j=1%>
+          <%s = @quiz.questions.count%>
+          <%section = ""%>
+          <% @quiz.questions.each do |q| %>
+
+            <%if(j%4 ==1) %>
+              <%if q.section != section%>
+                <%section = q.section%>
+              </tr><tr><td colspan="4">Section-<%=q.section%></td></tr>
+          <%end%>
+          <tr><td onclick="mark_question(this);"><%=q.tag%></td>
+
+          <%end%>
+          <%if (j%4==0 && j > 1) %>
+            <td onclick="mark_question(this);"><%=q.tag%></td><tr>
+            <%if q.section != section%>
+              <%section = q.section%>
+            <tr><td colspan="4">Section-<%=q.section%></td></tr>
+          <%end%>
+        <%end%>
+        <%if j%4 !=0 && j%4 !=1%>
+          <td onclick="mark_question(this);"><%=q.tag%></td>
+          <%if q.section != section%>
+            <%section = q.section%>
+          </tr><tr><td colspan="4">Section-<%=q.section%></td></tr>
+      <%end%>
+    <%end%>
+    <%if j%4 !=0 && j==s %>
+      </tr>
+    <%end%>
+    <%j=j+1%>
+  <%end%>
+</table>
+</div>
+<div id="container1" class="test_section" style="padding-left: 10px;float: right;width: 80%">
+  <object data="/quizzes/download_catchall/<%=@quiz.id%>" type="application/pdf" width="100%" height="100%">
+    <p>It appears you don't have a PDF plugin for this browser.</p>
+  </object>
+</div>
+</div>
+<div style="display: none;text-align: center;font-size: 26px;font-weight: 600;padding-top: 100px;" class="paused_message">Test has been paused. Please click Resume button to Resume the test.....</div>
+<div id="omr_panel" class="panel test_section">
+  <h3>OMR Sheet</h3>
+  <div class="scrollable">
+    <table>
+      <%i = 0%>
+      <% @quiz.questions.each do |q| %>
+        <%i = i+1%>
+        <tr class="questions">
+          <td><h1><%=q.tag%>.</h1></td>
+          <%q.question_answers.each do |a|%>
+            <%checked = false
+            if !@attempts.nil? && !@attempts[q.id].nil? && @attempts[q.id].include?(a.id)
+              checked = true
+            end
+          %>
+            <td><input class="options_<%=i%>" onchange="save_state();" <%=checked ? 'checked="checked"' : ""%> type="checkbox" name="answers[<%=q.id%>][]" value="<%=a.id%>"/><strong class="option_tag"><%=a.tag%></strong></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+  <div style="clear:both;"></div>
+</div>
+<a class="trigger test_section" href="#">OMR</a>
+</form>
+</div>
+<br/>
+

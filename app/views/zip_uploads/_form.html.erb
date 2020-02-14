@@ -1,0 +1,169 @@
+<form  class="form">
+</form>
+
+<%= form_for     @zip_upload, :html => { :multipart => true, :class => :form } ,:validate=>true do |f| %>
+    <% if     @zip_upload.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@zip_upload.errors.count, "error") %> prohibited this doc from being saved:</h2>
+
+          <ul>
+            <%     @zip_upload.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+
+    <div class='group'>
+      <div class='field'>
+        <div class="input string optional">
+          <label class="select required label" for="">
+            Select the zip file :
+          </label>
+
+          <%= f.file_field :asset %>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div id='data'>
+
+      <%= form_for @context,:html => { :class => :form }, :url => { :action => "index"},:validate=>true do |c| %>
+          <div class="group">
+            <div class="field">
+              <div class="input select required">
+                <label class="select required label" for="">
+                  Board :
+                </label>
+                <%= c.collection_select("board_id",@boards.to_a,:id,:name,{:include_blank=> "All"},{:class=>'select required drop_down'}) %>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <div class="group">
+            <div class="field">
+              <div class="input select required">
+                <label class="select required label" for="">
+                  Class :
+                </label>
+                <%= c.collection_select("content_year_id",@context.board.try(:content_years).to_a,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <div class="group">
+            <div class="field">
+              <div class="input select required">
+                <label class="select required label" for="">
+                  Subject :
+                </label>
+                <%= c.collection_select("subject_id",@context.content_year.try(:subjects).to_a,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <div class="group">
+            <div class="field">
+              <div class="input select required">
+                <label class="select required label" for="">
+                  Chapter :
+                </label>
+                <%= c.collection_select("chapter_id",@context.subject.try(:chapters).to_a ,:id,:name,{:include_blank=> "All"},:class=>'select required drop_down') %>
+              </div>
+            </div>
+          </div>
+      <% end %>
+      <br/>
+      <br/>
+      <div class='group'>
+        <div class='field'>
+          <div class="input string optional">
+            <label class="select required label" for="">
+              Create Assessment :
+            </label>
+            <%= f.check_box :check  %>
+          </div>
+        </div>
+      </div>
+      <div class='group'>
+        <div class='field'>
+          <div class="input string optional">
+            <label class="select required label" for="">
+              Publish Assessment :
+            </label>
+            <%= f.check_box :publish  %>
+          </div>
+        </div>
+      </div>
+      <div class='group' id="publish_group" style="display:none;">
+        <div class='field'>
+          <div class="input string optional">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Select Group
+            </label>
+            <select name="zip_upload[group_id]">
+              <% asign_groups(current_user).each do |g|%>
+                  <option value="<%=g.user_id%>"><%=g.try(:section_name)%></option>
+              <%end%>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class='label heading hr'>
+      </div>
+
+      <div class='group'>
+        <div align='center' class='field'>
+          <%= f.submit "Submit", :disable_with=>'Uploading' %>
+        </div>
+      </div>
+
+
+
+<% end %>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    $("#context_board_id").click(function() {
+        var selected_value = $('select#context_board_id :selected').val();
+        var url = "/course/get_content_years/"
+        var div_update = "#context_content_year_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#context_content_year_id").change(function() {
+        var selected_value = $('select#context_content_year_id :selected').val();
+        var url = "/content_years/get_subjets/"
+        var div_update = "#context_subject_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#context_subject_id").change(function() {
+        var selected_value = $('select#context_subject_id :selected').val();
+        var url = "/subjects/get_chapters/"
+        var div_update = "#context_chapter_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#context_chapters_id").change(function() {
+        var selected_value = $('select#context_chapter_id :selected').val();
+        var url = "/chapters/get_topics/"
+        var div_update = "#context_topic_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#zip_upload_publish").change(function(){
+        if($(this).is(':checked')){
+            $("#publish_group").show("slow");
+        }
+        else{
+            $("#publish_group").hide("slow");
+        }
+    });
+
+    //]]>
+</script>

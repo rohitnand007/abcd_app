@@ -1,0 +1,11 @@
+// $("#response").show();
+// $("[name='viewReportStudent']").each(function() {
+//           $(this).prop('checked',false)
+//  });         
+// $("#response").html("<p>Reports sent successfully to student Inbox</p>"); 
+$("#dynamic_content").html("<%= escape_javascript(render :partial => 'get_view_report_partial1', locals: {task: @task}) %>");
+$("#send_reports").css("font-size","1em").button();
+$("#send_reports").button();
+$('.spinner-gif').hide();
+// $("#response").hide(10000);
+

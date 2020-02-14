@@ -1,0 +1,18 @@
+body {
+  font-family: georgia, serif, arial;
+  /*background-color: #fff;
+  color: #333;
+  font-size: 13px;
+  line-height: 18px;*/
+}
+
+.ribbon-container h2 img:first-of-type{
+    width:25px;
+    margin-bottom: -4px;
+}
+#sixth-ribbon div img:not:first-of-type{
+    margin-bottom: -2px;
+}
+#fifth-ribbon div img:not:first-of-type{
+    margin-bottom: -2px;
+}

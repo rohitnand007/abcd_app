@@ -1,0 +1,162 @@
+%div{style:"color: #636363"}
+  Important:
+  %ul
+    %li Each tag has its own rules in order to be valid.
+    %li Hover over the specific field for the corresponding rules.
+    %li Tags which contain spaces should be surrounded by Double Quotes.
+  %label.select.required.label Question Bank
+  %br
+  .styled-select
+    = select_tag :publisher_question_bank_id , options_from_collection_for_select(@publisher_question_banks, :id , :question_bank_name ), class:"drop_down"
+- publisher_question_bank_id = @publisher_question_bank.id
+%table.tagsTable
+  %tr
+    %td{title:"You can add at most one class."}
+      %label
+        Form
+        %span.red
+          *
+      %ul.academic_class
+        - if @question_tags.nil?
+        - elsif @question_tags["academic_class"].blank?
+        - else
+          %li
+            =@question_tags["academic_class"]
+    %td{title:"You can add at most one subject."}
+      %label
+        Subject
+        %span.red
+          *
+      %ul.subject
+        - if @question_tags.nil?
+        - elsif @question_tags["subject"].blank?
+        - else
+          %li
+            =@question_tags["subject"]
+    %td{title:"You can add at most one chapter."}
+      %label
+        Chapter
+      %ul.chapter
+        - if @question_tags.nil?
+        - elsif @question_tags["chapter"].blank?
+        - else
+          %li
+            =@question_tags["chapter"]
+  %tr
+    %td{title:"You can add more than one concept names."}
+      %label
+        Concept Names
+      %ul.concept_names
+        - if @question_tags.nil?
+        - elsif @question_tags["concept_names"].blank?
+        - else
+          - @question_tags["concept_names"].each do |tag|
+            %li
+              = tag
+    %td{title:"Enter an existing difficulty level, you can add at most one difficulty level. "}
+      %label
+        Difficulty Level
+      %ul.difficulty_level
+        - if @question_tags.nil?
+        - elsif @question_tags["difficulty_level"].blank?
+        - else
+          %li
+            =@question_tags["difficulty_level"]
+    %td{title:"Enter an existing blooms taxonomy, you can add more than one blooms taxonomy tags. "}
+      %label
+        Blooms Taxonomy
+      %ul.blooms_taxonomy
+        - if @question_tags.nil?
+        - elsif @question_tags["blooms_taxonomy"].blank?
+        - else
+          - @question_tags["blooms_taxonomy"].each do |tag|
+            %li
+              = tag
+%hr
+:javascript
+  // for schand, course name is listed as schand
+  // Todo tooltip not working with tagit
+  $(".course").tagit({
+  requireAutocomplete: true,
+  fieldName:"course",
+  availableTags: "#{escape_javascript get_tag_values("course",publisher_question_bank_id)}".split(","),
+  maxTags: 1
+  });
+
+  $(".academic_class").tagit({
+  requireAutocomplete: true,
+  fieldName:"academic_class",
+  availableTags: "#{escape_javascript get_tag_values("academic_class",publisher_question_bank_id)}".split(","),
+  maxTags: 1
+  });
+
+  $(".subject").tagit({
+  requireAutocomplete: true,
+  fieldName:"subject",
+  availableTags: "#{escape_javascript get_tag_values("subject",publisher_question_bank_id)}".split(","),
+  maxTags: 1
+  });
+
+  $(".chapter").tagit({
+  fieldName:"chapter",
+  availableTags: "#{escape_javascript get_tag_values("chapter",publisher_question_bank_id)}".split(","),
+  maxTags: 1
+  });
+
+  $(".specialCategory").tagit({
+  requireAutocomplete: true,
+  fieldName:"specialCategory",
+  availableTags: "#{escape_javascript get_tag_values("specialCategory",publisher_question_bank_id)}".split(",")
+  });
+
+  $(".difficulty_level").tagit({
+  requireAutocomplete: true,
+  fieldName:"difficulty_level",
+  availableTags: "#{escape_javascript get_tag_values("difficulty_level",publisher_question_bank_id)}".split(","),
+  maxTags: 1
+  });
+
+  $(".blooms_taxonomy").tagit({
+  requireAutocomplete: true,
+  fieldName:"blooms_taxonomy",
+  availableTags: "#{escape_javascript get_tag_values("blooms_taxonomy",publisher_question_bank_id)}".split(",")
+  });
+
+  $(".concept_names").tagit({
+  fieldName:"concept_names",
+  allowSpaces: true,
+  availableTags: "#{escape_javascript get_tag_values("concept_names",publisher_question_bank_id)}".split(",")
+  });
+
+  $(".qsubtype").tagit({
+  fieldName:"qsubtype",
+  readOnly: true,
+  maxTags: 1
+  });
+  $('.qsubtype .tagit-new').hide();
+  $('.qsubtype .tagit-close').remove();
+
+:css
+  .recommendationTags{
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #C6C6C6;
+    outline:0;
+    height:25px;
+    width: 225px;
+  }
+  #quiz1_question_recommendation_tag{
+      background: rgba(0, 0, 0, 0);
+    border: none;
+    outline: none;
+    position: relative;
+    right:40px;
+  }
+  #question_question_recommendation_tag{
+      background: rgba(0, 0, 0, 0);
+    border: none;
+    outline: none;
+    position: relative;
+    right:40px;
+  }

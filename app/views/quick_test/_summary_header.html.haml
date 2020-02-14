@@ -1,0 +1,48 @@
+.testinfo_head_block
+  .testinfo_head_summary
+    %p{class:"heading"}
+      = quicktest.name
+
+    %p
+      Total no. of questions
+      = total_question_no(quicktest)
+      |
+      Class :
+      = groups_published(quicktest)
+      |
+      Status:
+      -if quicktest.quiz_targeted_groups.count==0#quicktest.quiz_publishes.empty?
+        = "Unpublished"
+      -else
+        = "Published"
+      |
+      Created On:
+      = Time.at(quicktest.timecreated).strftime(" %d/%b/%Y , %l:%M:%S %p")
+    %p
+      -if quicktest.quiz_targeted_groups.count!=0
+        Published On:
+        = Time.at(quicktest.quiz_targeted_groups.first.published_on).strftime(" %d/%b/%Y , %l:%M:%S %p")
+    %p
+      Total Students:
+      = quicktest_published_user_count(quicktest)
+      |
+      Downloaded:
+      = @quicktest_downloaded_user_count
+      |
+      Took Test:
+      = @quicktest_taken_user_count
+    %p{class:"summary_message"}
+      = image_tag "hand.png"
+      %span
+        = summary_message(quicktest)
+  .testinfo_head_label
+    -if !published?(quicktest)
+      .testinfo_viewbuttons{style:"background-color: #0090d4;"}
+        = link_to "Publish", quick_test_publish_page_path(quicktest)
+      .testinfo_viewbuttons{style:"background-color: #4d937b;"}
+        = link_to "Edit", quick_test_edit_path(quicktest.id)
+    -#elsif published?(quicktest)
+      .testinfo_viewbuttons{style:"background-color: #999999;"}
+        = link_to "Duplicate Test", "#"
+
+

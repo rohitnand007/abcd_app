@@ -1,0 +1,96 @@
+#primary_nav_wrap{
+    min-height: 70px;
+    vertical-align: middle;
+    z-index: 2000;
+}
+
+.custom_image{
+    padding: 25px 15px;
+    background-color: transparent;
+}
+
+.custom_image :hover{
+    padding: 10px 10px;
+    background-color: #d9dee4;
+}
+
+.custom_logo.img{
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: transparent;
+}
+
+.rightnav{
+    display: inline-block;
+    float:right;
+    line-height: 70px;
+    margin-right: 2%;
+}
+#search_content {
+    display: none;
+    width: 220px;
+    color: #0094E7;
+    background-color: #fff;
+    border: 1px solid #e6e9ed;
+    border-radius: 3px;
+}
+
+.search_custom{
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+
+
+.dropbtn {
+    background-color: transparent;
+    color: #777;
+    padding: 28px 20px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn a {
+    color: #777;
+    text-decoration: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 100%;
+    text-align: left;
+    top: 97%;
+    left: 0%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    z-index: 1000;
+    text-align: left;
+    margin: 0px;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #d9dee4;
+}

@@ -1,0 +1,39 @@
+<div id="content_header">
+  <h1 id="main_heading"><%= @qtype %></h1>
+</div>
+<div id="data">
+  <table>
+    <tr>
+      <td>
+        <div id='main'>
+          <div class='block' id='block-text' style="width:600px">
+            <div class='content'>
+              <div class='inner'>
+                <p class='first' style="font-size: 20px" >
+                  <strong><%= @question.questiontext %></strong>
+                  <span class='hightlight'></span>
+                </p>
+                <%@question.question_parajumbles.each do |c| %>
+                  <p>
+                    <span class='small'>
+                      <%= c.questiontext %> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select><%@question.question_parajumbles.each do |c| %>
+                          <option><%=  c.order %></option>
+                        <% end %>
+                      </select>
+                    </span>
+                  </p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div class="group">
+    <div align="center" class="field">
+      <input class="button big primary" data-disable-with="Creating..." name="commit" type="submit" value="Show Answer"/>
+      <a href="/questionbank" class="button danger icon remove">Back</a>
+    </div>
+  </div>
+</div>

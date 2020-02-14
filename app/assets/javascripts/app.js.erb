@@ -1,0 +1,209 @@
+$(document).ready(function() {
+    // Token input for the academic class and subject management
+    var subjects =$("#academic_class_subject_subject_id")
+    $(subjects).tokenInput(getSearchURL(), { preventDuplicates:true,
+        theme: '' ,crossDomain: false });
+    function getSearchURL() {
+        return "/subjects.json"
+    }
+
+
+    $("#content_subject_id").attr('disabled', 'disabled');
+    $("#content_academic_class_id").change(function() {
+        var academic_class = $('select#content_academic_class_id :selected').val();
+        $.get('/academic_class/get_subjects/' + academic_class, function(data){
+            populateSubjectDropdown($("#content_subject_id"), data);
+        });
+    });
+    function populateSubjectDropdown(select, data) {
+        $("#content_subject_id").removeAttr('disabled');
+        select.html('');
+        $.each(data, function(id, option) {
+            select.append($('<option></option>').val(option.value).html(option.name));
+        });
+    }
+
+
+    //In subject on select course the academic year is updated based on the subject
+
+
+
+    //In subject on select course the academic year is updated based on the subject
+    //
+//	$("#subject_academic_year_id").attr('disabled', 'disabled');
+    //$("#subject_course_id").change(function() {
+    //var selected_value = $('select#subject_course_id :selected').val();
+    //var url = "/course/get_academic_years/"
+    //var div_update = "#subject_academic_year_id"
+    //get_url_Data(url,selected_value,div_update);
+    //});
+
+    //In chapter on select course the academic year is updated and on select academicyear subject is updated
+
+//	$("#chapter_academic_year_id").attr('disabled', 'disabled');
+    //	$("#chapter_subject_id").attr('disabled', 'disabled');
+
+
+
+    //In topic on select course the academic year is updated and on select academicyear subject is updated and on select subject chapter is updated
+
+//	$("#topic_academic_year_id").attr('disabled', 'disabled');
+//	$("#topic_subject_id").attr('disabled', 'disabled');
+//	$("#topic_chapter_id").attr('disabled', 'disabled');
+
+
+
+    //In sub-topic on select course the academic year is updated and on select academicyear subject is updated and on select subject chapter is updated and on select chapter topics are updated
+
+//	$("#sub_topic_academic_year_id").attr('disabled', 'disabled');
+//	$("#sub_topic_subject_id").attr('disabled', 'disabled');
+//	$("#sub_topic_chapter_id").attr('disabled', 'disabled');
+//	$("#sub_topic_topic_id").attr('disabled', 'disabled');
+
+
+
+//generic
+
+    function processdropdown(present_div,update_div,url){
+        var selected_value = $('select#sub_topic_chapter_id :selected').val();
+        var url = "/chapters/get_topics/"
+        var div_update = "#sub_topic_topic_id"
+        get_url_Data(url,selected_value,div_update);
+    };
+
+
+
+//datetime picker
+    $('#class_room_on').datetimepicker({
+        ampm: true,
+        hourMin: 8,
+        hourMax: 16,
+        hourGrid: 1,
+        minuteGrid: 15,
+        dateFormat: 'dd-mm-yy'
+    });
+});
+
+
+
+// tipTip functions
+$(document).ready(function() {
+    addtipTip(); //add tipTip styles on document ready
+
+    $("#listing").dataTable({
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+    });
+
+    $("#mytable").dataTable({
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+    });
+});
+
+//START- Top Menu bar (onclick menu bar)
+// source from: http://css-tricks.com/designing-the-digg-header-how-to-download/
+
+$(document).ready(function(){
+    $("#top-menu-bar ul li").click(function() {
+        var hidden = $(this).children("ul").is(":hidden");
+
+        $("#top-menu-bar>ul>li>ul").hide()
+        $("#top-menu-bar>ul>li>a").removeClass();
+
+        if (hidden) {
+            $(this)
+                    .children("ul").toggle()
+                    .children("a").addClass("zoneCur");
+        }
+    });
+    $(".top-menu-bar").mouseleave(function(){
+        $("#top-menu-bar>ul>li>ul").hide();
+    });
+    $("#wrapper").mousedown(function(){
+        $("#top-menu-bar>ul>li>ul").hide();//click on any place hide the menu
+    });
+
+});
+//END - of Menu-bar
+
+
+
+
+// replaced from application.js
+
+
+
+
+function getSearchURL(mode) {
+    var inst_id =  $("select#"+mode+"_institution_id :selected").val();
+    var cent_id =  $("select#"+mode+"_center_id :selected").val();
+    return "/groups.json/?institution_id="+inst_id+"&center_id="+cent_id
+}
+
+function getSearchURL1() {
+    var inst_id =  $('select#device_institution_id :selected').val();
+    var cent_id =  $('select#device_center_id :selected').val();
+    return "/students.json/?institution_id="+inst_id+"&center_id="+cent_id
+}
+function getCoursesForClassesURL(class_id) {
+    var ac_class_id =  class_id;
+    return "/get_courses.json/?academic_class_id="+ac_class_id
+}
+function getSubjectsForTeachersURL(){
+    return "/get_subjects.json"
+}
+function goToByScroll(id){
+    $('html,body').animate({scrollTop: $("#"+id).offset().top},100);
+}
+
+function addtipTip(){
+    $(".tipTip").tipTip({maxWidth: '250px', edgeOffset: 10,delay: 0});
+    $(".tipTipRight").tipTip({maxWidth: '300px', edgeOffset: 10,defaultPosition: 'right',delay: 0});
+    $(".tipTipLeft").tipTip({maxWidth: '250px', edgeOffset: 10,defaultPosition: 'left',delay: 0});
+    $(".tipTipTop").tipTip({maxWidth: '250px', edgeOffset: 10,defaultPosition: 'top',delay: 0});
+}
+
+// end of replacement of application.js code
+
+
+// destroy
+
+$(document).ready(function() {
+    $('.delete_record').bind('ajax:beforeSend', function() {
+        var path = "<%= asset_path('ajax-loader.gif') %>"
+        var img = new Image();
+        $(img).attr({src: path,alt: "Loading...",id: "ajax_spinner"});
+        $(this).append(img);
+    });
+    $('.delete_record').bind('ajax:success', function() {
+        $(this).closest('tr').fadeOut(1600).remove();
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,277 @@
+<% content_for :head do %>
+    <%= stylesheet_link_tag "style", :media => "all" %>
+    <%= javascript_include_tag 'jquery' %>
+    <%= javascript_include_tag 'jcanvas.min' %>
+    <%= javascript_include_tag 'zoom' %>
+    <%= javascript_include_tag 'jsonGeneration' %>
+    <%= javascript_include_tag 'myscript' %>
+    <%= javascript_include_tag 'ready' %>
+<% end %>
+<%= form_for(@concept) do |f| %>
+    <% if @concept.errors.any? %>
+        <div id="error_explanation" xmlns="http://www.w3.org/1999/html">
+          <h2><%= pluralize(@concept.errors.count, "error") %> prohibited this concept from being saved:</h2>
+
+          <ul>
+            <% @concept.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+    <style type="text/css">
+        .web_dialog_overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            opacity: .15;
+            filter: alpha(opacity = 15);
+            -moz-opacity: .15;
+            z-index: 101;
+            display: none;
+        }
+
+        .web_dialog {
+            display: none;
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            top: 50%;
+            left: 50%;
+            margin-left: -190px;
+            margin-top: -100px;
+            background-color: #ffffff;
+            border: 2px solid #336699;
+            padding: 0px;
+            z-index: 102;
+            font-family: Verdana;
+            font-size: 10pt;
+        }
+
+        .web_dialog_title {
+            border-bottom: solid 2px #336699;
+            background-color: #336699;
+            padding: 4px;
+            color: White;
+            font-weight: bold;
+        }
+
+        .web_dialog_title a {
+            color: White;
+            text-decoration: none;
+        }
+
+        .align_right {
+            text-align: right;
+        }
+    </style>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnShowSimple").click(function (e) {
+                ShowDialog(false);
+                e.preventDefault();
+            });
+
+            $("#addQuiz").click(function (e) {
+                ShowDialog(true);
+                e.preventDefault();
+            });
+            $("#deleteQuiz").click(function (e) {
+                document.getElementById("quizName").innerText = "";
+                document.getElementById("quizId").setAttribute("value", "");
+                document.getElementById("addQuiz").hidden = false;
+                document.getElementById("deleteQuiz").hidden = true;
+            });
+
+
+            $("#btnClose").click(function (e) {
+                HideDialog();
+                e.preventDefault();
+            });
+
+            $("#btnSubmit").click(function (e) {
+                var quiz = $("#quizes input:radio:checked").val();
+                var quizId = $("#quizes input:radio:checked")[0].id;
+
+                document.getElementById("quizName").innerText = "Quiz :" + quiz;
+                document.getElementById("quizId").setAttribute("value", quizId);
+                document.getElementById("addQuiz").hidden = true;
+                document.getElementById("deleteQuiz").hidden = false
+                updateQuizDetails(quizId, quiz);
+                HideDialog();
+                e.preventDefault();
+            });
+        });
+
+        function ShowDialog(modal) {
+            $("#overlay").show();
+            $("#dialog").fadeIn(300);
+
+            if (modal) {
+                $("#overlay").unbind("click");
+            }
+            else {
+                $("#overlay").click(function (e) {
+                    HideDialog();
+                });
+            }
+        }
+
+        function HideDialog() {
+            $("#overlay").hide();
+            $("#dialog").fadeOut(300);
+        }
+
+    </script>
+
+    <div id="overlay" class="web_dialog_overlay"></div>
+
+    <div id="dialog" class="web_dialog">
+      <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+        <tr>
+          <td class="web_dialog_title">Add Quiz</td>
+          <td class="web_dialog_title align_right">
+            <a href="#" id="btnClose">Close</a>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+
+        <tr>
+          <td colspan="3" style="padding-left: 25px;">
+            <div id="quizes">
+              <table width="100%">
+
+                <% @i=0 %>
+                <% @quizes.each do |quize| %>
+                    <% if (@i%2)==0 %>
+                        <% if (@i!=0) %>
+                            </tr>
+                        <% end %>
+                        <tr>
+                          <td>
+                            <input id="quiz <%= quize.id %>" name="quiz" type="radio" checked="checked"
+                                   value="<%= quize.name %>"
+                            /> <%= quize.name %>
+                          </td>
+
+                    <% end %>
+                    <% if (@i%2)!=0 %>
+                        <td>
+                          <input id="quiz <%= quize.id %>" name="quiz" type="radio" checked="checked"
+                                 value="<%= quize.name %>"
+                          /> <%= quize.name %>
+                        </td>
+                    <% end %>
+                    <% @i=@i+1 %>
+                <% end %>
+
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center;">
+            <input id="btnSubmit" type="button" value="Submit"/>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="graph" class="map-space">
+      <canvas id="graphLines"></canvas>
+    </div>
+    <div class="fixedclass">
+      <div id="asidedataCreator">
+
+
+        <div style="padding-right: 1px;">
+          <%= f.hidden_field :concept %>
+          <div>
+            <!--  <button type="button" onClick="submit1();" id="submitButton" name="submitButton">
+                Submit
+              </button>-->
+          </div>
+          </br></br>
+          Name :
+          <%= f.text_field :name %>
+          </br></br>
+          <div>
+            <%= text_area_tag :contentDetails, "", :rows => 25, :cols => 44 %>
+
+            <script type="text/javascript">
+                tinyMCE.init({
+                    mode:'textareas',
+                    plugins:"uploadimage,table,advhr,advimage,advlink,insertdatetime,media,preview",
+
+                    theme:'advanced',
+                    theme_advanced_buttons1:"bold,italic,underline,separator,bullist,numlist,separator,undo,redo,|,forecolor,backcolor, |, justifyleft, justifycenter, justifyright, justifyfull",
+                    theme_advanced_buttons2:"styleselect,formatselect,fontselect,fontsizeselect",
+                    theme_advanced_buttons3:"tablecontrols,|,charmap,iespell,media,advhr",
+                    theme_advanced_buttons4:"hr,removeformat,visualaid,|,sub,sup,|,insertdate,inserttime,preview,uploadimage,|,link,unlink,code",
+                    theme_advanced_toolbar_location:"top",
+                    theme_advanced_toolbar_align:"left", theme_advanced_statusbar_location:"none",
+                    relative_urls:true,
+                    skin : "o2k7",
+                    skin_variant : "silver",
+
+                    setup:function (ed) {
+                        ed.onInit.add(function (ed, evt) {
+                        });
+                        ed.onChange.add(function (ed) {
+                            saveDetails();
+                        });
+                    }
+                })
+                ;
+                tinyMCE.addI18n('en.uploadimage', {
+                    desc:'Insert an image from your computer'
+                });
+            </script>
+          </div>
+          </br></br>
+          <div id="selectedQuizes">
+            <div id="output">
+              <p id="quizName"></p>
+              <input type="hidden" id="quizId" name="quizId"/>
+              <input type="button" id="addQuiz" value="Add Quiz"/>
+              <input type="button" id="deleteQuiz" value="Delete" hidden=true/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--</div>-->
+    <div id="logoCreator" style="position: fixed;top: 0.2%;right: 1%;z-index: 25;opacity: 0.4; width:10%;">
+      <img src="/assets/edutorlogo.png"/>
+    </div>
+    <div id="footerCreator" style="position: fixed;bottom: 0px;width:100%;height:35px;z-index: 21;">
+      <div id="Czoomerplus" style="position: fixed;bottom: 1%;right: 32%;z-index: 21;"><img src="/assets/zoomin.png"/>
+      </div>
+      <div id="Czoomerminus" style="position: fixed;bottom: 1%;right: 42.1%;z-index: 21;">
+        <img src="/assets/zoomout.png"/>
+      </div>
+      <div id="Cnormal_view" style="position: fixed;bottom: 1%;right: 37.1%;z-index: 21;"><img src="/assets/zoom.png"/>
+      </div>
+    </div>
+    <div id="Cheader" style="position: fixed;top: 0.1%;left: 0.1%;width:65%;height:35px;z-index: 21;">
+      <!--<div style="position: fixed;left: 3%;top: 1%;"> <%= link_to 'Back', concepts_path %> </div>-->
+      <input type="button" name="add" title="Add" value="Add" onClick="addNode();" style="position: fixed;left: 60%;top: 0.5%;height:30px;width:50px;background-color:#DBA901;">
+
+    </div>
+    <img id="Czoomimage" style="visibility: hidden; position: fixed;z-index: 24;" alt="Image not found..." onclick="javascript:this.style.visibility='hidden';"/>
+
+<% end %>

@@ -1,0 +1,66 @@
+= simple_form_for @windows_build, :url => create_windows_build_path, :method => :post, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Build!",
+                        :message => "You'll need to fix the following fields:"
+
+  .inputs
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        = f.label :institution_id, "Center", :class=>'label'
+        = f.collection_select :center_id,Center.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        = f.label :institution_id, "Academic Class", :class=>'label'
+        = f.collection_select :academic_class_id,AcademicClass.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field
+        = f.input :name, :input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :version, :input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+      = f.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), root_path,:class=>'button danger icon remove'
+
+
+:javascript
+  $("#windows_build_institution_id").change(function() {
+      set_default($("#windows_build_center_id"));
+      set_default($("#windows_build_academic_class_id"));
+      var selected_value = $('select#windows_build_institution_id :selected').val();
+      if (selected_value==""){
+       selected_value = 0;
+       $("#windows_build_section_id").attr('disabled', 'disabled');
+       $("#windows_build_academic_class_id").attr('disabled', 'disabled');
+       }
+      var url = '/institution/get_centers/' + selected_value
+      var div_update = "#windows_build_center_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+  $("#windows_build_center_id").change(function() {
+      set_default($("#windows_build_academic_class_id"));
+      var selected_value = $('select#windows_build_institution_id :selected').val();
+      var center = $('select#windows_build_center_id :selected').val();
+      if (selected_value==""){selected_value = 0;}
+      if (center==""){
+        center = 0;
+       $("#windows_build_section_id").attr('disabled','disabled');
+      }
+      var url = '/institution/get_academic_classes/' +selected_value+'/'+ center
+      var div_update = "#windows_build_academic_class_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+
+
+
+
+
+

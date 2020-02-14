@@ -1,0 +1,34 @@
+= form_for(@meta_tag) do |f|
+  - if @meta_tag.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(@meta_tag.errors.count, "error")
+        prohibited this tag from being saved:
+      %ul
+        - @meta_tag.errors.full_messages.each do |message|
+          %li= message
+  .field
+    = f.label :class_name
+    .styled-select
+      = collection_select :meta_tag, :class_id, @class_tags, :id, :value, {}, {:class => 'drop_down'}
+  %br
+
+  .field
+    = f.label :subject_name
+    .styled-select
+      = collection_select :meta_tag, :subject_id, @subject_tags, :id, :value, {}, {:class => 'drop_down'}
+  %br
+
+  .field
+    = f.label :concept_name
+    .styled-select
+      = collection_select :meta_tag, :concept_id, @concept_tags, :id, :value, {}, {:class => 'drop_down'}
+  %br
+
+  .field
+    = f.label :user_id
+    = f.text_field :user_id
+    %br/
+  %br
+  .actions
+    = f.submit :class => 'button'

@@ -1,0 +1,54 @@
+<div class="showcase-slide">
+  <!-- Put the slide content in a div with the class .showcase-content. -->
+  <div class="showcase-content">
+    <div class="showcase-content-wrapper">
+      <input id="current_question_id" type="hidden" name="question_id" value="<%=@question.id%>"/>
+      <input id="time_taken" type="hidden" name="time_taken" value="0"/>
+      <input id="attempted_question_ids" type="hidden" name="attempted_question_ids" value="<%=@attempted_question_ids%>"/>
+      <p style="font-size: 20px;text-align: left" >
+        <strong class="question_text"><%= @question.questiontext_format.html_safe %></strong>
+      </p>
+      <table>
+        <tbody>
+          <%i=0%>
+          <%i = i+1%>
+          <%if @question.qtype=="multichoice"%>
+            <%@question.question_answers.each do |a| %>
+              <tr>
+                <td><%= (a.answer_format).html_safe %></td>
+                <td>
+                  <%checked = false
+                  if !@option_ids.nil? && @option_ids.include?(a.id)
+                    checked = true
+                  end %>
+                  <input class="options_<%=i%>" <%=checked ? 'checked="checked"' : ""%> type="checkbox" name="answers[<%=@question.id%>][]" value="<%=a.id%>"/>
+                </td>
+              </tr>
+            <% end %>
+          <%elsif @question.qtype=="truefalse"%>
+            <%@question.question_answers.each do |a| %>
+              <tr>
+                <td><%= (a.answer_format).html_safe %></td>
+                <td>
+                  <%checked = false
+                  if !@option_ids.nil? && @option_ids.include?(a.id)
+                    checked = true
+                  end %>
+                  <input class="options_<%=i%>" <%=checked ? 'checked' : ""%> type="radio" name="answers[<%=@question.id%>][]" value="<%=a.id%>"/>
+                </td>
+              </tr>
+            <% end %>
+          <%end%>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<br/>
+              <br/>
+  <% if !@first%>
+    <input type="button" class="button big primary" onclick="get_previous_question();" value="Previous"/>
+  <%end%>
+  <% if !@last%>
+    <input type="button" class="button big primary" onclick="get_next_question();" value="Next"/>
+  <%end%>
+</div>

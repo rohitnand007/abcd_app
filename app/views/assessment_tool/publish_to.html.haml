@@ -1,0 +1,541 @@
+= stylesheet_link_tag "assessment_tool"
+.body_content1
+  .assessments_layout
+    - expiry_date_tip="Allows to set an expiry date for assessment. After this date, assessment will not be accessible."
+    - expiry_date_tip2="Pick a date from date picker"
+    - shuffle_question_tip="Users will get questions in random order while taking assessment"
+    - shuffle_option_tip="Users will get options in random order while taking assessment"
+    - allow_pausing_tip="Allows user to pause the assessment"
+    - set_password_tip="A password can be set to unlock the assessment"
+    - show_scores_after_tip="User can't access his/her score before this time"
+    - show_solutions_after_tip="User can't access his/her solution before this time"
+    - ibook_id = "00000000-0000-0000-0000-000000000000"
+    #tabs.ui-tabs.ui-widget.ui-corner-all
+      = render :partial => 'create_assessment_tabbed_header'
+      .ui-tabs-panel.ui-corner-bottom
+        = render :partial => 'bread_crumbs_indicator'
+    - existing_publishes = @quiz.quiz_targeted_groups
+    .assessment_publish_section_bar Publish history - Published #{existing_publishes.count} times
+    - existing_publishes.each do |quiz_publish|
+      .assessment_publish_block_row
+        .assessment_publish_block_cell
+          %div
+            Published to:
+            = quiz_publish.to_group ? User.find(quiz_publish.group_id).name : User.find(quiz_publish.recipient_id).name
+          %div
+            Published by:
+            = User.find(quiz_publish.published_by).name
+        .assessment_publish_block_cell
+          %div
+            Test ID:
+            = quiz_publish.quiz_id
+          %div
+            Created by:
+            = User.find(quiz_publish.quiz.createdby).name
+        .assessment_publish_block_cell
+          %div
+            Password:
+            =quiz_publish.password.present? ? quiz_publish.password : "Not set"
+          %div
+            Published on
+            =  Time.at(quiz_publish.published_on).strftime(" %d/%b/%Y")
+        .assessment_publish_block_cell
+          %div
+            Total Published
+            = quiz_publish.to_group ? (quiz_publish.group_id == 1 ?  1 : User.find(quiz_publish.group_id).try(:students).count) : 1
+          %div
+            Total Attempted:
+            = QuizAttempt.where(:publish_id=>quiz_publish.id).length||= "0"
+        - if current_user.institution.user_configuration.try(:enable_key_change)
+          = link_to "Edit Key", assessment_tool_key_interface_path(quiz_publish.id), class:'button',style:"top:-12px;"
+          = link_to "Upload Solutions", assessment_tool_upload_solutions_path(quiz_publish.id), class:'button',style:"top:-12px;"
+
+
+    %br
+    %br
+    = simple_form_for @target,:html => { :class => :form }, :url => { :action => "publish",:id=>@quiz.id } do |c|
+      .assessment_publish_input_title Start here to publish
+
+      .assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Publish Assessment as:
+        .assessment_publish_input_block_col2
+          %select{name:"quiz_targeted_group[assessment_type]"}
+            %option{value:"2"} Practice Test
+            %option{value:"3"} Institution Test
+      .assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Publish Assessment to:
+        .assessment_publish_input_block_col2
+          = radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label=>"Individual"
+          = 'Individual'
+          =  radio_button_tag :message_to, 'group',"true",:input_html=>{:class=>"text_field"},:label=>"Group"
+          = 'Group'
+      #group.assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Select Group:
+        .assessment_publish_input_block_col2
+          %select{name:"quiz_targeted_group[group_id]", id: "test",required: true}
+            %option{value: "" , :selected => 'disabled'}
+              = "Select Group"
+            - asign_groups(current_user).each do |g|
+              %option{value: "#{g.user_id}|#{g.build_info}" }
+                = g.try(:section_name).encode('UTF-8', :invalid => :replace, :undef => :replace)
+      #recipient.assessment_publish_input_block_row{style:"height:auto"}
+        .assessment_publish_input_block_col1 Students:
+        .assessment_publish_input_block_col2
+          = text_field :message, :multiple_recipient_ids,:label=>"To:"
+          %div#ind
+            -#= radio_button_tag :build, "4.0", "true",:id=>"build_4"
+            -#= "4.0"
+            = hidden_field_tag :build, "5.0"
+            -#= "5.0"
+      - if !current_user.institution.user_configuration.use_tags
+        .assessment_publish_input_block_row#toc_options
+          .assessment_publish_input_block_col1 Publish to Table of Contents:
+          .assessment_publish_input_block_col2
+            %select{name:"publish_to_toc",id: "show_toc_options"}
+              %option{value:"0"} No
+              %option{value:"1"} Yes
+            = link_to_add_association "Add table of contents", c , :quiz_target_location , partial:"table_of_contents_fields",
+                    "data-association-insertion-method"=>"html","data-association-insertion-node"=>"#quiz_target_location",id:"addContentTable",style:"display:none"
+        #quiz_target_location
+        .assessment_publish_input_block_row#book_options
+          .assessment_publish_input_block_col1 Publish to Book:
+          .assessment_publish_input_block_col2
+            %select{name:"publish_to_ibook", id: "show_book_options"}
+              %option{value:"0"} No
+              %option{value:"1"} Yes
+            = link_to_add_association "Add table of contents", c , :quiz_ibook_location , partial:"toc",
+                    "data-association-insertion-method"=>"html","data-association-insertion-node"=>"#quiz_ibook_location",id:"addContentTable1",style:"display:none"
+        #quiz_ibook_location
+      - else
+        .assessment_publish_input_block_row#book_options
+          .assessment_publish_input_block_col1 Publish to Book:
+          .assessment_publish_input_block_col2
+            %select{name:"publish_to_ibook", id: "show_book_options"}
+              %option{value:"0"} No
+              %option{value:"1"} Yes
+            = link_to_add_association "Add table of contents", c , :quiz_ibook_location , partial:"toc",
+                    "data-association-insertion-method"=>"html","data-association-insertion-node"=>"#quiz_ibook_location",id:"addContentTable1",style:"display:none"
+        #quiz_ibook_location
+      .assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Expiry date for assessment
+        .assessment_publish_input_block_col2
+          = c.datetime_select :timeclose,:as=>:datetime,:start_year=>2012,:default => 30.days.from_now,:order=>[:day,:month,:year]
+          %label{class:"tiptipClass", title:expiry_date_tip}
+      - if @quiz.format_type != 1
+        .assessment_publish_input_block_row
+          .assessment_publish_input_block_col1 Shuffle questions:
+          .assessment_publish_input_block_col2
+            %select{name:"quiz_targeted_group[shufflequestions]"}
+              %option{value:"0"} No
+              %option{value:"1"} Yes
+            %label{class:"tiptipClass", title:shuffle_question_tip}
+        .assessment_publish_input_block_row.shuffle_options{style: "display:none;"}
+          .assessment_publish_input_block_col1 Shuffle Options:
+          .assessment_publish_input_block_col2
+            %select{name:"quiz_targeted_group[shuffleoptions]"}
+              %option{value:"0"} No
+              %option{value:"1"} Yes
+            %label{class:"tiptipClass", title:shuffle_option_tip}
+      -else
+        .assessment_publish_input_block_row
+          .assessment_publish_input_block_col1 Multiple Options:
+          .assessment_publish_input_block_col2
+            %select#quiz_targeted_group_pause{name: "quiz_targeted_group[allow_multiple_options]"}
+              %option{value: "0"} No
+              %option{value: "1"} Yes
+      .assessment_publish_input_block_row{style: "display:none !important;"}
+        .assessment_publish_input_block_col1 Allow pausing:
+        .assessment_publish_input_block_col2
+          %select#quiz_targeted_group_pause{name: "quiz_targeted_group[pause]"}
+            %option{value: "0"} No
+            %option{value: "1"} Yes
+          %label{class:"tiptipClass", title:allow_pausing_tip}
+      .assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Set password:
+        .assessment_publish_input_block_col2
+          = c.text_field :password
+          %label{class:"tiptipClass", title:set_password_tip}
+      .assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Show scores after(in hours):
+        .assessment_publish_input_block_col2
+          = c.text_field :show_score_after,required:"required"
+          %label{class:"tiptipClass", title:show_scores_after_tip}
+      .assessment_publish_input_block_row
+        .assessment_publish_input_block_col1 Show solutions after(in hours):
+        .assessment_publish_input_block_col2
+          = c.text_field :show_answers_after,required:"required"
+          %label{class:"tiptipClass", title:show_solutions_after_tip}
+
+          %input#to_group{name: "quiz_targeted_group[to_group]", type: "hidden", value: "1"}
+          %input#to_group{name: "quiz_targeted_group[timeopen]", type: "hidden", value: 43.years.ago.to_i}
+      .assessment_publish_notification_block
+        = c.text_field :subject,:placeholder=>"*Type your notification message subject",value: @quiz.name,required:true
+        %br
+        = c.text_field :body, :placeholder=>"*Notification message",required:true
+        %br
+        %br
+
+      .assessment_publish_control
+        %br
+        - if @quiz.quiz_targeted_groups.empty?
+          .goto{style:"float:left"}
+            = link_to "Edit Assessment", assessment_tool_show_path(@quiz), :class=>"utility_button previous-btn"
+        %div{style:"float:right"}
+          =c.submit 'Publish' ,disable_with:'Publishing',id:"submit_button"
+          = link_to '<span style="color:#252629;">Cancel<span>'.html_safe, assessment_tool_my_assessments_path, id: "cancel_button", class: "grey_bg"
+        %br
+
+    %br
+    %br
+:css
+  ul.token-input-list{border-color: #ccc}
+  li.token-input-token{background-color: #eee}
+  .ui-datepicker .ui-datepicker-header{ background-color: #eee; color: #636363}
+  #ui-datepicker-div .ui-state-default{background-color: #fff; color:#636363}
+  #ui-datepicker-div .ui-state-default.ui-state-hover{color:#fff}
+  #ui-datepicker-div .ui-state-default.ui-state-highlight{border:1px solid #ccc}
+
+  select {
+          display: inline-block;
+          border: 2px solid #bbb;
+          padding: 4px 3px 3px 5px;
+          margin: 0;
+          font: inherit;
+          outline:none; /* remove focus ring from Webkit */
+          line-height: 1;
+          background: #f8f8f8;
+
+          -webkit-appearance:none; /* remove the strong OSX influence from Webkit */
+
+          -webkit-border-radius: 4px;
+          -moz-border-radius: 4px;
+          border-radius: 4px;
+  }
+  /* for Webkit's CSS-only solution */
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+      select {
+          padding-right:50px;
+      }
+  }
+      /* Since we removed the default focus styles, we have to add our own */
+      select:focus {
+          -webkit-box-shadow: 0 0 3px 1px #c00;
+          -moz-box-shadow: 0 0 3px 1px #c00;
+          box-shadow: 0 0 3px 1px #c00;
+      }
+
+      /* Select arrow styling */
+            .assessment_publish_input_block_col2:after {
+              /*  content: "▼"; */
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                font-size: 60%;
+                line-height: 30px;
+                padding: 0 7px;
+                background: #bbb;
+                color: white;
+
+                pointer-events:none;
+
+                -webkit-border-radius: 0 6px 6px 0;
+                -moz-border-radius: 0 6px 6px 0;
+                border-radius: 0 6px 6px 0;
+            }
+
+            .no-pointer-events .assessment_publish_input_block_col2:after {
+                content: none;
+            }
+  .assessment_publish_section_bar{
+     background-color: #eeeeee;
+     height: 2em;
+     font-size: 1.2em;
+     line-height: 2em;
+     padding-left: 1em;
+     border-bottom: solid #ccc thin;
+  }
+
+  .assessment_publish_block_row{
+     height: 4em;
+     font-size: 1em;
+     line-height: 2em;
+     margin-top: 0.5em;
+     padding-bottom: 0.5em;
+     border-bottom: solid #ccc thin;
+
+  }
+
+  .assessment_publish_block_cell{
+    width:19.5%;
+    padding-left: 0.8em;
+    display: inline-block;
+     border-right: solid #ccc thin;
+     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+     -moz-box-sizing: border-box; /* Firefox, other Gecko */
+     box-sizing: border-box; /* Opera/IE 8+ */
+  }
+
+
+  .assessment_publish_input_title{
+     background-color: #eeeeee;
+     height: 2em;
+     font-size: 1.2em;
+     line-height: 2em;
+     padding-left: 1em;
+     color:#60c8cd;
+     font-style: italic;
+
+  }
+   .assessment_publish_input_block{
+    width: inherit;
+   }
+
+   .assessment_publish_input_block_row{
+    width: inherit;
+    font-size: 1.2em;
+    height: 3em;
+    line-height: 3em;
+
+   }
+
+   .assessment_publish_input_block_col1{
+    width: 25%;
+    text-align: right;
+    display: inline-block;;
+   }
+
+   .assessment_publish_input_block_col2{
+    width: 70%;
+    margin-left: 1em;
+    text-align: left;
+    display: inline-block;
+   }
+   .assessment_publish_input_block_col3{
+    width: 15%;
+    margin-left: 1em;
+    text-align: left;
+    display: inline-block;
+   }
+   .assessment_publish_input_block_col4{
+    width: 24%;
+    text-align: right;
+    display: inline-block;;
+   }
+   .assessment_publish_input_block_col5{
+    width: 20%;
+    margin-left: 1em;
+    text-align: left;
+    display: inline-block;
+   }
+
+   .assessment_publish_notification_block{
+     border-bottom: solid #ccc thin;
+   }
+   #book_toc{
+     display: table;
+     width: 100%}
+   
+   .assessment_publish_notification_block input{
+     width: 80%;
+     margin-left: 10%;
+     height: 2em;
+     margin-top: 0.5em;
+     margin-bottom: 0.5em;
+   }
+
+:javascript
+
+  $(".tiptipClass").tipTip();
+  $(".utility_button").button({
+          icons:{primary:"ui-icon-plain-download-btn"}
+        });
+  $(".utility_button.next-btn").button({
+      icons:{primary:"ui-icon-next-btn"},
+      text:false
+    });
+  $(".utility_button.previous-btn").button({
+      icons:{primary:"ui-icon-previous-btn"},
+      text:false
+    });
+  $("#create-assessment-publish").removeClass('step_normal').addClass('step_active');
+  $( "#datepicker" ).datetimepicker({ timeFormat: 'hh:mm tt z',minDate: 0, maxDate: 60,dateFormat: "dd-mm-yy",numberOfMonths: 1,showTimezone:true});
+  $("#cancel_button").button();
+  $("#submit_button").button();
+  $( "#timelimit_selector" ).change(function(event) {
+  var selected_option_value = $("#timelimit_selector").val();
+    if (selected_option_value=="Yes")
+    {$(".assessment_publish_input_block_col4, .assessment_publish_input_block_col5").show();
+       $("#datepicker").attr("required",true)
+    }
+    else
+    {$(".assessment_publish_input_block_col4, .assessment_publish_input_block_col5").hide();
+     $("#datepicker").val("");
+     $("#datepicker").attr("required",false)
+    }
+
+  });
+  $( "#timelimit_selector" ).change();
+  //$('.string.optional').hide();
+  $("#quiz_targeted_group_extras").change(function() {
+      var selected_value = $('select#quiz_targeted_group_extras :selected').val();
+
+      if (selected_value == "homework") {
+          $("#quiz_targeted_group_assessment_type").empty().append('<option  value=2>Regular</option>');
+      }
+      else if (selected_value == "institute")  {
+          $("#quiz_targeted_group_pause").val("0");
+          $("#quiz_targeted_group_pause").attr("disabled", true);
+          $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=3>Assignment</option>').append('<option  value=4>Inclass</option>');
+      }
+      else if (selected_value == "practice")  {
+          $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=2>Regular</option>').append('<option  value=5>HOT/IIT</option>').append('<option  value=6>Olympiad</option>');
+      }
+      else if (selected_value == "quiz")  {
+          $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=1>Quiz</option>');
+      }
+      else if (selected_value == ""){
+          $("#quiz_targeted_group_assessment_type").empty()
+      }
+      if (selected_value != "institute")
+        $("#quiz_targeted_group_pause").attr("disabled", false);
+
+  });
+
+  var selected_value = $('select#quiz_targeted_group_extras :selected').val();
+
+  if (selected_value == "homework") {
+      $("#quiz_targeted_group_assessment_type").append('<option  value="">Please select</option>').empty().append('<option  value=2>Regular</option>');
+  }
+  else if (selected_value == "institute")  {
+      $("#quiz_targeted_group_pause").val("0");
+      $("#quiz_targeted_group_pause").attr("disabled", true);
+      $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=3>Assignment</option>').append('<option  value=4>Inclass</option>');
+  }
+  else if (selected_value == "practice")  {
+      $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=2>Regular</option>').append('<option  value=5>HOT/IIT</option>').append('<option  value=6>Olympiad</option>');
+  }
+  else if (selected_value == "quiz")  {
+      $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>').append('<option  value=1>Quiz</option>');
+  }
+  else if (selected_value == ""){
+      $("#quiz_targeted_group_assessment_type").empty().append('<option  value="">Please select</option>');
+  }
+  if (selected_value != "institute")
+      $("#quiz_targeted_group_pause").attr("disabled", false);
+
+  $("input[name$='message_to']").click(function(){
+    var radio_value = $(this).val();
+    if(radio_value=='individual') {
+      $("#to_group").val("0");
+      $("#recipient").show("slow");
+      $("#group").hide();
+      $("#test").each(function(){
+                    $(this).removeAttr('required');
+                  });
+      $("#message_multiple_recipient_ids").attr('required', 'true');
+      $("#book_options").hide();
+      $("#toc_options").show();
+      $("#quiz_ibook_location").html("");
+      $("#test").get(0).selectedIndex = 0;
+    }
+    else if(radio_value=='group') {
+      $("#to_group").val("1");
+      $("#message_multiple_recipient_ids").removeAttr('required');
+      $("#message_multiple_recipient_ids").tokenInput('clear');
+      $(".token-input-dropdown").remove();
+      $(".token-input-list").remove();
+      $("#token-input-multiple_recipient_ids").remove();
+      $(function() {
+        $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+          queryParam: 'term',
+          minChars: '3',
+          hintText: 'Type first 3-letters of users surname/firstname/roll number',
+          crossDomain: false,
+          preventDuplicates:true,
+          prePopulate: $("#message_multiple_ids").data("pre"),
+          theme: ""
+        });
+      });
+      $("#group").show("slow");
+      $("#recipient").hide();
+         $("#test").each(function(){
+               $(this).attr('required', 'true');
+              });
+      $("#build_4").attr("checked", true);
+      $("#toc_options").hide();
+      $("#book_options").hide();
+      $("#quiz_target_location").html("");
+      $("#quiz_ibook_location").html("");
+  }
+  });
+  $("#recipient").hide();
+  $("#group").show();
+
+  $(function() {
+      $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+          queryParam: 'term',
+          minChars: '3',
+          hintText: 'Type first 3-letters of users surname/firstname/roll number',
+          crossDomain: false,
+          preventDuplicates:true,
+          prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+          theme: ""
+      });
+  });
+        $("#book_options").hide();
+         $("input[name$='build']").click(function(){
+              var a = $(this).val();
+              if (a == "4.0") {$("#toc_options").show();$("#book_options").hide();$("#quiz_ibook_location").html("");$("#show_book_options").get(0).selectedIndex = 0;}
+              else if (a == "5.0") { $("#book_options").show(); $("#toc_options").hide();$("#quiz_target_location").html("");$("#show_toc_options").get(0).selectedIndex = 0;};
+           });
+        $("#test").click(function(){
+         var a = $(this).val();
+         if ((a.split("|")[1]) == "4.0")
+          { $("#book_options").hide();$("#toc_options").show();$("#quiz_ibook_location").html("");}
+          else if ((a.split("|")[1]) == "5.0") {$("#book_options").show();$("#toc_options").hide();$("#quiz_target_location").html("");}
+          else if ((a.split("|")[1]) == "1.0") { alert("Publishing to this group is not possible. Use ET login to publish.");
+          $("#test").get(0).selectedIndex = 0;}
+          else { $("#book_options").hide();};
+          });
+  $("#show_toc_options").change(function(){
+    if(this.value == 1){
+      //$("#quiz_target_location").show("slow");
+      $("#addContentTable").click();
+    }
+    else{
+      //$("#quiz_target_location").hide("slow");
+      $("#removeContentTable").click();
+    }
+  });
+  $("#show_book_options").change(function(){
+      if(this.value == 1){
+        //$("#quiz_target_location").show("slow");
+        $("#addContentTable1").click();
+        $("#quiz_ibook_location").show();
+
+      }
+      else{
+        //$("#quiz_target_location").hide("slow");
+        $("#removeContentTable1").click();
+        $("#quiz_ibook_location").html("");
+      }
+   });
+   //$("#ind :checked").click(function(){
+   //   var a = $(this).val();
+   //   if (a == "4.0"){$("#toc_options").show();$("#book_options").hide();}
+   //   else{ $("#book_options").show(); $("#toc_options").hide();}
+   //});
+    $(document).on('click', 'input[name$="uri2"]', function() {
+    $('input[name$="quiz_targeted_group[quiz_ibook_location_attributes][uri]"]').prop('checked', false);
+  })
+      $(document).on('click', 'input[name$="uri2"]', function() {
+    $('input[name$="quiz_targeted_group[quiz_ibook_location_attributes][uri]"]').prop('checked', false);
+    })
+        $(document).on('click', 'input[name$="quiz_targeted_group[quiz_ibook_location_attributes][uri]"]', function() {
+    $('input[name$="uri2"]').prop('checked', false);
+  })
+
+
+
+

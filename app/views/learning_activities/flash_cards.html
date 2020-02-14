@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/activities/font-awesome.min.css">
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script src="/assets/activities/jquery-ui.js"></script>
+    <script src="/assets/activities/jquery.flip.min.js"></script>
+    <script src="/assets/activities/app.js"></script>
+    <script src="/assets/activities/jquery-confirm.js"></script>
+    <script src="/assets/activities/jquery.loader.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/activities/common.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/flash_cards.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_flash_cards.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery.loader.css">
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="maincontent" style="margin-top:2%">
+    <div class="main_head">
+        <p class="col-xs-11 no-padding" id="title-text">Flash Cards</p>
+        <div id="header-tabs">
+            <ul class="nav nav-pills">
+                <li class="active naming_tabs"><a href="#create-template-tab"  aria-controls="create-template-tab" class="tabs_for_naming create_template_tab">01&nbsp&nbsp&nbspCreate Template</a></li>
+                <li class="naming_tabs1"><a href="#create-activity-tab" aria-controls="create-activity-tab" class="tabs_for_naming">02&nbsp&nbsp&nbspCreate Activity</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="create-template-tab">
+            <div class='col-xs-12 naming_create'>
+                <div style='padding-top:12px'>
+                    <p class="information-text col-xs-5">Let's create the template before adding the question</p>
+                    <button class='btn btn-custom next pull-right' id="continue_from_create">Save & Continue</button>
+                </div>
+            </div>
+            <div class = 'naming_form col-xs-12'>
+                <form class="form-horizontal row" role="form" method="POST" style="padding-top:20px;padding-bottom:50px">
+                    <div class="col-xs-9">
+                        <div class="form-group create-template-form-elements col-xs-12" style = "margin-bottom:0px">
+                            <label for="contentName" class="col-xs-4">Name of the activity</label>
+                            <div class="col-xs-8">
+                                <input type="text" name="contentName" id="contentName" class="form-control">
+                                <p class="text-warning">Please name the activity carefully, this name will be shown to the student</p>
+                            </div>
+                        </div>
+                        <div class="form-group create-template-form-elements col-xs-12" style = "margin-bottom:0px">
+                            <label for="description" class="col-xs-4">Description</label>
+                            <div class="col-xs-8">
+                                <input type="text" name="description" id="description" maxlength="350" class="form-control">
+                                <p class="text-warning">Maximum character limit is 350</p>
+                            </div>
+                        </div>
+                        <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                            <label for="class" class="col-xs-4">Class</label>
+                            <div class="col-xs-8 select-wrap ">
+                                <%= collection_select :tag, :class_id, @class_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"className"} %>
+                            </div>
+                        </div>
+                        <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                            <label for="subject" class="col-xs-4">Subject</label>
+                            <div class="col-xs-8 select-wrap">
+                                <%= collection_select :tag, :class_id, @subject_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"subject"} %>                                </div>
+                        </div>
+                        <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                            <label for="chapter/topicTags" class="col-xs-4">Chapter/Topic tags</label>
+                            <div class="col-xs-8 select-wrap">
+                                <%= collection_select :tag, :class_id, @concept_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"chapter"} %>                                </div>
+                        </div>
+                        <input type="hidden" name="learning_activity_type" id="learning_activity_type" value="flash_cards">
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="create-activity-tab">
+            <div class="options_for_modals col-xs-12">
+                <div class='col-xs-9 no-padding'>
+                    <div class="back-to-template" >
+                        <img class="pull-left" style="margin-right:15px;margin-top:5px" alt="Back" src="/assets/activities/back.png">
+                    </div>
+                    <button type="button" class=" btn " id="DescriptionModal"><span class="glyphicon glyphicon-plus" style="margin-right:5px"></span>Add Instructions</button>
+                    <button type="button" class=" btn " data-toggle="modal" data-target="#ModalForPreview" id="PreviewModal">Preview</button>
+                    <button class="btn logo-btn" id="edit-logo"><img src="/assets/activities/ignitor_logo.png" style="width:20px;height:20px;"><span  style="margin-left:8px">Edit Logo</span></button>
+                    <input  name="Select File" type="file" accept=".jpg, .jpeg, .png" class="logo-upload" style="display:none"/>
+                </div>
+                <button class="btn btn-custom save next pull-right" id="save-template" >Save Template</button>
+            </div>
+            <div class="col-xs-12 no-padding" id="create-activity-content">
+                <div class="col-xs-3 no-padding" id="card-details">
+                    <div class="col-xs-12" style="background-color: #76c4ac;padding:5px;">
+                        <span class="text-left" style="color:#ffffff;font-size:16px">Card details</span>
+                        <span  id="add-to-list" >+Add Card</span>
+                    </div>
+                    <!-- <span class="glyphicon glyphicon-list-alt text-center" style="padding:80px;font-size:120px"></span> -->
+                    <div class="col-xs-12 no-padding" id="card-list" style="height:553px">
+                        <ul class="nav nav-pills nav-stacked" id="card-tabs" role="tablist">
+                        </ul>
+                            <span id="empty-list" class="text-center">
+                            <img src="/assets/activities/empty-list.png">
+                            <div class="text-center">Empty List</div>
+                            </span>
+
+                    </div>
+                    <div class="col-xs-12 clue-answer-image-restrictions text-center" style="position:relative;bottom:3px">Maximum 15 cards only</div>
+                </div>
+                <div class="col-xs-9 no-padding" id="empty-clues-answers">
+                    <div class="clue-details">
+                        <span class="col-xs-12 text-left" style="color:#ffffff;font-size:16px;background-color: #2fb38e;padding-top:5px;padding-bottom:5px">Clue</span>
+
+                    </div>
+                    <div class="answer-details">
+                        <span class="col-xs-12 text-left" style="color:#ffffff;font-size:16px;background-color: #2fb38e;padding-top:5px;padding-bottom:5px">Answer</span>
+                    </div>
+                </div>
+                <div class="col-xs-9 no-padding" id="clues-answers">
+                    <div class="tab-content">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for description-->
+<div class="modal fade fadeModal" id="ModalForDescription" role="dialog" data-backdrop="false">
+    <div class="modal-dialog description-modal-dialog">
+        <!-- Modal content for description-->
+        <div class="modal-content modal-description">
+            <div class="modal-body">
+                <h4 class="modal-title modal-title-description">Add the Instructions below for students.</h4>
+                <textarea class="form-control" rows="5" id="textarea-description" placeholder="Instructions for students"></textarea>
+            </div>
+            <p class="clue-answer-image-restrictions col-xs-9">Maximum character limit is 350</p>
+            <div class="col-xs-3 no-padding">
+                <button type="button" class="btn  modal_btns" data-dismiss="modal" id="AddDescription" style="margin-left:15%">Add</button>
+                <button type="button" class="btn  modal_btns" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal for Preview-->
+<div class="modal fade fadeModal" id="ModalForPreview" data-keyboard="false" data-backdrop="static" role="dialog">
+    <div class="modal-dialog preview-modal-dialog">
+        <!-- Modal content for tag box answers-->
+        <div class="modal-content modal-content-preview no-border-radius bodyForPreview">
+            <div class="modal-header modal-header-preview">
+                <span class="glyphicon glyphicon-remove pull-right" style="cursor:pointer" data-dismiss="modal"></span>
+                <p class="modal-title modal-title-preview">Flash Cards Preview</p>
+            </div>
+            <div class="modal-body no-padding previewBody" id="preview-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/assets/activities/play_for_flash_cards.js"></script>
+<script src="/assets/activities/flash_cards.js"></script>
+</body>
+
+</html>

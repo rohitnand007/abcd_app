@@ -1,0 +1,29 @@
+#content_header
+  %h1#maend_heading assessment_end_topic_quizzes
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}",assessment_end_topic_quizzes_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_end_topic_quiz_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_end_topic_quiz_path(@assessment_end_topic_quiz)
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_end_topic_quiz_path(@assessment_end_topic_quiz)
+#data
+  #application-list
+    .heading= @assessment_end_topic_quiz.name
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.assessment_end_topic_quiz.rb.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @assessment_end_topic_quiz.name
+        %tr.even.left
+          %td
+          - if current_user.role.name.eql?('Support Team')
+            %td.right= link_to "Download", est_download_content_path(@assessment_end_topic_quiz) ,:title=>'Download Attachement',:class=>'tipTipRight'
+          - else
+            %td.right= link_to "Download", download_zip_content_path(@assessment_end_topic_quiz) ,:title=>'Download Attachement',:class=>'tipTipRight'
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2',:align=>'right'}
+            = link_to 'Edit', edit_assessment_end_topic_quiz_path(@assessment_end_topic_quiz), :class => "button icon edit"
+            = link_to 'Delete',assessment_end_topic_quiz_path(@assessment_end_topic_quiz), :method => "delete",
+                            :class => "button danger icon remove", :confirm => "Are you sure?"

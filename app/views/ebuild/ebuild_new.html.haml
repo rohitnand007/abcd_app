@@ -1,0 +1,84 @@
+= simple_form_for @ebuild_tag, :url => post_ebuild_path, :method => :post, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Build!",
+                        :message => "You'll need to fix the following fields:"
+
+  .inputs
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:prompt=>'Select'},{:class=>"drop_down"}
+    .group
+      .field#ebuild_list
+        = label :ebuild, :list, :class=>'label'
+        = select :ebuild, :ebuild_id ,[]
+    .group
+      .field#package_list
+        =# render 'package_list'
+    .group
+      .field
+        = f.input :ebuild_name, :input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        =f.simple_fields_for :ebuild_apps do |a|
+          -#= a.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+          -#= a.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+          = render 'ebuild_app_fields', :f => a
+      .add_more{:style=>'margin-left:30%',:align=>'center'}
+        = link_to_add_association '+Add Attachment', f, :ebuild_apps
+
+    .group
+      .field
+        = f.simple_fields_for :ebuild_publish do |p|
+          = p.hidden_field :ebuild_tag_id,:class=>"ebuild_tag_id"
+          = p.input :user_id ,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:label=>'Group' do
+            = p.collection_select :user_id,asign_groups(current_user),:user_id,:firstname,{:include_blank => false,:prompt=>"select group"} ,{:class=>"drop_down"}
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), root_path,:class=>'button danger icon remove'
+
+
+:javascript
+    $("#ebuild_tag_institution_id").change(function() {
+           $("#ebuild_ebuild_id").html('')
+          $("#package_list").html('')
+         var selected_value = $('select#ebuild_tag_institution_id :selected').val();
+         var url = "/get_builds/"
+         var div_update = "#ebuild_ebuild_id"
+         get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#ebuild_ebuild_id").change(function() {
+          var ebuild = $('select#ebuild_ebuild_id :selected').val();
+          if (ebuild==''){
+             $("#package_list").html('')
+          }
+          $.ajax({//  // to get centers under institute
+              type: "GET",
+              url: '/ebuild/' + ebuild ,
+              beforeSend:  function() {
+                  $("#loading").show();
+              },
+              success: function(data){
+                  $("#loading").hide();
+                  $('#progress_progress-indicator').remove(); // remove the progress-indicator
+                  if (data.length == 0) {
+                      alert('No apps found');
+                  }
+              }
+          });
+      });
+
+    $('[id^="ebuild_tag_ebuild_publish_"]').change(function(){
+         var ebuild = $('select#ebuild_ebuild_id :selected').val();
+         var group_id = $('select[id^="ebuild_tag_ebuild_publish_"] :selected').val();
+         if (group_id == "") {
+          $('.ebuild_tag_id').val('');
+         }
+         else{
+          $('.ebuild_tag_id').val(ebuild);
+         }
+    });
+
+
+

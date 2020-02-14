@@ -1,0 +1,694 @@
+class PowerchipsController < ApplicationController
+
+  skip_before_filter :authenticate_user!
+
+  # GET /powerchips
+  # GET /powerchips.json
+  def index
+    @powerchips = Powerchip.page(params[:page])
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @powerchips }
+    end
+  end
+
+  # GET /powerchips/1
+  # GET /powerchips/1.json
+  def show
+    @powerchip = Powerchip.find(params[:id])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @powerchip }
+    end
+  end
+
+  # GET /powerchips/new
+  # GET /powerchips/new.json
+  def new
+    @powerchip = Powerchip.new
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.json { render json: @powerchip }
+    end
+  end
+
+  # GET /powerchips/1/edit
+  def edit
+    @powerchip = Powerchip.find(params[:id])
+  end
+
+  # POST /powerchips
+  # POST /powerchips.json
+  def create
+
+    device_info = JSON.load(params[:device_info])
+    chip_fs_info =JSON.load(params[:chip_fs_info])
+    chip_info = JSON.load(params[:chip_info])
+
+    @admin_device = DeviceProperty.where(:mac_id=>device_info['mac_id'])
+    if @admin_device.empty?
+
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>false,:error=>"Invalid admin device"}}
+      end
+      logger.info"=========admin"
+      return
+
+    end
+
+    @issue_id = params[:masterchip_id]
+    @master_chip = Masterchip.find_by_issue_id(@issue_id)
+
+    if @master_chip.nil?
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>false,:error=>"Invalid masterchip id"} }
+      end
+      logger.info"=========master"
+      return
+
+    end
+
+    @master_chip_fs = ChipFsInfo.find(@master_chip.chip_fs_info_id)
+    @master_chip_fs = @master_chip_fs.to_json
+    @master_chip_fs = JSON.load(@master_chip_fs)
+    @master_chip_fs.delete('created_at')
+    @master_chip_fs.delete('updated_at')
+    @master_chip_fs.delete('id')
+    if !chip_fs_info_are_equal(@master_chip_fs,chip_fs_info)
+      respond_to do |format|
+        format.json { render json: {:chip_accepted=>false,:error=>"chip_fs_info doesn't match"} }
+      end
+      logger.info"=========chipfs"
+      return
+    end
+
+    chip_type = chip_info['type']
+    chip_info.delete('type')
+    chip_info['chip_type'] = chip_type
+
+    m_chip_info = chip_info
+    m_chip_info['issue_id'] = params[:masterchip_id]
+    m_chip_info.delete('masterchip_id')
+    @master_aspchip = Masterchip.where(m_chip_info)
+
+    if !@master_aspchip.empty?
+      respond_to do |format|
+        format.json { render json: {:chip_accepted=>false,:error=>"This is Masterchip"} }
+      end
+      return
+    end
+
+
+    chip_info.delete('issue_id')
+    chip_info['masterchip_id'] = params[:masterchip_id]
+
+    logger.info"===================#{chip_info}"
+    @pchip_exist = Powerchip.where(chip_info)
+    logger.info"===================#{@pchip_exist}"
+    @response = {}
+    if @pchip_exist.empty?
+      logger.info"===========innn========#{@pchip_exist}"
+      @pcid =  Powerchip.find_by_cid(chip_info['cid'])
+      @pserial = Powerchip.find_by_serial(chip_info['serial'])
+
+      @collision = ''
+      if !@pcid.nil?
+        @collision = "collison with #{@pcid.id}"
+      end
+
+      if !@pserial.nil?
+        @collision += "collison with #{@pserial.id}"
+      end
+      logger.info "==========Collusion #{@collision} "
+
+      if @collision.length != 0 #!@collision.nil?
+        logger.info"==================in collusion====="
+        @response = {:chip_accepted=>false,:error=>@collision}
+        record_chip_errors(@response)
+        respond_to do |format|
+          format.json { render json: @response }
+        end
+        return
+      else
+        logger.info"======increate===pchip"
+        @powerchip = Powerchip.new(chip_info)
+        respond_to do |format|
+          if @powerchip.save
+            format.json { render json: {:chip_accepted=>true} }
+          else
+            if @powerchip.errors.any?
+              record_chip_errors(@powerchip.errors)
+            end
+            format.json { render json: {:chip_accepted=>false,:error=>@powerchip.errors} }
+          end
+        end
+      end
+    else
+      logger.info"=========powerchip existed accepted"
+      respond_to do |format|
+        format.json { render json: {:chip_accepted=>true} }
+      end
+    end
+  end
+
+  # PUT /powerchips/1
+  # PUT /powerchips/1.json
+  def update
+    @powerchip = Powerchip.find(params[:id])
+
+    respond_to do |format|
+      if @powerchip.update_attributes(params[:powerchip])
+        format.html { redirect_to @powerchip, notice: 'Powerchip was successfully updated.' }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @powerchip.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # DELETE /powerchips/1
+  # DELETE /powerchips/1.json
+  def destroy
+    @powerchip = Powerchip.find(params[:id])
+    @powerchip.destroy
+
+    respond_to do |format|
+      format.html { redirect_to powerchips_url }
+      format.json { head :ok }
+    end
+  end
+
+  def admin_device_register
+    device_info = JSON.load(params[:device_info])
+    chip_fs_info =JSON.load(params[:chip_fs_info])
+    chip_info = JSON.load(params[:chip_info])
+    @device_propoerty = DeviceProperty.new(device_info)
+    respond_to do |format|
+      if @device_propoerty.save
+        @response = {:device_accepted=>true}
+        format.json { render json: @response }
+      else
+        if @device_propoerty.errors.any?
+          record_chip_errors(@device_propoerty.errors)
+        end
+        @response = {:device_accepted=>false}
+        format.json { render json: @response }
+      end
+    end
+
+
+
+  end
+
+  def masterchip_register
+    device_info = JSON.load(params[:device_info])
+    chip_fs_info =JSON.load(params[:chip_fs_info])
+    chip_info = JSON.load(params[:chip_info])
+    chip_info['chip_type'] = chip_info['type']
+    chip_info.delete('type')
+    @admin_device = DeviceProperty.where(device_info)
+    if @admin_device.empty?
+      respond_to do |format|
+        format.json { render json: {:chip_accepted=>false,:error=>'unauthorized'} }
+      end
+      return
+    end
+    ActiveRecord::Base.transaction do
+      @chip_info = ChipFsInfo.create(chip_fs_info)
+      chip_info['chip_fs_info_id']= @chip_info.id
+      @masterchip = Masterchip.new(chip_info)
+      if @masterchip.save
+        respond_to do |format|
+          format.json { render json: {:chip_accepted=>true,:masterchip_id=>@masterchip.issue_id} }
+        end
+        return
+      else
+        if @masterchip.errors.any?
+          record_chip_errors(@masterchip.errors)
+        end
+        respond_to do |format|
+          format.json { render json: {:chip_accepted=>false,:error=>'serial or cid already exist'} }
+        end
+        return
+      end
+    end
+
+
+  end
+
+  def powerchip_validate
+    users = ActionController::HttpAuthentication::Basic::user_name_and_password(request)
+    device = params[:device_id]
+    device_info = JSON.load(params[:device_info])
+    logger.info"============#{device}=======#{users}"
+    chip_fis_info = JSON.load(params[:chip_info])
+
+    logger.info "============#{chip_fis_info}"
+
+    #N010613301522
+
+
+    begin
+      if device == "N010613301522"
+        respond_to do |format|
+          format.json { render json:  {:chip_accepted=>true} }
+        end
+        return
+      end
+    rescue Exception=>e
+      logger.info "Exception ..............#{e.message}"
+    end
+
+
+
+
+    begin
+    if chip_fis_info['cid'] == "1b534d3030303030101df8f0d400d3c9"
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>true} }
+      end
+      return
+    end
+    rescue Exception=>e
+      logger.info "Exception ..............#{e.message}"
+    end
+
+    @device = Device.find_by_deviceid(device)
+    @device_property_exist  = DeviceProperty.find_by_imei_and_mac_id_and_android_id(device_info['imei'],device_info['mac_id'],device_info['android_id'])
+
+    if @device_property_exist.nil?
+      @device_property = DeviceProperty.create(device_info)
+    else
+      @device_property = @device_property_exist
+    end
+
+
+
+    if @device.nil?
+      respond_to do |format|
+        format.json {render json: {:chip_accepted=>false,:error=>'Invalid Deviceid'}}
+      end
+      return
+    end
+
+    @user = User.find_by_edutorid(users[0])
+    if !@user && !@user.valid_password?(params[:password])
+      respond_to do |format|
+        format.json {render json: {:chip_accepted=>false,:error=>'Invalid User or Password'}}
+      end
+      return
+    end
+
+    @response = {}
+    device_info = JSON.load(params[:device_info])
+    chip_fs_info =JSON.load(params[:chip_fs_info])
+    chip_info = JSON.load(params[:chip_info])
+
+    @powerchip = Powerchip.find_by_cid_and_serial(chip_info['cid'],chip_info['serial'])
+
+    @issue_id = params[:masterchip_id]
+    if @issue_id.nil?
+      if @powerchip.nil?
+        respond_to do |format|
+          format.json { render json:  {:chip_accepted=>false,:error=>"Invalid powerchip"} }
+        end
+        return
+      end
+      @master_chip = Masterchip.find_by_issue_id(@powerchip.masterchip_id)
+    else
+      @master_chip = Masterchip.find_by_issue_id(@issue_id)
+    end
+
+
+    if @master_chip.nil?
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>false,:error=>"Invalid masterchip id"} }
+      end
+      return
+    end
+
+    @master_chip_fs = ChipFsInfo.find(@master_chip.chip_fs_info_id)
+    @master_chip_fs = @master_chip_fs.to_json
+    @master_chip_fs = JSON.load(@master_chip_fs)
+    @master_chip_fs.delete('created_at')
+    @master_chip_fs.delete('updated_at')
+    @master_chip_fs.delete('id')
+    if !chip_fs_info_are_equal(@master_chip_fs,chip_fs_info)
+      @response = @response.merge({:chip_accepted=>true,:chip_fs_error=>"chip_fs_info doesn't match"})
+    end
+
+    if @master_chip.masterchip_details.nil?
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>false,:error=>'masterchip details not updated'} }
+      end
+      return
+    end
+
+
+    #11910
+    if @user.section.boards.first.id != @master_chip.masterchip_details.course.to_i
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>false,:error=>"course doesn't match"} }
+      end
+      return
+    end
+
+
+    @already_asigned = UserDevicePowerchip.find_by_powerchip_id(@powerchip.id)
+    if !@already_asigned.nil?
+      if @already_asigned.user_id == @user.id
+        respond_to do |format|
+          format.json { render json: {:chip_accepted=>true,:error=>"Powerchip already assigned}"} }
+        end
+        return
+      else
+        respond_to do |format|
+          format.json { render json: {:chip_accepted=>false,:error=>"Powerchip already assigned to #{@already_asigned.user.edutorid}"} }
+        end
+        return
+      end
+    end
+
+
+    @powerchip_exist = UserDevicePowerchip.where(:user_id=>@user.id,:device_id=>@device.id,:powerchip_id=>@powerchip.id,:device_property_id=>@device_property.id)
+
+
+    if @powerchip_exist.empty?
+      UserDevicePowerchip.create(:user_id=>@user.id,:powerchip_id=>@powerchip.id,:device_id=>@device.id,:device_property_id=>@device_property.id)
+      respond_to do |format|
+        format.json { render json: {:chip_accepted=>true} }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: {:chip_accepted=>true,:error=>'Powerchip already assigned'} }
+      end
+    end
+
+  end
+
+  def chip_fs_info_are_equal(master_fs,fs)
+    ['available_blocks','block_count','block_size','free_blocks'].each do |k|
+      unless master_fs[k].to_s == fs[k].to_s
+        return false
+      end
+    end
+    true
+  end
+
+  def masterchip_list
+    @masterchips = Masterchip.page(params[:page])
+  end
+
+  def show_masterchip
+    @masterchip = Masterchip.find(params[:id])
+  end
+
+  def masterchip_details
+    @masterchip = Masterchip.find(params[:id])
+    @details = MasterchipDetails.new
+  end
+
+  def save_masterchip_details
+    @masterchip = Masterchip.find(params[:id])
+    @details = MasterchipDetails.new(params[:masterchip_details])
+    @details.masterchip_id = @masterchip.id
+    respond_to do |format|
+      if @details.save
+        format.html { redirect_to show_masterchip_path(@masterchip), notice: 'Masterchip details successfully created.' }
+        format.json { render json: @masterchip, status: :created, location: @content_year }
+      else
+        format.html { render action: "powerchip_details" }
+        format.json { render json: @masterchip.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+
+
+
+  def assign_pwerchip
+    users = ActionController::HttpAuthentication::Basic::user_name_and_password(request)
+    @user = User.find_by_edutorid(users[0])
+    if !@user && !@user.valid_password?(params[:password])
+      respond_to do |format|
+        format.json {render json: {:chip_accepted=>false,:error=>'Invalid User or Password'}}
+      end
+      return
+    end
+
+    device_info = JSON.load(params[:device_info])
+
+
+    chip_fs_info =JSON.load(params[:chip_fs_info])
+    chip_info = JSON.load(params[:chip_info])
+    @issue_id = params[:masterchip_id]
+    @master_chip = Masterchip.find_by_issue_id(@issue_id)
+    @powerchip = Powerchip.find_by_serial_and_cid(chip_info['serial'],chip_info['cid'])
+    @user = User.find_by_edutorid(params[:edutorid])
+
+    @issue_id = params[:masterchip_id]
+    if @issue_id.nil?
+      if @powerchip.nil?
+        respond_to do |format|
+          format.json { render json:  {:chip_accepted=>false,:error=>"Invalid powerchip"} }
+        end
+        return
+      end
+      @master_chip = Masterchip.find_by_issue_id(@powerchip.masterchip_id)
+    else
+      @master_chip = Masterchip.find_by_issue_id(@issue_id)
+    end
+
+
+    if @master_chip.nil?
+      respond_to do |format|
+        format.json { render json:  {:chip_accepted=>false,:error=>"Invalid masterchip id"} }
+      end
+      return
+    end
+
+    @already_asigned = UserDevicePowerchip.where(:powerchip_id=>@powerchip.id)
+    if !@already_asigned.empty?
+      respond_to do |format|
+        format.json { render json: {:powerchip_assign=>false,:error=>"Powerchip already assigned to #{@already_asigned.first.user.edutor.id}"} }
+      end
+      return
+    end
+
+    if @user.devices.empty?
+      @powerchip_exist = UserDevicePowerchip.where(:user_id=>@user.id,:powerchip_id=>@powerchip.id)
+    else
+      @powerchip_exist = UserDevicePowerchip.where(:user_id=>@user.id,:device_id=>@user.devices.first.id,:powerchip_id=>@powerchip.id)
+    end
+
+
+    if @powerchip_exist.empty?
+      UserDevicePowerchip.create(:user_id=>@user.id,:powerchip_id=>@powerchip.id,:device_id=>@user.devices.first.id)
+      respond_to do |format|
+        format.json { render json: {:powerchip_assign=>true} }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: {:powerchip_assign=>true,:error=>'Powerchip already assigned'} }
+      end
+    end
+
+  end
+
+
+  def user_device_powerchip_list
+    @list = UserDevicePowerchip.page(params[:page])
+  end
+
+  def delink_user_powerchip
+    @chip = UserDevicePowerchip.find(params[:id])
+    @chip.destroy
+    redirect_to user_powerchip_list_path
+  end
+
+
+  def record_chip_errors(errors)
+    file = File.new(Rails.root.to_s+"/public/chip_error.txt", "a+")
+    File.open(file,  "a", 0644) do |f|
+      f.puts(errors.inspect.to_s)
+    end
+  end
+
+
+
+  def replicate_chip
+    @masterchip = Masterchip.find(params[:id])
+    @chip_fs_info = ChipFsInfo.find(@masterchip.chip_fs_info_id)
+    @chip_fs_info.update_attributes(:available_blocks=>@chip_fs_info.available_blocks.to_i-1,:free_blocks=>@chip_fs_info.free_blocks.to_i-1,:is_replicate=>true)
+    redirect_to masterchip_list_path
+  end
+                                                                   
+
+  def user_device_info_update
+     logger.info"===========#{params}"
+     #user_device_info_update?mac_id="6C:F3:73:25:EE:0C"&&serialno="c1607305c0f4f21"&&serialnumber="RF2D30E22BY"
+     #={"mac_id"=>"\"6C:F3:73:25:EE:0C\"?serialno=\"c1607305c0f4f21\"?serialnumber=\"RF2D30E22BY", "controller"=>"powerchips", "action"=>"user_device_info_update"}
+     logger.info"===========#{params['mac_id']}=====#{params['serialno']}"
+     device_property = DeviceProperty.find_by_mac_id_and_serial(params['mac_id'],params['serialno'])
+     logger.info"===#{device_property}"
+    if !device_property.nil?
+      device_property.update_attribute(:serialnumber=>params['serialnumber'])
+    end
+    render :text=>'updated'
+  end
+
+ def powerchip_remove
+    users = ActionController::HttpAuthentication::Basic::user_name_and_password(request)
+    device = params[:device_id]
+    device_info = JSON.load(params[:device_info])
+    chip_fis_info = JSON.load(params[:chip_info])
+    chip_info = JSON.load(params[:chip_info])
+
+    @device = Device.find_by_deviceid(device)
+    @device_property_exist  = DeviceProperty.find_by_imei_and_mac_id(device_info['imei'],device_info['mac_id'])
+
+    if @device_property_exist.nil?
+      respond_to do |format|
+        format.json {render json: {:chip_removed=>false,:error=>'Invalid Admin Device'}}
+      end
+      return
+    end
+
+
+    #if @device.nil?
+    #  respond_to do |format|
+    #    format.json {render json: {:chip_removed=>false,:error=>'Invalid Deviceid'}}
+    #  end
+    #  return
+    #end
+
+    #@user = User.find_by_edutorid(users[0])
+    #if !@user && !@user.valid_password?(params[:password])
+    #  respond_to do |format|
+    #    format.json {render json: {:chip_removed=>false,:error=>'Invalid User or Password'}}
+    #  end
+    #  return
+    #end
+
+    @masterchip  = Masterchip.find_by_cid_and_serial(chip_info['cid'],chip_info['serial'])
+
+    if @masterchip
+      respond_to do |format|
+        format.json { render json:  {:chip_removed=>false,:error=>"This is Masterchip"} }
+      end
+      return
+    end
+
+    @response = {}
+
+
+    @powerchip = Powerchip.find_by_cid_and_serial(chip_info['cid'],chip_info['serial'])
+
+    if !@powerchip.nil?
+     # new_cid = @powerchip.cid+"DELETED"
+     # @powerchip.cid = new_cid
+     # new_serial = @powerchip.serial+"DELETED"
+     # @powerchip.serial = new_serial
+      new_cid = @powerchip.cid+Time.now.to_i.to_s+"DELETED"
+      new_serial = @powerchip.serial+Time.now.to_i.to_s+"DELETED"
+      @powerchip.serial = new_serial
+      @powerchip.cid = new_cid
+      respond_to do |format|
+        if @powerchip.save
+          format.json { render json:  {:chip_removed=>true} }
+        else
+          logger.info"====not saved==#{@powerchip.errors}"
+          format.json { render json:  {:chip_removed=>false} }
+        end
+      end
+    else
+      respond_to do |format|
+        format.json { render json:  {:chip_removed=>false,:error=>"Invalid powerchip"} }
+      end
+    end
+
+    #@issue_id = params[:masterchip_id]
+    #if @issue_id.nil?
+    #  if @powerchip.nil?
+    #    respond_to do |format|
+    #      format.json { render json:  {:chip_removed=>false,:error=>"Invalid powerchip"} }
+    #    end
+    #    return
+    #  end
+    #  @master_chip = Masterchip.find_by_issue_id(@powerchip.masterchip_id)
+    #else
+    #  @master_chip = Masterchip.find_by_issue_id(@issue_id)
+    #end
+
+
+    #if @master_chip.nil?
+    #  respond_to do |format|
+    #    format.json { render json:  {:chip_removed=>false,:error=>"Invalid masterchip id"} }
+    #  end
+    #  return
+    #end
+
+    #@master_chip_fs = ChipFsInfo.find(@master_chip.chip_fs_info_id)
+    #@master_chip_fs = @master_chip_fs.to_json
+    #@master_chip_fs = JSON.load(@master_chip_fs)
+    #@master_chip_fs.delete('created_at')
+    #@master_chip_fs.delete('updated_at')
+    #@master_chip_fs.delete('id')
+    #if !chip_fs_info_are_equal(@master_chip_fs,chip_fs_info)
+    #  @response = @response.merge({:chip_removed=>true,:chip_fs_error=>"chip_fs_info doesn't match"})
+    #end
+
+    #if @master_chip.masterchip_details.nil?
+    #  respond_to do |format|
+    #    format.json { render json:  {:chip_removed=>false,:error=>'masterchip details not updated'} }
+    #  end
+    #  return
+    #end
+
+
+    #11910
+    #if @user.section.boards.first.id != @master_chip.masterchip_details.course.to_i
+    #  respond_to do |format|
+    #    format.json { render json:  {:chip_removed=>false,:error=>"course doesn't match"} }
+    #  end
+    #  return
+    #end
+
+
+    #@already_asigned = UserDevicePowerchip.find_by_powerchip_id(@powerchip.id)
+    #if !@already_asigned.nil?
+    #  if @already_asigned.user_id == @user.id
+    #    respond_to do |format|
+    #      format.json { render json: {:chip_removed=>true,:error=>"Powerchip already assigned}"} }
+    #    end
+    #    return
+    #  else
+    #    respond_to do |format|
+    #      format.json { render json: {:chip_removed=>false,:error=>"Powerchip already assigned to #{@already_asigned.user.edutorid}"} }
+    #    end
+    #    return
+    #  end
+    #end
+
+
+    #@powerchip_exist = UserDevicePowerchip.where(:user_id=>@user.id,:device_id=>@device.id,:powerchip_id=>@powerchip.id,:device_property_id=>@device_property.id)
+    #
+    #
+    #if @powerchip_exist.empty?
+    #  UserDevicePowerchip.create(:user_id=>@user.id,:powerchip_id=>@powerchip.id,:device_id=>@device.id,:device_property_id=>@device_property.id)
+    #  respond_to do |format|
+    #    format.json { render json: {:chip_removed=>true} }
+    #  end
+    #else
+    #  respond_to do |format|
+    #    format.json { render json: {:chip_removed=>true,:error=>'Powerchip already assigned'} }
+    #  end
+    #end
+
+  end
+
+end

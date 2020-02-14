@@ -1,0 +1,219 @@
+<%= stylesheet_link_tag "video_page" %>
+
+<div id="assetTypes">
+  <ul>
+    <li>
+      <a href="#videos">Videos</a>
+    </li>
+    <li>
+      <a href="#assessments">Assessments</a>
+    </li>
+    <li>
+      <a href="#pdfs">Pdfs</a>
+    </li>
+    <li>
+      <a href="#audios">Audios</a>
+    </li>
+    <li>
+      <a href="#weblinks">Weblinks</a>
+    </li>
+    <li>
+      <a href="#Htmlassets">Html Assets</a>
+    </li>
+    <li>
+      <a href="#apks">Apks</a>
+    </li>
+    <li>
+      <a href="#igns">Igns</a>
+    </li>
+  </ul>
+  <div id="videos">
+    <table class='table table-hover' id='append_table' align='center'>
+    <tbody>
+    <% @videos.each do |asset| %>
+      <tr>
+      <td><%= image_tag "assets.png" %></td>
+      <td > 
+        <%= asset[:name] %></td>
+      <td class="hide"><b>Asset Type</b>
+        <%= asset[:asset_type] %></td>
+        
+      <td class="hide"><b>GUID </b><span class="guid">
+          <%= asset[:guid]  %>
+        </span></td>
+      <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+      </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+  <div id="assessments">
+    <table class='table table-hover' id='append_table' align='center'>
+    <tbody>
+    <% @quizzes.each do |asset| %>
+      <tr>
+      <td>
+        <%= image_tag "assessments.png" %></td>
+      <td> 
+        <%= asset[:name] %></td>
+      <td class="hide"><b>Asset Type</b>
+        <%= asset[:asset_type] %></td>
+      <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+      <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+      </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+  <div id="pdfs">
+    <table class='table table-hover' id='append_table' align='center'>
+    <tbody>
+    <% @pdfs.each do |asset| %>
+      <tr>
+        <td>
+          <%= image_tag "content.png" %></td>
+        <td> 
+        <%= asset[:name] %></td>
+        <td class="hide"><b>Asset Type</b>
+        <%= asset[:asset_type] %></td>
+        <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+        <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+      </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+  <div id="weblinks">
+    <table class='table table-hover' id='append_table' align='center'>
+      <tbody>
+      <% @weblinks.each do |asset| %>
+          <tr>
+            <td>
+              <%= image_tag "content.png" %></td>
+            <td>
+              <%= asset[:name] %></td>
+            <td class="hide"><b>Asset Type</b>
+              <%= asset[:asset_type] %></td>
+            <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+            <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div id="audios">
+    <table class='table table-hover' id='append_table' align='center'>
+      <tbody>
+      <% @audios.each do |asset| %>
+          <tr>
+            <td>
+              <%= image_tag "content.png" %></td>
+            <td>
+              <%= asset[:name] %></td>
+            <td class="hide"><b>Asset Type</b>
+              <%= asset[:asset_type] %></td>
+            <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+            <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div id="Htmlassets">
+    <table class='table table-hover' id='append_table' align='center'>
+      <tbody>
+      <% @html5_assets.each do |asset| %>
+          <tr>
+            <td>
+              <%= image_tag "content.png" %></td>
+            <td>
+              <%= asset[:name] %></td>
+            <td class="hide"><b>Asset Type</b>
+              <%= asset[:asset_type] %></td>
+            <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+            <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div id="apks">
+    <table class='table table-hover' id='append_table' align='center'>
+      <tbody>
+      <% @apks.each do |asset| %>
+          <tr>
+            <td>
+              <%= image_tag "content.png" %></td>
+            <td>
+              <%= asset[:name] %></td>
+            <td class="hide"><b>Asset Type</b>
+              <%= asset[:asset_type] %></td>
+            <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+            <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div id="igns">
+    <table class='table table-hover' id='append_table' align='center'>
+      <tbody>
+      <% @igns.each do |asset| %>
+          <tr>
+            <td>
+              <%= image_tag "content.png" %></td>
+            <td>
+              <%= asset[:name] %></td>
+            <td class="hide"><b>Asset Type</b>
+              <%= asset[:asset_type] %></td>
+            <td class="hide"><b>GUID</b>
+        <span class="guid">
+          <%= asset[:guid] %>
+        </span></td>
+            <td class= "add_asset"><%= radio_button_tag "guid", asset[:guid], false %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+
+</div>
+<script>
+  
+  var selected_guid = "";
+  var tabs = ["videocipher", "assessment", "pdf"];
+  $("#assetTypes").tabs();
+  $(".add_asset").click(function(){
+    selected_guid = $(this).prev("td").find("span").text();
+  });
+  function GetCurrentAssestGuid(){
+    var active_tab_index = $("#assetTypes").tabs("option", "active");
+    return tabs[active_tab_index] +";" +selected_guid.trim();
+  }
+  $("#nav_icons").css("display", "none");
+</script>
+
+<style>
+.hide{
+  display : none;
+}
+</style>

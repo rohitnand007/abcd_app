@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <p>
+   	Your message to <%=@to_a%> could not be delivered, because no user exist or sender address is not valid.
+    </p>
+    <p>
+      Some of the valid sender address formats are as follows:<br/>
+      1. Id@<%=@c_name%>.myedutor.com . e.g ES-XXX@<%=@c_name%>.myedutor.com <br/>
+      2. Class@<%=@c_name%>.myedutor.com . e.g 9@<%=@c_name%>.myedutor.com <br/>
+      2. Class-Section@<%=@c_name%>.myedutor.com . e.g 9-A@<%=@c_name%>.myedutor.com <br/>
+    </p>
+    <p>
+      Valid email ids list:<br/>
+      Classes:<br/>
+    <ul>
+      <% classes = User.where(:type=>'AcademicClass',:center_id=>@center.id) %>
+      <%classes.each do |c|%>
+        <%name = Profile.where(:user_id=>c.id)%>
+        <li>
+          <%=name.first.firstname%>@<%=@c_name%>.myedutor.com
+        </li>
+      <%end%>
+    </ul><br/>
+    Sections:<br/>
+    <ul>
+      <%classes.each do |c|%>
+        <%name = Profile.where(:user_id=>c.id)%>
+        <%sections = User.where(:type=>"Section",:academic_class_id=>c.id)%>
+        <%sections.each do |s|%>
+          <%section = Profile.where(:user_id=>s.id)%>
+          <li>
+            <%=name.first.firstname%>-<%=section.first.firstname%>@<%=@c_name%>.myedutor.com
+          </li>
+        <%end%>
+      <%end%>
+    </ul>
+  </p>
+
+  <p>
+    For any queries please mail at support@myedutor.com
+  </p>
+  <p>
+    Regards,<br/>
+    Edutor Support
+  </p>
+</body>
+</html>

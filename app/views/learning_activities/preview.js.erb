@@ -1,0 +1,4 @@
+ <% @partial_view = "preview_"+ @learning_activity.learning_activity_type%>;
+$(".previewBody").html("<%= escape_javascript(render @partial_view,:locals=>{:id=>@learning_activity.id})%>");
+$(".modal-backdrop").css("display", "none")
+

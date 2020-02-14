@@ -1,0 +1,434 @@
+-if user_signed_in? && (current_user.rc=="EA")
+  #header_home.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "home.png"),root_path
+    .nav_text
+      %label
+        Home
+  #header_manage_users.nav_icon_block
+    .nav_icon_image
+      = image_tag "manage_users.png"
+    .nav_text.drop
+      %label
+        Manage Users
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Institutions",institutions_path
+      %li= link_to "Centers",centers_path
+      %li= link_to "Classes", academic_classes_path
+      %li= link_to "Sections", sections_path
+      %li= link_to "Groups", groups_path
+      %li= link_to "Teachers", teachers_path
+      %li= link_to "Students", users_path
+      %li= link_to "Student Search", student_search_path
+      %li= link_to "Publishers", publishers_path
+      -#%li= link_to "Roles", roles_path
+      %li= link_to "Upload Students", upload_csv_file_path
+      %li= link_to "Bulk Assign Licenses", bulk_assign_interface_license_sets_path
+      %li= link_to "Bulk Unassign Licenses", bulk_unassign_interface_license_sets_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  -##header_assessments.nav_icon_block
+  -#  .nav_icon_image
+  -#    = image_tag "assessments.png"
+  -#  .nav_text.drop
+  -#    %label
+  -#      Assessments
+  -#  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+  -#    %li= link_to "Quick Test", controller:"quick_test",action:"new"
+  -#    -#%li= link_to "Assessments",quizzes_path
+  -#    %li= link_to "Zip Uploads", quizzes_zip_upload_path
+  -#  -#%li= link_to "Assessments",'/assessment_tool/all_assessments'
+  -#    -#%li= link_to "Question Bank",questionbank_path
+  -#    -#%li= link_to "New Question Bank",assessment_tool_manage_questions_path
+  -#  .nav_menuarrow
+  -#    = image_tag "menu_arrow.png"
+  -##header_contents_old.nav_icon_block
+  -#  .nav_icon_image
+  -#    = image_tag "content.png"
+  -#  .nav_text.drop
+  -#    %label
+  -#      Content (Old)
+  -#  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+  -#    %li= link_to "Boards", boards_path
+  -#    %li= link_to "Content Years", content_years_path
+  -#    %li= link_to "Subjects", subjects_path
+  -#    %li= link_to "Chapters", chapters_path
+  -#    %li= link_to "Topics", topics_path
+  -#    %li= link_to "Sub Topics", sub_topics_path
+  -#    %li= link_to "Web Links",web_links_path
+  -#    %li= link_to "Usages",usages_path
+  -#    -#%li= link_to "Test Configurations", test_configurations_path
+  -#    %li= link_to 'Upload Ncx file' ,ncx_upload_path
+  -#  .nav_menuarrow
+  -#    = image_tag "menu_arrow.png"
+  #header_devices.nav_icon_block
+    .nav_icon_image
+      = image_tag "devices.png"
+    .nav_text.drop
+      %label
+        Devices
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Devices", devices_path
+      -#%li= link_to "Delink Powerchips", powerchip_unregister_path
+      -#%li= link_to "Powerchip slots", powerchip_slots_path
+      %li= link_to "Device Messages", device_messages_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_question_bank.nav_icon_block
+    .nav_icon_image
+      = image_tag "question_bank.png"
+    .nav_text
+      %label
+        Question Bank
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      -#%li= link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+      -#%li= link_to "Search Questions", assessment_tool_manage_questions_path
+      %li= link_to "All Question Banks", publisher_question_banks_path
+      %li= link_to "Stores", stores_path
+      -#%li= link_to "Ignitor Times", ignitor_times_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_tags.nav_icon_block
+    .nav_icon_image= image_tag "books_collections.png"
+    .nav_text
+      %label Tags
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Tags List", tags_path
+      %li= link_to "Tag DBS", tags_dbs_path
+      %li= link_to "Add Tags(CSV)", csv_upload_interface_tags_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+-elsif user_signed_in? && (current_user.rc=="IA" or current_user.rc=="EO")
+  #header_home.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "home.png"),root_path
+    .nav_text
+      %label
+        Home
+  #header_manage_users.nav_icon_block
+    .nav_icon_image
+      = image_tag "manage_users.png"
+    .nav_text.drop
+      %label
+        = link_to 'Manage Users', "#",:class=>"droplabel"
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Centers",centers_path
+      %li= link_to "Classes", academic_classes_path
+      %li= link_to "Sections", sections_path
+      %li= link_to "Groups", groups_path
+      %li= link_to "Teachers", teachers_path
+      %li= link_to "Students", users_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_assessments.nav_icon_block
+    .nav_icon_image
+      = image_tag "assessments.png"
+    .nav_text.drop
+      %label
+        = link_to 'Assessments', "#"
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Quick Test", controller:"quick_test",action:"new"
+      -#%li= link_to "Assessments",quizzes_path
+      %li= link_to "Zip Uploads", quizzes_zip_upload_path
+      %li= link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+      %li= link_to "Assessments",'/assessment_tool/all_assessments'
+      %li= link_to "Zip Uploads[QB]", zip_upload_question_path
+      -#%li= link_to "Question Bank",questionbank_path
+      -#%li= link_to "New Question Bank",assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  -##header_contents_old.nav_icon_block
+  -#  .nav_icon_image
+  -#    = image_tag "content.png"
+  -#  .nav_text
+  -#    %label
+  -#      Content (Old)
+  -#  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+  -#    %li= link_to "Content Years", content_years_path
+  -#    %li= link_to "Subjects", subjects_path
+  -#    %li= link_to "Chapters", chapters_path
+  -#    %li= link_to "Topics", topics_path
+  -#    %li= link_to "Sub Topics", sub_topics_path
+  -#    %li= link_to "Web Links",web_links_path
+  -#    %li= link_to "Usages",usages_path
+  -#    -#%li= link_to "Test Configurations", test_configurations_path
+  -#    %li= link_to 'Upload Ncx file' ,ncx_upload_path
+  -#    %li
+  -#      - if current_user.institution.user_configuration.is_admin_privilege
+  -#        = link_to "Device Messages",device_messages_path
+  -#
+  -#  .nav_menuarrow
+  -#    = image_tag "menu_arrow.png"
+  #header_devices.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "devices.png"),devices_path
+    .nav_text
+      %label
+        Devices
+  #header_question_bank.nav_icon_block
+    .nav_icon_image
+      = image_tag "question_bank.png"
+    .nav_text
+      %label
+        Question Bank
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+      %li= link_to "Search Questions", assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_licenses.nav_icon_block
+    .nav_icon_image
+      = image_tag "licenses.png"
+    .nav_text
+      %label
+        Licenses
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Licenses", license_sets_path
+      %li= link_to "Download Booklist", get_csv_book_list_ibooks_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+-elsif user_signed_in? && (current_user.rc=="ECP")
+  #header_dashboard.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "analytics_icon.png"), dashboard_publisher_path(current_user.id)
+    .nav_text
+      %label Dashboard
+  #header_question_bank.nav_icon_block
+    .nav_icon_image
+      = image_tag "question_bank.png"
+    .nav_text
+      %label
+        Question Bank
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+      %li= link_to "Zip Uploads", zip_upload_question_path
+      %li= link_to "Search Questions", assessment_tool_manage_questions_path
+      %li= link_to "Create New Question Bank", new_publisher_question_bank_path
+      %li= link_to "List all", list_publisher_question_banks_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_books.nav_icon_block
+    .nav_icon_image= image_tag "books.png"
+    .nav_text
+      %label My Books
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Book Catalogue", ibooks_path
+      %li= link_to "Add Book", new_ibook_path
+      %li= link_to "Download Booklist", get_csv_book_list_ibooks_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_collections.nav_icon_block
+    .nav_icon_image= image_tag "books_collections.png"
+    .nav_text
+      %label My Collections
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Collection Catalogue", ipacks_path
+      %li= link_to "Create Collection", new_ipack_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_assets.nav_icon_block
+    .nav_icon_image= image_tag "assets.png"
+    .nav_text
+      %label Assets
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Upload Single Asset", single_asset_upload_interface_user_assets_path
+      %li= link_to "Bulk Upload Assets", bulk_upload_assets_interface_user_assets_path
+      %li= link_to "Asset Catalogue", my_assets_interface_user_assets_path
+      %li= link_to "Assessments", assessment_tool_my_assessments_path
+      %li= link_to "Learning Activities", learning_activities_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_institutes.nav_icon_block
+    .nav_icon_image= link_to (image_tag "institute.png"),schools_publisher_path(current_user.id)
+    .nav_text
+      %label Institutes
+  #header_licenses.nav_icon_block
+    .nav_icon_image= link_to (image_tag "licenses.png"),license_sets_path
+    .nav_text
+      %label Licenses
+-elsif user_signed_in? && (current_user.rc=="CR")
+  #header_home.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "home.png"),root_path
+    .nav_text
+      %label
+        Home
+  #header_manage_users.nav_icon_block
+    .nav_icon_image
+      = image_tag "manage_users.png"
+    .nav_text.drop
+      %label
+        = link_to 'Manage Users', "#",:class=>"droplabel"
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Classes", academic_classes_path
+      %li= link_to "Sections", sections_path
+      %li= link_to "Groups", groups_path
+      %li= link_to "Teachers", teachers_path
+      %li= link_to "Students", users_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_assessments.nav_icon_block
+    .nav_icon_image
+      = image_tag "assessments.png"
+    .nav_text.drop
+      %label
+        = link_to 'Assessments', "#"
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Quick Test", controller:"quick_test",action:"new"
+      -#%li= link_to "Assessments",quizzes_path
+      %li= link_to "Zip Uploads", quizzes_zip_upload_path
+      %li= link_to 'Assessment Uploads', assessment_upload_zip_uploads_path
+      %li= link_to "Assessments",'/assessment_tool/all_assessments'
+      -#%li= link_to "Question Bank",questionbank_path
+      -#%li= link_to "New Question Bank",assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  -##header_contents_old.nav_icon_block
+  -#  .nav_icon_image
+  -#    = image_tag "content.png"
+  -#  .nav_text
+  -#    %label
+  -#      Content (Old)
+  -#  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+  -#    %li= link_to "Boards", boards_path
+  -#    %li= link_to "Content Years", content_years_path
+  -#    %li= link_to "Subjects", subjects_path
+  -#    %li= link_to "Chapters", chapters_path
+  -#    %li= link_to "Topics", topics_path
+  -#    %li= link_to "Sub Topics", sub_topics_path
+  -#    %li= link_to "Web Links",web_links_path
+  -#    %li= link_to "Usages",usages_path
+  -#    -#%li= link_to "Test Configurations", test_configurations_path
+  -#    %li= link_to 'Upload Ncx file' ,ncx_upload_path
+  -#  .nav_menuarrow
+  -#    = image_tag "menu_arrow.png"
+  #header_devices.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "devices.png"),devices_path
+    .nav_text
+      %label
+        Devices
+  #header_question_bank.nav_icon_block
+    .nav_icon_image
+      = image_tag "question_bank.png"
+    .nav_text
+      %label
+        Question Bank
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+      %li= link_to "Search Questions", assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_licenses.nav_icon_block
+    .nav_icon_image
+      = image_tag "licenses.png"
+    .nav_text
+      %label
+        Licenses
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Licenses", license_sets_path
+      %li= link_to "Download Booklist", get_csv_book_list_ibooks_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+-elsif user_signed_in? && (current_user.rc=="ET")
+  #header_home.nav_icon_block
+    .nav_icon_image
+      = link_to (image_tag "home.png"),root_path
+    .nav_text
+      %label
+        Dashboard
+  #header_manage_users.nav_icon_block
+    .nav_icon_image
+      = image_tag "manage_users.png"
+    .nav_text.drop
+      %label
+        Manage Users
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      -#%li= link_to "Institutions",institutions_path
+      -#%li= link_to "Centers",centers_path
+      -#%li= link_to "Classes", academic_classes_path
+      %li= link_to "Sections", sections_path
+      -#%li= link_to "Groups", groups_path
+      -#%li= link_to "Teachers", teachers_path
+      %li= link_to "Students", users_path
+      -#%li= link_to "Student Search", student_search_path
+      -#%li= link_to "Publishers", publishers_path
+      -#%li= link_to "Roles", roles_path
+      -#%li= link_to "Upload Students", upload_csv_file_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_assessments.nav_icon_block
+    .nav_icon_image
+      = image_tag "assessments.png"
+    .nav_text.drop
+      %label
+        Assessments
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Quick Test", controller:"quick_test",action:"new"
+      -#%li= link_to "Assessments",quizzes_path
+      %li= link_to "Zip Uploads", quizzes_zip_upload_path
+      %li= link_to "Assessments",'/assessment_tool/my_assessments'
+      -#%li= link_to "Question Bank",questionbank_path
+      -#%li= link_to "New Question Bank",assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  -##header_contents_old.nav_icon_block
+  -#  .nav_icon_image
+  -#    = image_tag "content.png"
+  -#  .nav_text
+  -#    %label
+  -#      Content (Old)
+  -#  %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+  -#    %li= link_to "My Subjects", my_subjects_teachers_path
+  -#    %li= link_to "My Classes", teacher_path(current_user)
+  -#    -#%li= link_to "Usages",usages_path
+  -#    %li= link_to "Web Links",web_links_path
+  -#    %li= link_to 'Upload Content', teacher_contents_path(current_user)
+  -#    -#%li= link_to 'HomeWork',assessment_home_works_path
+  -#  .nav_menuarrow
+  -#    = image_tag "menu_arrow.png"
+  -# .nav_icon_block
+  -#   .nav_icon_image
+  -#     = link_to (image_tag "devices.png"),devices_path
+  -#   .nav_text
+  -#     %label
+  -#       Devices
+  #header_question_bank.nav_icon_block
+    .nav_icon_image
+      = image_tag "question_bank.png"
+    .nav_text
+      %label
+        Question Bank
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Add New Questions", assessment_tool_manage_questions_path(:p => 1)
+      %li= link_to "Search Question Database", assessment_tool_manage_questions_path
+      -#%li= link_to "Search Questions", assessment_tool_manage_questions_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+  #header_contents_new.nav_icon_block
+    .nav_icon_image
+      = image_tag "content.png"
+    .nav_text
+      %label
+        Content
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      %li= link_to "Content Catalogue", user_assets_path
+      %li= link_to "Publish Content", user_assets_path(:p => 1)
+      %li= link_to "Publish History", user_assets_path(:p => 2)
+      %li= link_to "User Statistics", publish_stats_users_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+-elsif user_signed_in? && (current_user.rc=="ES")
+  #header_assessments.nav_icon_block
+    .nav_icon_image
+      = image_tag "assessments.png"
+    .nav_text.drop
+      %label
+        Assessments
+    %ul.top-menu-bar.dropmenu{:style=>"display:none;"}
+      -#%li= link_to "Quick Test", controller:"quick_test",action:"new"
+      %li= link_to "Assessments",quizzes_student_not_attempted_assessments_path
+    .nav_menuarrow
+      = image_tag "menu_arrow.png"
+
+

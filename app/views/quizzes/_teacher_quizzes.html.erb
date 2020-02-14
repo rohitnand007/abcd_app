@@ -1,0 +1,156 @@
+
+
+<% sorted_quizzes_ids ={}%>
+
+
+<%# while (i <= @quizzes.count-1)   do %>
+
+<div style="display:none" id="pages_count"><%=@quiz_pages%></div>
+<%i = 0%>
+<% @quizzes.each do |q| %>
+    <% j=0 %>
+    <% q.quiz_targeted_groups.each do |t| %>
+        <% @all_first_attempts = QuizAttempt.find_by_sql("SELECT qa.*,ug.user_id FROM quiz_attempts qa INNER JOIN user_groups ug on qa.user_id=ug.user_id WHERE qa.quiz_id=#{q.id} AND publish_id=#{t.id} AND ug.group_id=#{t.group_id} AND (qa.attempt=1) group by qa.user_id")%>
+
+        <%if @all_first_attempts.count > 4 %>
+            <% time_interval = 0 %>
+            <% total_score=0 %>
+            <% lst_submit = 0 %>
+
+            <% lst_10_submit = [0,0,0,0,0] %>
+            <% all_submissions = [] %>
+            <%  @all_first_attempts.each do |t| %>
+                <% total_score += t.sumgrades.to_i %>
+                <% all_submissions.push(t.timefinish) %>
+
+            <%end%>
+            <% lst_10_submit = all_submissions.sort[all_submissions.size-5,all_submissions.size] %>
+            <%logger.info "==lst_10_submit/3600=======#{(lst_10_submit.sum)}" %>
+
+            <% std = (lst_10_submit.sum/lst_10_submit.count.to_f) %>
+            <% time_interval = ((lst_10_submit[4]-lst_10_submit[0])/3600)  %>
+
+            <%time_till_date = (Time.now.to_i-std)/3600%>
+            <%if time_till_date/24 <300%>
+             <% sorted_quizzes_ids[std]=t.id %>
+             <div id='<%=t.id%>' style="height:5.7em;width:100%;border-bottom:1px solid #c2d1d8;border-top:1px solid #c2d1d8;background-color:white;margin-bottom:2px;overflow:auto;" onclick="loadme(this.id)">
+
+            <div id='details_1' style='width:70%;height:auto;position:absolute;'>
+              <table>
+                <tr>
+                  <td ><%= image_tag 'test.png' , :style=>"padding-left:1em;"%></td>
+                  <td><label style='padding-left:1em;font-family:"colabrate";font-size:1em;color:#333945;'>
+                    <%=q.name[0,50]%>&nbsp;<%if(q.name.to_s.length>50)%>...<%end%>
+                  </label></td>
+                </tr>
+              </table>
+              <table style="padding: 0; margin-left:1em;;">
+                <tr>
+                  <td>
+                    <table style="padding: -1; margin:-1;">
+                      <tr>
+                        <td style="background-color: #15b8d4;border: 1px solid #15b8d4;border-radius: 6px 0 0 6px;"><%= image_tag('clock.png') %></td>
+                        <td style="border: 1px solid #15b8d4;border-radius: 0 6px 6px 0;">
+                          <table style="padding: -1; margin:-1;line-height: 12px;">
+                            <tr>
+                              <td>
+                                <label  style='padding-left:0px;font-family:"colabrate";font-size:0.8em;color:#15b8d4;'>
+                                Published on:&nbsp;&nbsp;<%= display_date_time(t.published_on)%><%#= display_date_time(lst_10_submit[0])%><%#= display_date_time(lst_10_submit[4])%><%#= display_date_time(std)%>
+                              </label>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <label  style='padding-left:0px;font-family:"colabrate";font-size:0.8em;color:#15b8d4;'>
+                                Submitted on:&nbsp;&nbsp;<%if ((time_till_date/24).to_i > 0) %><%= (time_till_date/24).to_i %> days ago<%else%><%= (time_till_date%24).to_i %> hrs ago <%end%>
+                             </label>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+
+
+                  </td>
+                  <td>
+
+                    <% types={1=>"Quiz",2=>"Practice Test",3=>"Institute Test",4=>"Assignment",5=>"Inclass",6=>"Regular",7=>"HOT/IIT",8=>"Olympiad",9=>"Institute-test"} %>
+                    <label style='padding-left:1.5em;font-family:"colabrate";font-size:1em;'>Type:</label>
+                    <label style='padding-left:2px;font-family:"colabrate";font-size:0.8em;color:#5d6c81'><%=types[t.assessment_type]%></label>
+                  </td>
+                  <td>
+
+                   <label style='padding-left:1.5em;font-family:"colabrate";font-size:1em;'>
+                     <% if t.group_id %>
+                         <%_val= User.find(t.group_id).try(:name).to_s %>
+                         <%if _val[0,5]!="Admin" %>
+                             <% _val1 = User.find(t.group_id).type.to_s %>
+                             <%=_val1.gsub("Academic","")%>:
+                         <%end%>
+                     <%elsif t.recipient_id %>
+                         Student:
+                     <%end%>
+                     </label>
+                   </label>
+                    <label style='padding-left:2px;font-family:"colabrate";font-size:0.8em;color:#5d6c81'>
+                      <% if t.group_id %>
+                           <% _name = User.find(t.group_id).try(:name) %>
+                          <%= _name[0,10]%> <%if(_name.length>10)%>...<%end%>
+                      <%elsif t.recipient_id %>
+                          <% _name =User.find(t.recipient_id).try(:name) %>
+                          <%= _name[0,10]%> <%if(_name.length>10)%>...<%end%>
+                      <%end%>
+                    </label>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+
+            <div id='section_1' style='left:70%;line-height:0.01em;width:15%;height:auto;position:absolute;display:inline;'>
+              <p style='text-align:center;z-index:1;position:relative;top:0em;color:white;font-family:"colabrate";font-size:1.5em;line-height:0.8em;'>
+
+                <% if total_score!=0 %>
+                    <%= (total_score/@all_first_attempts.count) %>
+                <%else%>
+                    0
+                    <% end %>
+                   </p>
+              <p style='text-align:center;z-index:1;position:relative;line-height:0px;top:0em;color:white;font-family:"colabrate";font-size:0.7em;'>
+               Average</p>
+                <div style='position:absolute;z-index:0;height:5.1em;min-width:98%;left:1%;top:0.2em;background-color:#15b8d4;'>
+                </div>
+                </div>
+            <div id='submitted_1' style='left:85%;width:15%;height:5em;line-height:0.8em;display:inline;position:absolute;'>
+              <p style='text-align:center;z-index:1;position:relative;top:0em;color:white;font-family:"colabrate";font-size:1.5em;'>
+               <%= @all_first_attempts.count %>
+
+              </p>
+              <p style='text-align:center;z-index:1;position:relative;line-height:0px;top:0em;color:white;font-family:"colabrate";font-size:0.7em;'>Submitted</p><div style='position:absolute;z-index:0;min-height:5.1em;min-width:98%;left:1%;top:0.2em;background-color:#f17736;'>
+            </div>
+            </div>
+            </div>
+            <% end %>
+        <% end %>
+        <%j = j+1%>
+    <% end %>
+    <%i = i+1%>
+<% end %>
+<div id="show_quizzes_count" style="display: none"><%=i%></div>
+<%if i==0%>
+             <p style="text-align: center">No data found</p>
+
+<%end%>
+<%sorted_keys = sorted_quizzes_ids.keys.sort%>
+<%i = sorted_keys.length-1%>
+<% _temp = "" %>
+<% while (i >= 0)   do %>
+    <%_temp= _temp+sorted_quizzes_ids[sorted_keys[i]].to_s+":" %>
+    <% i =i-1%>
+<%end%>
+    <div id="sorted_ids" style="display: none"><%= _temp %></div>
+
+
+

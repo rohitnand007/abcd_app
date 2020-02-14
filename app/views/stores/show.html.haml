@@ -1,0 +1,45 @@
+= link_to "ALL_Stores_Page", stores_path, class:"button"
+= link_to "Edit", edit_store_path(@store) ,class:"button"
+%h2
+  = @store.name
+%h4
+  = @store.description
+%br
+
+%h1 Assigned Publishers
+%table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+
+  %tr
+    %th store.ID
+    %th storename
+    %th ecp_id
+    %th ecpname
+    %th books V1(5.0) count
+    %th books v2(6.0) count
+
+  - @associated_publishers.each do |st_ecp|
+    %tr
+      %td= @store.id
+      %td= @store.name
+      %td= st_ecp.edutorid
+      %td= st_ecp.rc
+      %td= st_ecp.ibooks.count
+      %td= st_ecp.ibooks.select{|ibook| ibook if ibook.version==2}.count
+
+
+%h1 Assigned Institutions
+%table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+
+  %tr
+    %th store.ID
+    %th storename
+    %th Institute_id
+    %th Institute_name
+  -#%th Institution_count
+
+  - @associated_institutions.each do |st_insti|
+    %tr
+      %td= @store.id
+      %td= @store.name
+      %td= st_insti.edutorid
+      %td= st_insti.name

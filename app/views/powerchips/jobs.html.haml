@@ -1,0 +1,79 @@
+#content_header
+  %h1#main_heading Search SD card jobs
+#data
+  %table{width: "100%"}
+    %tr
+      %td
+        %div
+          %form.simple_form.form{action: "/pearson/jobs", method: "post"}
+            .inputs
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_start_date"} Start Date
+                    %input#start_date.string.optional.text_field{maxlength: "255", name: "start_date", size: "50", type: "text", value: @report_start_date}/
+              .group
+                .field
+                  .input.string.optional
+                    %label.string.optional.label{for: "report_end_date"} End Date
+                    %input#end_date.string.optional.text_field{maxlength: "255", name: "end_date", size: "50", type: "text", value: @report_end_date}/
+              .group
+                .field{:align=>'center'}
+                  %input.button.big.primary{name: "submit", type: "submit", value: "Search"}/
+
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#jobs_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Job Name
+                %th Total Pass
+                %th Pass
+                %th Fail
+                %th Total Fail
+                %th Job ID
+                %th Host Name
+                %th Start Date
+                %th End Date
+                -#%th Last Date
+                %th.last &nbsp
+            %tbody
+              - @jobs.each do |job|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"job_#{job.id}"}
+                  %td.col= job.jobname.split("/").last
+                  %td.col= job.totalpass
+                  %td.col= job.pass
+                  %td.col= job.fail
+                  %td.col= job.totalfail
+                  %td.col= job.jobid
+                  %td.col= job.hostname
+                  %td.col= display_as_timezone(job.startdate)
+                  %td.col= display_as_timezone(job.enddate)
+                  -#%td.col= display_as_timezone(job.lastdate)
+                  %td.col
+                    = link_to_show(job_slots_path(job.jobid))
+        .pagination_info
+          =# paginate @jobs
+:javascript
+  $(document).ready(function() {
+    $("#jobs_list").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+   $(function() {
+      $( "#start_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+      $( "#end_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+    });

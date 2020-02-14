@@ -1,0 +1,25 @@
+= stylesheet_link_tag 'publisher'
+#selectSchool
+  %ul
+    %li
+      %a{href: "#instituteSchool"} Institution
+    %li
+      %a{href: "#centerSchool"} Center
+  #instituteSchool
+    - if @institutions.empty?
+      No Institutions configured. Please contact Edutor Admin.
+    - else
+      - @institutions.each do |institution|
+        = institution.name
+        %br
+  #centerSchool
+    - if @centers.empty?
+      No centers configured. Please contact Edutor Admin
+    - else
+      - @centers.each do |center|
+        = center.name
+        %br
+:javascript
+  $selectSchool = $("#selectSchool")
+  $selectSchool.tabs().tabs("select",1).removeClass("ui-widget-content").find("a:contains('Institution')").text("Institutions");
+  $selectSchool.find("a:contains('Center')").text("Centers");

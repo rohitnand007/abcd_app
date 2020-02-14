@@ -1,0 +1,8 @@
+= simple_form_for(@book_publisher) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :name
+
+  .actions
+    = f.button :submit,:class=>'big primary'

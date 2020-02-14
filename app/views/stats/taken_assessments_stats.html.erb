@@ -1,0 +1,42 @@
+<div id="content_header">
+  <h1 id="main_heading">Taken Assessments Statistics</h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Statistics Home", :controller => "stats", :action => "index" %></li>
+  </ul>
+</div>
+<div id="data">
+  <div>
+    <table width='100%'>
+      <tr>
+        <td id='publish_list' valign='top'>
+          <table cellpadding='1' cellspacing='1'>
+            <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='publish-history' width='100%'>
+              <thead>
+                <tr class='tr-head'>
+                  <th><%=@filter_group_by%></th>
+                  <th>No. of Students</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%i=0%>
+                <% @stats.each do |t| %>
+                  <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                    <% else %>
+                    <tr class="tr-odd odd">
+                    <% end %>
+                    <td class='col'><%=t.time%></td>
+                    <td class="col"><%=t.num_students%></td>
+                  </tr>
+                  <%i = i+1%>
+                <%end%>
+              </tbody>
+            </table>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

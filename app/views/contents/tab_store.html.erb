@@ -1,0 +1,160 @@
+<style type="text/css">
+  .clear{
+    clear:both;
+  }
+  #left-sidebar{
+    float:left;
+    width:25%;
+  }
+  #right-sidebar{
+    float: right;
+    width: 75%
+  }
+  .breadcrumbs{
+    padding:4px 0;
+    color:#000000;
+    font-size:14px;
+  }
+  .breadcrumbs a{
+    text-decoration:none;
+    color: #1B5A92
+  }
+  .breadcrumbs a:hover{
+    text-decoration:underline;
+  }
+  .one-by-four{
+    width:25%;
+    float: left;
+  }
+  .three-by-four{
+    width:75%;
+    float: left;
+  }
+  .filter,.filter-list{
+    list-style-type:none;
+    padding:0;
+    margin:0
+  }
+  .selected-filter{
+    font-weight:bold;
+    background-color:#EEE;
+    margin-top:3px
+  }
+  .filter-list li{
+    padding:4px 6px;
+  }
+  .filter a{
+    text-decoration:none;
+    display: block;
+  }
+  .filter-list a:hover{
+    text-decoration:underline
+  }
+  .filter-block{
+    margin-bottom:8px;
+    padding:2px;
+    border:1px solid #EEE;
+  }
+  .filter-head{
+    padding:4px 6px;
+    color:#FFFFFF;
+    font-weight:bold;
+    font-size:14px;
+    background-color:#1B5A92
+  }
+  #content-block{
+    width:74%;
+    padding-left:1%;
+  }
+  .store-item{
+    margin-bottom:5px;
+    border-bottom:1px dotted #EEE;
+  }
+  .store-download{
+    vertical-align:middle;
+  }
+  .store-download a{
+    text-decoration:none
+  }
+  .store-item-name{
+    font-size:20px;
+    color:#696969
+  }
+  .store-item-top{
+    margin-bottom:4px;
+  }
+  .store-download{
+    margin-top:12px;
+    text-align: right
+  }
+  .store-download a{
+    text-decoration:none;
+    padding:8px 10px;
+    font-size:14px;
+    color:#FFFFFF;
+    background:#1B5A92;
+    font-weight:bold
+  }
+  .store-item-details{
+     margin-bottom:4px;
+  }
+</style>
+<div id="left-bar" class="one-by-four">
+  <ul class="filter">
+  <% if @side_panel_filter.length > 0 %>
+    <li class="filter-block">
+      <div class="filter-head"><%=@side_panel_filter_head%></div>
+      <ul class="filter-list">
+        <%@side_panel_filter.each do |panel_filter|%>
+            <li><%=link_to panel_filter[0], '/contents/tab_store'+panel_filter[1] %></li>
+         <%end%>
+      </ul>
+    </li>
+  <% end %>
+  <% if @side_panel_browse.length > 0 %>
+    <li class="filter-block">
+      <div class="filter-head"><%=@side_panel_browse_head%></div>
+      <ul class="filter-list">
+        <%@side_panel_browse.each do |panel_browse|%>
+          <% if panel_browse[1].length > 0 %>
+            <li><%=link_to panel_browse[0], '/contents/tab_store'+panel_browse[1] %></li>
+          <% else %>
+            <li class="selected-filter"><%=panel_browse[0]%></li>
+          <% end %>
+         <%end%>
+      </ul>
+    </li>
+  <% end %>
+  </ul>
+</div>
+<div id="content-block" class="three-by-four">
+  <div class="top-content breadcrumbs">
+    <%@breadcrumbs.each do |crumb|%>
+      <% if crumb[1].length > 0 %>
+        <%=crumb[2]%><%=link_to crumb[0], '/contents/tab_store'+crumb[1] %>
+      <% else %>
+        <%=crumb[2]+crumb[0]%>
+      <% end %>
+    <%end%>
+  </div>
+  <div class="store-contents">
+    <% @show_contents.each do |content|%>
+      <div class="store-item">
+        <div class="three-by-four">
+          <div class="store-item-top">
+            <span class="store-item-name"><%= content.name %></span>
+          </div>
+          <div class="store-item-details">
+            Board: <%=content.board.name%> | Class: <%=content.content_year.name%> | Subject: <%=content.subject.name%>
+          </div>
+        </div>
+        <div class="one-by-four store-download">
+          <%= link_to "Download",download_store_content_path(content)%>
+        </div>
+        <div class="clear"></div>
+      </div>
+    <%end%>
+  </div>
+</div>
+<div class="clear"></div>
+<%= paginate @contents %>

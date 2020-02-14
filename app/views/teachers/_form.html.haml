@@ -1,0 +1,250 @@
+= simple_form_for @teacher, :html => { :class => :form } do |f|
+  = f.error_messages
+  .inputs
+  - if current_user.is?'EA'
+    .group
+      .field
+        #instution
+          = f.label :institution_id, "Institution", :class=>'label'
+          = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,@teacher.institution.try(:centers).to_a,:id,:name,{:include_blank=>"Please select",},{:class=>'drop_down'}
+        -#%span{:class=>'label',:style=>"color:orange;padding-left:200px;"}*Please remove all the existing assigned classes before to change the center
+    .group
+      .field
+        #academic_class
+          = f.label :academic_class_id, "Academic Class", :class=>'label'
+          = f.collection_select :academic_class_id,@teacher.center.try(:academic_classes).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,@teacher.academic_class.try(:sections).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        = f.input :rollno,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  -elsif current_user.is? 'IA' or current_user.is? 'EO'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,current_user.try(:centers).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+        -#%span{:class=>'label',:style=>"color:orange;padding-left:200px;"}*Please remove all the existing assigned classes before to change the center
+    .group
+      .field
+        #academic_class
+          = f.label :academic_class_id, "Academic Class", :class=>'label'
+          = f.collection_select :academic_class_id,@teacher.center.try(:academic_classes).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,@teacher.academic_class.try(:sections).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        = f.input :rollno,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  -elsif current_user.is?'CR'
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = f.collection_select :institution_id,[current_user.institution],:id,:name,{:include_blank=>false},{:class=>'drop_down'}
+    .group
+      .field
+        #centers
+          = f.label :center_id, "Center", :class=>'label'
+          = f.collection_select :center_id,[current_user.center],:id,:name,{:include_blank=>false},{:class=>'drop_down'}
+    .group
+      .field
+        #academic_class
+          = f.label :academic_class_id, "Academic Class", :class=>'label'
+          = f.collection_select :academic_class_id,@teacher.center.try(:academic_classes).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        #sections
+          = f.label :section_id, "Section", :class=>'label'
+          = f.collection_select :section_id,@teacher.academic_class.try(:sections).to_a,:id,:name,{:include_blank=>"Please select"},{:class=>'drop_down'}
+    .group
+      .field
+        = f.input :rollno,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  -else
+    .group
+      .field
+        = f.label :institution_id, "Institution", :class=>'label'
+        = current_user.type.eql?("Institution") ? current_user.name : current_user.institution.name
+        - if current_user.center or current_user.type.eql?('Center')
+          = f.label :center_id, "  Center", :class=>'label'
+          = current_user.type.eql?("Center") ? current_user.name : current_user.center.name
+  -#.group
+    .field
+      = f.label :is_class_teacher, "Class Teacher", :class => "label"
+      = f.check_box :is_class_teacher
+
+  .group
+    .field
+      =f.label :Group, "Profile:", :class => "label heading"
+      %br
+      %br
+  =f.simple_fields_for :profile do |p|
+    .group
+      .field
+        = p.input :surname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Surname'
+    .group
+      .field
+        = p.input :middlename,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Middle name'
+    .group
+      .field
+        = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'First name'
+    .group
+      .field
+        = p.input :phone,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Phone'
+    .group
+      .field
+        = p.input :address,:input_html=>{:class=>"text_area",:rows=>4,:cols=>46},:label_html=>{:class=>"label"},:label=>'Address'
+  .group
+    .field
+      = f.input :date_of_birth,:as=>:date, :start_year => Date.today.year - 30,:order => [:day,:month, :year],:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+
+  .group
+    .field
+      = f.label :password, :class => "label"
+      = f.password_field :password, :class => "text_field"
+      %span.description must be at least 6 characters
+  .group
+    .field
+      = f.label :password_confirmation, "Re-enter Password", :class => "label"
+      = f.password_field :password_confirmation, :class => "text_field"
+
+  -# if current_user.is? 'CR' or current_user.is? 'ET'
+  .group
+    .field
+      =f.label :Group, "Groups", :class => "label"
+      = f.input :group_tokens ,:as=>:text,:input_html=>{:rows=>4,:cols=>100 ,"data-pre" => f.object.groups.map{|u| Hash[id: u.id, name: u.profile.display_name]}.to_json,:class=>'text_field',:id=>'teacher_group_ids'},:label => false
+  .group
+    .field
+      =f.label :Group, "Associate Devices:", :class => "label heading"
+      %br
+      %br
+      = f.simple_fields_for :devices do |device|
+        = render 'device_fields', :f => device
+      .links.add_more
+  -#.group
+  -#  .field
+  -#    =f.label :Group, "Classes:", :class => "label heading"
+  -#    %br
+  -#    %br
+  -#    = f.simple_fields_for :teacher_class_rooms do |class_room|
+  -#      = render 'teacher_class_room_fields', :f => class_room
+  -#    .links.add_more
+  -#      = link_to_add_association '+ Add Another Classes',f,:teacher_class_rooms
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), teachers_path,:class=>'button danger icon remove'
+:javascript
+  $(document).ready(function(){
+      var groups = $('#teacher_group_ids');
+      $(groups).tokenInput(getSearchURL("teacher"), { preventDuplicates:true,prePopulate: $(groups).data('pre'),
+          theme: '' ,crossDomain: false });
+
+  $("#teacher_institution_id").change(function() {
+      set_default($("#teacher_center_id"));
+      set_default($("#teacher_academic_class_id"));
+      set_default($("#teacher_section_id"));
+      var institution = $('select#teacher_institution_id :selected').val();
+      if(institution==""){
+           institution=0;
+           $("#teacher_academic_class_id").attr('disabled','disabled');
+           $("#teacher_section_id").attr('disabled','disabled');
+          }
+      var url = '/institution/get_centers/' + institution
+      var div_update = "#teacher_center_id"
+      get_url_Data_for_multiparams(url,div_update);
+
+  });
+
+  //to prevent the user to not change the center if and only there are no classes assigned to him/her.
+  //$("#teacher_center_id").click(function() {
+  //if ( $("[id^=teacher_teacher_class_rooms_attributes_]").filter("[id$=_group_id]").filter(':visible').length > 0)
+  //{
+  // alert('Please remove all the existing assigned classes before to change the center');
+  // $('#teacher_center_id option[value=""]').attr('selected','selected');
+  //}
+  //});
+
+  $("#teacher_center_id").change(function() {
+      set_default($("#teacher_academic_class_id"));
+      set_default($("#teacher_section_id"));
+      var institution = $('select#teacher_institution_id :selected').val();
+      var center = $('select#teacher_center_id :selected').val();
+      if(institution==""){institution=0;}
+      if(center==""){
+           center=0;
+           $("#teacher_section_id").attr('disabled','disabled');
+          }
+
+      //to update academic classes
+      var url = '/institution/get_academic_classes/' +institution+'/'+ center
+      var div_update = "#teacher_academic_class_id"
+      get_url_Data_for_multiparams(url,div_update);
+
+
+      //to update the sections or groups in adding of classes to teacher
+      //var url1 = '/institution/get_sections/' +institution+'/'+ center+'/'+'classes'
+      //$("[id^=teacher_teacher_class_rooms_attributes_]").filter("[id$=_group_id]").each( function() {
+        // var div_update1 = "#"+$(this).attr('id');
+         //get_url_Data_for_multiparams(url1,div_update1);
+      //});
+
+      //for groups settings
+          $(groups).tokenInput('clear');
+          $(".token-input-dropdown").remove();
+          $(".token-input-list").remove();
+          $("#token-input-teacher_group_ids").remove();
+          $(groups).tokenInput(getSearchURL("teacher"), { preventDuplicates:true,
+              theme: '' ,crossDomain: false });
+          $(groups).tokenInput('clear');
+  });
+
+  $("#teacher_academic_class_id").change(function() {
+      set_default($("#teacher_section_id"));
+      var institution = $('select#teacher_institution_id :selected').val();
+      var center = $('select#teacher_center_id :selected').val();
+      var academic_class = $('select#teacher_academic_class_id :selected').val();
+      if(institution=="") { institution=0;}
+      if(center=="") { center=0;}
+      if(academic_class=="") { academic_class=0;}
+      var url = '/institution/get_sections/' +institution+'/'+ center+'/'+academic_class
+      var div_update = "#teacher_section_id"
+      get_url_Data_for_multiparams(url,div_update);
+
+  });
+  //to populate the sections or groups in adding of classes to teacher
+    /*$(".add_more").bind('click', function() {
+
+        var institution = $('select#teacher_institution_id :selected').val();
+        var center = $('select#teacher_center_id :selected').val();
+        if(institution==""){institution=0;}
+        if(center==""){center=0;}
+        var url1 = '/institution/get_sections/' +institution+'/'+ center+'/'+'classes'
+
+        //to update the sections or groups in adding of classes to teacher
+        $("[id^=teacher_teacher_class_rooms_attributes_]").filter("[id$=_group_id]").each( function() {
+           var div_update1 = "#"+$(this).attr('id');
+           alert(div_update1);
+           get_url_Data_for_multiparams(url1,div_update1);
+        });
+      });*/
+
+  });
+
+

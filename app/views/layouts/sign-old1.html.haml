@@ -1,0 +1,19 @@
+%html
+  %head
+    %title My Edutor
+    = csrf_meta_tags
+    = stylesheet_link_tag 'signin'
+    = javascript_include_tag 'signin'
+
+  %body
+    #container
+      #box
+        = yield
+      :css
+        #footer{background: none;}
+      #footer
+        .block
+          %p
+          Copyright &copy; #{Time.now.year}
+          %span{:style=>"text-decoration: underline;"}
+            Edutor Technologies

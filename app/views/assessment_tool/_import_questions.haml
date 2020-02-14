@@ -1,0 +1,75 @@
+%div
+  %table{cellpadding: "0", cellspacing: "0", width: "90%"}
+    %tr
+      %td{style: "width:20%; border: 0px; padding: 15px 8px; vertical-align: top;position: relative;"}
+
+        -# %svg#Layer_1{"enable-background" => "new 0 0 50 50", height: "50px", space: "preserve", version: "1.1", viewbox: "0 0 50 50", width: "50px", x: "0px", xmlns: "http://www.w3.org/2000/svg", "xmlns:xlink" => "http://www.w3.org/1999/xlink", y: "0px"}
+        -#   %path{d: "M25,11.2c12.5,0,21.6-2.2,21.6-5c0-2.8-9.1-5-21.6-5S3.4,3.5,3.4,6.2C3.4,9,12.5,11.2,25,11.2z", fill: "#60C8CD"}
+        -#   %path{d: "M40.8,31.2c2.3,0,4.4,0.9,5.9,2.4c0.1-0.1,0.2-0.1,0.2-0.2V22.5c-4,2.2-13.1,3.3-22,3.3S7,24.6,3,22.5v10.9\r\n\tc1,1.7,9.7,3.7,22,3.7c2.8,0,5.4-0.1,7.8-0.3C34,33.5,37.2,31.2,40.8,31.2z", fill: "#60C8CD"}
+        -#   %path{d: "M32.3,39.7c0-0.4,0-0.8,0.1-1.1c-2.4,0.2-4.9,0.3-7.4,0.3c-8.9,0-18-1.1-22-3.3v8.6c0,0.1,0,0.1,0,0.2\r\n\ts0,0.1,0,0.2V45H2.9c1.3,2,10.2,4.5,22,4.5c5.4,0,10.2-0.6,13.9-1.3C35.1,47.3,32.3,43.8,32.3,39.7z", fill: "#60C8CD"}
+        -#   %path{d: "M47,20.2V9.3c-4,2.4-12.8,3.6-22,3.6S6,11.7,3,9.3v10.9c1,1.7,9.7,3.7,22,3.7C37.3,23.9,45,21.9,47,20.2z", fill: "#60C8CD"}
+        -#   %g
+        -#     %g
+        -#       %path{d: "M39.9,34.5c0-0.8,0.7-1.5,1.6-1.5l0,0c0.8,0,1.6,0.7,1.6,1.5v5.9c0,0.8-0.7,1.5-1.6,1.5l0,0\r\n\t\t\tc-0.8,0-1.5-0.7-1.5-1.5L39.9,34.5z", fill: "#636363"}
+        -#     %polygon{fill: "#636363", points: "46.6,38 41.4,47.1 36.1,38 \t"}
+        -#   %b{style: "position: absolute; top: 86px;"} Question Bank
+        -# = image_tag "question_bank.png"
+        %b{style: "font-size: 16px;"} Question Bank
+      %td#selected_questions_control_buttons{style: "width: 80%; border: 0px; padding: 0px; padding-top: 20px; vertical-align: top;"}
+        - if controller.action_name == 'edit'
+          %div{style: "float: left;"}
+            -unless @quiz.quiz_sections.empty?
+              = link_to "Add Questions &nbsp; ".html_safe, assessment_tool_update_assessment_division_path({assessment_division_id:@quiz.id}), remote:true, id:"addQuestions"
+            -else
+              = link_to "Add Questions &nbsp; ".html_safe, assessment_tool_update_assessment_division_path({assessment_division_id:@quiz.id}), remote:true, id:"addQuestionsSimpleTest"
+            to
+            %span.selected_section_cue
+              = @quiz.name
+          %div{style: "float: right;"}
+          =# link_to "Go to Preview Section","#",style:" color: #60c8cd;text-decoration: none",id:"goToEditSection"
+    %tr
+      %td{style: "width:20%; border: 0px; padding: 2px 8px 2px 8px; vertical-align: top;"}
+        %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+          %tr
+            %td{style: "border: 0px; padding: 2px;"}
+            %label{for: "subjectAddQuestionsButton"}
+              %b
+                Questions Data Base
+          %tr
+            %td{ style: "width:20%;border: 0px; padding: 2px 8px 2px 8px; vertical-align: top;"}
+              .styled-select
+                = select_tag :search_db,options_for_select(@qdbs.map{|question_bank| [question_bank[0],question_bank[1],{"data-question_bank_type"=>question_bank[2]}]}),{class: 'drop_down',style:"width: 220px; padding:7px"}
+        - is_publisher = (current_user.rc=="ECP")
+        - if  is_publisher or current_user.institution.user_configuration.use_tags
+          - publisher_question_bank_id = @publisher_question_bank.id
+          :javascript
+            $('#search_db').val("#{publisher_question_bank_id}");
+          #filter_box
+            -#= render :partial => 'search_questions', locals:{publisher_question_bank:@publisher_question_bank}
+            = render :partial => 'live_tag_filters', locals:{publisher_question_bank:@publisher_question_bank}
+        - else
+          #filter_box
+            = render :partial => 'search_ncx_questions'
+      %td{id:'select_questions',style: "width: 80%; border: 0px; padding: 0px; vertical-align: top;"}
+        %center.ui-corner-all{style:" width: 400px; margin:auto; margin-top: 20px;"}
+          %svg#Layer_1{"fill"=>"#ccc","fill-opacity"=>"0.6","enable-background" => "new 0 0 100 100", :height => "400px", "inkscape:version" => "0.48.4 r9939", "sodipodi:docname" => "wait.svg", :space => "preserve", :version => "1.1", :viewbox => "0 0 100 100", :width => "300px", :x => "0px", :xmlns => "http://www.w3.org/2000/svg", "xmlns:cc" => "http://creativecommons.org/ns#", "xmlns:dc" => "http://purl.org/dc/elements/1.1/", "xmlns:inkscape" => "http://www.inkscape.org/namespaces/inkscape", "xmlns:rdf" => "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "xmlns:sodipodi" => "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd", "xmlns:svg" => "http://www.w3.org/2000/svg", "xmlns:xhtml" => "http://www.w3.org/1999/xhtml", :y => "0px"}
+            %g#g3
+              %g#g5
+                %path#path7{:d => "M 75.753,90.483 C 71.648836,89.495106 68.619654,86.247885 64.98532,84.281942 60.936006,80.135481 55.150762,82.84135 50.09605,82.325837 37.881923,82.412037 24.587087,81.104821 14.921183,72.823698 7.218625,66.499865 4.3910887,56.16596 4.6143725,46.528071 4.2123973,36.870752 6.473564,26.428525 13.810564,19.620149 23.060362,10.930998 36.37228,9.0778522 48.56291,9.1568502 60.882634,8.9792371 74.293633,10.240533 84.139296,18.436938 91.195467,24.326337 94.587305,33.581534 94.551,42.618099 c 0.529911,9.725439 -0.737936,20.3996 -7.750364,27.776847 -2.592951,4.181699 -9.984783,4.834426 -8.147906,10.777699 -0.467142,2.955408 1.555381,8.90071 -2.89973,9.310355 z M 61.813,79.064 c 4.522591,2.876381 8.902401,5.97718 13.517625,8.70725 1.534878,-1.725047 0.340656,-4.712335 0.688375,-7.006833 0,-1.882139 0,-3.764278 0,-5.646417 C 85.098381,71.094353 91.260502,61.769522 91.736817,51.891964 92.332683,42.873031 92.362502,32.966264 86.82516,25.312669 80.222708,15.804801 68.136538,12.559801 57.155011,11.978461 44.865885,11.542059 31.643974,11.284482 20.683941,17.726407 12.362155,22.360246 7.6293153,31.731548 7.3549377,41.081997 c -0.5045407,9.55697 0.090747,20.282429 7.0778963,27.604875 8.322417,8.968902 21.210947,10.895123 32.86597,10.981451 4.844174,0.09837 9.696238,-0.0837 14.514196,-0.604323 z", "inkscape:connector-curvature" => "0"}
+              %g#g9
+                %g#g11
+                  %path#path13{:d => "m 49.626,51.958 c -3.93299,0.543027 -7.676423,-2.877413 -7.214415,-6.892802 -0.652452,-4.50624 3.343526,-8.246602 7.792847,-7.511153 4.563743,-0.334176 7.36353,4.284891 6.600369,8.409169 C 56.657951,49.74957 53.355774,52.346534 49.626,51.958 z M 49.622,38.895 c -4.395511,-0.710375 -6.923226,4.092749 -5.692606,7.888196 0.67566,4.266707 6.282206,4.670618 9.418713,3.027929 C 56.323366,47.654676 56.287331,42.288 53.624188,39.88215 52.48174,39.03172 50.999976,38.890118 49.622,38.895 z", "inkscape:connector-curvature" => "0"}
+                %g#g15
+                  %path#path17{:d => "m 27.74,51.958 c -3.934199,0.543336 -7.676984,-2.87897 -7.214398,-6.89498 -0.652699,-4.506347 3.342887,-8.247421 7.792573,-7.511963 4.522373,-0.330399 7.341752,4.216851 6.607471,8.322233 C 34.812413,49.689085 31.515451,52.35742 27.74,51.958 z M 27.737,38.895 c -4.395694,-0.710401 -6.923347,4.093084 -5.692523,7.88859 0.676258,4.266802 6.283333,4.66973 9.420058,3.02768 2.974593,-2.156638 2.938944,-7.523014 0.275704,-9.928702 C 30.597511,39.03267 29.11549,38.887645 27.737,38.895 z", "inkscape:connector-curvature" => "0"}
+                %g#g19
+                  %path#path21{:d => "m 71.511,51.958 c -3.920729,0.538352 -7.653383,-2.84929 -7.210638,-6.856276 -0.67183,-4.515119 3.327005,-8.28665 7.791204,-7.54666 4.521042,-0.329076 7.340286,4.216727 6.607398,8.321316 C 78.585525,49.692288 75.283047,52.353569 71.511,51.958 z M 71.508,38.895 c -4.395619,-0.71066 -6.921998,4.09371 -5.691523,7.88859 0.676219,4.266683 6.283202,4.669916 9.419809,3.027534 2.952331,-2.139874 2.927477,-7.424809 0.354688,-9.86658 C 74.441164,39.043693 72.918639,38.885928 71.508,38.895 z", "inkscape:connector-curvature" => "0"}
+
+
+          #search_message{style:"color:#636363;size:14px;"}
+            Please search questions from question bank ...
+          %br
+          %br
+          = image_tag "blue_loading.gif", class:"loading"
+
+
+

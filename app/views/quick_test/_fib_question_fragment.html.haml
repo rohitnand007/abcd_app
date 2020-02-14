@@ -1,0 +1,35 @@
+.nested-fields
+  .q_typemenu
+    .question_attribute_button.labeler
+      Fill in the blanks
+    .question_attribute_button.image_inserter
+      = link_to_add_association 'Insert image', f, :question_images,
+      "data-association-insertion-method"=>"append",
+      "data-association-insertion-node"=>".nested-fields",
+      "data-association-insertion-traversal"=>"closest",
+      "data-association-insertion-node-down"=>".q_textcell",
+      "data-association-insertion-traversal-down"=>"find"
+
+    .question_attribute_button.delete_question
+      = link_to_remove_association image_tag("empty.png"), f
+  = render partial: "question_text_fragment", locals:{:f=>f,:placeholder=>"Eg. 'India's capital is' will be rendered as 'India's capital is _____'"}
+  = f.hidden_field  :qtype, value:"fib"
+  %br
+  - f.object.question_fill_blanks.build if f.object.question_fill_blanks.empty?
+  = f.fields_for :question_fill_blanks do |b|
+    .q_optionblock
+      = render "question_fill_blank_fields", :f => b
+      .q_optionrow
+        .option_cell1
+          = f.label "Explanation"
+        .option_cell2
+          = f.text_field :generalfeedback, placeholder:"Optional"
+        .option_cell3{style:"display:none"}
+  = #link_to_add_association '+Add Answer', f, :question_fill_blanks
+
+
+  %br
+  %hr
+  %br
+
+

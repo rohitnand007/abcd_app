@@ -1,0 +1,20 @@
+  <div id='content_header'>
+  <h1 id='main_heading'>
+    There is an already started assessment by you.
+    What do you want to do ?
+  </h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessments Home", :controller => "quizzes", :action => "student_not_attempted_assessments" %></li>
+  </ul>
+</div>
+<div id='data'>
+    <div class="group">
+      <div align="center" class="field">
+        <a href="/quizzes/resume_assessment/<%=@publish_id%>" class="button big primary">Resume</a>
+        <a href="/quizzes/restart_assessment/<%=@publish_id%>" class="button big primary">Restart</a>
+      </div>
+    </div>
+</div>
+

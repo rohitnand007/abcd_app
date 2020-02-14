@@ -1,0 +1,5 @@
+- 4.times {f.object.question_answers.build} if f.object.new_record?
+= f.fields_for :question_answers do |f|
+  = render :partial => 'question_answer_fields', locals:{f:f}
+
+

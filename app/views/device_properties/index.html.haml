@@ -1,0 +1,63 @@
+%h1 Listing device_properties
+
+%table
+  %tr
+    %th Time
+    %th Board
+    %th Bootloader
+    %th Brand
+    %th Cpu abi
+    %th Cpu abi2
+    %th Device
+    %th Display
+    %th Fingerprint
+    %th Hardware
+    %th Host
+    %th Id
+    %th Manufacturer
+    %th Model
+    %th Product
+    %th Radio
+    %th Serial
+    %th Tags
+    %th Type
+    %th Unknown
+    %th User
+    %th Version codename
+    %th Radio version
+    %th
+    %th
+    %th
+
+  - @device_properties.each do |device_property|
+    %tr
+      %td= device_property.TIME
+      %td= device_property.BOARD
+      %td= device_property.BOOTLOADER
+      %td= device_property.BRAND
+      %td= device_property.CPU_ABI
+      %td= device_property.CPU_ABI2
+      %td= device_property.DEVICE
+      %td= device_property.DISPLAY
+      %td= device_property.FINGERPRINT
+      %td= device_property.HARDWARE
+      %td= device_property.HOST
+      %td= device_property.ID
+      %td= device_property.MANUFACTURER
+      %td= device_property.MODEL
+      %td= device_property.PRODUCT
+      %td= device_property.RADIO
+      %td= device_property.SERIAL
+      %td= device_property.TAGS
+      %td= device_property.TYPE
+      %td= device_property.UNKNOWN
+      %td= device_property.USER
+      %td= device_property.VERSION_CODENAME
+      %td= device_property.radio_version
+      %td= link_to 'Show', device_property
+      %td= link_to 'Edit', edit_device_property_path(device_property)
+      %td= link_to 'Destroy', device_property, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Device property', new_device_property_path

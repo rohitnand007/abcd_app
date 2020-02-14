@@ -1,0 +1,190 @@
+= simple_form_for @context, :method => :post, :url => '/questions_download_pdf.pdf', :html => { :class => :form } do |f|
+  = f.error_messages :header_message => "Invalid Chapter!",
+                      :message => "You'll need to fix the following fields:"
+  .inputs
+    - unless current_user.is?("ET")
+      .group
+        .field
+          = f.label :board_id, "Board", :class=>'label'
+          = f.collection_select :board_id,(current_user.role_id == 1 ? Board.all : current_user.institution.boards),:id,:name,{:include_blank => 'Please Select'},:input_html=>{:class=>"drop_down",:prompt=>true},:label_html=>{:class=>"label"}
+
+          -#= f.collection_select :board_id, current_user.role_id == 8 ? current_user.boards : Board.all ,:id,:name,{:prompt => true},{:class=>"drop_down"}
+      .group
+        .field
+          = f.label :content_year_id, "content year", :class=>'label'
+          = f.select :content_year_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true ,:label=>'Content Year'
+      .group
+        .field
+          = f.label :subject_id, "Subject", :class=>'label'
+          = f.select :subject_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    - else
+      .group
+        .field
+          = f.input :subject_id, :label_html=>{:class=>"label"} do
+            = f.collection_select :subject_id,current_user.class_contents,:id,:name_with_content_year,{:prompt=>true},{:class=>'drop_down' }
+    .group
+      .field
+        = f.label :chapter_id, "Chapter", :class=>'label'
+        = f.select :chapter_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    .group
+      .field
+        = f.label :topic_id, "Topic", :class=>'label'
+        = f.select :topic_id,[],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+  .group
+    .field{:align=>'center'}
+      = f.button :submit, "Generate PDF",:class=>'big primary' ,:disable_with=> "Generating PDF.."
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), pdf_download_path,:class=>'button danger icon remove'
+      
+:javascript
+  $("context_content_year_id").attr('disabled', 'disabled');
+  $("#context_board_id").change(function() {
+       clear_all(1);
+      var selected_value = $('select#context_board_id :selected').val();
+      var url = "/course/get_content_years/"
+      var div_update = "#context_content_year_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#context_content_year_id").change(function() {
+      clear_all(2)
+      var selected_value = $('select#context_content_year_id :selected').val();
+      var url = "/content_years/get_subjets/"
+      var div_update = "#context_subject_id"
+      get_url_Data(url,selected_value,div_update);
+  });                                                               
+  
+  $("#context_subject_id").change(function() {
+        clear_all(3);
+        var selected_value = $('select#context_subject_id :selected').val();
+        var url = "/subjects/get_chapters_values/"
+        var div_update = "#context_chapter_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+  
+    $("#context_chapter_id").change(function() {
+        clear_all(4);
+        var value = $('select#context_chapter_id :selected').val();
+        var selected_value = value.split("|")[0]
+        var page_no = value.split("|")[1]
+        if (page_no != ','){
+          $('.context_page').show();
+          $('.chapter_page_no').empty();
+          $('.chapter_page_no').append('Start-page: '+page_no.split(',')[0]+' End-page: '+page_no.split(',')[1]);
+        }
+        else {
+          $('.chapter_page_no').empty();
+          $('.chapter_page_no').append('No page numbers')
+          $('.context_page').hide();
+        }
+        var url = "/chapters/get_topics_values/"
+        var div_update = "#context_topic_id"
+        get_url_Data(url,selected_value,div_update);
+    });
+
+    $("#context_topic_id").change(function() {
+        clear_all(5);
+        var value = $('select#context_topic_id :selected').val();
+        var selected_value = value.split("|")[0]
+        var page_no = value.split("|")[1]
+        if (page_no != ','){
+          $('.context_page').show();
+          $('.topic_page_no').empty();
+          $('.topic_page_no').append('Start-page: '+page_no.split(',')[0]+' End-page: '+page_no.split(',')[1]);
+        }
+        else {
+          $('.topic_page_no').empty();
+          $('.topic_page_no').append('No page numbers')
+          $('.context_page').hide();
+        }
+    });
+
+    function clear_all(status){
+    if (status == 1) {
+      $("#context_content_year_id").empty();
+      $("#context_subject_id").empty();
+      $("#context_topic_id").empty();
+      $("#context_chapter_id").empty();
+      $(".context_page").show();
+      $('.topic_page_no').empty();
+      $('.chapter_page_no').empty();
+    }
+    if (status == 2){
+     $("#context_subject_id").empty();
+     $("#context_topic_id").empty();
+     $("#context_chapter_id").empty();
+     $(".context_page").show();
+     $('.topic_page_no').empty();
+     $('.chapter_page_no').empty();
+    }
+    if (status == 3){
+         $("#context_topic_id").empty();
+         $("#context_chapter_id").empty();
+         $(".context_page").show();
+         $('.topic_page_no').empty();
+         $('.chapter_page_no').empty();
+        }
+    if (status == 4){
+         $("#context_topic_id").empty();
+         $(".context_page").show();
+         $('.topic_page_no').empty();
+         $('.chapter_page_no').empty();
+        }
+    if (status == 5){
+         $(".context_page").show();
+         $('.topic_page_no').empty();
+        }
+    }
+    $("#submit_form").click(function(){
+        var page_no = $('input#context_params').val();
+        var c_value = $('select#context_chapter_id :selected').val();
+        var chapter_value = c_value.split("|")[0]
+        var chapter_page = c_value.split("|")[1]
+        var t_value = $('select#context_topic_id :selected').val();
+        var topic_value = t_value.split("|")[0]
+        var topic_page = t_value.split("|")[1]
+       $('select#context_chapter_id :selected').val(chapter_value);
+       $('select#context_topic_id :selected').val(topic_value);
+    });
+
+
+  $(document).ready(function() {
+
+      var checked = $("#context_is_profile:input:checked").length;
+      if(checked == 1){
+          $("#content_profile").show();
+      }
+      else{
+          $("#content_profile").hide();
+      }
+      $("#context_is_profile").change(function(){
+          if($(this).is(':checked')){
+              $("#content_profile").show("slow");
+          }
+          else{
+              $("#content_profile").hide("slow");
+          }
+      });
+
+      $("input[name$='link_type']").click(function(){
+          var radio_value = $(this).val();
+          if(radio_value=='weblink') {
+              //$("#message_group_id").get(0).selectedIndex = 0;
+              $("#extras").show("slow");
+              $("#video").hide();
+              $("#flash").hide();
+          }
+          else if(radio_value=='video') {
+              $("#extras").hide();
+              $("#video").show("slow");
+              $("#flash").hide();
+          }
+          else if(radio_value=='flash') {
+                        $("#extras").hide();
+                        $("#video").hide();
+                        $("#flash").show("slow");
+                    }
+      });
+       $("#extras").hide();
+       $("#video").hide();
+       $("#flash").hide();
+  });

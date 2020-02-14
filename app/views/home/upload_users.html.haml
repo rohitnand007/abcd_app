@@ -1,0 +1,16 @@
+=form_tag(process_csv_upload_path,{:multipart=>true,:method=>:post}) do
+  %h2 Upload Students
+  %br
+  %b
+    %i Note:
+    Abstract group is a group formed at institution level. The students can belong to any academic class or section.
+  %div{style:"background-color: #f9f9f9;padding:10px;"}
+    %h4 Please generate the following in Excel like program and save it as CSV file type.
+    %b institution_id,center_id,academic_class_id,section_id,email,Surname,Middlename,FirstName,Gender,Address,Parent Email,Parent Mobile,Device Screen Name,DOB,SchoolTag,deviceid,paid,password,abstract group name
+    %br
+    XXXXX,XXXXX,XXXXX,XXXXX,foo@bar.com,Bhonsle,Chatrapati,Sivaji,m,Shivaneri Maharashtra,jijyabai@bhonsle.com,8888888888,Shivaji,19:02:1630,XXXXX,XXXXX,y,edutor,""
+  %br/
+  %br/
+  =label_tag :file,"Enter formatted csv file"
+  =file_field_tag :csv_file
+  =submit_tag "Upload"

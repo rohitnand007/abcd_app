@@ -1,0 +1,32 @@
+%table.abridgedBookInfo
+  - book_metadata = ibook.get_metadata
+  %tr
+    %td
+      - if File.exist?(Rails.root.to_s+"/public/ibook_public/#{ibook.id}/"+"cover.png")
+        = image_tag "/ibook_public/#{ibook.id}/"+"cover.png",width:"140px", height: "145px",title:"#{ibook.info_file.exists? ?   book_metadata["description"] : ''}"
+      - else
+        = image_tag "book_icon.png",width:"140px", height: "145px",title:"#{ibook.info_file.exists? ?   book_metadata["description"] : ''}"
+    %td
+      %table
+        -if book_metadata.present? && book_metadata[:error]
+          %tr
+            %td= book_metadata[:message]
+        -else
+          %tr
+            %td Book:
+            %td{'data-type'=>'displayName'}= ibook.info_file.exists? ?   book_metadata["displayName"] : ""
+          %tr
+            %td ISBN:
+            %td= ibook.info_file.exists? ?   book_metadata["isbn"] : ""
+          %tr
+            %td Author:
+            %td{'data-type'=>'author'}= ibook.info_file.exists? ?   book_metadata["author"] : ""
+          %tr
+            %td Subject:
+            %td{'data-type'=>'subject'}= ibook.info_file.exists? ?   book_metadata["subject"] : ""
+          %tr
+            %td Class:
+            %td{'data-type'=>'class'}= ibook.info_file.exists? ?   book_metadata["academicClass"] : ""
+          %tr
+            %td Type:
+            %td{'data-type'=>'type'}= ibook.info_file.exists? ?   book_metadata["bookType"] : ""

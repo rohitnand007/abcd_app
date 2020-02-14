@@ -1,0 +1,18 @@
+.fullDetailArea{"data-id"=>ibook.id}
+  .firstLevelDetail
+    %table.firstDetailTable
+      %tbody
+        %tr
+          %td
+            = render :partial => 'abridged_book_info',locals: {ibook:ibook}
+          %td
+            = render :partial => 'more_book_info',locals: {ibook:ibook}
+          %td
+            - if ibook.ipacks.empty?
+              = link_to image_tag("delete_icon_black.png"), ibook, :confirm => 'Are you sure?', :method => :delete
+            = check_box_tag "ibooks", ibook.id
+    = link_to "Hide","javascript:void(0)", class:"hideDetail"
+  .extendedDetail.occupyWidth
+  .toggleBar
+    = button_tag " ▼ Details",type:"button",class:"detailToggleButton"
+

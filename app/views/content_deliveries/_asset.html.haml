@@ -1,0 +1,11 @@
+= simple_form_for "",url: "/user_assets", :method => :post,html: {id: "available_assets"}, remote: true do |f|
+  %div
+    %div.scrollbox
+      %br
+      - @user_assets.each_with_index do |asset, index|
+        = label_tag do
+          = radio_button_tag "asset_id", asset.id, (index==0)
+          = asset.asset_name
+    = f.submit "Add Asset"
+    %i{style:"color:#04B486"} Note: Only uploaded zip files will be shown here
+    %br

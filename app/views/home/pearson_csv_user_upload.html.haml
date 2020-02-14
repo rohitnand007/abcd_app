@@ -1,0 +1,6 @@
+#content_header
+  %h1#main_heading Upload Users
+=form_tag(parson_process_csv_upload_path,{:multipart=>true,:method=>:post}) do
+  =label_tag :file,"Enter formatted csv file"
+  =file_field_tag :csv_file
+  =submit_tag "Upload"

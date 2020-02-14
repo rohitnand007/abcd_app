@@ -1,0 +1,21 @@
+= form_tag  "/assessment_tool/update_question_instances", remote: true , multipart: true do
+  =render :partial => 'section_info', locals: {assessment_div: assessment_div}
+  %br
+  %br
+  %table{cellpadding:0,cellspacing:0,width:"100%"}
+    %tbody.sortable_questions
+      %tr
+        %td{style:"margin: 0px; padding: 4px; border: 1px solid #CCC; vertical-align: top; text-align: left;"}
+          Questions
+      - assessment_div.quiz_question_instances.sort_by {|x| [x.position, x.id] }.each_with_index do |question_instance,question_index|
+        = render :partial => 'section_question', locals: {assessment_div: assessment_div, question_instance: question_instance,question_index: question_index}
+  %br
+  = hidden_field_tag "assessment_div_id" , assessment_div.id
+  = hidden_field_tag "assessment_div_type" , get_assessment_div_type(assessment_div)
+  - if assessment_div.quiz_question_instances.length != 0
+    %div{style: "float: left;"}
+      %button#saveAssessment2 Save and Refresh
+      = image_tag "small_loading.gif",id:"saving_refreshing",style:"vertical-align: middle"
+:javascript
+  $("#saving_refreshing").hide();
+  $("#saveAssessment2").click(function(){$("#saving_refreshing").show()}).button();

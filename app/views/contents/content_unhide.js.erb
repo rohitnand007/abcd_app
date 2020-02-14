@@ -1,0 +1,5 @@
+<% params[:ids].each do |id| %>
+   dom_id = "#content_<%=id%>"
+   $(dom_id).css("opacity",'');
+<% end %>
+$("#result").html("<%= escape_javascript render 'shared/flash_messages' %>").show("slide", { direction: 'left' });

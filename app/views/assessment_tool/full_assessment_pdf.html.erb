@@ -1,0 +1,178 @@
+<script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js">
+</script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        TeX: {extensions: ["mhchem.js"]}
+    });
+</script>
+<style>
+    table > tbody > tr > td img {
+
+    }
+
+    @font-face {
+        font-family: "krutidev";
+        src: url(<%="file://#{Rails.root.to_s}/public/assets/krutidev.ttf".html_safe %>);
+    }
+
+    @font-face {
+        font-family: "Mangal";
+        src: url(<%="file://#{Rails.root.to_s}/public/assets/mangal.ttf".html_safe %>);
+    }
+</style>
+
+<br/>
+</br></br></br>
+</hr>
+<div>
+  <table align="center" class="quiz-head">
+    <tr>
+      <td colspan="2"><b>School Name:</b></td>
+      <td colspan="1">&nbsp;<%= "Page Institute" %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Pdf Number:</b></td>
+      <td colspan="1">&nbsp;<%= @i %></td>
+    </tr>
+  </table>
+</div>
+<% @question_ids = [] %>
+<div class="page">
+      <% @all_questions.each do |question| %>
+      <% context_val = question.context.nil? ? "NA" : question.context %>
+      <%if context_val != "NA"%>
+      <% chapter = context_val.chapter_id == 0 ? "": Chapter.where(id:context_val.chapter_id).empty? ? "NA" : Chapter.where(id:context_val.chapter_id).first.name  %>
+      <% topic = context_val.topic_id == 0 ? "" : Topic.where(id:context_val.topic_id).empty? ? "NA":Topic.where(id:context_val.topic_id).first.name %>
+      <% sub = context_val.subject_id.nil?  ? "" : Subject.where(id:context_val.subject_id).empty? ? "NA" :Subject.where(id:context_val.subject_id).first.name %>
+      <% content_year = context_val.content_year_id.nil? ? "" : ContentYear.where(id:context_val.content_year_id).empty? ? "NA": ContentYear.where(id:context_val.content_year_id).first.name %>
+      <% end %>
+          <% if !@question_ids.include? question.id %>
+              <% if question.qtype != 'passage' %>
+                  <div class="nobreak">
+                    <table>
+                      <tbody>
+                      <tr>
+                        <td style="text-align: left; width:25px; vertical-align: top;"><%= question.id  %>.&nbsp;</td>
+                        <td style="width:700px;"><%= question.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %></td>
+                        <td style="width:50px;text-align: right;"><%= question.defaultmark.to_s %></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                    <br/>
+                    <% if question.answer_lines !=0 %>
+                        <% question.answer_lines.times do %>
+                            <br/>
+                            <hr>
+                        <% end %>
+                    <% end %>
+                  </div>
+                  <div class="nobreak" style="padding-left:25px;">
+                    <table align="center" width="100%">
+                      <% a = ("a".."z").to_a %>
+                      <% n = 0 %>
+                      <% question.question_answers.each do |c| %>
+                          <tr>
+                            <td align="left" style="vertical-align:top;width: 30px;">
+                              &nbsp;
+                            </td>
+                            <td align="left" valign="middle">
+                              <%= a[n] %>. &nbsp;
+                              <%= c.pdf_answer_format.gsub("<br />", " ").gsub("<p>", "").gsub("<p >", "").gsub("</p>", "").force_encoding('utf-8').encode.html_safe %>
+                            </td>
+                            <% n= n+1 %>
+                          </tr>
+                      <% end %>
+                    </table>
+                    <%if context_val != "NA"%>
+                    <p><%="Question Metadata: Class: #{content_year}, Subject:#{sub}, Chapter:#{chapter},Topic:#{topic}" %></p>
+                    <%end%>
+                  </div>
+                  <% @question_ids << question.id %>
+              <% else %>
+                  <% x = 0 %>
+                  <% s = ("a".."z").to_a %>
+                  <div class="nobreak">
+                    <table>
+                      <tbody>
+                      <tr>
+                        <td style="text-align: left; width:25px; vertical-align: top;">
+                          <%= question.id  %>.&nbsp;&nbsp;
+                        </td>
+                        <td style="width:700px;">
+                          <%= question.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %>
+                        </td>
+                        <td style="width:50px;text-align: right;"></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                    <br/>
+                    <% if question.answer_lines !=0 %>
+                        <% question.answer_lines.times do %>
+                            <br/>
+                            <hr>
+                        <% end %>
+                    <% end %>
+                  </div>
+                  <% question.questions.each do |q| %>
+                      <div style="padding-left:25px;">
+                        <div class="nobreak">
+                          <table>
+                            <tbody>
+                            <tr>
+                              <td style="text-align: left; width:25px; vertical-align: top;">
+                                <%= q.id %>
+                              </td>
+                              <td style="width:700px;">
+                                <%= q.pdf_questiontext_format.force_encoding('utf-8').encode.html_safe %>
+                              </td>
+                              <td style="width:50px;text-align: right;"><%= q.defaultmark.to_s %></td>
+                            </tr>
+                            </tbody>
+                          </table>
+                          <br/>
+                          <% if question.answer_lines !=0 %>
+                              <% question.answer_lines.times do %>
+                                  <br/>
+                                  <hr>
+                              <% end %>
+                          <% end %>
+                        </div>
+                        <div class="nobreak" style="padding-left:25px;">
+                          <table align="center" width="100%">
+                            <% a = ("a".."z").to_a %>
+                            <% n = 0 %>
+                            <% q.question_answers.each do |c| %>
+                                <tr>
+                                  <td align="left" style="vertical-align:top;width: 30px;">
+                                    &nbsp;
+                                  </td>
+                                  <td align="left" valign="middle">
+                                    <%= a[n] %>. &nbsp;
+                                    <%= c.pdf_answer_format.gsub("<br />", " ").gsub("<p>", "").gsub("<p >", "").gsub("</p>", "").force_encoding('utf-8').encode.html_safe %>
+                                  </td>
+                                  <% n= n+1 %>
+                                </tr>
+                            <% end %>
+                          </table>
+                          <%if context_val != "NA"%>
+                          <p><%="Question Metadata: Class: #{content_year}, Subject:#{sub}, Chapter:#{chapter},Topic:#{topic}" %></p>
+                          <%end%>
+                        </div>
+                      </div>
+                      <% x= x+1 %>
+                      <% @question_ids << q.id %>
+                  <% end %>
+              <% end %>
+          <% end %>
+      <% end %>
+      <br/>
+
+</div>
+
+
+
+

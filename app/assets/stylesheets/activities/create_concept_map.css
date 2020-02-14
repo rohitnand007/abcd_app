@@ -1,0 +1,232 @@
+#node-description{
+	resize:none;
+}
+#create_template{
+	width:1200px;
+}
+.form-content{
+	width:1170px;
+	border:1px solid grey;
+	height:400px;
+	padding-left:0px;
+    margin-top:20px;
+}
+
+.select-wrap:after {
+    content: "›";
+    -ms-transform: rotate(90deg);
+    /* IE 9 */
+    -webkit-transform: rotate(90deg);
+    /* Safari */
+    transform: rotate(90deg);
+    text-align: center;
+    line-height: 32px;
+    position: absolute;
+    width: 26px;
+    height: 32px;
+    background: #fff;
+    color: #76c4ac;
+    font-size: 30px;
+    right: 29%;
+    top: 0px;
+    pointer-events: none;
+}
+
+.form-control:focus {
+    border-color: #cccccc;
+    box-shadow: inset 0 1px 1px #cccccc, 0 0 8px #cccccc;
+}
+.naming_create {
+    background-color: #FFFBE8;
+    height: 55px;
+    width:1168px;
+    border-bottom:1px solid grey;
+}
+.next-page {
+    background-color: #8a68ac;
+    color: #ffffff;
+    box-shadow: 1px 1px 8px 1px #c5c5c5;
+}
+.next-page:hover {
+    background-color: #815aa5;
+    color: #ffffff;
+}
+.create-template-form-elements {
+    margin-top: 10px;
+}
+
+.create-template-form-elements input {
+    width: 74%;
+    height: 30px;
+}
+
+.create-template-form-elements select {
+    width: 74%;
+    height: 30px;
+    border: thin solid #76c4ac;
+    background-color: #ffffff;
+}
+
+.create-template-form-elements button {
+    height: 32px;
+    background-color: #76c4ac;
+    border: thin solid #76c4ac;
+    color: #ffffff;
+}
+.canvas-description{
+	margin-left:0px;
+	margin-right:0px;
+	width:1170px;
+	margin:auto;
+}
+.canvas-btn{
+	border:1px solid #b1b1b1;
+	height:600px;
+	padding:0px;
+	border-left:none;
+}
+
+.concept-map-template{
+	padding:10px 15px 10px 0px;
+	margin-bottom:0px;
+	cursor:pointer;
+}
+.concept-map-template:before {
+    content: "‹";
+    text-align: center;
+    position: relative;
+    top: 6px;
+    left: 0px;
+    color: #76c4ac;
+    font-size: 36px;
+    width: 10px;
+    height: 20px;
+}
+.head-btn{
+	margin-left:0px;
+	margin-right:0px;
+	width:1170px;
+}
+.btn-spacing{
+	margin-left:10px;
+	width:140px;
+}
+#close,#save-template,.logo-btn{
+	margin-top:25px;
+}
+.btn-row-create-concept{
+	padding:5px;
+	background-color:#dff4f4;
+	margin-left:0px;
+	margin-right:0px;
+}
+.btn-white-create-concept,.btn-white-create-concept:hover,
+.btn-white-create-concept:active,.btn-white-create-concept:focus{
+	font-size:12px;
+	padding:4px 6px!important;
+	outline:none;
+}
+#save-name{
+	position: relative;
+    left: -7px;
+    border-radius: 3px;
+    border: 1px solid #c2c2c2;
+    background-color: #c2c2c2;
+    padding: 2px 9px 4px;
+    color: #ffffff;
+}
+#element-name{
+	border-radius: 4px;
+    border: 1px solid #777777;
+    padding: 2px 6px 4px;
+    width:164px;
+}
+.modal-dialog{
+	width:1024px;
+}
+.modal-content-preview{
+	border:1px solid #76c4ac;
+}
+.modal-header-preview {
+	padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    height: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #2fb38e;
+}
+.modal-title-preview {
+    color: white;
+}
+.previewBody{
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+div.mce-edit-area{
+    padding:10px; 
+}
+.information-text {
+    padding-top: 5px;
+}
+#board,#className{
+	-webkit-appearance: none;
+    -moz-appearance: none;
+}
+.error-confirm{
+    background-color:#76c4ac;
+    text-transform:capitalize !important;
+}
+.error-confirm:hover{
+    background-color:#39b18d;
+}
+
+#title-text{
+     color:#7ac9aa;
+     font-size: 16px;
+ }
+.activity-tab{
+        border:solid #76c4ac 1px;
+ }
+#activity tr{
+     border-bottom:solid #adadad 1px;
+ }
+.mynaming-tab{
+        padding-left:20px;
+        height:20px;
+ }
+.mynaming-tab:after{
+   content: "›";
+   text-align: center;
+   /* line-height: 32px; */
+   position: relative;
+   top: -50px;
+   left: -15px;
+   color: #76c4ac;
+   font-size: 36px;
+   width: 10px;
+   height: 20px;
+ }
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+     background-color: #76c4ac;
+     color: #fff;
+ }
+.nav-pills li > a {
+     color: black;
+     padding-bottom: 7px;
+     padding-top: 10px;
+ }
+.navigation-tab{
+     padding-left: 0;
+     width: 1200px;
+     padding-top:20px;
+ }
+.nav-pills {
+     height: 65px;
+     width: 40%;
+ }
+
+.nav-pills>li {
+     float: left;
+     font-size: 16px;
+     width: 45%;
+ }

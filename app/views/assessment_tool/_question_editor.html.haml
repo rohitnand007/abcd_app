@@ -1,0 +1,4 @@
+= form_for @question, remote:true ,url:{ :controller => "assessment_tool", :action => "update_individual_question",
+:quiz_id => @quiz.id ,:assessment_div_id=>@assessment_div_id} do |f|
+  = render :partial => 'question_components_editor' , locals:{f:f}
+  = f.submit "Update",id:"changeQuestion"

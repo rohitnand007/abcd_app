@@ -1,0 +1,67 @@
+-if user_signed_in? && (current_user.rc=="EA")
+  -#admin
+-elsif user_signed_in? && (current_user.rc=="IA")
+  .stats_box
+    .box_top
+      Institute Statistics
+    .content_box
+      .cont  No. of Centers
+      .num= link_to Center.where('institution_id =?',current_user.institution_id).count,centers_path
+-elsif user_signed_in? && (current_user.is?("EST"))
+  .stats_box
+    .box_top
+      Content Statistics
+    .content_box
+      .cont New Content
+      .num= link_to Content.where('status IN (?)' ,[1,10]).count, contents_path({:status=>1})
+    .content_box
+      .cont Under process
+      .num= link_to Content.where('status =?' ,5).count, contents_path({:status=>5})
+    .content_box
+      .cont Rejected Content
+      .num= link_to Content.where('status =?' ,3).count, contents_path({:status=>3})
+    .content_box
+      .cont EST Processed
+      .num= link_to Content.where('status =?' ,6).count, contents_path({:status=>6})
+
+-elsif user_signed_in? && (current_user.rc=="CR")
+  .stats_box
+    .box_top
+      Center Statistics
+    .content_box
+      .cont No. of Students
+      .num= link_to User.where('center_id =? and edutorid like ?',current_user.center_id,"ES-%").count,users_path
+-elsif user_signed_in? && (current_user.is?("ET"))
+  .stats_box
+    .box_top
+      Content Statistics
+    .content_box
+      .cont Awaiting process
+      .num= link_to current_user.contents.where(:status=>[1,5]).count, contents_path({:status=>[1,5]})
+    -#.content_box
+      .cont Under process
+      .num= link_to current_user.contents.where('status =?' ,5).count, contents_path({:status=>5})
+    -#.content_box
+      .cont Rejected Content
+      .num= link_to current_user.contents.where('status =?' ,3).count, contents_path({:status=>3})
+    .content_box
+      .cont EST Processed
+      .num= link_to current_user.contents.where('status =?' ,6).count, contents_path({:status=>6})
+
+
+-else
+  .stats_box
+    .box_top
+      Content Statistics
+    .content_box
+      .cont New Content
+      .num= link_to current_user.contents.where('status =?' ,1).count, contents_path({:status=>1})
+    .content_box
+      .cont Under process
+      .num= link_to current_user.contents.where('status =?' ,5).count, contents_path({:status=>5})
+    .content_box
+      .cont Rejected Content
+      .num= link_to current_user.contents.where('status =?' ,3).count, contents_path({:status=>3})
+    .content_box
+      .cont EST Processed
+      .num= link_to current_user.contents.where('status =?' ,6).count, contents_path({:status=>6})

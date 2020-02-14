@@ -1,0 +1,164 @@
+%script{:src => "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/rgbcolor.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/StackBlur.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/canvg.js", :type => "text/javascript"}
+= javascript_include_tag 'jquery.stickysectionheaders'
+= stylesheet_link_tag 'jquery.stickysectionheaders'
+= stylesheet_link_tag "c3.css"
+= javascript_include_tag "d3.min.js"
+= javascript_include_tag "c3.min.js"
+%canvas#canvas3{:style => "display: none"}
+- colors = {blue:{darkest:"#194f90",dark:"#3f6cad",medium:"#3f6cad",light:"#e2e7f0"},
+pink:{darkest:"#ef466d",dark:"#3f6cad",medium:"#3f6cad",light:"#fce6ec"},
+orange:{darkest:"#f37e3b",dark:"#3f6cad",medium:"#3f6cad",light:"#faceb5"}}
+.sticky-list
+  %ul
+    %li.bucket
+      .bucket-header{style:"background:#{colors[:blue][:darkest]}"}
+        .header_text{style:"display:inline-block;width:50%;text-align:left"} Container Header 1
+        .print_icon{style:"display:inline-block;width:50%;float:right;text-align:right"}
+          = link_to "Print", "#", id:"print_div"
+      .bucket-body{style:"background:#{colors[:blue][:light]}"}
+        %br
+        %br
+        %br
+        .graphs_container{style:"text-align: center; color:#767676;"}
+          = "ASSESSMENT NAME:"
+          %br
+          = "Science Test 12  Number Of Questions: 15  Total Marks: 100  Last Published: 15th OCT 2016 "
+          %br
+          #Assessments_graph.inline_graph{data:{x:['x', 's1','s2','s3','s4','s5','s6'],y1:['section1', 300, 400, 500, 600, 700, 200,900],y2:['section2', 900, 400, 500, 400, 700, 800,400],y3:['section3', 300, 800, 500, 600, 600, 1200,1000]}.to_json}
+          -##learning_minutes_graph.inline_graph
+
+    %li
+      .bucket-header{style:"background:#{colors[:pink][:darkest]}"}
+        .header_text{style:"display:inline-block;width:50%;text-align:left"} Container Header 2
+        .print_icon{style:"display:inline-block;width:50%;float:right;text-align:right"}
+          = link_to "Print", "#", id:"print_chart"
+      .bucket-body{style:"background:#{colors[:pink][:light]}"}
+        .graphs_container{style:"text-align: center;color:#767676;"}
+          = "Avg Learning minutes for last Month"
+          %br
+          %br
+          #learning_minutes_graph.inline_graph
+    %li
+      .bucket-header{style:"background:#{colors[:orange][:darkest]}"} Container Header 3
+      .bucket-body{style:"background:#{colors[:orange][:light]}"}
+        .graphs_container
+          = "Assessment Name"
+          %br
+          %br
+          #assessments_graph.inline_graph
+          #learning_minutes_graph.inline_graph
+    %li
+      .bucket-header{style:"background:#{colors[:pink][:darkest]}"} Container Header 4
+      .bucket-body{style:"background:#{colors[:pink][:light]}"}
+        .graphs_container
+          = "Assessment Name"
+          %br
+          %br
+          #assessments_graph.inline_graph
+          #learning_minutes_graph.inline_graph
+:css
+  .graphs_container{
+  padding: 5% 5% 5% 5%;
+  background-color: white;
+  }
+  /*graph related css here below  */
+
+:javascript
+  // javascript to print contents of a div
+  $("#print_div").click(function(){
+  var doc = new jsPDF()
+    //var test = $.get($("#Assessments_graph > svg"), function(svgText){
+    //    var svgAsText = new XMLSerializer().serializeToString(svgText);
+    //    doc.addSVG(svgAsText, 20, 20, doc.internal.pageSize.width - 20*2)});
+
+  //  canvg('canvas', $("#Assessments_graph").html().trim());
+  //var img = canvas.toDataURL("image/png");
+  //doc.addImage(img, 'PNG', 15, 40, 180, 60);
+  var $container = $('#Assessments_graph'),
+    // Canvg requires trimmed content
+    content = $container.html().trim(),
+    canvas = document.getElementById('canvas3');
+
+    canvg(canvas, content);
+    var img = canvas.toDataURL("image/png", 1.0)
+    doc.addImage(img, 'PNG', 15, 40, 180, 60)
+    doc.text('Assessments Information', 10, 10)
+   doc.save('graph.pdf')
+
+  })
+    $("#print_chart").click(function(){
+  var doc = new jsPDF()
+  var $container = $('#learning_minutes_graph'),
+    // Canvg requires trimmed content
+    content = $container.html().trim(),
+    canvas = document.getElementById('canvas3');
+
+    canvg(canvas, content);
+    var img = canvas.toDataURL("image/png", 1.0)
+    doc.addImage(img, 'PNG', 15, 40, 180, 60)
+    doc.text('Learning Minutes for the Last Month', 10, 10)
+   doc.save('graph.pdf')
+
+  })
+  //javascript for sticky headers
+  $('.sticky-list').stickySectionHeaders({
+  stickyClass     : 'sticky',
+  headlineSelector: '.bucket-header'
+  });
+
+  function generateHorizontalGraph(selector,gen_options,data_options,axis_options){
+    var cdata = $.parseJSON($(selector).attr('data'))
+    var default_data_options = {
+        X: 'x',
+        columns:[cdata.x,cdata.y1, cdata.y2, cdata.y3],
+        type: 'bar',
+        labels: {
+          format: function (v, id, i, j) {
+              if (v == 10.001)
+                 return "N/S";
+              else if (v == 10.002)
+                 return "N/A";
+              else
+                 return v;
+          }
+      }
+      }
+    var default_axis_options = {
+        rotated: true,
+        x: {
+          type: 'category',
+          tick: {
+            format: function(x) { return '';}
+          }
+        },
+        y2: {
+        show: true
+        }
+        }
+    return c3.generate($.extend({
+      bindto: selector,
+      data: $.extend(default_data_options,data_options),
+      axis: $.extend(default_axis_options,axis_options)
+      },gen_options)
+    );
+  }
+  generateHorizontalGraph('#Assessments_graph', {padding:{left: 60}},{colors:{x:'#7ca0c5',section1: '#3f6cad',section2: '#f37e3b',section3: '#767676'}},{rotated: false,x:{type: 'category',  tick: {format: function(x) { return '';}}}})
+  // for donut chart
+  var chart = c3.generate({
+    bindto: '#learning_minutes_graph',
+    data: {
+      columns: [
+        ['physics', 30],['maths', 120],['chemistry',67],['biology', 95],['computers',100]
+      ],
+      type : 'donut',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+    },
+    donut: {
+      title: "Month December 2016"
+    }
+  });

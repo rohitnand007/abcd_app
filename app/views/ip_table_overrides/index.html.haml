@@ -1,0 +1,37 @@
+%h1 Listing ip_table_overrides
+
+%table
+  %tr
+    %th Institution
+    %th Center
+    %th User
+    %th Domain
+    %th Ip
+    %th Status
+    %th Added at
+    %th Modified at
+    %th Added by
+    %th Modified by
+    %th
+    %th
+    %th
+
+  - @ip_table_overrides.each do |ip_table_override|
+    %tr
+      %td= ip_table_override.institution_id
+      %td= ip_table_override.center_id
+      %td= ip_table_override.user_id
+      %td= ip_table_override.domain
+      %td= ip_table_override.ip
+      %td= ip_table_override.status
+      %td= ip_table_override.added_at
+      %td= ip_table_override.modified_at
+      %td= ip_table_override.added_by
+      %td= ip_table_override.modified_by
+      %td= link_to 'Show', ip_table_override
+      %td= link_to 'Edit', edit_ip_table_override_path(ip_table_override)
+      %td= link_to 'Destroy', ip_table_override, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Ip table override', new_ip_table_override_path

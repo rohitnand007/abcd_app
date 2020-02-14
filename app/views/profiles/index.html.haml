@@ -1,0 +1,34 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active= link_to "#{t("web-app-theme.list", :default => "List")}", profiles_path
+      %li=# link_to "#{t("web-app-theme.new", :default => "New")}", new_profile_path
+  .content
+    %h2.title
+      = t("web-app-theme.all", :default => "All")
+      Profiles
+    .inner
+      %table.table
+        %tr
+          %th.first ID
+          %th
+            = t("activerecord.attributes.profile.surname", :default => t("activerecord.labels.surname", :default => "surname"))
+          %th= t("web-app-theme.created_at", :default => "Created at")
+          %th.last &nbsp;
+        - @profiles.each do |profile|
+          %tr{:class => cycle("odd", "even"),:id=>"profile_#{profile.id}"}
+            %td
+              = profile.id
+            %td
+              = link_to profile.surname, profile_path(profile)
+            %td
+              = display_date_time(profile.created_at)
+            %td.last
+              = link_to "#{t("web-app-theme.show", :default => "Show")}", profile_path(profile)
+              |
+              \#{link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_profile_path(profile)} |
+              \#{link_to "#{t("web-app-theme.delete", :default => "Delete")}", profile_path(profile), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"}
+      .actions-bar.wat-cf
+        .actions
+        = paginate @profiles
+- content_for :sidebar, render(:partial => 'shared/sidebar')

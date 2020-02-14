@@ -1,0 +1,37 @@
+.reportsview_rowcell
+  - published = quicktest_published_user_count(quicktest)
+  - downloaded = @quicktest_downloaded_user_count
+  - test_taken = 0
+  - test_taken = @quicktest_taken_user_count
+  - download_percent = 0
+  - download_percent = (downloaded*100/published) if published!=0
+  - test_taken_percent = 0
+  - test_taken_percent = (test_taken*100)/published if published!=0
+  %table{class:"big_table",style: "float: left;"}
+    %tr
+      %td{colspan: 6}
+        Live responses chart
+    %tr
+      %td{colspan: 3}
+        .myStat1{"data-bgcolor" => "#d1d2d4", "data-dimension" => "200", "data-fgcolor" => "#4d937b",
+        "data-fill" => "#fff", "data-fontsize" => "24", "data-info" => "Downloaded", "data-percent" => download_percent,
+        "data-text" => "#{download_percent}%", "data-width" => "20", :style => "display:inline"}
+      %td{colspan: 3}
+        .myStat2{"data-bgcolor" => "#d1d2d4", "data-dimension" => "200", "data-fgcolor" => "#4d937b",
+        "data-fill" => "#fff", "data-fontsize" => "24", "data-info" => "Took Test", "data-percent" => test_taken_percent,
+        "data-text" => "#{test_taken_percent}%", "data-width" => "20", :style => "display:inline"}
+    %tr
+      %td{colspan: 2}
+        .reportgraph_info
+          %p= published
+          %p Total Students
+      %td{colspan: 2}
+        .reportgraph_info
+          %p= downloaded
+          %p Downloaded
+      %td{colspan: 2}
+        .reportgraph_info
+          %p= test_taken
+          %p Took Test
+
+

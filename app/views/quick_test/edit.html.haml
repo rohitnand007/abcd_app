@@ -1,0 +1,73 @@
+%br
+#quicktest_block
+  .quicktest_menu
+    .quicktest_menubutton_active
+      Create New Quick Test
+    .quicktest_menubutton_blank
+    .quicktest_menubutton_dull
+      = link_to "Manage Quick Tests",action:"manage"
+    .quicktest_menubutton_info
+      You are creating quick test
+
+  .q_body_block
+    = form_for @quiz, :url => {:controller => 'quick_test', :action => 'save',:id=>@quiz.id}, :html => { :multipart => true } do |f|
+      = f.text_field :name,class:"input_field",placeholder:"Give a title to your test ...",required:"required"
+      = f.hidden_field :format_type,:value=>7
+      %br
+      %br
+      = f.fields_for :questions do |ques|
+        - if ques.object.qtype == "multichoice"
+          = render "mcq_question_fragment", :f=>ques
+        - if ques.object.qtype == "fib"
+          = render "fib_question_fragment", :f=>ques
+        - if ques.object.qtype == "truefalse"
+          = render "tf_question_fragment", :f=>ques
+
+      .q_typemenu{id:"q_selectorbox"}
+        .question_attribute_button.picker
+          = link_to_add_association "True False", f , :questions, partial:"tf_question_fragment",
+          "data-association-insertion-method"=>"before","data-association-insertion-node"=>"#q_selectorbox"
+        .question_attribute_button.picker
+          = link_to_add_association "Multiple Choice", f , :questions, partial:"mcq_question_fragment",
+          "data-association-insertion-method"=>"before","data-association-insertion-node"=>"#q_selectorbox"
+        .question_attribute_button.picker
+          = link_to_add_association "Fill in the Blanks", f , :questions, partial:"fib_question_fragment",
+          "data-association-insertion-method"=>"before","data-association-insertion-node"=>"#q_selectorbox"
+        .question_attribute_button.image_inserter
+          = link_to 'Insert image',"#"
+        .question_attribute_button{style:"background-color: #9170b2;"}
+          = image_tag("delete_icon.png")
+      .q_textblock{id:"q_dummybox"}
+        .q_label{style:"height: 4em"}
+          Question
+        .q_textcell{style:"height: 4em"}
+      %br
+      .quicktest_controlbar
+        .q_savediv
+          = f.submit "Save & Close" ,value:"save" , class:"save_button"
+        .q_publishdiv
+          = f.submit "Publish" ,value:"publish" , class:"publish_button"
+
+
+:javascript
+  document.getElementsByClassName("picker")[1].addEventListener("click", check1, true);
+  document.getElementsByClassName("picker")[2].addEventListener("click", check1, true);
+  document.getElementsByClassName("picker")[0].addEventListener("click", check1, true);
+
+  function check1(){
+  window.setTimeout(function(){
+  var nodes = document.getElementsByClassName("q_label");
+  for(var i=0;i<nodes.length-1;i++){
+   nodes[i].innerHTML="Question "+(i+1);
+  }
+  if(nodes.length>10){
+      document.getElementById("q_selectorbox").style.display="none";
+      document.getElementById("q_dummybox").style.display="none";
+  }
+  else{
+      document.getElementById("q_selectorbox").style.display="";
+      document.getElementById("q_dummybox").style.display="";
+  }
+  },100)};
+
+

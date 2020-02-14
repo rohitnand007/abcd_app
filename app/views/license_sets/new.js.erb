@@ -1,0 +1,17 @@
+/**
+ * Created by harsha on 31/1/15.
+ */
+$("#dialogForm").html("<%= escape_javascript(render partial: 'form', locals:{ipack: @ipack}) %>")
+
+$("#dialogForm").dialog({
+    width: "auto",
+    modal: true,
+    title: "Collection: <%= @ipack.name %>",
+    draggable: false,
+    resizable: false,
+    close: function () {
+        form[0].reset()
+    }
+})
+
+$("#assignToSchool").closest("td").find(".loading").css("visibility", "hidden")

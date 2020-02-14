@@ -1,0 +1,654 @@
+-#= javascript_include_tag 'jquery.stickysectionheaders'
+= javascript_include_tag 'jquery.sticky'
+= stylesheet_link_tag 'jquery.stickysectionheaders'
+= javascript_include_tag 'countUp'
+%script{:src => "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/rgbcolor.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/StackBlur.js", :type => "text/javascript"}
+%script{:src => "http://canvg.github.io/canvg/canvg.js", :type => "text/javascript"}
+%script{:src => "https://unpkg.com/scrollreveal@3.3.2/dist/scrollreveal.min.js", :type => "text/javascript"}
+= stylesheet_link_tag "c3.css"
+= javascript_include_tag "d3.js"
+= javascript_include_tag "c3.js"
+%canvas#canvas3{:style => "display: none"}
+-#- book_sec_info =[["5","book_title1",[1,2,3],3],["6","book_title2",[6,7,8,9,10],4]]
+- time = Time.new
+- today_date = time.strftime("#{time.day.ordinalize} %B, %Y") #Date.today.strftime("#{time.day.ordinalize} %B, %Y")
+- last_month_date = 30.days.ago.strftime("#{(30.days.ago).day.ordinalize} %B, %Y")
+- book_sec_info = @need_array
+- books_count = @need_array_books_count
+- books_num_array = (0..books_count).to_a
+- circle_colors_array = ["dark_blue","dark_pink","dark_orange","dark_green"]
+- color_codes_array = ["#3f6cad" ,"#ef466d" ,"#f37e3b" ,"#0e9b4d"]
+- panel_footer = 1
+-k = 1
+.container-fluid
+  .panel.panel-default
+    .panel-heading.dark_blue#panel_heading1
+      %div
+        .nav.navbar-left
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Class Overview
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel1", :title=>"Collapse"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/print.png",:href => "/", :id=>"print_div"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/refresh.png",:href => "/"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/expand.png", :id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel1"}
+    #panel1.collapse.in
+      .panel-body.lightest_blue
+        - if books_count == 0
+          = render partial: "no_data_populate", locals: {message:"Looks like there are no books assigned to you, please request your admin to assign books to you. "}
+        -else
+          - sec_index = 0
+          -@need_array.keys.each_with_index do |subject,i|
+            .graphs_container
+              .row
+                .panel_info
+                  = "Student - Sectionwise Summary: "
+                  %br
+                  = "As of Date - "
+                  %b #{today_date}
+                  %br
+                  = "Form :"
+                  %b
+                    =subject[0]
+                  %br
+                  ="Subject : "
+                  %b
+                    =subject[1]
+                - 1.times do
+                  %br
+              -@need_array[subject].each do |sub_book|
+                .row
+                  .col-md-3.contents_box.center_align
+                    %br
+                    %br
+                    %img{:alt => "abcd_logo", :src => "ibook_public/#{sub_book[0]}/cover.png",:href => "/"}
+                    %br
+                    %br
+                    = sub_book[1]
+                  .col-md-9
+                    .graph_header.headers_box.center-align
+                    %br
+                    .div{id:"sec_students_graph#{sec_index}", data:{x:sub_book[2],y:sub_book[3].unshift('Students'), z:color_codes_array * sub_book[3].count}.to_json}
+                    -sec_index = sec_index + 1
+            .panel-footer.light_blue{style:" color:white; height:30px;"}
+              .row
+                .col-md-2{style:"bottom: 5px; left: 5px;"}
+                  = "0#{panel_footer}"
+                .col-md-9
+                .col-md-1.nav_icons
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+                -panel_footer = panel_footer+1
+            %br
+            %br
+          -sub_index = 0
+          -@need_array.keys.each_with_index do |subject,i|
+            .graphs_container
+              .row
+                .panel_info
+                  = "Learning minutes by Section:"
+                  %br
+                  = "From "
+                  %b #{last_month_date}
+                  = "to"
+                  %b #{today_date}
+                  %br
+                  = "Form :"
+                  %b
+                    =subject[0]
+                  %br
+                  ="Subject : "
+                  %b
+                    =subject[1]
+                - 1.times do
+                  %br
+              %br
+                %br
+              -@need_array[subject].each do |sub_book|
+                .row
+                  .col-md-3.book_icon.center_align
+                    %img{:alt => "abcd_logo", :src => "ibook_public/#{sub_book[0]}/cover.png",:href => "/"}
+                    %br
+                    %br
+                    = sub_book[1]
+                  .col-md-9
+                    -#.graph_header.headers_box.center-align Total Learning Minutes
+                    -#%br
+                    .div{id:"total_lm_graph#{sub_index}", data:{x:sub_book[2],y1:sub_book[4].unshift('Total Learning Minutes'),y2:sub_book[5].unshift('Average Learning Minutes')}.to_json}
+                  -#.col-md-4
+                  -#  -#.graph_header.headers_box.center-align Average learning Minutes
+                  -#  -#%br
+                  -#  .div{id:"average_lm_graph#{sub_index}", data:{x:sub_book[2],y:sub_book[5].unshift('Average Learning Minutes')}.to_json}
+                  - sub_index = sub_index+1
+                  -#.col-md-1
+            .panel-footer.light_blue{style:" color:white; height:30px;"}
+              .row
+                .col-md-2{style:"bottom: 5px; left: 5px;"}
+                  = "0#{panel_footer}"
+                .col-md-9
+                .col-md-1.nav_icons
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+                -panel_footer = panel_footer+1
+              %br
+  .panel.panel-default
+    .panel-heading.dark_pink#panel_heading1
+      %div
+        .nav.navbar-left.first_img
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Student Engagement
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel2", :title=>"Collapse"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/print.png",:href => "/", :id=>"print_div"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/"}
+          -#-#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/refresh.png",:href => "/"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/expand.png", :id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel2"}
+    #panel2.collapse.in
+      .panel-body.lightest_pink
+        -if books_count == 0
+          = render partial: "no_data_populate", locals: {message:"Looks like there are no books assigned to you, please request your admin to assign books to you. "}
+        -else
+          -sub_sub_index = 0
+          -@need_array.keys.each_with_index do |subject,i|
+            .graphs_container
+              .row
+                .panel_info
+                  = "Student Engagement by Section: "
+                  %br
+                  = "From "
+                  %b #{last_month_date}
+                  = "to"
+                  %b #{today_date}
+                  %br
+                  = "Form :"
+                  %b
+                    =subject[0]
+                  %br
+                  ="Subject : "
+                  %b
+                    =subject[1]
+                  %br
+              -@need_array[subject].each do |sub_book|
+                .row
+                  .col-md-3.contents_box.center_align
+                    %br
+                    %br
+                    %img{:alt => "abcd_logo", :src => "ibook_public/#{sub_book[0]}/cover.png",:href => "/"}
+                    %br
+                    %br
+                    = sub_book[1]
+                  .col-md-9
+                    -#.graph_header.headers_box.center-align
+                    %br
+                    .div{id:"combined_lo_graph#{sub_sub_index}", data:{x:sub_book[2],y3:sub_book[8].unshift('LOs Consumed')}.to_json}
+                    -#, y1:sub_book[6].unshift('Videos Watched'),y2:sub_book[7].unshift('Tests Taken')
+                    -sub_sub_index = sub_sub_index + 1
+                  -#.col-md-1
+
+            .panel-footer.light_pink{style:" color:white; height:30px;"}
+              .row
+                .col-md-2{style:"bottom: 5px; left: 5px;"}
+                  = "0#{i+1}"
+                .col-md-9
+                .col-md-1.nav_icons
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+          %br
+  .panel.panel-default
+    .panel-heading.dark_orange#panel_heading1
+      %div
+        .nav.navbar-left.first_img
+          %img{:alt => "abcd_logo", :src => "assets/abcd_icons/bar_chart.png",:href => "/"}
+        .nav.navbar-left.heading_row
+          %a Student Performance
+        .nav.navbar-right
+          -#%img
+          -#  %span.glyphicon.glyphicon-print.spacing{:title=>"Print Container"}
+          -#%img.align_vertical{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/", :width => "80", :height => "60", :title=>"Download CSV"}
+          %img
+            %span.glyphicon.glyphicon-menu-down.spacing{:id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel3", :title=>"Collapse"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/print.png",:href => "/", :id=>"print_div"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/csv.png",:href => "/"}
+          -#-#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/refresh.png",:href => "/"}
+          -#%img{:alt => "abcd_logo", :src => "assets/abcd_icons/expand.png", :id=>"expand","data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#panel3"}
+    #panel3.collapse.in
+      .panel-body.lightest_orange
+        -if @quizzes_array.count == 0
+          = render partial: "no_data_populate", locals: {message:"You have not published any assessments so far. Please publish to see data here"}
+        -else
+          - @quizzes_array.each_with_index do |quiz,i|
+            .graphs_container
+              .row
+                .panel_info
+                  %b
+                    = "Test Name:"
+                  = quiz[0]
+                  %br
+                  %b
+                    = "No. of Questions:"
+                  =  quiz[1]
+                - 3.times do
+                  %br
+              .row
+                .col-md-1
+                  .students_performance_graph_legend.contents_box
+                    = "No. of students"
+                .col-md-11
+                  .div{id:"students_performance_graph#{i}", data:{x:@quiz_graph_array[i][0][:sections],y1:@quiz_graph_array[i][0][:a].unshift('0% - 33%'),y2:@quiz_graph_array[i][0][:b].unshift('34% - 77%'),y3:@quiz_graph_array[i][0][:c].unshift('78% - 100%')}.to_json }
+
+            .panel-footer.light_orange{style:" color:white; height:30px;"}
+              .row
+                .col-md-2{style:"bottom: 5px; left: 5px;"}
+                  = "0#{i+1}"
+                .col-md-9
+                .col-md-1.nav_icons
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/previous_arw.png",:href => "/"}
+                  %img{:alt => "abcd_logo", :src => "assets/abcd_icons/next_arw.png",:href => "/"}
+            %br
+
+
+:css
+  /*overall panel and image placing css below;*/
+  .nav_icons{
+  display: none;
+  }
+
+  /*.sections_student_info{*/
+    /*height:250px;*/
+    /*overflow-x:hidden;*/
+    /*overflow-y:auto;*/
+    /*background:#fff;*/
+    /*box-shadow:  0px 10px 25px 10px #f6f6f6 inset ;*/
+  /*}*/
+
+
+  .align_vertical{
+  vertical-align: top;
+  }
+
+  .glyphicon.glyphicon-print{
+  font-size: 25px;
+  color: #ffffff;
+  }
+
+  .spacing{
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-right: 10px;
+  }
+
+  .glyphicon.glyphicon-menu-down{
+  font-size: 25px;
+  color: #ffffff;
+  }
+
+
+  .center_align{text-align: center}
+
+  .heading_row{
+  min-height: 68px;
+  right: 50px;
+  }
+  .graph_header{font-size: 1.4em;}
+  .panel_info{
+  margin: 0 auto;
+  color: #767676;
+  font-size: 1.5em;
+  }
+  .heading_row > a{
+  min-height: 68px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  }
+  .panel-heading{
+  height: 68px;
+  line-height: 68px;
+  z-index: 1 !important;
+  }
+  .book_icon{
+  font-size: 1.3em;
+  color: #767676;
+  top: 60px;
+  }
+  .book_icon > img{
+  max-width: 50%;
+  position: relative;
+  }
+  .icon_block > img {
+  max-height: 100px;
+  max-width: 100px;
+  }
+  h3{color: white !important;}
+  .inline_header{
+  display: inline-block;
+  width: 30%;
+  text-align: center;
+  color: #767676;
+  }
+  .row-bottom-margin{
+  margin-bottom:0px !important;
+  }
+  .first_img{
+
+  }
+  .first_header{
+  color:white;
+  vertical-align: middle;
+  position: relative;
+  top:2px;
+  }
+  .second_img {
+
+  }
+  .nav_icons{
+  left:50px;
+  }
+  .nav_icons > img {
+  height: 30px;
+  position: relative;
+  bottom: 10px;
+  }
+  /*color's css below*/
+  .darkest_blue{background-color: #194f90}
+  .dark_blue{background-color: #3f6cad}
+  .light_blue{background-color: #7ca0c5}
+  .lightest_blue{background-color: #e2e7f0}
+
+  .darkest_pink{background-color: #c50fc3 }
+  .dark_pink{background-color: #ef466d}
+  .light_pink{background-color: #fc92a4 }
+  .lightest_pink{background-color: #fce6ec;}
+
+  .darkest_orange{background-color: #c12f05}
+  .dark_orange{background-color: #f37e3b}
+  .light_orange{background-color: #f69e6c}
+  .lightest_orange{background-color: #faceb5}
+
+  .darkest_green{  background-color: #1c6e2c;}
+  .dark_green{ background-color: #0e9b4d;}
+  .light_green{ background-color: #86cda6}
+  .lightest_green{ background-color: #c3e6d2;}
+
+  /*cirlcles related css of second container here*/
+  .circles_container_3{
+  padding: 5% 5% 5% 20%;
+  background-color: white;
+  z-index: -1;
+  }
+
+  .big_circle{
+  width: 200px;
+  height: 200px;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  border-radius: 100px;
+  display:inline-block;
+  color:white;
+  line-height: 200px;
+  font-size: 25px !important;
+
+  }
+  /*circles related css of third container here*/
+
+  .medium_circle{
+  width: 150px;
+  height: 150px;
+  -webkit-border-radius: 75px;
+  -moz-border-radius: 75px;
+  border-radius: 75px;
+  display:inline-block;
+  color:white;
+  line-height: 150px;
+  font-size: 24px !important;
+  }
+  /*circles related css of first container here*/
+  .sections_container{
+  background-color: white;
+  z-index: -1;
+  }
+  .contents_box{
+  /*margin-left: 30px;*/
+  font-size:1.3em;
+  color: #767676;
+  }
+  .headers_box{
+  font-size: 1.5em;
+  color: #767676;
+  }
+  .contents_box > img {
+  max-width: 55%;
+  /*max-height:30%;*/
+  }
+
+  .circle{
+  text-align: center ;
+  line-height: 100px;
+  display:inline-block;
+  padding: 10px 30px 0px 0px;
+  color: #767676;
+  }
+  .count{
+  font-size: 20px;
+  /*font-weight: bold;*/
+  }
+
+    /*graphs of 1St container related css here below  */
+  .graphs_container{
+  padding: 2% 5% 2% 5%;
+  background-color: white;
+  }
+  .inline_graph_width30{
+  display: inline-block;
+  width: 30%
+  }
+  .inline_graph_width50{
+  display: inline-block;
+  width: 49%;
+  }
+  .inline_graph_width70{
+  display: inline-block;
+  width: 69%;
+  }
+  /*overall graphs related css below*/
+  #teachers_graph.c3 .tick, #books_graph.c3 .tick, .c3-axis-y .tick, .c3-axis-y2 .tick {
+    display:none;
+  }
+  .c3-axis-x text{
+    font-size:12px;
+    fill: #767676;
+  }
+  .students_performance_graph_legend{
+  -ms-transform: rotate(270deg); /* IE 9 */
+  -webkit-transform: rotate(270deg); /* Chrome, Safari, Opera */
+  transform: rotate(270deg);
+  position: relative;
+  left: 100px;
+  top: 125px;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+:javascript
+  //function circleNumberCounter(elementSelectorId, totalCounters){
+  //for (counter = 1 ; counter <= totalCounters; counter++ ){
+  //var numAnimCircle = new CountUp(elementSelectorId + counter, 400, parseInt($("#"+elementSelectorId + counter).text()), 0, 2.5, {})
+  //numAnimCircle.start();
+   // }
+  // }
+  //circleNumberCounter("circle", "#{k-1}");
+  window.sr = ScrollReveal({ reset: true });
+  sr.reveal('.graphs_container', { duration: 1500 })
+  sr.reveal('.sections_container', { duration: 1500 })
+  sr.reveal('.panel_info', { duration: 1500 })
+  $(".panel-heading").sticky({ topSpacing: 69 });
+    $("#sticker").sticky({ topSpacing: 69*2 });
+  // javascript for graph printer
+
+  $("#print_div").click(function(){
+    //Hide all other elements other than printarea.
+
+
+  var $container = $('.circles_container'),
+    // Canvg requires trimmed contents
+    contents = $container.html().trim(),
+    canvas = document.getElementById('canvas3');
+
+    canvg(canvas, contents);
+    var img = contents.toDataURL("image/png", 1.0)
+    doc.addImage(img, 'PNG', 15, 40, 180, 60)
+    doc.text('Assessments Information', 10, 10)
+  doc.save('graph.pdf')
+
+  })
+
+  //Vertical graphs generator
+  function generateVerticalGraph(selector, dataHash, axisHash, legendHash){
+  var defaultDataHash = {type: 'bar',
+    labels: {
+      format: function (v, id, i, j) {
+          if (v >= 1000)
+             return v/1000 + "K";
+          else if (v >= 1000000)
+             return v/1000000 + "M";
+          else
+             return v;
+      }
+  }}
+  var defaultAxisHash = {
+   x: {
+        type: 'category',
+          tick: {
+                fit: true,
+                multiline: true
+            }
+
+   },
+  rotated:false,
+        y2:{
+        show:false
+          }
+        }
+
+  return c3.generate({
+  bindto:selector,
+  data: $.extend({}, dataHash, defaultDataHash),
+  axis: $.extend({}, defaultAxisHash, axisHash),
+  legend:$.extend({}, legendHash),
+  bar: {
+    width: {
+        ratio: 0.5 // this makes bar width 50% of length between ticks
+    }
+    // or
+    //width: 100 // this makes bar width 100px
+  },
+    zoom: {
+        enabled: true
+    },
+  })
+  }
+
+  //javascript of graphs of container1-tile1
+    for (counter = 0 ; counter <= #{books_count-1}; counter++ ){
+  var ssg = $.parseJSON($("#sec_students_graph"+counter).attr('data'));
+  var axisHashOfSectionsContainer= {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:ssg.x},rotated:false,y2:{show:false}};
+  var legendHashOfSectionsStudents = {show:true}
+  var dataHashOfSections = {
+  colors:{x:'#7ca0c5','Students': ssg.z[counter]},
+      columns: [
+          ssg.y
+      ]
+
+  }
+
+  generateVerticalGraph("#sec_students_graph"+counter, dataHashOfSections, axisHashOfSectionsContainer, legendHashOfSectionsStudents );
+  }
+
+
+  //javascript of graphs of container1-tile2
+
+  for (counter = 0 ; counter <= #{books_count-1}; counter++ ){
+  var tlmy = $.parseJSON($("#total_lm_graph"+counter).attr('data'));
+  var axisHashOfPerformanceContainer= {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:tlmy.x},rotated:false,y2:{show:false}};
+  var legendHashOfActiveStudents = {show:true}
+  var dataHashOfTotalLm = {
+  colors:{x:'#7ca0c5','Total Learning Minutes': '#3f6cad','Average Learning Minutes': '#0e9b4d'},
+      columns: [
+          tlmy.y1,
+          tlmy.y2
+      ]
+
+  }
+
+  generateVerticalGraph("#total_lm_graph"+counter, dataHashOfTotalLm, axisHashOfPerformanceContainer, legendHashOfActiveStudents );
+
+  //var almy = $.parseJSON($("#average_lm_graph"+counter).attr('data'));
+  //var dataHashOfAverageLm = {
+  //colors:{x:'#7ca0c5','Average Learning Minutes': '#0e9b4d'},
+  //columns: [
+  //almy.y
+  //     ]
+  //}
+  //var axisHashOfEngagementContainer = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:tlmy.x},rotated:false,y2:{show:false}};
+  //var legendHashOfActiveStudents = {show:true}
+  //
+  //
+  //generateVerticalGraph("#average_lm_graph"+counter, dataHashOfAverageLm, axisHashOfEngagementContainer, legendHashOfActiveStudents )
+  }
+
+
+
+
+
+  // javascript of graphs of container 2
+  for (counter = 0 ; counter <= #{books_count-1}; counter++ ){
+  var dec = $.parseJSON($("#combined_lo_graph"+counter).attr('data'));
+  var dataHashOfEngagementContainer = {colors:{x:'#7ca0c5', 'LOs Consumed': '#f37e3b'},
+  columns: [
+  //dec.y1,
+  //dec.y2,
+  dec.y3
+       ]}
+  var axisHashOfEngagementContainer = {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:dec.x},rotated:false,y2:{show:false}};
+  var legendHashOfEngagementContainer = {show:true}
+
+  generateVerticalGraph("#combined_lo_graph"+counter, dataHashOfEngagementContainer,axisHashOfEngagementContainer,legendHashOfEngagementContainer);
+  //'videos Watched': '#3f6cad', 'Tests Taken': '#ef466d',
+
+  }
+
+  // javascript for container 3
+
+  for (counter = 0 ; counter <= 2; counter++ ){
+  var cdata_students_per = $.parseJSON($("#students_performance_graph"+counter).attr('data'));
+  var axisHashOfPerformanceContainer= {x:{type:'category',tick:{fit:true,multiline:true,rotate:1},categories:cdata_students_per.x},rotated:false,y2:{show:false}};
+  var legendHashOfActiveStudents = {show:true}
+  var dataHashOfPerformanceContainer = {colors:{x:'#7ca0c5','0% - 33%': '#ef466d', '34% - 77%': '#f37e3b', '78% - 100%': '#0e9b4d'},
+  columns: [
+  cdata_students_per.y1,
+  cdata_students_per.y2,
+  cdata_students_per.y3
+       ]}
+  generateVerticalGraph("#students_performance_graph"+counter, dataHashOfPerformanceContainer,axisHashOfPerformanceContainer,legendHashOfActiveStudents);
+
+  }
+
+
+
+
+
+

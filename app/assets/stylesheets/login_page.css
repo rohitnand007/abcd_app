@@ -1,0 +1,12 @@
+#close_flash{
+    visibility: hidden;
+}
+.flash_text{
+    bottom: 65px;
+    font-style: italic;
+    color: #ff0000;
+}
+.login_btn{
+   height: 50px;
+
+}

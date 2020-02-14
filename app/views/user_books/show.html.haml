@@ -1,0 +1,30 @@
+#data
+  #application-list
+    %h1 User Name:   #{@User}
+    %table.details{width: '100%' ,align: 'left'}
+      %tbody
+        %tr.even.right
+          %td Book List:
+        %tr.odd.right
+        - @UserBooks.each do |user_book|
+          %tr.odd.right
+            %td= user_book.book_name
+
+:javascript
+  $(document).ready(function() {
+    $("#message_acknowledgs").dataTable({
+        "aoColumns": [
+                    null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+

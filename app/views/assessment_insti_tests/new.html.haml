@@ -1,0 +1,27 @@
+#content_header
+  %h1#main_heading assessment_insti_testes
+
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_insti_tests_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_insti_test_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_insti_tests_path
+      %li.active= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_insti_test_path
+  .content
+    %h2.title
+      = t("web-app-theme.new", :default => "New")
+      assessment_insti_tests
+    .inner
+      = render "form"
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

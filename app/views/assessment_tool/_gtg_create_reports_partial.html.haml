@@ -1,0 +1,87 @@
+%div
+  %table{cellpadding: "0", cellspacing: "0"}
+    %tbody
+      - if @assessment
+        - count = 0
+        - @assessment.quiz_targeted_groups.each do |quiz_targeted_group|
+          - if quiz_targeted_group.to_group
+            - count = count + 1
+            %tr
+              %td{style: "border: 0px; padding: 2px 8px 2px 8px;"}
+                %input{:value=>quiz_targeted_group.id,:name => "quizTargetedGroupId", onclick: "resetSelectionRadioGroup(this); var x = this.value; $('#nextComparisonAssessments').button('option', 'disabled', false); $('#nextConfigurationParameters').button('option', 'disabled', false); $('#nextGenerateReport').button('option', 'disabled', false); document.getElementById('selectedAssessmentBucket').src='/assets/bucket_full_icon.png'; document.getElementById('selectedAssessmentBucket2').src='/assets/bucket_full_icon.png'; document.getElementById('selectedAssessmentBucket3').src='/assets/bucket_full_icon.png'; document.getElementById('selectAssessmentStep').src='/assets/check_box_checked.png'; $('#selectionText').html('You have selected below assessment'); $('#selectedAssessment').html($('#' + x ).html()); $('#selectionText2').html('You have selected below assessment'); $('#selectedAssessment2').html($('#' + x ).html()); $('#selectionText3').html('You have selected below assessment'); $('#selectedAssessment3').html($('#' + x ).html());", style: "vertical-align: middle;", type: "radio"}/
+              %td{id: quiz_targeted_group.id}
+                %table{cellpadding: "0", cellspacing: "0"}
+                  %tbody
+                    %tr{style: "border: 1px solid #CCC;"}
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        = @assessment.name
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        = User.find(quiz_targeted_group.group_id).name
+                      /%td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"} Mathematics
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        Publish ID:
+                        = quiz_targeted_group.id
+                        /Duration:
+                        /= show_duration(@assessment.timelimit*60)
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        Assessment ID:
+                        = @assessment.id
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        Total Marks:
+                        = @assessment.total_marks
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        Test taken:
+                        = Quiz.get_quiz_attempts(quiz_targeted_group).size
+                        of
+                        = Quiz.get_quiz_targeted_group_student_size(quiz_targeted_group)
+                      %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                        Published On:
+                        - publish_date = Time.at(quiz_targeted_group.published_on)
+                        = publish_date.strftime("#{publish_date.day.ordinalize}" " %B" " %Y")
+            %tr{style: "border: 0px;"}
+              %td{colspan: "2"} &nbsp;
+          -else
+            %div
+              -if count == 0
+                This Assessment Never Published to a group
+                - count = count + 1
+      -else
+        - @publishes.each do |quiz_targeted_group|
+          %tr
+            %td{style: "border: 0px; padding: 2px 8px 2px 8px;"}
+              %input{:value=>quiz_targeted_group.id,:name => "quizTargetedGroupId", onclick: "resetSelectionRadioGroup(this); var x = this.value; $('#nextComparisonAssessments').button('option', 'disabled', false); document.getElementById('selectedAssessmentBucket').src='/assets/bucket_full_icon.png'; document.getElementById('selectedAssessmentBucket2').src='/assets/bucket_full_icon.png'; document.getElementById('selectedAssessmentBucket3').src='/assets/bucket_full_icon.png'; document.getElementById('selectAssessmentStep').src='/assets/check_box_checked.png'; $('#selectionText').html('You have selected below assessment'); $('#selectedAssessment').html($('#'+ x ).html()); $('#selectionText2').html('You have selected below assessment'); $('#selectedAssessment2').html($('#'+ x ).html()); $('#selectionText3').html('You have selected below assessment'); $('#selectedAssessment3').html($('#'+ x ).html());", style: "vertical-align: middle;", type: "radio"}/
+            %td{id: quiz_targeted_group.id}
+              %table{cellpadding: "0", cellspacing: "0", width: "100%"}
+                %tbody
+                  %tr{style: "border: 1px solid #CCC;"}
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      = quiz_targeted_group.quiz.name
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      = User.find(quiz_targeted_group.group_id).name
+                    /%td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"} Mathematics
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      Publish ID:
+                      = quiz_targeted_group.id
+                      /Duration:
+                      /= show_duration(@assessment.timelimit*60)
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      Assessment ID:
+                      = quiz_targeted_group.quiz_id
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      Total Marks:
+                      = quiz_targeted_group.quiz.total_marks
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      Test taken:
+                      = Quiz.get_quiz_attempts(quiz_targeted_group).size
+                      of
+                      = Quiz.get_quiz_targeted_group_student_size(quiz_targeted_group)
+                    %td{style: "border: 1px solid #CCC; padding: 2px 8px 2px 8px;"}
+                      Published On:
+                      - publish_date = Time.at(quiz_targeted_group.published_on)
+                      = publish_date.strftime("#{publish_date.day.ordinalize}" " %B" " %Y")
+          %tr{style: "border: 0px;"}
+            %td{colspan: "2"} &nbsp;
+- if !@assessment
+  .pagination_info
+    = paginate @publishes, :remote => true ,:params => {:controller => 'assessment_tool', :action => 'gtg_create_report_pagination'}
+

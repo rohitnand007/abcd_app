@@ -1,0 +1,5 @@
+$('.spinner-gif').hide();
+$("#my-assessment-filter-partial").html("<%= escape_javascript(render :partial => 'assessment_tool/assessment_list') %>");
+common_ready_function();
+prepare_dialogs_for_analytics();
+$(".classComboBox").prop("selectedIndex", -1);

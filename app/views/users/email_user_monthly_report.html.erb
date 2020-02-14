@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= @user.name %> monthly report</title>
+  <meta name="description" content="parent's report">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Parents report">
+
+  <style>
+          /* Global properties ======================================================== */
+      html, body { width:100%; height:100%; padding:0; margin:0;}
+
+      body {
+          width:100%;
+      }
+
+      #wrapper { float:none; width:1024px; background-position: top center; overflow:hidden; position:relative;  margin:0 auto;}
+      #main {width:1024px; margin:0 auto; overflow:hidden; position:relative; background-image:url(<%=wicked_pdf_css_image_tag('/assets/images/footer_bg.jpg')%>); background-position:bottom right; background-repeat:no-repeat; bottom:0;}
+      #header { background-image: url( <%=wicked_pdf_css_image_tag('/assets/images/header_bg.jpg')%>); background-repeat:no-repeat; width:1024px; height:130px; margin:0 auto; z-index:101; position:relative; _position:relative; z-index:100; padding-top:35px;}
+      .clear {clear:both;}
+      .badge { width:420px; height:60px;font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:25px; color:#fff; background-color:#404041; border-radius:8px; line-height:60px; text-align:center; margin: 0 auto;}
+      .span { display: table-cell; vertical-align: middle; text-align:center;}
+      .student_details { float:left; height:auto; overflow:hidden; font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:20px/50px;  color:#000; padding-left:150px; }
+      .student_details p {color:#000000;}
+      .student_details span { font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:20px/50px; color:#0072bc; }
+
+      .usage_overview { width:910px; height:auto; overflow:hidden; background-color:#323a45; border-radius:8px;font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:25px; color:#fff; padding-bottom:10px; padding-left:2px; margin:0 auto 25px auto;}
+      .usage_overview .title{ float:left; width:100%; height:50px;font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:25px; color:#fff; line-height:45px;}
+      .usage_overview .title2{ float:left; width:100%; height:30px;font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:16px; color:#fff; line-height:35px;}
+      .usage_overview .cell{ float:left; width:225px; height:45px; font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; margin:1px; vertical-align: middle; text-align:center; font-size:14px; line-height:45px; color:#000; }
+      .usage_overview .cell2{ float:left; width:149px; height:45px;font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; margin:1px; vertical-align: middle; text-align:center; font-size:14px; line-height:45px; color:#000; }
+      .usage_overview .cell .span{ font-size:8px; line-height:45px; color:#000; }
+
+      h1 { font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:20px; color:#fff;}
+      h2 { font-size:40px; line-height:48px; color:#1e1e1e; font-weight:normal; letter-spacing:-2px;}
+      h3 { font-size:53px; line-height:65px; color:#1e1e1e; font-weight:normal; letter-spacing:-2px;}
+
+      .white { background-color:#fff;}
+      .gray { background-color:#eaedf1;}
+
+      .progress {
+          width: 152px; height:28px;font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif; font-size:14px; line-height:28px; color:#000;
+          border: 1px solid black; margin:5px auto;
+          position: relative;
+          padding: 3px;
+      }
+
+      .percent {
+          position: absolute;
+          left: 15%;
+      }
+
+      #bar100 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 100%;
+      }
+
+      #bar90 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 90%;
+      }
+      #bar80 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 80%;
+      }
+      #bar70 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 70%;
+      }#bar60 {
+           height: 28px;
+           background-color: #14b9d6;
+           width: 60%;
+       }#bar50 {
+            height: 28px;
+            background-color: #14b9d6;
+            width: 50%;
+        }#bar40 {
+             height: 28px;
+             background-color: #14b9d6;
+             width: 40%;
+         }#bar30 {
+              height: 28px;
+              background-color: #14b9d6;
+              width: 30%;
+          }
+      #bar20 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 20%;
+      }
+      #bar10 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 10%;
+      }
+      #bar0 {
+          height: 28px;
+          background-color: #14b9d6;
+          width: 1%;
+      }
+      .alwaysbreak { page-break-before: always; }
+      .nobreak:before { clear:both; }
+      .nobreak{ page-break-inside: avoid;
+          /* http://code.google.com/p/wkhtmltopdf/issues/detail?id=9#c21 */
+      }
+  </style>
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+      google.load('visualization', '1', {packages: ['corechart']});
+  </script>
+  <script type="text/javascript">
+      function drawVisualization() {
+          // Create and populate the data table.
+          var data = google.visualization.arrayToDataTable([
+              ['Task', 'Hours per Day'],
+              <%unless @subject_chart.nil?%>
+              <%i = ''%>
+              <%@subject_chart.each do |b,a|%>
+              <%=i%>
+              ['<%=a[0]%>',<%=a[1]%>]
+              <%i = ','%>
+              <%end%>
+              <%end%>
+
+          ]);
+
+          // Create and draw the visualization.
+          new google.visualization.PieChart(document.getElementById('visualization')).
+                  draw(data, {title:" "});
+      }
+
+
+      google.setOnLoadCallback(drawVisualization);
+  </script>
+
+</head>
+<body>
+
+<div id="wrapper">
+  <div id="main">
+    <%#=image_tag 'http://'+request.host_with_port+@user.institution.profile.photo(:small) %>
+    <div id="header">
+      <div class="badge" style="float:left;margin-left:300px;"><span>Tablet Learning Platform</span></div>
+      <div style="width:120px;float:right; margin:5px;margin-left:7px;"><img src="file:///<%=Rails.root.to_s+Institution.find(1020).profile.photo(:small)%>"/></div>
+      <div class="clear"></div>
+      <div align="center"><h1>Monthly Student Activity Report</h1></div>
+    </div> <!-- Header ends -->
+    <div class="student_details">
+      <p>Name: <span> <%= @user.name%> </span></p>
+      <p>Roll no: <span> <%= @user.rollno%> </span></p>
+      <p>Class: <span><%= @user.academic_class.name %> / <%= @user.section.name%></span></p>
+      <p>From: <span> <%=@start_date%> To: <%=@end_date%></span></p>
+      <p>School: <span> <%= @user.institution.name %> </span></p>
+      <p>Time spent this month:<span>  <%= @time_spent %> </span> minutes </p>
+      <p>No of messages sent to inbox this month: <span> <%= @messages.count %> </span></p>
+    </div>
+    <% unless @usages.empty? %>
+        <div class="usage_overview nobreak" align="center">
+          <div class="title" align="center">Usage Overview</div>
+          <div class="cell gray"></div>
+          <div class="cell gray">Module Progress(% till date)</div>
+          <div class="cell gray" style="line-height:1.5em">Module Progress(% till last month)</div>
+          <div class="cell gray" style="line-height:1.5em">Time spent (minutes) for the period - month)</div>
+          <div class="clear"></div> <!-- Row 1 ends -->
+
+          <%@subject_usage.each do |b,c|%>
+              <%if c[3] != 0 %>
+                  <div class="cell white" style="line-height:1.5em"><%=c[0]%></div>
+                  <div class="cell white">
+                    <% c1 = c[1]*100/c[4].to_i%>
+                    <%if c1 <= 100 and c1 !=0 %>
+                        <div class="progress"><span class="percent"><%=c1%></span>
+                          <div style="height: 28px;background-color: #14b9d6;width: <%=c1%>%;"></div>
+                        </div>
+                    <%else%>
+                        NA
+                    <%end%>
+                  </div>
+                  <div class="cell white">
+                    <% c2 = c[2]*100/c[4].to_i%>
+                    <%if c2 <= 100 and c2 != 0 %>
+                        <div class="progress"><span class="percent"><%=c2%></span>
+                          <div style="height: 28px;background-color: #14b9d6;width: <%=c2%>%;"></div>
+                        </div>
+                    <%else%>
+                        NA
+                    <%end%>
+                  </div>
+                  <div class="cell white"><%=c[3]%></div>
+                  <div class="clear"></div> <!-- Row 2 ends -->
+              <% end %>
+          <%end%>
+
+        </div> <!-- Usage overview ends -->
+    <%end%>
+    <%unless @subject_chart.empty?%>
+        <div id="visualization" style="width: 910px; height: 500px; border:2px solid #323a45; border-radius:8px; margin:25px 55px;" align="center"></div> <!-- Pie Chart -->
+    <%end%>
+    <%unless @month_attempts.empty?%>
+        <div class="usage_overview  nobreak" align="center">
+          <div class="title" align="center">Practice / Assesment Overview</div>
+          <div class="cell gray"></div>
+          <div class="cell gray"style="line-height:1.5em">No of Assessments attempted (this month)</div>
+          <div class="cell gray" style="line-height:1.5em">No of Assessments attempted (Cumulative)</div>
+          <div class="cell gray">Avg Score(%)</div>
+          <div class="clear"></div> <!-- Row 1 ends -->
+
+          <%@assessment_usage.each do |b,a|%>
+              <% if a[3] != 0 %>
+                  <div class="cell white"><%=a[0]%></div>
+                  <div class="cell white"><%=a[1]%></div>
+                  <div class="cell white"><%=a[2]%></div>
+                  <div class="cell white"><%=a[3].to_i%></div>
+                  <div class="clear"></div>
+              <%end%>     <!-- Row 2 ends -->
+          <%end%>
+          <!--<div class="title2" align="center">Time Spent on tests this month:<span><%#= @total_test_time%></span>minutes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tests published this month:<span><%#=@total_published%></span></div>-->
+        </div> <!-- Practice overview ends -->
+    <%end%>
+    <div class="usage_overview alwaysbreak nobreak" align="center">
+      <div class="title" align="center">Details of the last 5 tests attempted on the tablet:</div>
+      <div class="cell gray">Subject</div>
+      <div class="cell gray">Chapter</div>
+      <div class="cell gray">Score (%)</div>
+      <div class="cell gray">Attempt No</div>
+      <!--<div class="cell2 gray">Time Spent (mins)</div>-->
+      <div class="clear"></div> <!-- Row 1 ends -->
+      <%QuizAttempt.includes(:quiz).where("user_id=? AND quizzes.format_type IN (?)",@user.id,[0,1]).order('quiz_attempts.id desc').limit(5).each do |test|%>
+          <div class="cell white"><div><%= test.quiz.context.try(:subject).try(:name)%></div></div>
+          <div class="cell white" style="line-height:1.5em"><%= test.quiz.context.chapter_id !=0 ?  test.quiz.context.try(:chapter).try(:name)+"-" : ''%><%= test.quiz.name%></div>
+          <div class="cell white"><%= ((test.sumgrades/test.quiz.quiz_question_instances.sum(:grade))*100).to_i%></div>
+          <div class="cell white"><%= test.attempt%></div>
+          <!--<div class="cell2 white"><%#=test.quiz_question_attempts.sum(:time_taken)/60%></div>-->
+          <div class="clear"></div> <!-- Row 2 ends -->
+      <%end%>
+    </div> <!-- Practice overview ends -->
+    <p>This report is Auto Generated using IGNITOR Course Delivery Engine. Please view information as indicative and bring to notice of Edutor representative discrepancies if any.</p>
+
+  </div>
+</div>
+
+</body>
+</html>

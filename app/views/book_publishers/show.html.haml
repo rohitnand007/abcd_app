@@ -1,0 +1,9 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @book_publisher.name
+
+= link_to 'Edit', edit_book_publisher_path(@book_publisher)
+\|
+= link_to 'Back', book_publishers_path

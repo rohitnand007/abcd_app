@@ -1,0 +1,98 @@
+#content_header
+  -if (!@profile.nil? and @profile.user.is?'ECP')
+    %h1#main_heading License Settings
+  -else
+    #breadcrumbs
+      =bread_crumb_for_profile_pages
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_profile_path
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        -if (!@profile.nil? and @profile.user.is?'ECP')
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.website", :default => t("activerecord.labels.website", :default => "License Keys API Link"))
+            %td.right= @profile.website
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.address", :default => t("activerecord.labels.address", :default => "Address"))
+            %td.right= @profile.address
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+            %td.right= @profile.phone
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.alternateemail", :default => t("activerecord.labels.alternateemail", :default => "Alternate Email"))
+            %td.right= @profile.alternateemail
+        -elsif (!@profile.nil? and !@profile.user.is?'IG' and  !@profile.user.is?'CG')
+          -#%tr.even.left
+          -#  %td Photo
+          -#  %td.right= image_tag @profile.photo.url(:small)
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.institution", :default => t("activerecord.labels.institution", :default => "Institution"))
+            %td.right= @profile.user.try(:institution).try(:name)
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.center", :default => t("activerecord.labels.center", :default => "Center"))
+            %td.right= @profile.user.try(:center).try(:name)
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.web_screen_name", :default => t("activerecord.labels.web_screen_name", :default => "Web Login Name"))
+            %td.right= @profile.web_screen_name
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.surname", :default => t("activerecord.labels.surname", :default => "Surname"))
+            %td.right= @profile.surname
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.middlename", :default => t("activerecord.labels.middlename", :default => "Middle name"))
+            %td.right= @profile.middlename
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.firstname", :default => t("activerecord.labels.firstname", :default => "First name"))
+            %td.right=  @profile.firstname
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.gender", :default => t("activerecord.labels.gender", :default => "Gender"))
+            %td.right= @profile.gender
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.address", :default => t("activerecord.labels.address", :default => "Address"))
+            %td.right= @profile.address
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+            %td.right= @profile.phone
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.alternateemail", :default => t("activerecord.labels.alternateemail", :default => "Alternate email"))
+            %td.right= @profile.alternateemail
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.height", :default => t("activerecord.labels.height", :default => "Height"))
+            %td.right= @profile.height
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.weight", :default => t("activerecord.labels.weight", :default => "Weight"))
+            %td.right= @profile.weight
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.blood_group", :default => t("activerecord.labels.blood_group", :default => "Blood group"))
+            %td.right= @profile.blood_group
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.user_id", :default => t("activerecord.labels.user_id", :default => "Id"))
+            %td.right= @profile.user.edutorid
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.rollno", :default => t("activerecord.labels.rollno", :default => "Rollno"))
+            %td.right= @profile.user.rollno
+        -else
+          %tr.even.left
+            %td Logo
+            %td.right= image_tag @profile.photo.url(:small)
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.firstname", :default => t("activerecord.labels.firstname", :default => "Name"))
+            %td.right=  @profile.firstname
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.phone", :default => t("activerecord.labels.phone", :default => "Phone"))
+            %td.right= @profile.phone
+          %tr.odd.left
+            %td= t("activerecord.attributes.profile.address", :default => t("activerecord.labels.address", :default => "Address"))
+            %td.right= @profile.address
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.user_id", :default => t("activerecord.labels.user_id", :default => "Id"))
+            %td.right= @profile.user.edutorid
+          %tr.even.left
+            %td= t("activerecord.attributes.profile.rollno", :default => t("activerecord.labels.rollno", :default => "Rollno"))
+            %td.right= @profile.user.rollno
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit", edit_profile_path(@profile), :class => "button icon edit"

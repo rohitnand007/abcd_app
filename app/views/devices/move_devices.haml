@@ -1,0 +1,62 @@
+#content_header
+  %h1#main_heading Move Devices
+  -#%h3#sub_heading Move
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}", devices_path
+    -if current_user.is? 'EA' or current_user.is? 'IA'
+      %li.inner_tab_selected=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_device_path
+      %li.inner_tab_selected= link_to "#{t("web-app-theme.move_devices", :default => "Move devices")}", move_devices_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            .heading Move Devices
+            = form_tag('/update/devices',:class => :form) do
+              .inputs
+              - if current_user.is?'EA' or current_user.is?'IA'
+                .group
+                  .field
+                    = label :institution_id, "Institution", :class=>'label'
+                    = select_tag :institution_id,options_from_collection_for_select(Institution.includes(:profile),:id,:name) ,:class=>'drop_down'
+                .group
+                  .field
+                    = label :center_id, "Center", :class=>'label'
+                    = select_tag :center_id, '',{ :prompt => 'Select'  ,:class=>'drop_down' }
+              .group
+                .field
+                  = label :device_tokens, "Devices", :class => "label"
+                  = text_field_tag :device_tokens ,{:rows=>4,:cols=>100 ,:class => 'text_field'},:label => false
+              .group
+                .field{:align=>'center'}
+                  = submit_tag :move ,:class=>'button'
+                  = link_to t("web-app-theme.cancel", :default => "Cancel"), devices_path,:class=>'button danger icon remove'
+
+:javascript
+  $(function() {
+      $("#device_tokens").tokenInput("/devices.json", {
+          crossDomain: false,
+          preventDuplicates:true,
+          prePopulate: $("#device_tokens").data("pre"),
+          theme: ""
+      });
+  });
+  $("#institution_id").change(function() {
+      var institution = $('select#institution_id :selected').val();
+      var url = '/institution/get_centers/' + institution
+      var div_update = "#center_id"
+      get_url_Data_for_multiparams(url,div_update);
+  });
+  $("#range_from").change(function() {
+      var from = $('select#range_from :selected').val();
+      $("#range_to").attr('disabled',false);
+      $('#range_to option').each(function(i, option){
+          if (option.value<from){
+              $(option).attr('disabled',true);
+          }else{
+              $(option).attr('disabled',false);
+          }
+      });
+  });

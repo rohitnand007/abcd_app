@@ -1,0 +1,11 @@
+.q_optionrow
+  .option_cell1
+    = f.label "Possibilities"
+  .option_cell2
+    = f.text_field :answer, placeholder:"Please enter possibilities separated by commas ...",required:"required"
+  .option_cell3{style:"display:none"}
+    = f.hidden_field :fraction, value:"0"
+
+
+= #link_to_remove_association "Remove Blank", f #This will only work if you put .nested-fields class at the top of this page
+

@@ -1,0 +1,46 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active= link_to "#{t("web-app-theme.list", :default => "List")}", assessments_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_path
+  .content
+    %h2.title
+      = t("web-app-theme.all", :default => "All")
+      assessment template
+    .inner
+      %table.table
+        %tr
+          %th.name Name
+          %th
+            Template
+          %th
+            &nbsp;
+        %tr   
+          %td
+            IIT
+          %td
+            = link_to @iit.path,@iit.path.sub("/home/dilip/edutor-dev/public","")
+          %td.last
+            = @iit
+        %tr   
+          %td
+            IIT
+          %td
+            = link_to @mock.path, @mock.path.sub("/home/dilip/edutor-dev/public","")
+          %td.last
+            = @mock
+        %tr   
+          %td
+            IIT
+          %td
+            = link_to @olimpaid.path, @olimpaid.path.sub("/home/dilip/edutor-dev/public","")
+          %td.last
+            = @olimpaid
+        %tr   
+          %td
+            IIT
+          %td
+            =  link_to @quiz.path, @quiz.path.sub("/home/dilip/edutor-dev/public","")
+          %td.last
+            = @quiz            
+             

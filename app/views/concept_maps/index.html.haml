@@ -1,0 +1,80 @@
+:css
+  #concept_map_configuration{
+    margin-top:20px;
+
+  }
+:javascript
+  $(document).ready(function() {
+    $("#concept_map_list").dataTable({
+        "aoColumns": [
+                    null,null,null, null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+#content_header
+  %h1#main_heading concept_map
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=link_to  "#{t("web-app-theme.list", :default => "List")}", concept_maps_path
+    %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_concept_map_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#concept_map_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                -#%th Id
+                %th Publisher
+                %th Board
+                %th Content Year
+                %th Subject
+                %th Chapter
+                %th Topic
+                %th Name
+                %th Created At
+                %th &nbsp
+
+            %tbody
+              -#%tr.tr-blank
+              - @concept_maps.each do |concept_map|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"concept_map_#{concept_map.id}"}
+                  -#%td.col=  concept_map.rb.id
+                  %td.col
+                    = concept_map.asset.user.name if concept_map.asset
+                  %td.col
+                    = concept_map.board.name if concept_map.board
+                  %td.col
+                    = concept_map.content_year.name if concept_map.content_year
+                  %td.col
+                    = concept_map.subject.name  if concept_map.subject
+                  %td.col
+                    = link_to concept_map.chapter.name, chapter_path(concept_map.chapter)  if concept_map.chapter
+                  %td.col
+                    = link_to concept_map.topic.name, topic_path(concept_map.topic)  if concept_map.topic
+                  %td.col
+                    = concept_map.name
+                  %td.col
+                    = display_date_time(concept_map.created_at)
+                  %td.col
+                    = link_to_show(concept_map_path(concept_map))
+                    &nbsp
+                    = link_to_edit(edit_concept_map_path(concept_map))
+                    &nbsp;
+                    = link_to_delete(concept_map_path(concept_map))
+
+        - unless @concept_map.blank?
+          .pagination_info
+            = paginate @concept_mapzes
+        #concept_map_configuration

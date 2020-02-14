@@ -1,0 +1,103 @@
+:javascript
+  $(document).ready(function() {
+    $("#other_classes").dataTable({
+            "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            "bRetrieve": true,
+            "bDestroy": true
+        });
+  });
+
+#content_header
+  -#%h1#main_heading Teacher
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "My Classes","#",{:class=>'current'}
+  %h3#sub_heading
+#inner-tab-menu
+  %ul
+    - unless current_user.is? 'ET' or current_user.is? 'EO'
+
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", teachers_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_teacher_path
+      %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", teacher_path
+      %li.first= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_teacher_path
+    -#elsif current_user.is? 'ET'
+      %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", '#'
+#data
+  #application-list
+    .heading
+
+      -#%span.red_label{:style=>'font-size:20px;'}= link_to @teacher.section.name,my_students_path(@teacher,@teacher.section)
+    - unless current_user.is? 'ET'
+      %table.details{width: '700px',align: 'center'}
+        %tbody
+          %tr.even.left
+            %td Name
+            %td.right= @teacher.name
+          %tr.odd.left
+            %td Edutor-Id
+            %td.right= @teacher.edutorid
+          %tr.even.left
+            %td Email
+            %td.right= @teacher.email
+          %tr.odd.left
+            %td Address
+            %td.right= @teacher.profile.address
+          %tr.even.left
+            %td Phone
+            %td.right= @teacher.profile.phone
+          %tr.odd.left
+            %td Roll No
+            %td.right= @teacher.rollno
+          %tr.even.left
+            %td DeviceID
+            %td.right= raw @teacher.devices.uniq.map(&:deviceid).join('<br/>') if @teacher.devices
+          -#%tr.odd.left
+            %td My Class
+            %td.right= link_to @teacher.section.name,my_students_path(@teacher,@teacher.section)
+    -#.heading My Classes
+    -#= render 'teachers/my_classes'
+
+    - unless @teacher.ignitor_books.empty?
+      Assigned Collections
+      %table#collections.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+        %thead
+          %tr.tr-head
+            %th Name
+            %th Books
+            %th ID
+        %tbody
+          -@teacher.ignitor_packs.each do |ip|
+            %tr{:class => cycle("tr-odd", "tr-even")}
+              %td= ip[:ipack_name]
+              %td= ip[:ipack_books]
+              %td= link_to "Revoke" , {:controller => "users", :action => "single_pack_revoke", :user_id => @teacher.id, :ipack_id=>ip[:ipack_id],:license_id=>ip[:license_set_id]},class:"button"
+    %br
+    %div{:align=>'right'}
+      -if current_user.is? 'CR'
+        -#= link_to "Delete", teacher_path(@teacher), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+        -#= link_to "Add Academic Class", new_academic_class_path,:class=>"button icon add"
+        = link_to "Add Student",new_user_path ,:class=>"button icon add"
+:javascript
+        $("#collections").dataTable({
+        "aoColumns": [
+                   null,null,
+                   { "bSortable": false }
+                                        ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+        });
+  });

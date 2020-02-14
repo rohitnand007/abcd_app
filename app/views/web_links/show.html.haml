@@ -1,0 +1,50 @@
+#content_header
+  %h1#main_heading Weblink
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", web_links_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_web_link_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_web_link_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", web_link_path
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.chapter.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right=  @web_link.name 
+        %tr.odd.left
+          %td Board
+          %td.right=link_to(@web_link.board.name,board_path(@web_link.board)) if @web_link.board
+        %tr.even.left
+          %td Content Year
+          %td.right= link_to(@web_link.content_year.name,content_year_path(@web_link.content_year)) if @web_link.content_year
+        %tr.odd.left
+          %td Subject
+          %td.right= link_to(@web_link.subject.name,subject_path(@web_link.subject)) if @web_link.subject
+        %tr.even.left
+          %td Chapter
+          %td.right= link_to(@web_link.chapter.name,chapter_path(@web_link.chapter)) if @web_link.chapter
+        %tr.odd.left
+          %td Topic
+          %td.right= link_to(@web_link.topic.name,topic_path(@web_link.topic)) if @web_link.topic
+        %tr.even.left
+          - if @web_link.extras != ""
+            %td URL
+            %td.right= @web_link.extras
+          - if @web_link.web_link_video
+            %td Video File Name
+            %td.right= @web_link.web_link_video.attachment_file_name
+          - if @web_link.web_link_flash
+            %td Flash File Name
+            %td.right= @web_link.web_link_flash.attachment_file_name
+        %tr.odd.left
+          %td=t("web-app-theme.created_at", :default => "Created at")
+          %td.right= display_date_time(@web_link.created_at)
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit", edit_web_link_path(@web_link), :class => "button icon edit"
+            = link_to "Delete", web_link_path(@web_link), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+

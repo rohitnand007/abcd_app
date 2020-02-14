@@ -1,0 +1,62 @@
+= simple_form_for (@power_chip), :html => { :class => :form } do |f|
+  = f.error_notification
+
+  .inputs
+  .group
+    .field
+      = f.input :user_id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  - if @power_chip.new_record?
+    .group
+      .field
+        = f.input :powerchipid,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :publisher_id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :publisher_name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :license_key,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :start_date,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :end_date,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :license_status,:as=>:select,:collection=>[['active','active'],['expired','expired']],:include_blank => false,
+            :input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :license_type,:as=>:select,:collection=>[['open','open'],['closed','closed'],['sharable','sharable']],:include_blank => false,
+            :input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :action_on_expiry,:as=>:select,:collection=>[['delete','delete'],['warn','warn'],['allow','allow'],['preview','preview']],:include_blank => false,
+            :input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :message_on_expiry,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :content_id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      = f.input :device_id,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      -#= f.input :uid,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field
+      -#= f.input :extras,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+
+  .actions
+    = f.button :submit,:class=>'big primary'
+
+:javascript
+  $(function() {
+    $( "#power_chip_start_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+    $( "#power_chip_end_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+  });

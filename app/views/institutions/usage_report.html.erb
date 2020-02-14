@@ -1,0 +1,35 @@
+<div id="content_header">
+  <h1 id="main_heading">Generate Usage Report</h1>
+</div>
+<div id="data">
+  <table width="100%">
+    <tr>
+      <td>
+        <div>
+          <form method="post" action="/institutions/usages" class="simple_form form">
+            <input type="hidden" name="institute" value="<%=@institute_id%>" />
+            <div class="group">
+              <div class="field">
+                <div class="input string optional"><label for="report_start_date" class="string optional  label">Start Date</label><input type="text" value="<%=@report_start_date%>" size="50" name="report_start_date" maxlength="255" id="report_start_date" class="string optional text_field"/></div>
+              </div>
+            </div>
+            <div class="group">
+              <div class="field">
+                <div class="input string optional"><label for="report_end_date" class="string optional  label">End Date</label><input type="text" value="<%=@report_end_date%>" size="50" name="report_end_date" maxlength="255" id="report_end_date" class="string optional text_field"/></div>
+              </div>
+            </div>
+            <div class="actions">
+              <input type="submit" value="Get Report" name="submit" class="button big primary"/>
+            </div>
+          </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<script type="text/javascript">
+  $(function() {
+    $( "#report_start_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+    $( "#report_end_date" ).datepicker({ dateFormat: "yy-mm-dd" });
+  });
+</script>

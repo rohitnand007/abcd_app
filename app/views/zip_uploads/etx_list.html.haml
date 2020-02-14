@@ -1,0 +1,176 @@
+:javascript
+  $(document).ready(function() {
+    $("#etx_files").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": false,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+
+%div
+  %table#etx_files.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= "Etx File Name"
+        %th= "Time Updated"
+        %th= "Status"
+        %th= "Error"
+        %th= "Questions"
+
+    %tbody
+      - @zip_upload.etx_files.each do |file|
+        - n = 1
+        - file.ques_no = !file.ques_no.nil? ? file.ques_no : "nil"
+        - file.ques_no.split(',').each_slice(5) do |q_no|
+          %tr{:class => cycle("tr-odd", "tr-even")}
+            - if n == 1
+              %td.col= file.filename.split('/').last
+              %td.col= display_date_time(file.updated_at)
+              %td.col= file.state
+              %td.col= file.error
+              %td.col
+                -q_no.each do |q|
+                  -if q != "nil"
+                    = link_to "#{q}",question_path(q)
+              - n = 2
+            -else
+              %td.col
+              %td.col
+              %td.col
+              %td.col
+              %td.col
+                -q_no.each do |q|
+                  - if q != "nil"
+                    = link_to "#{q}",question_path(q)
+  -#- if current_user.is? "ECP"
+  -#- else
+  - unless (@no_quiz.present? && @no_quiz==true)
+    = form_for @quiz, :url => {:controller => 'zip_uploads', :action => 'etx_to_assessment',:class => 'function1'}, :html => { :multipart => true } do |f|
+      = hidden_field_tag :id , @zip_upload.id
+      %br
+      = f.fields_for :quiz_detail do |q_d|
+
+        #metadata_box
+          %hr
+
+          = f.submit "Download Etx_links" , class:"button"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

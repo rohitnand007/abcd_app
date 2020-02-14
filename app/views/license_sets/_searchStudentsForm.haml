@@ -1,0 +1,40 @@
+= form_for :user,{:url=>"/license_sets/#{license_set_id}/fetch_students", remote:true} do |f|
+  %table
+    %tr
+      %td
+        .group
+          .field
+            = f.label :institution_id, "Institution", :class=>'label'
+            %br
+            .styled-select
+              = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down institution_id",:disabled => "disabled"}
+      %td
+        .group
+          .field
+            #centers
+              = f.label :center_id, "Center", :class=>'label'
+              %br
+              .styled-select
+                - if current_user.is?'CR'
+                  = f.collection_select :center_id,[current_user.center],:id,:name,{},{:class=>"drop_down center_id",:disabled => "disabled"}
+                - else
+                  = f.collection_select :center_id,current_user.centers,:id,:name,{:prompt=>'Select'},{:class=>"drop_down center_id"}
+      %td
+        .group
+          .field
+            #academic_class
+              = f.label :academic_class_id, "Academic Class", :class=>'label'
+              %br
+              .styled-select
+                = f.collection_select :academic_class_id,current_user.academic_classes,:id,:name,{:prompt=>'Select'},{:class=>"drop_down academic_class_id"}
+      %td
+        .group
+          .field
+            #sections
+              = f.label :section_id, "Section", :class=>'label'
+              %br
+              .styled-select
+                = f.collection_select :section_id,[current_user.section].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down section_id"}
+      %td{style:"vertical-align:bottom; padding:5px"}
+        = f.submit ">" , class:"button searchStudentsSubmit"
+      %td= image_tag "small_loading.gif", style:"display:none", class:'small_loading'

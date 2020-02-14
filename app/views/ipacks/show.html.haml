@@ -1,0 +1,9 @@
+%p#notice= notice
+%p
+  %b Name:
+  = @ipack.name
+= render :partial => 'ipack_book_list', locals: {slices:@slices}
+
+= link_to 'Edit', edit_ipack_path(@ipack)
+\|
+= link_to 'My Collections', ipacks_path

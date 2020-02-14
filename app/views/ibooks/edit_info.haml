@@ -1,0 +1,15 @@
+= link_to ' ↞ Back to Books Catalogue', ibooks_path, id:"myBooks"
+%p &nbsp;
+%h3.red Use the information below and cross check the new Info file before  uploading
+%h3 Old Info
+%p
+  %pre{style:"font-size:14px"}= JSON.pretty_generate(@ibook.get_metadata)
+= simple_form_for @ibook,url:update_info_ibook_path(@ibook), html:{ :multipart => true } do |f|
+  = f.error_notification
+  .inputs
+    = f.hidden_field :publisher_id, value:current_user.id
+    %table
+      %tr
+        %td= f.file_field :info_file, accept:'application/zip'
+      %tr 
+        %td{style:"padding-top:15px;"}= f.button :submit, "Update Info", class:'normalButton'

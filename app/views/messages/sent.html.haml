@@ -1,0 +1,70 @@
+:javascript
+  $(document).ready(function() {
+    $("#sent_messages_list").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  #breadcrumbs
+    = bread_crumb_message_page
+#inner-tab-menu
+  %ul
+    %li=  link_to "#{t("web-app-theme.list", :default => "Inbox")}", messages_path+user_path(current_user)
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+#data
+  %table{width: '100%'}
+    %t
+      %td
+        %div
+          %table#sent_messages_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th Recipient/Group
+                %th Type
+                %th Subject
+                %th Unique Downloads
+                %th= t("web-app-theme.created_at", :default => "Sent at")
+                %th Body
+                %th Attachments
+                %th show
+                -#%th.last &nbsp
+            %tbody
+              - @messages.each do |message|
+                %tr{:class => cycle("tr-odd", "tr-even")}
+                  %td.col
+                    - if !message.recipient_id.nil? or !message.group_id.nil?
+                      - if message.group_id.nil?
+                        = message.recipient.try(:name)
+                      - else
+                        = User.find(message.group_id).try(:name)
+                  %td.col= link_to message.message_type
+                  %td.col= message.subject
+                  %td.col
+                    - if message.id > 8383
+                      = message.message_user_downloads.count('user_id', :distinct => true)
+                    - else
+                      = "NA"
+                  %td.col= display_date_time(message.created_at)
+                  %td.col
+                    = message.body.html_safe.split("/").last if message.body
+                  %td.col
+                    -if message.assets.present?
+                      - message.assets.each do |asset|
+                        = link_to asset.name,asset.url
+                  %td.col
+                    =link_to_show(message_path(message))
+        - unless @messages.blank?
+          .pagination_info
+            = paginate @messages

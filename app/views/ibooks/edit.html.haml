@@ -1,0 +1,9 @@
+= stylesheet_link_tag 'ibooks'
+= javascript_include_tag 'ibooks'
+= link_to ' ↞ Back to Books Catalogue', ibooks_path, id:"myBooks"
+%h1 Upload Encrypted Content
+= render partial:'form',locals:{edit:true}
+:javascript
+  removeWebAppButtons()
+  buttonizeNormalButtons()
+

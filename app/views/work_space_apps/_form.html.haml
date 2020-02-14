@@ -1,0 +1,37 @@
+= simple_form_for @work_space_app, :html => { :class => :form,:multipart => true },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid work_space_app",
+                        :message => "You'll need to fix the following fields:"
+  .inputs
+    .group
+      .field
+        = f.input :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Select User:"
+    .group
+      .field
+        = f.input :work_space,:collection=>[3,4],as: :radio,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Select Work Space:"
+    .group
+      .field
+        = f.input :app_location,:collection=>[['data','/data/app'],['system','/system/app']],as: :radio,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"App Location:"
+    .group
+      .field
+        = file_field_tag :apk,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"App Location:"
+
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), work_space_apps_path,:class=>'button danger icon remove'
+
+
+:javascript
+  $(document).ready(function(){
+    $(function() {
+      $("#work_space_app_multiple_recipient_ids").tokenInput("/profile_users.json", {
+      queryParam: 'term',
+      minChars: '3',
+      hintText: 'Type first 3-letters of users surname/firstname/roll number',
+      crossDomain: false,
+      preventDuplicates:true,
+      prePopulate: $("#work_space_app_multiple_recipient_ids").data("pre"),
+      theme: ""
+      });
+    });
+  });

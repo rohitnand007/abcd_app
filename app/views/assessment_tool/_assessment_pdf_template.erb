@@ -1,0 +1,135 @@
+<script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full.js">
+</script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        TeX: {extensions: ["mhchem.js"]}
+    });
+</script>
+<style>
+    table > tbody > tr > td img {
+
+    }
+
+    @font-face {
+        font-family: "krutidev";
+        src: url(<%="file://#{Rails.root.to_s}/public/assets/krutidev.ttf".html_safe %>);
+    }
+
+    @font-face {
+        font-family: "Mangal";
+        src: url(<%="file://#{Rails.root.to_s}/public/assets/mangal.ttf".html_safe %>);
+    }
+</style>
+
+<br/>
+<div class="logo" style="width:100%; float:none;height:auto">
+  <%= wicked_pdf_paperclip_image_tag "/assets/abcdlogo.png", style: "font-weight:bold:margin:auto;" %>
+</div>
+</br></br></br>
+</hr>
+<div>
+  <table align="center" class="quiz-head">
+    <tr>
+      <td colspan="2"><b>School Name:</b></td>
+      <td colspan="1">&nbsp;<%= User.find(@center).name %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Test Name:</b></td>
+      <td colspan="1">&nbsp;<%= @quiz.name %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Total Questions:</b></td>
+      <td colspan="1">&nbsp;<%= @quiz.total_questions %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Marks:</b></td>
+      <td colspan="1">&nbsp;<%= @quiz.questions.sum(:grade).to_i %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Duration:</b></td>
+      <td colspan="1">&nbsp;<%= @quiz.timelimit.to_i %> minutes</td>
+    </tr>
+  </table>
+  <p><b>Instructions for Assessment:</b></p>
+
+  <p style="margin-left: 20px"><%= @quiz.intro.html_safe %></p>
+</div>
+<% @question_ids = [] %>
+<div class="page">
+  <% i = 1 %>
+  <% if !@quiz.quiz_sections.empty? %>
+      <% @quiz.quiz_sections.each do |section| %>
+          <% if !section.questions.empty? %>
+              <div class="page-break-top">
+                <table align="center" class="quiz-head">
+                  <tr class="sec-head">
+                    <td colspan="2" align='center'>
+                      <b>Section:</b>&nbsp;<%= section.parent_section ? section.parent_section.name+"/" : '' %><%= section.name %>
+                    </td>
+                  </tr>
+                  <tr class="sec-head" style="width: 100%">
+                    <td align='center'><b>Questions:</b>&nbsp;<%= section.questions.count %></td>
+                    <td align='center'><b>Marks:</b>&nbsp;<%= section.questions.sum(:grade).to_i %></td>
+                  </tr>
+                </table>
+                <p style="margin-left: 10px"><b>Instructions for this section:</b> &nbsp;&nbsp;
+                  <%= section.intro.html_safe %>
+                </p>
+                </br>
+              </div>
+              <br/>
+
+              <% section.questions.each do |question| %>
+                  <% if !@question_ids.include? question.id %>
+                      <% if question.qtype != 'passage' %>
+                          <%= render partial: 'assessment_tool/pdf_regular_question', locals: {i: i, question: question} %>
+                          <br/>
+                          <% @question_ids << question.id %>
+                      <% else %>
+                          <% x = 0 %>
+                          <% s = ("a".."z").to_a %>
+                          <%= render partial: 'assessment_tool/pdf_passage_parent', locals: {i: i, question: question} %>
+                          <% question.questions.each do |q| %>
+                              <%= render partial: 'assessment_tool/pdf_passage_child', locals: {i: i, question: question, q: q, x: x, s: s} %>
+                              <% x= x+1 %>
+                              <% @question_ids << q.id %>
+                              <br/>
+                          <% end %>
+                      <% end %>
+                      <% i = i+1 %>
+                  <% end %>
+              <% end %>
+              <br/>
+          <% end %>
+      <% end %>
+  <% else %>
+      <% @quiz.questions.each do |question| %>
+          <% if !@question_ids.include? question.id %>
+              <% if question.qtype != 'passage' %>
+                  <%= render partial: 'assessment_tool/pdf_regular_question', locals: {i: i, question: question} %>
+                  <% @question_ids << question.id %>
+              <% else %>
+                  <% x = 0 %>
+                  <% s = ("a".."z").to_a %>
+                  <%= render partial: 'assessment_tool/pdf_passage_parent', locals: {i: i, question: question} %>
+                  <% question.questions.select{|qu| @quiz.question_ids.include? qu.id}.each do |q| %>
+                      <%= render partial: 'assessment_tool/pdf_passage_child', locals: {i: i, question: question, q: q, x: x, s: s} %>
+                      <% x= x+1 %>
+                      <% @question_ids << q.id %>
+                  <% end %>
+              <% end %>
+              <% i = i+1 %>
+          <% end %>
+      <% end %>
+      <br/>
+  <% end %>
+</div>
+
+<%= render partial: 'assessment_tool/pdf_key' %>
+
+
+

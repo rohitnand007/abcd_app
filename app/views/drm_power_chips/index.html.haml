@@ -1,0 +1,36 @@
+#content_header
+  %h1#main_heading Listing power chips
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_power_chip_path
+#data
+  %table{width:'100%'}
+    %tr
+      %td
+        %div
+          %table#power_chip_list.listing.sort_table{align:'center', width:'100%', cellpadding:1, cellspacing:1}
+            %thead
+              %tr.tr-head
+                -#%th User
+                %th Publisher name
+                %th License key
+                %th Start date
+                %th End date
+                %th License status
+                %th License type
+                %th Device
+                %th
+            %tbody
+              - @power_chips.each do |power_chip|
+                %tr{:class => cycle("tr-odd odd", "tr-even even")}
+                  -#%td.col= power_chip.user_id
+                  %td.col= power_chip.publisher_name
+                  %td.col= power_chip.license_key
+                  %td.col= display_date_time(power_chip.start_date).to_date
+                  %td.col= display_date_time(power_chip.end_date).to_date
+                  %td.col= power_chip.license_status
+                  %td.col= power_chip.license_type
+                  %td.col= power_chip.device_id
+                  %td.col
+                    = link_to_show(power_chip)
+                    = link_to_edit(edit_power_chip_path(power_chip))

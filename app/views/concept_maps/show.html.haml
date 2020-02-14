@@ -1,0 +1,28 @@
+#content_header
+  %h1#main_heading concept_maps
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}",concept_maps_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_concept_map_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_concept_map_path(@concept_map)
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.show", :default => "Show")}", concept_map_path(@concept_map)
+#data
+  #application-list
+    .heading= @concept_map.name
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= t("activerecord.attributes.concept_map.rb.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @concept_map.name
+        %tr.even.left
+          %td
+          - if current_user.role.name.eql?('Support Team')
+            %td.right= link_to "Download", est_download_content_path(@concept_map) ,:title=>'Download Attachement',:class=>'tipTipRight'
+          - else
+            %td.right= link_to "Download", download_zip_content_path(@concept_map) ,:title=>'Download Attachement',:class=>'tipTipRight'
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2',:align=>'right'}
+            = link_to "Edit", edit_concept_map_path(@concept_map), :class => "button icon edit"
+            = link_to "Delete", concept_map_path(@concept_map), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"

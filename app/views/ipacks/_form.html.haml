@@ -1,0 +1,22 @@
+= simple_form_for(@ipack) do |f|
+  = f.error_notification
+  = f.input :name, label:false, placeholder:'Enter a descriptive name for your collection. Eg."9th Class English"'
+  = f.hidden_field :publisher_id, value:current_user.id
+  %table.occupyWidth
+    %tr
+      %td
+        %h3 Choose from existing books below
+      %td.rightPuller
+        = f.submit "Done", class:'normalButton', confirm:"Are you sure you want to update collection?"
+  #ibookList
+    %table.occupyWidth
+      - current_user.ibooks.each_slice(3) do |ibooks|
+        %tr
+          - ibooks.each do |ibook|
+            %td.thirtyThree
+              %label
+                = check_box_tag "ipack[ibook_ids][]",ibook.id, @ipack.ibooks.include?(ibook), class:"overlappingCheckbox"
+                = render partial:'ibooks/abridged_book_info', locals:{ibook:ibook}
+
+
+

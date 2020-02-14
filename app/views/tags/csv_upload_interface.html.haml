@@ -1,0 +1,13 @@
+= stylesheet_link_tag "video_page"
+%h1 Bulk Tag Upload
+.panel.panel-default
+  .upload
+    = form_tag '/tags/create_csv_upload', :method => 'post', :multipart => true do
+      .well
+        %h3 The file should be in the following format: Tags DB Name, Tag Category(Academic Class/Subject/Concept), Tag Value
+        = link_to "Download Template", "/tags/download_template", class: "template"
+      .col4
+        = file_field_tag :file, required: "required"
+        %br
+        %br
+        = submit_tag 'Upload', disable_with: "Uploading...", class: 'btn btn-info'

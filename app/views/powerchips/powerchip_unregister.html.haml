@@ -1,0 +1,32 @@
+%h3 Chip Unregister
+
+= form_tag 'powerchip_search',:remote=>true do
+  %table
+    %tr
+      %td
+        C-IDs
+      %td
+        = text_field_tag 'cids' ,"", placeholder:"Enter C-IDs separated by commas " , style:"width: 4in"
+    %tr
+      %td
+        Edutor-IDs
+      %td
+        = text_field_tag 'edutorids' ,"", placeholder:"Enter Edutor-Ids separated by commas " , style:"width: 4in"
+
+
+  %br
+  = submit_tag  'Search Chips'  ,id:"searchChips", class:'button'
+
+%br
+
+#user_chip_details_container
+
+:javascript
+    $("#searchChips").click(function(){
+                           if ($("#cids").val()=="" && $("#edutorids").val()=="" )  {
+                               alert("Both C-IDs and Edutor-IDs can't be empty at the same time !");
+                               return false;
+                           }
+                         });
+
+

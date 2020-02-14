@@ -1,0 +1,150 @@
+function dynamicallyPopulateCorrespondingDropdowns(url, ajaxParameters, output_mapping) {
+    // selected_values={identifier1:value,identifier2:value}
+    // output_mapping = {expected_output_key1: $element_to_populate1,expected_output_key2: $element_to_populate2}
+    var path = "<%= asset_path('ajax-loader.gif') %>"
+    var img = new Image();
+    if (ajaxParameters.length == 0) {
+        //alert("please select");
+        return false;
+    }
+
+    $(img).attr({src: path, alt: "Loading...", class: "multi_ajax_spinner"});
+    $.ajax({//Make the Ajax Request
+        type: "POST",
+        url: url,
+        data: ajaxParameters,
+        beforeSend: function () {
+            $.each(output_mapping, function (key, $element_to_populate) {
+                $element_to_populate.after(img);   // append the spinner
+            })
+        },
+        success: function (data) {
+            $('.multi_ajax_spinner').remove(); // remove the spinner
+            if (data.length == 0) {
+                $('.multi_ajax_spinner').remove()
+                alert('No related data for the selected');
+                //$(div_update).attr('disabled', 'disabled');
+            }
+            else {
+                $.each(output_mapping, function (tag_identifier, $element_to_populate) {
+                    if (tag_identifier in data) {
+                        // update the drop downs for which server sends data,
+                        // leave the rest of tag_identifiers alone
+                        tag_options = data[tag_identifier];
+                        populateDropdown($element_to_populate, tag_options);
+                    }
+
+                })
+            }
+        },
+        statusCode: {
+            404: function () {
+                $('.multi_ajax_spinner').remove()
+                alert("request failed");
+            }
+        }
+    });
+}
+function get_url_Data(url,selected_value,div_update){
+    var path = "<%= asset_path('ajax-loader.gif') %>"
+    var img = new Image();
+    if (selected_value.length == 0) {
+        //alert("please select");
+        return false;
+    }
+
+    $(img).attr({src: path,alt: "Loading...",id: "ajax_spinner"});
+    $.ajax({//Make the Ajax Request
+        type: "GET",
+        url: url + selected_value ,
+        beforeSend:  function() {
+            $(div_update).after(img);   // append the spinner
+        },
+        success: function(data){
+            $('#ajax_spinner').remove(); // remove the spinner
+            if (data.length == 0) {
+                //alert('No related data for the selected');
+                //$(div_update).attr('disabled', 'disabled');
+                $(div_update).empty();
+                 }
+            else {
+                populateDropdown($(div_update), data); }
+        },
+        statusCode: {
+            404: function() {
+                $('#ajax_spinner').remove();
+                alert("request failed");
+            }
+        }
+    });
+}
+/* for already generated url's (i.e if url has multiple parameter values) */
+function get_url_Data_for_multiparams(url,div_update){
+    var path = "<%= asset_path('ajax-loader.gif') %>"
+    var img = new Image();
+    $(img).attr({src: path,alt: "Loading...",id: "ajax_spinner"});
+    $.ajax({//Make the Ajax Request
+        type: "GET",
+        url: url  ,
+        beforeSend:  function() {
+            $(div_update).after(img);   // append the spinner
+        },
+        success: function(data){
+            $('#ajax_spinner').remove(); // remove the spinner
+            if (data.length == 0) {
+//                alert('No related data for the selected');
+//                $(div_update).attr('disabled', 'disabled');
+                $(div_update).empty();
+            }
+            else {
+                populateDropdown($(div_update), data); }
+        },
+        statusCode: {
+            404: function() {
+                $('#ajax_spinner').remove();
+                alert("request failed");
+            }
+        }
+    });
+}
+
+
+
+function populateDropdown(select, data) {
+    select.removeAttr('disabled');
+    select.html('');
+    select.append($('<option></option>').val('').html('Select'));
+    $.each(data, function(id, option) {
+        select.append($('<option></option>').val(option.value).html(option.name));
+    });
+}
+
+function populateDropdownforgroups(select, data) {
+    $("#user_user_group_attributes_group_id").removeAttr('disabled');
+    select.html('');
+    $.each(data, function(id, option) {
+        select.append($('<option></option>').val(option.value).html(option.name));
+    });
+}
+
+function populateDropdownWithPrompt(select, data,prompt) {
+    select.removeAttr('disabled');
+    select.html('');
+    select.append($('<option></option>').val('').html(prompt));
+    $.each(data, function(id, option) {
+        select.append($('<option></option>').val(option.value).html(option.name));
+    });
+}
+
+function set_default(select) {
+    select.removeAttr('disabled');
+    select.html('');
+    select.append($('<option></option>').val('').html("select"));
+}
+
+
+
+
+
+
+

@@ -1,0 +1,95 @@
+- @created_questions.each do |new_ques|
+  %tr{style: ""}
+    %td Success
+    %td
+      = new_ques.qtype
+    %td
+      = link_to "#{new_ques.id}", question_path(new_ques.id), target: "_blank"
+
+-#- current_question = @question
+-#- it_is_passage = current_question.qtype=="passage"
+-#- question_id = current_question.id
+-#%tr.question_container{:class => ("passage_question" if it_is_passage)}
+-#  = hidden_field_tag "question_id",question_id, id:"ques_id_#{question_id}"
+-#  - if it_is_passage
+-#    = hidden_field_tag "child_question_ids",current_question.questions.map(&:id) , class:"child_questions"
+-#  %td{style:"width: 80%; margin: 0px; padding: 18px; border: 1px solid #CCC; vertical-align: top; text-align: left;"}
+-#    %div{style:"width:100%"}
+-#      %br
+-#      %table{cellpadding:"0", cellspacing:"0",  style:"padding-left: 8px; width:inherit;"}
+-#        %tr.ui-widget-content
+-#          %td{style: " padding: 20px; border: 1px solid #CCC;text-align: center;"}
+-#            =# hidden_field_tag "current_question.defaultmark", question_index+1,class:"question_position"
+-#            %strong.question_number{:class => ("parent_question_number" if it_is_passage)}
+-#              =# question_index+1
+-#          %td{style: " padding: 8px; border: 1px solid #CCC;  text-align: left;overflow:hidden;width:700px; max-width:700px"}
+-#            = current_question.questiontext_format.html_safe
+-#          %td{style: " padding: 8px; border: 1px solid #CCC; text-align: center;"}
+-#            %center
+-#              Marks
+-#              %br
+-#              - if it_is_passage
+-#                = number_field_tag  "current_question.defaultmark", 0 , disabled: "disabled"
+-#              - else
+-#                = number_field_tag  "current_question.defaultmark", current_question.defaultmark, min:1
+-#              %br
+-#              = show_qtype(current_question.qtype)
+-#          %td{style: " margin: 0px; padding: 4px; text-align: center;background-color:white"}
+-#            %center
+-#              Negative Marks
+-#              %br
+-#              - if it_is_passage
+-#                = number_field_tag  "current_question.defaultmark",  0 , disabled: "disabled"
+-#              -else
+-#                = number_field_tag  "current_question.defaultmark",  current_question.penalty, min:0
+-#        %tr
+-#          %td{colspan: "3", style: "height: 4px; margin: 0px; padding: 0px; border: 0px; vertical-align: top;"}
+-#
+-#          /.q_assets
+-#          /  %img{src: "images/image_icon.png", style: "border:1px solid black;border-right:0px"}/
+-#          /  %img{src: "images/google_search.png", style: "border:1px solid black;"}/
+-#          /  %img{src: "images/video_icon.png", style: "border:1px solid black;border-left:0px;border-right:0px"}/
+-#          /  %img{src: "images/audio_icon.png", style: "border:1px solid black"}/
+-#        - case current_question.qtype
+-#        - when "multichoice"
+-#          - current_question.question_answers.each_with_index do |question_answer,index|
+-#            %tr
+-#              %td{style: "border: 1px solid #CCC;text-align: center;"}
+-#                = index+1
+-#              %td{colspan: "2", style: "width: 90%; padding: 8px; border: 1px solid #CCC;text-align: left;"}
+-#                = question_answer.answer_format.html_safe
+-#              %td{style: "width: 40px!important; margin: 0px; padding: 0px; border: 0px; vertical-align: center; text-align: center;"}
+-#                %center
+-#                  - if question_answer.fraction == 1
+-#                    -#%input{type: "checkbox", disabled: "disabled", checked:"checked"}
+-#                  - else
+-#        - when "truefalse"
+-#          - current_question.question_answers.each_with_index do |question_answer,index|
+-#            %tr
+-#              %td{style: "border: 1px solid #CCC; text-align: center;"}
+-#                = index+1
+-#              %td{colspan: "2", style: "width: 90%; padding: 8px; border: 1px solid #CCC; text-align: left;"}
+-#                = question_answer.answer_format.html_safe
+-#              %td{style: "width: 40px!important; margin: 0px; padding: 0px; border: 0px; vertical-align: center; text-align: center;"}
+-#                %center
+-#                  -#- if question_answer.fraction == 1
+-#                  -#  %input{type: "checkbox", disabled: "disabled", checked:"checked"}
+-#                  -#- else
+-#        %tr
+-#          %td{colspan: "3", style: "margin: 0px; padding: 0px; border: 0px;"}
+-#            %br
+-#            %div{style: "float: left; height: 10px; margin: 0px; padding: 4px; border: 0px;"}
+-#              %span{style: "color: #60c8cd;"}
+-#                = if current_question.timecreated > 15.minutes.ago.to_i then "Newly Created Question" else "Imported Question" end
+-#            %div{style: "float: right; height: 10px; margin: 0px; padding: 4px; border: 0px;color: grey"}
+-#              -#-#-if assessment_div
+-#              -#- if question_editable?(current_user,current_question)
+-#              -#  = link_to "Edit this question", assessment_tool_edit_question_path({question_id:current_question.id,assessment_div_id:assessment_div.id, quiz_id:assessment_div.quiz_id}), remote:true , class:"question_editor"
+-#              -#  = link_to "Remove this question", assessment_tool_delete_question_instance_path({question_instance_id:question_instance.id,assessment_div_id:assessment_div.id}), remote:true, confirm:"Are you sure?"
+-#            %div{style: "width: 20px;"}
+-#    - if it_is_passage
+-#      %br
+-#      %table
+-#        %tbody.sub_questions.sortable_questions
+:javascript
+

@@ -1,0 +1,9 @@
+.nested-fields.nested_attributes
+  .group
+    .field
+      = f.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  - unless @content.type == "Assessment"  or @content.type == "AssessmentHomeWork"
+    .group.remove_field
+      .field   
+        = link_to_remove_association "remove attachment", f
+          

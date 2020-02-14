@@ -1,0 +1,554 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assessment Statistics</title>
+    <style>
+        .section-title {
+            color: #60c8cd;
+            text-align: left;
+        }
+        .assessment-header {
+            padding-left: 20px;
+        }
+        .assessment-section {
+            border: 1px solid #CCC;
+            padding: 1em 1em;
+        }
+        .report_box {
+            display: table;
+        }
+
+        .studentRecords {
+            width: 100%;
+            color: #636363
+        }
+
+        .studentRecords thead tr {
+            background-color: #1FA5B1;
+            text-align: left;
+            color: #FFF;
+            border-bottom: 1px solid #636363;
+        }
+
+        .studentRecords th {
+            font-weight: normal;
+        }
+
+        .studentRecords th, .studentRecords td {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .studentRecords td:nth-child(3), .studentRecords th:nth-child(3), .studentRecords td:nth-child(4), .studentRecords th:nth-child(4) {
+            text-align: center;
+        }
+
+        .studentRecords td:nth-child(3), .studentRecords td:nth-child(4) {
+            text-transform: uppercase;
+        }
+
+    </style>
+    <%= stylesheet_link_tag "c3.css" %>
+    <%= javascript_include_tag "d3.min.js" %>
+    <%= javascript_include_tag "c3.min.js" %>
+  </head>
+  <body style="vertical-align: middle;">
+    <span>Assessment / List of Assessments / Analytics</span>
+    <br/>
+    <br/>
+
+    <div class="assessment-section">
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tbody><tr>
+	<td style="border: 0px; padding: 2px 8px 2px 8px; width:25%;"><span class="section-title" id="assessmentDetails.assessmentName"></span></td>
+        <td style="width: 75%; border: 0px; padding: 0px;">
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<tbody><tr><td style="border-left: 0px; padding: 2px 8px 0px 0px; width:30%;"><div id="assessmentDetails.class"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="assessmentDetails.numberOfQuestions"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="assessmentDetails.Subject"></div></td></tr>
+			<tr><td style="border-left: 0px; padding: 2px 8px 0px 0px; width:30%;"><div id="assessmentDetails.noOfPublishes"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="assessmentDetails.maximumMarks"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="assessmentDetails.chapter"></div></td></tr>
+			<tr><td style="border-left: 0px; padding: 2px 8px 0px 0px; width:30%;"><div id="assessmentDetails.lastPublished"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="assessmentDetails.maximumDuration"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="assessmentDetails.testId"></div></td></tr>
+		</tbody></table>
+	</td>
+        </tr></tbody></table>
+    </div>
+
+    <br/>
+    <span style="color: grey;"><i>Publish History</i></span>
+    <br/>
+    <br/>
+
+    <div id="publish_content">
+    </div>
+
+
+<script type="text/javascript">
+    /*var statisticsJSON = {
+        "assessmentDetails":{"assessmentName":"Math Quiz","Subject":"Mathematics","maximumDuration":"2 Hrs","numberOfQuestions":"50", "maximumMarks":"50","noOfPublishes":"3","lastPublished":"5 days ago"},
+        "publishDetails": [
+            {
+                "staticPublishDetails":{   
+                    "section":"6th Class B",
+                    "totalRecipients":"30",       
+                    "publishedOn":"5th October 2014",       
+                    "publishedBy":"IA-99343",       
+                    "publishId":"24234"},
+                "dynamicPublishInfo":{
+                    "downloaded":"25",
+                    "takenTest":"20",
+                    "lowestScore":"3",
+                    "highestScore":"42",
+                    "averageScore":"31",
+                    "noOfStudentsWithLowestScore":"4",
+                    "noOfStudentsWithHighestScore":"3",
+                    "topperNames":["Ram","Krishna","Dev Patel"]
+                }
+            },
+
+            {
+                "staticPublishDetails":{   
+                    "section":"6th Class B",
+                    "totalRecipients":"30",       
+                    "publishedOn":"5th October 2014",       
+                    "publishedBy":"IA-99343",       
+                    "publishId":"24235"},
+                "dynamicPublishInfo":{
+                    "downloaded":"25",
+                    "takenTest":"20",
+                    "lowestScore":"3",
+                    "highestScore":"42",
+                    "averageScore":"31",
+                    "noOfStudentsWithLowestScore":"4",
+                    "noOfStudentsWithHighestScore":"3",
+                    "topperNames":["Ram","Krishna","Dev Patel"]
+                }
+            }
+        ]
+    };*/
+
+    var statisticsJSON = <%= @json_data.to_json.html_safe %>
+    console.log("---------- static AJAX call response: " + JSON.stringify(statisticsJSON));
+
+    var numberOfPublishDetails = statisticsJSON.publishDetails.length;
+    var nowShowing = 0;
+    var numberAtTimeOfAjaxCall = 0;
+    var donuts = new Object();
+
+    function createHTML() {
+        var htmlString = '';
+        
+        for (var i=0; i<numberOfPublishDetails; i++) {
+            //console.log("---------- publish detail - " + i);
+            var publishDetailsString = '    <div id="publish' + i + '">'
+                +   '<form method="POST" action="/quizzes/export_student_results/">'
+                + '<div class="styled-select" style="overflow:initial;">'
+                +  '<select name="mode" class="drop_down">'
+                + '<option value="1">Only first attempt</option>'
+                +'<option value="0">All attempts</option>'
+                +'<option value="2">Only last attempt</option>'
+                +'</select>'
+                +'</div>'
+                +'<input type="submit" class="submit_button" name="export_type" value="Export as CSV"/>'
+                + '<input type="submit" class="submit_button" name="export_type" value="Export (Questionwise table) csv"/>'
+                + '<input type="submit" class="submit_button" name="export_type" value="Export(Questionwise) as CSV"/>'
+                +'<a href= "/assessment_tool/download_attempt_data/" style="color:#636363;" class="submit_button">Download Attempt Data</a>'
+                +    ' </form>'
+                + '<div class="assessment-section" id="publish' + i + '_item">'
+	            + '<table cellpadding="0" cellspacing="0" width="100%">'
+	            + '<tbody><tr>'
+                + '    <td style="width: 75%; border: 0px; padding: 0px;">'
+		        + '    <table cellpadding="0" cellspacing="0" width="100%">'
+			    + '        <tbody><tr><td style="border-left: 0px; padding: 2px 8px 0px 0px; width:30%;"><div id="publish' + i + '_staticPublishDetails.section"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="publish' + i + '_staticPublishDetails.publishedBy"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="publish' + i + '_staticPublishDetails.totalRecipients"></div></td></tr>'
+			    + '        <tr><td style="border-left: 0px; padding: 2px 8px 0px 0px; width:30%;"><div id="publish' + i + '_staticPublishDetails.publishedOn"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="publish' + i + '_staticPublishDetails.publishId"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="publish' + i + '_dynamicPublishInfo.downloaded"></div></td></tr>'
+			    + '        <tr><td style="border-left: 0px; padding: 2px 8px 0px 0px; width:30%;">&nbsp;</td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="publish' + i + '_staticPublishDetails.password"></div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px; width:35%;"><div id="publish' + i + '_dynamicPublishInfo.takenTest"></div></td></tr>'
+		        + '    </tbody></table>'
+	            + '</td>'
+	            + '<td style="border: 0px; padding: 2px 8px 2px 8px; width:25%;"><div style="float: center;"><button style="background-color:#60c8cd; color: white;" id="publish' + i + '_viewAnalytics" onclick="displayToggle(' + i + ')" style="vertical-align: middle;"><span style="vertical-align: middle;"><img src="/assets/view_icon.png" style="vertical-align: middle;"/></span>&nbsp;<span style="vertical-align: middle;">View Analytics</span></button></div></td>'
+                + '    </tr></tbody></table>'
+                + '</div>'
+
+                + '<br/>'
+                + '<br/>'
+
+                + '<div id="publish' + i + '_dynamic">'
+	            + '<table cellpadding="0" cellspacing="0" width="100%"><tbody>'
+                + '        <tr><td style="padding: 2px 8px 2px 8px; width: 50%;"><div style="text-align: center;">Live Responses</div></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"><div style="text-align: center;">Student Scores</div></td></tr>'
+                + '        <tr><td style="padding: 2px 8px 2px 8px; width: 50%;"><center><div style="text-align:center; width: 440px;">'
+                + '            <div id="publish' + i + '_donut1" style="width: 200px; float:left;"></div>&nbsp;<div id="publish' + i + '_donut2" style="width: 200px; float:left;"></div></div></center></td><td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"><center><div style="text-align:center; width: 400px;">'
+                + '            <table cellpadding="0" cellspacing="0" width="100%"><tbody><tr>'
+                + '                <td width="40%">'
+                + '                   <table cellpadding="0" cellspacing="0" style="float: right; text-align: right;"><tbody>'
+                + '                        <tr><td width="85%">Lowest Score</td><td width="15%" rowspan="2"><img src="/assets/right_menu_arrow.png"/></td></tr>'
+                + '                        <tr><td width="85%" style="color: grey;"><div id="publish' + i + '_dynamicPublishInfo.noOfStudentsWithLowestScore"></div></td><td width="15%">&nbsp;</td></tr>'
+                + '                        <tr><td width="85%">&nbsp;</td><td width="15%">&nbsp;</td></tr>'
+                + '                        <tr><td width="85%">Highest Score</td><td width="15%" rowspan="2"><img src="/assets/right_menu_arrow.png"/></td></tr>'
+                + '                        <tr><td width="85%" style="color: grey;"><div id="publish' + i + '_dynamicPublishInfo.noOfStudentsWithHighestScore"></div></td><td width="15%">&nbsp;</td></tr>'
+                + '                        <tr><td width="85%">&nbsp;</td><td width="15%">&nbsp;</td></tr>'
+                + '                        <tr><td width="85%">Average Score</td><td width="15%" rowspan="2"><img src="/assets/right_menu_arrow.png"/></td></tr>'
+                + '                        <tr><td width="85%" style="color: grey;">&nbsp;</td><td width="15%">&nbsp;</td></tr>'
+                + '                    </tbody></table>'
+                + '                </td>'
+                + '                <td width="60%">'
+                + '                   <div id="publish' + i + '_custompie" style="width: 250px;">'
+                + '                       <svg class="pie" style="width: 200px; height: 200px">'
+                + '                         <circle cx="100" cy="100" r="95" style="fill: white; stroke: white; stroke-width: 5;"></circle>'
+                + '                         <path d="M100,60 L100,5 A95,95 1 0,0 15,60 z" style="fill: #1fa5b1;"></path>'
+                + '                         <path d="M100,65 L100,135 L15,135 A95,95 1 0,1 15,65 z" style="fill: #1fa5b1;"></path>'
+                + '                         <path d="M100,140 L100,195 A95,95 1 0,1 15,140 z" style="fill: #1fa5b1;"></path>'
+                + '                         <path d="M105,5 L105,195 A95,95 1 0,0 105,5 z" style="fill: #60c8cd;"></path>'
+                + '                         <text id="publish' + i + '_svgLowestScore" x="60" y="35" fill="white"></text>'
+                + '                         <text x="50" y="50" fill="white">Marks</text>'
+                + '                         <text id="publish' + i + '_svgHighestScore" x="60" y="95" fill="white"></text>'
+                + '                         <text x="50" y="110" fill="white">Marks</text>'
+                + '                         <text id="publish' + i + '_svgAverageScore" x="60" y="160" fill="white"></text>'
+                + '                         <text x="50" y="175" fill="white">Marks</text>'
+                + '                         <text id="publish' + i + '_svgTotalScore" x="140" y="100" fill="white"></text>'
+                + '                         <text x="120" y="115" fill="white">Total Marks</text>'
+                + '                       </svg>'
+                + '                   </div>'
+                + '                </td>'
+                + '            </tr></tbody></table>'
+                + '        </div></center></td></tr>'
+                + '        <tr><td style="padding: 2px 8px 2px 8px; width: 50%;"><center><div style="text-align:center; width: 400px;"><div style="padding-top: 20px; margin: 2px; width: 30%; height: 70px; background-color: #f27678; color: white; float: left;"><center><table cellpadding="0" cellspacing="0" style="text-align: center;"><tbody><tr><td><div id="publish' + i + '_dynamicPublishInfo.totalRecipients2"></div></td></tr><tr><td>Total Students</td></tr></tbody></table></center></div>&nbsp;<div style="padding-top: 20px; margin: 2px; width: 30%; height: 70px; background-color: #f27678; color: white; float: left;"><center><table cellpadding="0" cellspacing="0" style="text-align: center;"><tbody><tr><td><div id="publish' + i + '_dynamicPublishInfo.downloaded2"></div></td></tr><tr><td>Downloaded</td></tr></tbody></table></center></div>&nbsp;<div style="padding-top: 20px; margin: 2px; width: 30%; height: 70px; background-color: #f27678; color: white; float: left;"><center><table cellpadding="0" cellspacing="0" style="text-align: center;"><tbody><tr><td><div id="publish' + i + '_dynamicPublishInfo.takenTest2"></div></td></tr><tr><td>Test Taken</td></tr></tbody></table></center></div></div></center></td>'
+                + '            <td style="border-left: 1px solid #CCC; padding: 2px 8px 2px 8px;"><center><div style="text-align:center; width: 400px;"><div style="padding-top: 20px; margin: 2px; width: 35%; height: 70px; background-color: #f27678; color: white; float: left;"><center><table cellpadding="0" cellspacing="0" width="100%" style="text-align: center;"><tbody><tr><td><img src="/assets/cap.png"/></td></tr><tr><td>Class Toppers</td></tr></tbody></table></center></div>&nbsp;<div style="padding-top: 20px; margin: 2px; width: 55%; height: 70px; background-color: #f27678; color: white; float: left;"><center><table cellpadding="0" cellspacing="0" style="text-align: center;"><tbody><tr><td rowspan="2"><br/><div id="publish' + i + '_dynamicPublishInfo.topperNames"></td></tr></tbody></table></center></div></div></center></td></tr>'
+	            + '</tbody></table>'
+
+                + '<br/>'
+                + '<br/>'
+                    + '<div id="publish' + i + '_dynamicPublishInfo.studentWiseRecords" ></div>'
+                + '</div>'
+                + '</div>'
+                +'<br><br>';
+            var student_info_string = 
+            htmlString += publishDetailsString;
+        }
+
+        document.getElementById("publish_content").innerHTML = htmlString;
+
+        for (var i=numberOfPublishDetails-1; i>-1; i--) {
+            var totalRecipients = parseInt(statisticsJSON.publishDetails[i].staticPublishDetails.totalRecipients);
+            var downloaded = parseInt(statisticsJSON.publishDetails[i].dynamicPublishInfo.downloaded);
+            var takenTest = parseInt(statisticsJSON.publishDetails[i].dynamicPublishInfo.takenTest);
+            // dark color, light color
+            donuts["publish" + i + "_" + 'donut1'] = createDonut("publish" + i + "_" + 'donut1', '#60c8cd', '#DDDDDD', downloaded, totalRecipients, "Downloaded", "Not Downloaded", "Downloaded");
+            donuts["publish" + i + "_" + 'donut2'] = createDonut("publish" + i + "_" + 'donut2', '#60c8cd', '#DDDDDD', takenTest, totalRecipients, "Test Taken", "Tests Not Taken", "Test Taken");
+        }
+    }
+
+    function generateStudentWiseStatusTableHtml(studentDataJSONArray) {
+        studentsList = JSON.parse(studentDataJSONArray)
+        html = "<table class='studentRecords'><thead><tr><th>ID</th><th>Student Name</th><th>Downloaded</th><th>Test Taken</th><th>Score</th></tr></thead><tbody>"
+        for (var i = 0; i < studentsList.length; i++) {
+            html = html + "<tr><td>" + studentsList[i].id + "</td><td>" + studentsList[i].name + "</td><td>" + studentsList[i].downloaded + "</td><td>" + studentsList[i].taken + "</td><td>" + studentsList[i].score + "</td></tr>"
+        }
+        html = html + "</tbody></table>"
+        return html
+    }
+    
+    function getTimeString(timeSeconds) {
+        var hrs = 0, mins = 0, secs = 0;
+        if (timeSeconds > 3600) {
+            hrs = Math.floor(timeSeconds/3600);
+            timeSeconds -= (hrs * 3600);
+        }
+        if (timeSeconds > 60) {
+            mins = Math.floor(timeSeconds/60);
+            timeSeconds -= (mins * 60);
+        }
+        secs = timeSeconds;
+        var timeString = '';
+        if (secs > 0 || !(hrs > 0 || mins > 0)) {
+            timeString = '' + secs + ' secs';
+        }
+        if (hrs > 0 || mins > 0) {
+            timeString = '' + mins + ' mins ' + timeString;
+        }
+        if (hrs > 0) {
+            timeString = '' + hrs + ' hrs ' + timeString;
+        }
+        //console.log('timeSeconds=' + timeSeconds + ', str=' + timeString);
+        return timeString;
+    }
+
+
+     function createDonut(donutId, color1, color2, correct, total, correctLabel, wrongLabel, insideText) {
+      var donut = c3.generate({
+        size: {
+            height: 220,
+            width: 220
+        },
+        data: {
+          columns: [
+            [correctLabel, correct],
+            [wrongLabel, (total-correct)]
+          ],
+          type : 'donut',
+          onmouseover: function (d, i) { /*console.log("onmouseover", d, i, this);*/ },
+          onmouseout: function (d, i) { /*console.log("onmouseout", d, i, this);*/ },
+          onclick: function (d, i) { /*console.log("onclick", d, i, this);*/ },
+        },
+        legend: {
+          show: false ,
+        },
+	    bindto: '#' + donutId,
+        axis: {
+          x: {
+            label: 'Sepal.Width'
+          },
+          y: {
+            label: 'Petal.Width'
+          }
+        },
+        donut: {
+          label: {
+            format: function (d, ratio) { return ""; }
+          },
+          title: insideText + " " + Math.round(correct * 100 / total) + "%"
+        },
+        color: {
+          pattern: [color1, color2]
+        },
+        zoom: {
+          enabled: true
+        }
+      });
+      return donut;
+     }
+
+    function setHTML(elementID, prefix) {
+        document.getElementById(elementID).innerHTML = prefix + eval("statisticsJSON." + elementID);
+    }
+
+    function setHTMLValue(elementID, prefix, value) {
+        document.getElementById(elementID).innerHTML = prefix + value;
+    }
+
+    function setDynamicHTML(publishNumber, elementID, prefix) {
+        document.getElementById("publish" + publishNumber + "_" + elementID).innerHTML = prefix + eval("statisticsJSON.publishDetails[" + publishNumber + "]." + elementID);
+    }
+    function setDynamicHTMLRaw(publishNumber, elementID, raw_html) {
+        document.getElementById("publish" + publishNumber + "_" + elementID).innerHTML = raw_html;
+    }
+    function setDynmaicFormAddress(publishNumber){
+        $("#publish"+publishNumber).find("form").attr("action","/quizzes/export_student_results/"+eval("statisticsJSON.publishDetails[" + publishNumber + "].staticPublishDetails.publishId"));
+        $("#publish"+publishNumber).find("form a").attr("href","/assessment_tool/download_attempt_data/"+eval("statisticsJSON.publishDetails[" + publishNumber + "].staticPublishDetails.publishId"));
+    }
+
+    function updateWithStaticData() {
+        setHTML("assessmentDetails.class", "Class: ");
+        setHTML("assessmentDetails.chapter", "Chapter: ");
+        setHTML("assessmentDetails.testId", "Test Id: ");
+
+        setHTML("assessmentDetails.numberOfQuestions", "No. of Questions: ");
+        setHTML("assessmentDetails.Subject", "Subject: ");
+        setHTML("assessmentDetails.assessmentName", "");
+        setHTML("assessmentDetails.lastPublished", "Last Published On: ");
+        setHTML("assessmentDetails.noOfPublishes", "No. of Published: ");
+        setHTML("assessmentDetails.maximumMarks", "Total Marks: ");
+        setHTMLValue("assessmentDetails.maximumDuration", "Duration: ", getTimeString(statisticsJSON.assessmentDetails.maximumDuration));
+    }
+
+    function removeAllChildNodes(parentNode) {
+        while (parentNode.firstChild) {
+            parentNode.removeChild(parentNode.firstChild);
+        }
+    }
+
+    function updateWithDynamicData(publishNumber) {
+        setDynamicHTML(publishNumber, "staticPublishDetails.publishId", "Published Id: ");
+        setDynamicHTML(publishNumber, "staticPublishDetails.section", "Section: ");
+        setDynamicHTML(publishNumber, "staticPublishDetails.password", "Password: ");
+        setDynamicHTML(publishNumber, "staticPublishDetails.totalRecipients", "Total Recipients: ");
+        setDynamicHTML(publishNumber, "staticPublishDetails.publishedOn", "Published On: ");
+        setDynamicHTML(publishNumber, "staticPublishDetails.publishedBy", "Published By: ");
+        setDynmaicFormAddress(publishNumber);
+
+        var totalRecipients = parseInt(statisticsJSON.publishDetails[publishNumber].staticPublishDetails.totalRecipients);
+        var downloaded = parseInt(statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.downloaded);
+        var takenTest = parseInt(statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.takenTest);
+        var studentwise_record_table_html = generateStudentWiseStatusTableHtml(statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.studentWiseRecords);
+        setDynamicHTML(publishNumber, "dynamicPublishInfo.downloaded", "Downloaded: ");
+        setDynamicHTML(publishNumber, "dynamicPublishInfo.takenTest", "Test Taken: ");
+        setDynamicHTMLRaw(publishNumber, "dynamicPublishInfo.studentWiseRecords", studentwise_record_table_html)
+        document.getElementById("publish" + publishNumber + "_" + "dynamicPublishInfo.totalRecipients2").innerHTML = totalRecipients;
+        document.getElementById("publish" + publishNumber + "_" + "dynamicPublishInfo.downloaded2").innerHTML = downloaded;
+        document.getElementById("publish" + publishNumber + "_" + "dynamicPublishInfo.takenTest2").innerHTML = takenTest;
+        document.getElementById("publish" + publishNumber + "_" + "dynamicPublishInfo.topperNames").innerHTML = statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.topperNames.join(', ');
+        // Update donut charts
+        donuts["publish" + publishNumber + "_" + 'donut1'].unload({
+            ids: 'Downloaded'
+        });
+        donuts["publish" + publishNumber + "_" + 'donut1'].unload({
+            ids: 'Not Downloaded'
+        });
+        donuts["publish" + publishNumber + "_" + 'donut2'].unload({
+            ids: 'Test Taken'
+        });
+        donuts["publish" + publishNumber + "_" + 'donut2'].unload({
+            ids: 'Tests Not Taken'
+        });
+        donuts["publish" + publishNumber + "_" + 'donut1'].load({
+            columns: [
+                ['Downloaded', downloaded],
+                ['Not Downloaded', (totalRecipients-downloaded)]
+            ]
+        });
+        donuts["publish" + publishNumber + "_" + 'donut2'].load({
+            columns: [
+                ['Test Taken', takenTest],
+                ['Tests Not Taken', (totalRecipients-takenTest)]
+            ]
+        });
+        /*console.log("--------- donut: totalRecipients=" + totalRecipients);
+        console.log("--------- donut: downloaded=" + downloaded);
+        console.log("--------- donut: takenTest=" + takenTest);*/
+
+        // Set new titles
+        var oldDownloadedTitleNode = d3.select("#publish" + publishNumber + "_donut1").select(".c3-chart-arcs-title").node();
+        var downloadedParentNode;
+        if (!oldDownloadedTitleNode) { // After refresh
+            oldDownloadedTitleNode = d3.select("#publish" + publishNumber + "_donut1").select(".my-donut-title").node();
+            downloadedParentNode = oldDownloadedTitleNode.parentNode;
+            d3.select("#publish" + publishNumber + "_donut1").selectAll(".my-donut-title").remove();
+        }
+        else {
+            downloadedParentNode = oldDownloadedTitleNode.parentNode;
+            d3.select("#publish" + publishNumber + "_donut1").selectAll(".c3-chart-arcs-title").remove();
+        }
+        /* <text class="c3-chart-arcs-title" x="0" y="20" font-family="sans-serif" font-size="20px" text-anchor="middle" fill="blue">89%</text> */
+        d3.select(downloadedParentNode).append("text")
+            .attr("y", -25)
+            .attr("class", "my-donut-title")
+            /*.attr("font-family", "HelveticaNeueLTStd55Roman,Arial, sans-serif")*/
+            .attr("font-size", "12px")
+            .attr("text-anchor", "middle")
+            /*.attr("fill", "blue")*/
+            .text("Downloaded");
+        d3.select(downloadedParentNode).append("text")
+            .attr("y", 15)
+            .attr("class", "my-donut-title")
+            .attr("font-size", "36px")
+            .attr("text-anchor", "middle")
+            .text(parseInt(downloaded*100/totalRecipients) + "%");
+        var oldTestsTakenTitleNode = d3.select("#publish" + publishNumber + "_donut2").select(".c3-chart-arcs-title").node();
+        var testsTakenParentNode;
+        if (!oldTestsTakenTitleNode) { // After refresh
+            oldTestsTakenTitleNode = d3.select("#publish" + publishNumber + "_donut2").select(".my-donut-title").node();
+            testsTakenParentNode = oldTestsTakenTitleNode.parentNode;
+            d3.select("#publish" + publishNumber + "_donut2").selectAll(".my-donut-title").remove();
+        }
+        else {
+            testsTakenParentNode = oldTestsTakenTitleNode.parentNode;
+            d3.select("#publish" + publishNumber + "_donut2").selectAll(".c3-chart-arcs-title").remove();
+        }
+        d3.select(testsTakenParentNode).append("text")
+            .attr("y", -25)
+            .attr("class", "my-donut-title")
+            .attr("font-size", "12px")
+            .attr("text-anchor", "middle")
+            .text("Test Taken");
+        d3.select(testsTakenParentNode).append("text")
+            .attr("y", 15)
+            .attr("class", "my-donut-title")
+            .attr("font-size", "36px")
+            .attr("text-anchor", "middle")
+            .text(parseInt(takenTest*100/totalRecipients) + "%");
+
+
+        document.getElementById("publish" + publishNumber + "_" + "dynamicPublishInfo.noOfStudentsWithLowestScore").innerHTML = statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.noOfStudentsWithLowestScore + " Students scored";
+        document.getElementById("publish" + publishNumber + "_" + "dynamicPublishInfo.noOfStudentsWithHighestScore").innerHTML = statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.noOfStudentsWithHighestScore + " Students scored";
+
+        var svgLowestScore = document.getElementById("publish" + publishNumber + "_" + "svgLowestScore");
+        var svgHighestScore = document.getElementById("publish" + publishNumber + "_" + "svgHighestScore");
+        var svgAverageScore = document.getElementById("publish" + publishNumber + "_" + "svgAverageScore");
+        var svgTotalScore = document.getElementById("publish" + publishNumber + "_" + "svgTotalScore");
+        removeAllChildNodes(svgLowestScore);
+        removeAllChildNodes(svgHighestScore);
+        removeAllChildNodes(svgAverageScore);
+        removeAllChildNodes(svgTotalScore);
+        svgLowestScore.appendChild(document.createTextNode(getTillOneDecimalPlace(statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.lowestScore, 1)));
+        svgHighestScore.appendChild(document.createTextNode(getTillOneDecimalPlace(statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.highestScore, 1)));
+        svgAverageScore.appendChild(document.createTextNode(getTillOneDecimalPlace(statisticsJSON.publishDetails[publishNumber].dynamicPublishInfo.averageScore, 1)));
+        svgTotalScore.appendChild(document.createTextNode(getTillOneDecimalPlace(statisticsJSON.assessmentDetails.maximumMarks, 1)));
+    }
+
+    function getTillOneDecimalPlace(decimalnumber, digits) {
+        var rounder = Math.pow(10, digits);
+        return (Math.round(decimalnumber * rounder) / rounder).toFixed(digits);
+    }
+
+    function getDynamicDataUsingAJAX() {
+        //console.log("Invoking AJAX call for publish - " + nowShowing);
+        numberAtTimeOfAjaxCall = nowShowing;
+        $.ajax({
+            type: "GET",
+            url: "/assessment_tool/get_dynamic_stat_info/" + statisticsJSON.publishDetails[nowShowing].staticPublishDetails.publishId,
+            dataType: "json",
+            success: function(response) {
+                console.log("AJAX call for publish returned json = " + JSON.stringify(response));
+                if (numberAtTimeOfAjaxCall === nowShowing) {
+                    statisticsJSON.publishDetails[nowShowing].dynamicPublishInfo = response;
+                    updateWithDynamicData(nowShowing);
+                }
+                else {
+                    //console.log("Switch to another publish data detected - ajax response ignored.");
+                }
+            },
+            error: function(response) {
+                console.log("Error in AJAX call to fetch dynamic data : " + response);
+            }
+        });
+    }
+    
+    function displayToggle(publishNumber) {
+        nowShowing = publishNumber;
+        for (var i=0; i<numberOfPublishDetails; i++) {
+            if (publishNumber == i) {
+                $('#publish' + i + '_dynamic').show();
+		        $("#publish" + i + "_viewAnalytics").children("span").css("background-color", "#CCC");
+		        $("#publish" + i + "_item").css("background-color", "#F8F8F8");
+            }
+            else {
+                $('#publish' + i + '_dynamic').hide();
+		        $("#publish" + i + "_viewAnalytics").children("span").css("background-color", "#60c8cd");
+		        $("#publish" + i + "_item").css("background-color", "#ffffff");
+            }
+        }
+    }
+
+$(document).ready(
+    function() {
+        createHTML();
+        $(".submit_button").button();
+        updateWithStaticData();
+        for (var i=numberOfPublishDetails-1; i>-1; i--) {
+            nowShowing = i;
+            updateWithDynamicData(i);
+        }
+        getDynamicDataUsingAJAX();
+
+        setInterval(function(){getDynamicDataUsingAJAX(nowShowing)}, 30000); // Retrieve every 30 seconds
+
+        for (var i=numberOfPublishDetails-1; i>-1; i--) {
+		    $("#publish" + i + "_viewAnalytics").button();/*.click(function(e) {
+			    e.preventDefault();
+			    displayToggle(i);
+		    });*/
+		    $("#publish" + i + "_viewAnalytics").children("span").css("background-color", "#60c8cd");
+        }
+	    displayToggle(0);
+    }
+);
+</script>
+  <style>
+    .report_box1{
+        align:right;
+        width:100%;
+
+    }
+    </style>
+
+  </body>
+</html>

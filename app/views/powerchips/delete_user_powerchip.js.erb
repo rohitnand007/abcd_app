@@ -1,0 +1,7 @@
+<%- @row_ids.each do |row_id| %>
+$("#<%= row_id %>").remove();
+<% end %>
+$("#selectAllChips").removeAttr("checked");
+$("#chipsCount").html("<%= @row_ids.size %> chip(s) delinked")
+
+

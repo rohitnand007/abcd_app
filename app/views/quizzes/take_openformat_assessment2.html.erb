@@ -1,0 +1,953 @@
+<style>
+  /* Start by setting display:none to make this hidden.
+    Then we position it in relation to the viewport window
+    with position:fixed. Width, height, top and left speak
+    speak for themselves. Background we set to 80% white with
+    our animation centered, and no-repeating */
+  .modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .9 )
+      50% 50%
+      no-repeat;
+    text-align: center;
+    padding-top: 200px;
+  }
+
+  /* When the body has the loading class, we turn
+     the scrollbar off with overflow:hidden */
+  body.loading {
+    overflow: hidden;
+  }
+
+  /* Anytime the body has the loading class, our
+     modal element will be visible 
+  body.loading  .modal{
+    display: block;
+  }​
+  */
+  
+  .panel {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    z-index: 100;
+    display: none;
+    background: url(../../assets/panel_bg.png);
+    border:1px solid #111111;
+    border-radius: 0px 10px 10px 0px;
+    -moz-border-radius:0px 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius: 0px 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    width: 250px;
+    height: auto;
+    padding: 25px;
+
+  }
+
+  .panel p{
+    margin: 0 0 15px 0;
+    padding: 0;
+    color: #cccccc;
+  }
+
+  .panel a, .panel a:visited{
+    margin: 0;
+    padding: 0;
+    color: #9FC54E;
+    text-decoration: none;
+    border-bottom: 1px solid #9FC54E;
+  }
+
+  .panel a:hover, .panel a:visited:hover{
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+    text-decoration: none;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  a.trigger{
+    position: fixed;
+    z-index: 100;
+    text-decoration: none;
+    top: 20px; left: 0;
+    font-size: 16px;
+    letter-spacing:-1px;
+    font-family: verdana, helvetica, arial, sans-serif;
+    color:#fff;
+    padding: 20px 40px 20px 15px;
+    font-weight: 700;
+    background:#333333 url(../../assets/plus.png) 85% 55% no-repeat;
+    /*border:1px solid #444444;*/
+    border-radius: 0px 10px 10px 0px;
+    -moz-border-radius:0px 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius: 0px 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    display: block;
+  }
+
+  a.trigger:hover{
+    position: fixed;
+    z-index: 100;
+    text-decoration: none;
+    top: 20px; left: 0;
+    font-size: 16px;
+    letter-spacing:-1px;
+    font-family: verdana, helvetica, arial, sans-serif;
+    color:#fff;
+    padding: 20px 40px 20px 20px;
+    font-weight: 700;
+    background:#222222 url(../../assets/plus.png) 85% 55% no-repeat;
+    /* border:1px solid #444444; */
+    border-radius: 0px 10px 10px 0px;
+    -moz-border-radius:0px 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius: 0px 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    display: block;
+  }
+
+  a.active.trigger {
+    background:#222222 url(../../assets/minus.png) 85% 55% no-repeat;
+  }
+
+  .option_tag {
+    color: #9FD2F8; padding:-5px 15px 0 25px;
+  }
+
+  .scrollable {
+    height:400px; overflow-y:auto; overflow-x:hidden; clip-rect:(0px, 300px, 400px, 0px); }
+  .q_status td {
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .marked_question {
+    color: yellow;
+  }
+  /* CSS Document */
+  h4 {
+    font-size: 1.2em;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+  }
+
+  .jt-test-sidebar {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-bottom: 2px solid #DDDDDD;
+    float: right;
+    margin-top: -2px;
+    padding: 2px 12px 12px;
+    width: 220px;
+  }
+
+  .jt-test-sidebar {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-bottom: 2px solid #DDDDDD;
+    float: right;
+    margin-top: -2px;
+    padding: 2px 12px 12px;
+    width: 220px;
+  }
+  .jt-test-sidebar-section {
+    margin: 16px 0;
+  }
+  .jt-test-sidebar-title {
+    color: #555555;
+    margin: 18px 0;
+  }
+  .jt-test-question-sections {
+    margin: 16px 0;
+  }
+  .jt-test-question-sections dt {
+    color: #555555;
+    font-weight: bold;
+    margin: 18px 0;
+  }
+  .jt-test-results-scorecard {
+    background: none repeat scroll 0 0 #F6F6F6;
+    border: 2px solid #DDDDDD;
+    border-radius: 6px 6px 6px 6px;
+    color: #333333;
+    margin-top: -12px;
+    padding: 8px;
+    position: relative;
+  }
+  .jt-test-results-scorecard dt {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .jt-test-results-scorecard dd {
+    font-size: 2.1em;
+    font-weight: bold;
+  }
+  .jt-test-results-scorecard.pass {
+    background: none repeat scroll 0 0 #D8F5D7;
+    border-color: #6AD269;
+    color: #037900;
+  }
+  .jt-test-results-scorecard.fail {
+    background: none repeat scroll 0 0 #FEE1E1;
+    border-color: #EA9393;
+    color: #AA1111;
+  }
+  .jt-test-timer {
+    background: none repeat scroll 0 0 #DAEFFF;
+    border: 2px solid #9FD2F8;
+    border-radius: 6px 6px 6px 6px;
+    color: #004F8D;
+    height:50px;
+    margin-top: 2px;
+    padding: 0px 0px 12px 10px;
+    position: relative;
+  }
+  .jt-test-timer-results #test_timer_clock {
+    font-family: "Helvetica Neue",Corbel,Arial,Freesans,Sans-Serif;
+  }
+  #test_pause_resume_anchor {
+    background: url("../../assets/timer-controls-map.png") no-repeat scroll 0 0 transparent;
+    display: block;
+    height: 39px;
+    width: 39px;
+  }
+  #test_pause_resume_anchor span {
+    height: 1px !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    top: -2400px !important;
+    width: 1px !important;
+  }
+  #test_pause_resume_anchor.pause {
+    background-position: 0 -78px;
+  }
+  #test_pause_resume_anchor.pause:hover {
+    background-position: 0 -117px;
+  }
+  #test_pause_resume_anchor.resume:hover {
+    background-position: 0 -39px;
+  }
+  #test_timer_title {
+    font-size: 0.9em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  #test_timer_clock {
+    font-size: 2.1em;
+    font-weight: bold;
+  }
+  #test_timer_pause_resume {
+    position: absolute;
+    right: 0.65em;
+    top: 0.95em;
+  }
+  .jt-test-description {
+    line-height: 1.2em;
+    margin-bottom: 26px;
+    padding-right: 244px;
+  }
+  .jt-test-description .formatted-document {
+    min-height: 3em;
+  }
+  .jt-test-description img {
+    padding-left: 12px;
+  }
+  .jt-test-title-bar {
+    background: url("../../assets/test-title-bar-background.png") repeat-x scroll 0 0 #EEEEEE;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    font-size: 1.5em;
+    margin: 0 -12px;
+    padding: 8px;
+  }
+  .jt-test-content {
+    margin: 0 -12px 0px;
+    position: relative;
+  }
+  .jt-test-slides {
+    border-top: 2px solid #DDDDDD;
+    padding-right: 244px;
+  }
+  .jt-test-slides .question-title {
+    border-bottom: 2px solid #DDDDDD;
+    font-size: 1.5em;
+    margin-bottom: 18px;
+    padding: 14px 0;
+    position: relative;
+  }
+  .jt-test-slides .question-title .pass-fail-label {
+    font-size: 0.8em;
+    position: absolute;
+    right: 0.1em;
+    text-transform: uppercase;
+    top: 1em;
+  }
+  .jt-end-test-section {
+    padding-top: 16px;
+    text-align: center;
+  }
+  #jt_end_test_now_anchor {
+    background: none repeat scroll 0 0 #FCEEF2;
+    border: 2px solid #F5CAD6;
+    border-radius: 12px 12px 12px 12px;
+    display: inline-block;
+    font-family: "Helvetica Neue",Corbel,Arial,Freesans,Sans-Serif;
+    padding: 6px 10px;
+  }
+  #jt_end_test_now_anchor span {
+    color: #C22B4D;
+    font-size: 1em;
+    font-weight: bold;
+  }
+  #jt_end_test_now_anchor:hover {
+    background: none repeat scroll 0 0 #FDE3EB;
+    border-color: #E9A2B6;
+    text-decoration: none;
+  }
+  .jt-test-tags-list {
+    color: #AAAAAA;
+    list-style: square outside none;
+    margin: -4px 16px 0;
+  }
+  .jt-test-tags-list li {
+    margin: 6px 0;
+  }
+  .jt-test-slides-content {
+    padding: 1px 18px 1px 12px;
+  }
+  .jt-test-get-jumbopass {
+    line-height: 1.2em;
+    margin: 18px 0;
+    text-align: center;
+  }
+  .jt-test-get-jumbopass a {
+    background: none repeat scroll 0 0 #FBF9D0;
+    border: 2px solid #F0E9AB;
+    border-radius: 16px 16px 16px 16px;
+    color: #CD3E12;
+    display: block;
+    padding: 16px;
+  }
+  .jt-test-get-jumbopass a:hover {
+    background: none repeat scroll 0 0 #FFF2AC;
+    border-color: #F2DF79;
+    text-decoration: none;
+  }
+  .jt-test-form-actions {
+    border-top: 2px solid #DDDDDD;
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+  .jt-test-form-actions .prev-next-buttons {
+    color: #DDDDDD;
+    float: left;
+    font-size: 1.2em;
+  }
+  .jt-test-form-actions .prev-next-buttons a {
+    font-size: 1em;
+    text-transform: uppercase;
+  }
+  .jt-test-form-actions .highlight-button {
+    float: right;
+    line-height: 2.4em;
+  }
+  #quiz_previous_button {
+    margin-right: 8px;
+  }
+  .quiz-question-list-item {
+    float: left;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.5em;
+    padding-bottom: 3px;
+    text-align: center;
+    width: 36px;
+  }
+  .quiz-question-list-item.active span {
+    background: none repeat scroll 0 0 #FFFFBB;
+    border-color: #FFFFEE #FFDD99 #FFDD99 #FFFFEE;
+    color: #222222;
+  }
+  .quiz-question-list-item.active.incorrect a {
+    color: #AA0000;
+  }
+  .quiz-question-list-item.active.correct a {
+    color: #007700;
+  }
+  .quiz-question-list-item.highlight a {
+    color: #AA00EE !important;
+  }
+  .quiz-question-list-item.completed {
+    color: red;
+    text-decoration: line-through;
+  }
+  .quiz-question-list-item.completed a {
+    color: #AAAAAA;
+  }
+  .quiz-question-list-item.incorrect a {
+    color: #D87E7E;
+  }
+  .quiz-question-list-item.incorrect a:hover {
+    color: #AA0000;
+  }
+  .quiz-question-list-item.correct a {
+    color: #80C280;
+  }
+  .quiz-question-list-item.correct a:hover {
+    color: #007700;
+  }
+  .evaluation-question-list-item-anchor {
+    border: 1px solid transparent;
+    border-radius: 4px 4px 4px 4px;
+    color: #777777;
+    display: inline-block;
+    padding: 0 6px;
+  }
+  .evaluation-question-list-item-anchor:hover {
+    color: #222222;
+    text-decoration: none;
+  }
+  .attempted-quiz-question-fields {
+    line-height: 1.2em;
+    min-height: 420px;
+  }
+  .attempted-quiz-question-fields table {
+    width: 100%;
+  }
+  .attempted-quiz-question-fields label {
+    display: block;
+    padding-right: 32px;
+  }
+  .attempted-quiz-question-fields label:hover {
+    cursor: pointer;
+  }
+  .attempted-quiz-question-fields .answer-choices tr:hover td {
+    background: none repeat scroll 0 0 #EEEEEE;
+  }
+  .attempted-quiz-question-fields .choice-cell {
+    text-align: center;
+    vertical-align: middle;
+    width: 7%;
+  }
+  .attempted-quiz-question-fields .text-cell {
+    text-align: left;
+    vertical-align: middle;
+    width: 93%;
+  }
+  .question-text-and-photo {
+    padding: 0 3px;
+  }
+  .end-of-quiz-call-to-action h3 {
+    border-bottom: 2px solid #DDDDDD;
+    font-size: 1.5em;
+    margin-bottom: 18px;
+    padding: 14px 0;
+  }
+  .end-of-quiz-call-to-action .submit-button {
+    text-align: center;
+  }
+  .end-of-quiz-call-to-action button {
+    background: none repeat scroll 0 0 #FCEEF2;
+    border: 2px solid #F5CAD6;
+    border-radius: 16px 16px 16px 16px;
+    color: #C22B4D;
+    display: inline-block;
+    font-family: "Helvetica Neue",Corbel,Arial,Freesans,Sans-Serif;
+    padding: 12px 22px;
+  }
+  .end-of-quiz-call-to-action button span {
+    font-size: 2em;
+    font-weight: bold;
+  }
+  .end-of-quiz-call-to-action button:hover {
+    background: none repeat scroll 0 0 #FDE3EB;
+    border-color: #E9A2B6;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .jt-breadcrumbs {
+    overflow: hidden;
+  }
+  .jt-page-content, .jt-breadcrumbs {
+    margin: auto;
+    width: 1024px;
+  }
+  .jt-page-content {
+    border: 1px solid #DEDED1;
+    border-radius: 15px 15px 15px 15px;
+    height: auto;
+    margin-top: 15px;
+    padding: 5px;
+  }
+  .jt-partner {
+    background: none repeat scroll 0 0 #F7F8EA !important;
+  }
+  .jt-partner-header .jt-constraint, .jt-partner-footer .jt-constraint {
+    max-width: 100% !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  .jt-breadcrumbs .jt-constraint-inner {
+    font-size: 1.4em !important;
+    margin-left: 140px;
+    padding: 20px 0 5px 10px !important;
+  }
+  h1 {
+    font-size: 1.5em !important;
+    margin-bottom: 0 !important;
+    margin-left: 10px !important;
+  }
+  h2 {
+    font-size: 1.4em !important;
+  }
+  .jt-test-timer-content {
+    height: 100% !important;
+  }
+  li {
+    list-style: none outside none !important;
+    margin-left: 0 !important;
+  }
+  ul {
+    padding-left: 0 !important;
+  }
+  .jt-page-content {
+    /*min-height: 720px !important;*/
+    height: auto;
+    overflow: hidden;
+    padding-bottom: 10px;
+  }
+  .jt-partner-user-actions {
+    line-height: 2em !important;
+    padding-top: 15px;
+  }
+  .jt-test-form-actions a:hover {
+    color: #C22B4D !important;
+  }
+  .jt-page-content a:visited, .jt-breadcrumbs a:visited {
+    color: #0049D2 !important;
+  }
+  .jt-test-sidebar-section dt, .jt-test-sidebar-section dd {
+    display: block !important;
+    width: 200px !important;
+  }
+  .evaluation-question-list {
+    height: 100% !important;
+  }
+  .jt-constraint {
+    padding: 0 12px !important;
+  }
+  .jt-test-description {
+    margin-bottom: 20px !important;
+    margin-top: 0 !important;
+  }
+  .jt-powered-by-logo {
+    right: 27px !important;
+    top: 60px !important;
+  }
+  .jt-breadcrumbs {
+    background: none repeat scroll 0 0 #F7F8EA !important;
+    margin-top: 5px;
+  }
+  .jt-index-title {
+    font-size: 2em !important;
+    margin-top: 0 !important;
+  }
+  .jt-index-table {
+    margin: 0 !important;
+  }
+  .jt-index-description {
+    margin-bottom: 4px !important;
+  }
+  .jt-index-sub-title {
+    margin: 15px 0 !important;
+  }
+  .test_icon {
+    float: left;
+    font-size: 1.8em !important;
+    font-weight: bold;
+    left: 155px;
+    margin-left: -145px;
+    position: relative;
+    top: 47px;
+  }
+  .test_icon img {
+    margin-right: 0;
+    position: relative;
+    top: 10px;
+  }
+  .jt-index-sub-title {
+    margin: 36px 0 10px !important;
+  }
+
+  .checkbox {
+    width: 19px;
+    height: 25px;
+    padding: 0 5px 0 0;
+    background: url(checkbox.png) no-repeat;
+    display: block;
+    clear: left;
+    float: left;
+  }
+  .question-title {
+    border-bottom: 2px solid #DDDDDD;
+    font-size: 1.5em;
+    margin-bottom: 18px;
+    padding: 14px 0;
+    position: relative;
+  }
+</style>
+<!-- Use latest PDF.js build from Github -->
+<script type="text/javascript" src="/pdf.js"></script>
+<script type="text/javascript" src="/assets/jquery"></script>
+<!--<script type="text/javascript" src="https://raw.github.com/mozilla/pdf.js/gh-pages/build/pdf.js"></script>-->
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("body").addClass("loading");
+    $("#modal").show();
+    $(".trigger").click(function(){
+      $(".panel").toggle("fast");
+      $(this).toggleClass("active");
+      return false;
+    });
+
+    countAttempted();
+    //$("#q_status").height($("#container").height());
+  });
+  function save_state() {
+    countAttempted();
+    $.post("/quizzes/save_assessment_state", $("#omr_form").serialize());
+  }
+  function myFunction()
+  {
+    setInterval(function(){myTimer()},1000);
+  }
+
+  function countAttempted() {
+    var c = 0;
+    var e = '';
+    $('input:checked').each(function() {
+      if($(this).attr("class") == e){
+      }
+      else{
+        e = $(this).attr("class");
+        c++;
+      }
+    });
+    $("#no_attempted").html(c);
+  }
+
+  function mark_question(e,i) {
+    $(e).toggleClass('active');
+    if ($(e).hasClass('active')) {
+      m_q.push(i);
+    }
+    else {
+      m_q.splice( $.inArray(i, m_q), 1 );
+    }
+    $(m_q_h).val(m_q.join());
+    save_state();
+  }
+
+  min_save = 0;
+  paused = false;
+
+  m_q = [];
+<%if @quiz.timelimit == 0 %>
+    timer_active = false;
+<%else %>
+    timer_active = true;
+<%  end%>
+<% @marked_q.each do |m| %>
+    var k = <%=m.to_i%>;
+    m_q.push(k);
+<%end%>
+
+  function pause_resume() {
+    if($("#test_pause_resume_anchor").hasClass('pause')) {
+      pause();
+      $("#test_pause_resume_anchor").removeClass('pause');
+      $("#test_pause_resume_anchor").addClass('resume');
+    }
+
+    else {
+      $("#test_pause_resume_anchor").removeClass('resume');
+      $("#test_pause_resume_anchor").addClass('pause');
+      resume();
+    }    return false;
+  }
+  function pause() {
+    paused = true;
+    $(".test_section").hide();
+    $(".test_section").hide();
+    $(".paused_message").show();
+    $("#jt_end_test_now_anchor").attr("disabled", true);
+    save_state();
+  }
+  function resume() {
+    paused = false;
+    $(".test_section").show();
+    $(".test_section").show();
+    $(".paused_message").hide();
+    $("#jt_end_test_now_anchor").removeAttr("disabled");
+  }
+  function myTimer()
+  {
+    if (timer_active) {
+      var t = $("#time_left").val()
+      if(t <= 2) {
+        $("#omr_form").submit();
+        //$(".test_section").hide();
+        //$(".test_section").hide();
+        timer_active = false;
+        $("#jt_end_test_now_anchor").removeAttr("disabled");
+      }
+      if (t > -1 && !paused) {
+        var seconds = t % 60;
+        var hours = parseInt( t / 3600 ) % 24;
+        var minutes = parseInt( t / 60 ) % 60;
+        $("#hours").html(hours);
+        $("#minutes").html(minutes);
+        $("#seconds").html(seconds);
+        $("#time_left").val(t-1);
+      }
+
+    }
+    min_save++;
+      if (min_save % 60 ==0 && !paused)
+        save_state();
+  }
+  function submit_test() {
+    $("#jt_end_test_now_anchor").attr("disabled", true);
+    $("#omr_form").submit();
+  }
+</script>
+<div class="wat-cf" id="wrapper">
+  <div id="content_wrapper">
+    <div class="jt-page-content">
+      <div class="jt-constraint">
+        <div class="jt-constraint-inner">
+          <div class="jt-test-page" id="test">
+            <form accept-charset="UTF-8" action="/quizzes/submit_assessment/<%=@publish.id%>" id="omr_form" method="post">
+              <input type="hidden" name="quiz_id" value="<%=@quiz.id%>"/>
+              <input type="hidden" name="publish_id" value="<%=@publish.id%>"/>
+              <input type="hidden" id="m_q_h" name="marked_questions" value=""/>
+              <input id="time_left" type="hidden" name="time_left" value="<%=@time_left%>"/>
+
+              <div class="jt-test-title-bar" style="color:#555555">
+                <h1><%=@quiz.name%></h1>
+              </div>
+              <div class="jt-test-content clear">
+                <div class="jt-test-sidebar">
+                  <div class="jt-test-sidebar-section jt-test-timer no-time-limit" id="test_timer">
+                    <div class="jt-test-timer-content clear">
+                      <div id="test_timer_time">
+                        <h4 id="test_timer_title">Total Time</h4>
+                        <%if @quiz.timelimit == 0 %>
+                          <span id="test_timer_clock">Unlimited</span>
+                        <%else%>
+                          <span id="test_timer_clock"><span id="hours"></span>:<span id="minutes"></span>:<span id="seconds"></span></span>
+                        <%end%>
+                      </div>
+                      <% if @publish.pause? %>
+                        <div id="test_timer_pause_resume">
+                          <span onclick="pause_resume();" class="pause" id="test_pause_resume_anchor" style="cursor: pointer"></span>
+                        </div>
+                      <%end%>
+                    </div>
+                  </div>
+                  <div id="test_sidebar_controls" style="">
+                    <div class="jt-test-sidebar-section jt-test-questions-list">
+                      <h3 class="jt-test-sidebar-title">
+                        Flagged Questions
+                      </h3>
+                      <ul class="evaluation-question-list clear">
+                        <% @quiz.questions.each do |q| %>
+                          <%logger.debug(@marked_q)%>
+                          <li class="quiz-question-list-item <%= (@marked_q.include? q.id.to_s) ? 'active' : '' %>" onclick="mark_question(this,<%=q.id%>);"><span class="evaluation-question-list-item-anchor" style="text-decoration: underline;cursor: pointer"><%=q.tag%></span></li>
+                        <%end%>
+                      </ul>
+                    </div>
+                    <p class="jt-test-sidebar-section jt-end-test-section">
+                      <input id="jt_end_test_now_anchor" style="cursor: pointer" value="Submit Test" type="button" onclick="submit_test();"/>
+                    </p>
+                    <div class="spacer"></div>
+                  </div>
+                </div>
+
+              </div>
+              <div id="omr_panel" class="panel test_section" style="display: none; ">
+                <h3 style="color:white">OMR Sheet</h3>
+                <div class="scrollable">
+                  <table>
+                    <%i = 0%>
+                    <% @quiz.questions.each do |q| %>
+                      <%i = i+1%>
+                      <tr class="questions">
+                        <td><h3 style="color:white"><%=q.tag%>.</h3></td>
+                        <%q.question_answers.each do |a|%>
+                          <%checked = false
+                          if !@attempts.nil? && !@attempts[q.id].nil? && @attempts[q.id].include?(a.id)
+                            checked = true
+                          end
+                        %>
+                          <td><input class="options_<%=i%>" onchange="save_state();" <%=checked ? 'checked="checked"' : ""%> type="checkbox" name="answers[<%=q.id%>][]" value="<%=a.id%>"/><strong class="option_tag"><%=a.tag%></strong></td>
+                        <% end %>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+                <div style="clear:both;"></div>
+              </div>
+              <a class="trigger test_section" href="#">OMR</a>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div id="container1" class="test_section" style="padding-left: 2px;float: left;width: 73%;overflow: hidden;height: auto;min-height: 600px">
+        <h3 class="question-title" style="color:#555555;text-align: right">Attempted Questions <span id="no_attempted"></span> of <%=@quiz.questions.count%></h3>
+        <!--<object data="/quizzes/download_catchall/<%=@quiz.id%>" type="application/pdf" width="100%" height="90%">
+          <p>It appears you don't have a PDF plugin for this browser.</p>
+        </object>-->
+        <div>
+          <button id="prev">Previous</button>
+          <button id="next">Next</button>
+          &nbsp; &nbsp;
+          <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+        </div>
+
+        <div>
+          <canvas id="the-canvas" style="border:1px solid black"></canvas>
+        </div>
+        <script>
+            //
+            // NOTE:
+            // Modifying the URL below to another server will likely *NOT* work. Because of browser
+            // security restrictions, we have to use a file server with special headers
+            // (CORS) - most servers don't support cross-origin browser requests.
+            //
+            var url = '/quizzes/download_catchall/<%=@quiz.id%>';
+
+            //
+            // Disable workers to avoid yet another cross-origin issue (workers need the URL of
+            // the script to be loaded, and currently do not allow cross-origin scripts)
+            //
+            PDFJS.disableWorker = true;
+
+            var pdfDoc = null,
+                    pageNum = 1,
+                    pageRendering = false,
+                    pageNumPending = null,
+                    scale = 0.8,
+                    canvas = document.getElementById('the-canvas'),
+                    ctx = canvas.getContext('2d');
+
+            /**
+             * Get page info from document, resize canvas accordingly, and render page.
+             * @param num Page number.
+             */
+            function renderPage(num) {
+                pageRendering = true;
+                // Using promise to fetch the page
+                pdfDoc.getPage(num).then(function(page) {
+                    var viewport = page.getViewport(scale);
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Render PDF page into canvas context
+                    var renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+                    var renderTask = page.render(renderContext);
+
+                    // Wait for rendering to finish
+                    renderTask.promise.then(function () {
+                        pageRendering = false;
+                        if (pageNumPending !== null) {
+                            // New page rendering is pending
+                            renderPage(pageNumPending);
+                            pageNumPending = null;
+                        }
+                    });
+                });
+
+                // Update page counters
+                document.getElementById('page_num').textContent = pageNum;
+            }
+
+            /**
+             * If another page rendering in progress, waits until the rendering is
+             * finised. Otherwise, executes rendering immediately.
+             */
+            function queueRenderPage(num) {
+                if (pageRendering) {
+                    pageNumPending = num;
+                } else {
+                    renderPage(num);
+                }
+            }
+
+            /**
+             * Displays previous page.
+             */
+            function onPrevPage() {
+                if (pageNum <= 1) {
+                    return;
+                }
+                pageNum--;
+                queueRenderPage(pageNum);
+            }
+            document.getElementById('prev').addEventListener('click', onPrevPage);
+
+            /**
+             * Displays next page.
+             */
+            function onNextPage() {
+                if (pageNum >= pdfDoc.numPages) {
+                    return;
+                }
+                pageNum++;
+                queueRenderPage(pageNum);
+            }
+            document.getElementById('next').addEventListener('click', onNextPage);
+
+            /**
+             * Asynchronously downloads PDF.
+             */
+            PDFJS.getDocument(url).then(function (pdfDoc_) {
+                pdfDoc = pdfDoc_;
+                document.getElementById('page_count').textContent = pdfDoc.numPages;
+                $("body").removeClass("loading");
+                $("#modal").hide();
+                myFunction();
+                // Initial/first page rendering
+                renderPage(pageNum);
+            });
+        </script>
+      </div>
+      <div style="display: none;text-align: center;font-size: 22px;font-weight: 600;color:#555555;padding-top: 100px;" class="paused_message">Test has been paused. Please click Resume button to Resume the test.....</div>
+    </div>
+
+  </div>
+</div>
+<div class="modal" id="modal"><img src='../../assets/processing1.gif' /><br/><br/><h3>Please wait while test is loading. It may take few minutes...</h3></div>​

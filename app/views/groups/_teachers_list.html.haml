@@ -1,0 +1,39 @@
+#content_header
+  %h3#main_heading Add teachers to the group.
+#data{:style=>"margin-top: 3%;"}
+  .form{:style=>'padding-bottom: 20px;'}
+    - if current_user.is? "EA"
+      -#%span{:id=>'institution'}=select("student", "institution_id", Institution.includes(:profile).collect {|p| [ p.name, p.id ] }, {:prompt => 'Select Institution'})
+      -#%span{:id=>'center',:style=>'display:none'}=select("student", "center_id",[], {:prompt => 'Select Center'})
+      -#%span{:id=>'academic_class',:style=>'display:none'}=select("student", "academic_class_id",[], {:prompt => 'Select Form'})
+      -#%span{:id=>'section',:style=>'display:none'}=select("student", "section_id",[], {:prompt => 'Select Section'})
+    -elsif current_user.is? "IA" or current_user.is? "EO"
+      = hidden_field_tag "institution_id",current_user.institution_id,:id=>'institution_id'
+      %span{:id=>'center'}=select("teacher", "center_id",Center.includes(:profile).where(:institution_id=>current_user.institution_id).collect {|p| [ p.name, p.id ]}, {:prompt => 'Select Center'})
+
+  %span{:id=>'loading',:style=>'display:none'}=image_tag('ajax-loader.gif');
+  #progress-indicator.progress-indicator= image_tag('progress-indicator.gif')
+  #teachers_list
+:javascript
+  $("#teacher_center_id").change(function() {
+    if (("<%= current_user.is? 'IA' %>") || (("<%= current_user.is? 'EO' %>")) ||("<%= current_user.is? 'MOE' %>") || ("<%= current_user.is? 'CR' %>")) {
+      var institution = $('#institution_id').val();
+    }
+    else{
+      var institution = $('select#teacher_institution_id :selected').val();
+    }
+    var center = $('select#teacher_center_id :selected').val();
+
+    $.ajax({//Make the progress Request
+      type: "POST",
+      url: '/group_teacher_search/list_teachers?institution_id='+institution+"&center_id="+center,
+      beforeSend:  function() {
+        $("#progress-indicator").show();
+        $("#teachers_list").css('opacity',0.70);
+      },
+      success: function(data){
+        $("#progress-indicator").hide();
+        $("#teachers_list").css('opacity','');
+      }
+    });
+    });

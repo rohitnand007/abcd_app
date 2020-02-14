@@ -1,0 +1,30 @@
+-if f.object.new_record?
+  = f.fields_for :question_answers, f.object.question_answers.build do |b|
+    %tr.tf_option_set{style:"display:none"}
+      %td{style: "border: 1px solid #CCC; text-align: center;"}
+        = b.label "A"
+      %td{colspan: "2", style: "height:40px; padding-right: 8px; border: 1px solid #CCC; text-align: left;"}
+        = b.text_field :answer,class:"true_field full_text_camouflage", readonly: true
+      %td{style: "width: 40px!important; margin: 0px; padding: 0px; border: 0px; vertical-align: center; text-align: center;"}
+        = b.check_box :fraction, value:"1",class:"tf_checkbox"
+      %td
+        Correct answer
+  = f.fields_for :question_answers, f.object.question_answers.build do |b|
+    %tr.tf_option_set{style:"display:none"}
+      %td{style: "border: 1px solid #CCC; text-align: center;"}
+        = b.label "B"
+      %td{colspan: "2", style: "height:40px; padding-right: 8px; border: 1px solid #CCC; text-align: left;"}
+        = b.text_field :answer, class:"false_field full_text_camouflage", readonly: true
+      %td{style: "width: 40px!important; margin: 0px; padding: 0px; border: 0px; vertical-align: center; text-align: center;"}
+        = b.check_box :fraction, value:"1",class:"tf_checkbox"
+      %td
+        Correct answer
+-else
+  = f.fields_for :question_answers do |f|
+    = render :partial => 'question_answer_fields', locals:{f:f}
+
+:javascript
+  //The below script serves as validation for true or false checkboxes only. Both should not be selected for a single question
+  $(document).on('click', 'input[class="tf_checkbox"]', function() {
+    $('input[type="checkbox"]').not(this).prop('checked', false);
+  });

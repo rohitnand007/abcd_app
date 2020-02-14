@@ -1,0 +1,129 @@
+.tags
+  %h2 Question Details
+  %table.table-hover.listing.sort_table{:align => "center", :package_id => "#{@question_upload.id}", :width => "100%"}
+    %thead
+      %tr.tr-head
+        %th Question No
+        %th Question
+        %th Tags
+        %th Status
+        %th
+    %tbody
+      - @question_ids.each_with_index do |question_id, index|
+        %tr{question_id: "#{question_id}", question_no: @page_no*@per_count + index, question_status: "#{@question_upload.questions_status[question_id]}", class: "#{@question_upload.questions_status[question_id]}"}
+          %td
+            = @page_no*@per_count + index + 1
+          %td
+            -# %div.inner.question_style
+            -#   %p.first{:style => "min-width: 900px;overflow-x: auto;"}
+            -#     = Question.find(question_id).questiontext_format.html_safe
+            -#     - question_id
+            -#     %span.highlight
+            - @question = Question.find(question_id)
+            = render file: "#{Rails.root.to_s}/app/views/questions/show_#{@question.qtype}"
+          %td 
+            %table.tags
+              %tbody
+              - Question.find(question_id).tags.each do |tag|
+                - if tag.name != "qsubtype"
+                  %tr
+                    %td{style: "font-weight: 600;"}
+                      = tag.proper_name + ":"
+                    %td
+                      = tag.value
+                  %tr
+                    %td{colspan: 2}
+                      %hr
+          %td
+            = @question_upload.questions_status["#{question_id}"]
+          %td
+            %input.button.tablebutton.approve_question.btn.btn-info.pull-right{:name => "approve", :type => "submit", :value => "Approve", :disabled => true}/
+            %input.button.tablebutton.editdata.edit_question.btn.pull-right{:name => "edit", :type => "submit", :value => "Edit"}/
+
+.pagination_info{style: "float:right;"}
+  = paginate @question_ids
+
+.question_info
+  = form_tag "/question_uploads/#{@question_upload.id}/update_question_tags", :method => 'post', :multipart => true do 
+    %table
+      %tr.field
+        %td= label_tag :question_no
+        %td= text_field_tag :question_no, nil, required: "required", :placeholder => "Enter Question Text", :readonly => true
+      %tr.field{:hidden => true}
+        %td= label_tag :question_id
+        %td= text_field_tag :question_id, nil, required: "required"
+      %tr.field
+        %td= label_tag :academic_class
+        %td.styled-select
+          = collection_select :tags, :academic_class, @class_tags, :value, :value, {}, {:class => 'drop_down'}
+      %tr.field
+        %td= label_tag :subject_name
+        %td.styled-select
+          = collection_select :tags, :subject, @subject_tags, :value, :value, {}, {:class => 'drop_down'}
+      %tr.field
+        %td= label_tag :concept_name
+        %td.styled-select
+          = collection_select :tags, :concept_names, @concept_tags, :value, :value, {}, {:class => 'drop_down'}
+    .actions
+      = submit_tag "Update", disable_with: "Updating...", class: 'button tablebutton'
+
+:css
+  .question_info{
+    display: none;
+  }
+  .question_info .field{
+    margin: 5px;
+    padding: 5px;
+  }
+  .question_info .field td{
+    margin: 5px;
+    padding: 5px;
+  }
+  .edit_question, .approve_question{
+    margin: 5px;
+  }
+  .question_style > table{
+    width: 850px !important;
+  }
+  .tags{
+    width: 200px;
+  }
+  .child_question_id{
+    display: none;
+  }
+
+:javascript
+  var package_id = "#{@question_upload.id}";
+  $(".edit_question").click(function(){
+    //get question id, question no
+    var question_id = $(this).parent().parent().attr("question_id");
+    var question_no = $(this).parent().parent().attr("question_no");
+    //set asset text
+    $("#question_no").val(question_no);
+    $("#question_id").val(question_id);
+    $(".question_info").dialog({title: "Update Question Tags",
+      dialogClass: 'updateTags',
+      width: "auto",
+      height: "auto",
+      resizable: false,
+      draggable: false,
+      modal: true
+    });
+  });
+  $(".approve_question").click(function(){
+    var question_id = $(this).parent().parent().attr("question_id");
+    $("#loading_overlay").css("display", "");
+    $.post("/question_uploads/" + package_id + "/approve_question.json",{"question_id" : question_id}, function(data, status){
+      $("#loading_overlay").css("display", "none");
+      alert("Question Approved Successfully");
+      $("#loading_overlay").css("display", "");
+      window.location.reload();
+    });
+  });
+  $("tr.OK").each(function(){
+    $(this).find(".approve_question").attr("disabled", false);
+  });
+  $("tr.Approved").each(function(){
+    $(this).find(".edit_question").attr("disabled", true);
+    $(this).find(".approve_question").attr("disabled", true);
+  });

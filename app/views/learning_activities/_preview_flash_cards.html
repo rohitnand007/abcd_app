@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/activities/font-awesome.min.css">
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script src="/assets/activities/jquery-ui.js"></script>
+    <script src="/assets/activities/jquery.flip.min.js"></script>
+    <script src="/assets/activities/app.js"></script>
+    <script src="/assets/activities/jquery-confirm.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_flash_cards.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/common.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+</head>
+
+<body>
+<div id="ContainerForPreview"></div>
+        <script src="/assets/activities/play_for_flash_cards.js"></script>
+        <script>
+        $('#ContainerForPreview').empty();
+        var jsonData = "";
+        $.ajax({
+            url: "/learning_activities/<%=@learning_activity.id%>/get_activity_data",
+            type: 'GET',
+            cache: false,
+            success: function(data, textStatus, jqXHR)
+            {
+                jsonData = JSON.stringify(data);
+                var finaljson = JSON.parse(decodeURIComponent(jsonData));
+                $('#ContainerForPreview').playForFlashCards(finaljson, '/learning_activities/download/');
+
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                alert("error in playing");
+            }
+        });
+//        var json=document.URL.split('value=')[1];
+//        var finaljson=JSON.parse(decodeURIComponent(json));
+//        $('#ContainerForPreview').playForFlashCards(finaljson,'download/');
+        </script>
+
+</body>
+</html>

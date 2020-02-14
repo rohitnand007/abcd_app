@@ -1,0 +1,14 @@
+= form_tag bulk_user_data_update_path, :multipart => true do
+  %h2 Update Abstract User Groups
+  %h4 The csv file should be in the following format
+  %div{style:"background-color: #f9f9f9; width: 400px;"}
+    %h4 Please generate the following in Excel like program and save it as CSV file type.
+    %b EdutorId , Email,Parent Email, Parent Mobile, Mobile No, Firstname, School_tags, Password, rollno
+    %br
+    "Edutorid", Email,Parent Email, Parent Mobile, Mobile No, Firstname, School_tags,Password, rollno
+    %br
+    "Edutorid", Email,Parent Email, Parent Mobile, Mobile No, Firstname, School_tags, Password, rollno
+  %br/
+  %br/
+  = file_field_tag "file"
+  = submit_tag 'Update'

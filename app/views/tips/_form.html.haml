@@ -1,0 +1,31 @@
+= simple_form_for @tip, :html => { :class => :form,:multipart => true },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid tip",
+                        :message => "You'll need to fix the following fields:"
+  .inputs
+    .group
+      .field
+        = f.input :multiple_recipient_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Select User:"
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Tip:"
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), tips_path,:class=>'button danger icon remove'
+
+
+
+:javascript
+  $(document).ready(function(){
+    $(function() {
+      $("#tip_multiple_recipient_ids").tokenInput("/profile_users.json", {
+      queryParam: 'term',
+      minChars: '3',
+      hintText: 'Type first 3-letters of users surname/firstname/roll number',
+      crossDomain: false,
+      preventDuplicates:true,
+      prePopulate: $("#work_space_app_multiple_recipient_ids").data("pre"),
+      theme: ""
+      });
+    });
+  });

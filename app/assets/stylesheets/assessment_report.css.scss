@@ -1,0 +1,138 @@
+body {
+    font-size: 12px;
+    font-family: HelveticaNeueLTStd55Roman,Arial,sans-serif;
+    color: #111;
+}
+
+.form select {
+    background-color: #F3F6FA;
+    border: 1px solid #C5CEDB;
+    border-radius: 5px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1) inset;
+    height: 27px;
+    padding: 3px;
+}
+
+/* --------- BEGIN create assessment styles --------- */
+.step_active_new {
+  background-color:#60c8cd;
+  display:block;
+  background-image: url(/assets/arrow_new.png);
+  background-repeat:no-repeat;
+  width:99%;
+  height:30px;
+
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  padding:0 0 0 10px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+/*    --------------       */
+
+.step_normal_new { background-color:#cccccc;
+  display:block;
+  background-image: url(/assets/arrow_new.png);
+  background-repeat:no-repeat;
+  width:160px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  padding:0 0 0 6px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+
+
+#step_normal_btn_new {
+  background-color:#CCCCCC;
+  display:block;
+  width:165px;
+  height:30px;
+  font:14px Arial, Helvetica, sans-serif;
+  color:#fff;
+  line-height:30px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  cursor:pointer;}
+#step_normal_btn_new .no_new { float:left;
+  height:30px; width:10px;
+  line-height:30px;
+  padding:0 8px;
+  border-radius:4px;}
+#step_normal_btn_new .btnarea_new { float:left;
+  background-image: url(/assets/arrow_new.png);
+  background-repeat:no-repeat;
+  height:30px;
+  line-height:30px;
+  padding:0 0 0 20px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;}
+
+
+/* -------------------------------------- */
+
+.form-first-name{
+  height:30px; color:#636363;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border:#CCC 0.1em solid; padding-left:10px;
+}
+
+.form-last-name {
+  height:30px; color:#636363;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border:#CCC 0.1em solid; border-top:none; padding-left:10px;
+}
+
+.form-name{
+  height:30px; color:#636363;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border:#CCC 0.1em solid; padding-left:10px;
+}
+/* --------- END create assessment styles --------- */
+
+/* --------- START create analytic report styles --------- */
+.popup{
+  background-color: transparent;
+  border: 2px solid #d1d2d4;
+  border-radius: 2px;
+  color:black;
+  margin-top:-4px;
+  background-image:url('tip.png') no-repeat center center #fafafa;
+}
+
+.noTitle .ui-dialog-titlebar {
+  display: none;
+}
+/* --------- END create analytic report styles --------- */
+
+
+/* End of assessment report */
+

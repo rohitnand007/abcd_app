@@ -1,0 +1,34 @@
+<%= render partial: "content_header" %>
+<div id="data">
+  <table style="width: 100%">
+    <tr>
+      <td>
+        <div id='main' style="width: 100%">
+          <div class='block' id='block-text' style="min-width:900px;width:96%;margin:2%">
+            <div class='content' style="margin: 0px;">
+              <div class='inner question_style' >
+                <p class='first' style="min-width: 900px;overflow-x: auto">
+                  <%= @question.questiontext_format.html_safe %>
+                  <span class='hightlight'></span>
+                </p>
+                    <b>Answer Feedback:</b>
+                    <%= @question.generalfeedback_format.html_safe %>                  
+              </div>
+            </div>
+          </div>
+          <%= render partial: "question_metadata" %>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <!--<div class="group">-->
+  <!--<div align="center" class="field">-->
+  <!--<%#if !@question.edit_access(current_user.id)%>-->
+  <!--<a href="/questions/copy/<%#=@question.id%>" class="button big primary">Copy</a>-->
+  <!--<%# else %>-->
+  <!--<a href="/questions/copy/<%#=@question.id%>" class="button big primary">Copy</a>-->
+  <!--<a href="/questions/<%#=@question.id%>/edit" class="button big primary">Edit</a>-->
+  <!--<%# end %>-->
+  <!--</div>-->
+  <!--</div>-->
+</div>

@@ -1,0 +1,289 @@
+
+<style type="text/css">
+
+    #tree1{
+        margin: 10px;
+        padding: 10px;
+        width: auto;
+    }
+    .ui-widget-content{
+        background: #fff;
+    }
+    #tree1 ul li {
+        width: 800px;
+        font-size: 15px;
+        color: #000000;
+    }
+    #tree1 ul li ul li  {
+        width: 700px;
+        font-size: 14px;
+        color: #191919;
+        cursor: move;
+        min-height: 25px;
+    }
+    #tree1 ul li ul li ul li {
+        width: 600px;
+        height: 20px;
+        font-size: 13px;
+        color: #333333;
+        cursor: move;
+    }
+</style>
+<div id="content_header">
+  <h1 id="main_heading">Manage Content</h1>
+  <h3 id="sub_heading"></h3>
+</div>
+<div id="inner-tab-menu">
+  <uL>
+    <li><%=  link_to "#{t("web-app-theme.list", :default => "List")}", contents_path %></li>
+    <li class="inner_tab_selected"><%= link_to 'Manage', '/content/manage' %></li>
+  </uL>
+</div>
+
+<div id="data">
+  <table align="center">
+    <tr>
+      <td style="padding-left:10%;">
+        <div class="button-group">
+          <input name="Check All" id="checkall" value="check all" type="submit" class="button">
+          <input name="UnCheck All" id="uncheckall" value="un check all" type="submit" class="button">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="tree1">
+          <%= form_tag "/content/position_update" do %>
+          <% @contents.each do |subject| %>
+              <ul class="ui-sortable">
+                <li  class="ui-state-default">
+
+                    <%= check_box_tag "content[]",'',true %><%= subject.name %>
+
+                  <ul id="<%= subject.id%>" class="ui-sortable">
+                    <% subject.chapters.order("play_order asc").each do |chapter|%>
+                        <li  id="<%= chapter.id %>" class="ui-state-default">
+                          <div id="content_<%= chapter.id %>" style="<%= chapter.is_hidden? ? 'opacity:0.3;' : ''%>">
+                            <input id="check_<%= chapter.id %>" type="checkbox"  name="content[]" >
+                            <%= chapter.name %>
+                            <%= hidden_field_tag "is_locked[]",chapter.is_locked,:id=>"lock_#{chapter.id}" %>
+                            <%= link_to "lock","",:id=>chapter.id %>
+                            <div style="float:right;" id="lock_content_<%= chapter.id %>">
+                              <%= content_lock(chapter.is_locked)%>
+                            </div>
+                          </div>
+                          <div style="clear:both;"></div>
+                          <ul class="ui-sortable">
+                            <% chapter.topics.order("play_order asc").each do |topic|%>
+                                <% id =  "#{topic.type}_#{topic.id}" %>
+                                <li  id="<%= topic.id %>"  class="ui-state-default">
+                                  <div id="content_<%= topic.id %>" style="<%= topic.is_hidden? ? 'opacity:0.3;' : ''%>">
+                                    <input id="check_<%= topic.id %>" type="checkbox"  name="content[]" ><%= topic.name %>
+                                    <%= hidden_field_tag "is_locked[]",topic.is_locked %>
+                                    <div style="float:right;" id="lock_content_<%= topic.id %>">
+                                      <%= content_lock(topic.is_locked)%>
+                                    </div>
+                                  </div>
+                                  <div style="clear:both;"></div>
+                                </li>
+                            <%end%>
+                          </ul>
+                        </li>
+                    <%end%>
+                  </ul>
+                </li>
+              </ul>
+           <%= submit_tag "post" %>
+          <%end%>
+        <%end%>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-left:10%;">
+        <div class="button-group">
+          <button type="submit" class="button icon approve" id="toArray" value="Commit" name="toArray">Commit</button>
+          <button type="submit" class="clicked button icon lock" id="tolock" value="lock" name="tolock">Lock</button>
+          <button type="submit" class="clicked button danger icon unlock" id="tounlock" value="unlock" name="to unlock">Un-Lock</button>
+          <button type="submit" class="clicked button" id="hide" value="hide" name="to hide">Hide</button>
+          <button type="submit" class="clicked button danger" id="unhide" value="unhide" name="to unhide">Un-Hide</button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td height="65px;">
+        <div style="padding-left: 10%;" align="center">
+          <div id="result" class="flash"></div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <% unless @contents.blank? %>
+            <div class="pagination_info" style="float: left; ">
+              <%= paginate @contents %>
+            </div>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+
+</div>
+<script type="text/javascript">
+    // Applaying checkbox to the #tree
+    $('#tree1').checkboxTree({
+        onCheck: { ancestors: 'uncheck', descendants: 'check' },
+        onUncheck: { ancestors: 'uncheck' },
+        initializeChecked: 'expanded',
+        initializeUnchecked: 'collapsed'
+    });
+    $('#checkall').click(function(){ $('#tree1').checkboxTree('checkAll'); });
+    $('#uncheckall').click(function(){ $('#tree1').checkboxTree('uncheckAll'); });
+
+
+    //Applaying sortable
+    $('#tree1 li').sortable({
+        placeholder: "ui-state-highlight",
+        tolerance:'intersect',
+        cursor:'move',
+        items:'li',
+        nested:'ul'
+    });
+    $( "#tree1 li" ).disableSelection();
+
+    //On click function for saving the play order to the database
+    $('#toArray').click(function(e){
+        var subject = new Array();
+        $("#tree1 li[id^=Subject]").each(function() {
+            var a = $(this).attr('id');
+            var s = $("#"+a+" li");
+            var childs= "";
+            for(var i=0; i<s.length; i++){
+              var  lock_id = $(s[i]).attr('id')
+                lock = $("#"+lock_id+' div input[type="hidden"]').attr("value");
+                childs = childs + ($(s[i]).attr('id'))+","+lock+ ';';
+            }
+            subject.push(a+":"+childs);
+        });
+        $.ajax({//Make the Ajax Request
+            type: "POST",
+            url: "/content/position_update" ,
+            data: {subject: subject},
+            beforeSend:  function() {
+                $('#result').html('');
+                $('#toArray').attr("disabled", "disabled"); //disable the button to prevent more hits
+                $('#toArray').html('please wait...')
+            },
+            success: function(data){
+                $('#toArray').html('Commit');
+                $('#toArray').removeAttr("disabled");
+
+            }
+        });
+    });
+
+    //On click function for locking and unlocking the elements
+
+    $('.clicked').click(function(e){
+        var values = new Array();
+        var locks = new Array();
+        $.each($("input[name='content[]']:checked"), function() {
+            values.push($(this).parent().attr('id').split("_")[1]);
+        });
+        $.each($("input[name='is_locked[]']"), function() {
+            locks.push($(this).attr('value'));
+        });
+        alert(locks);
+        if ($(this).attr('value') == "lock"){
+            var url = "/content/lock";
+            var disable_with = 'Locking...';
+            var id = $("#tolock");
+            var text = "Lock";
+        }
+        else if ($(this).attr('value') == "unlock") {
+            var url = "/content/unlock";
+            var disable_with = 'Un-Locking...';
+            var id = $("#tounlock");
+            var text = "Un-Lock";
+        }
+        else if ($(this).attr('value') == "hide") {
+            var url = "/content/hide";
+            var disable_with = 'Hiding...';
+            var id = $("#hide");
+            var text = "Hide";
+        }
+        else if ($(this).attr('value') == "unhide") {
+            var url = "/content/unhide";
+            var disable_with = 'Un-Hiding...';
+            var id = $("#unhide");
+            var text = "Un-Hide";
+        }
+        if (values.length != 0) {
+            $.ajax({//Make the Ajax Request
+                type: "POST",
+                url: url ,
+                data: {ids: values, lokcs: locks},
+                beforeSend:  function() {
+                    $('#result').html('');
+                    id.attr("disabled", "disabled"); //disable the button to prevent more hits
+                    id.html(disable_with)
+                },
+                success: function(data){
+                    id.html(text);
+                    id.removeAttr("disabled");
+                }
+            });
+        }
+        else{
+            alert('Select item to lock or unlock')
+        }
+
+    });
+
+    // collapse all children on document load
+    // click on child collapse parallel li's
+    $('#tree1 ul li ul li span').click(function(){
+        items =  $(this).parent().siblings(); //get all li parallel to this
+        if($(this).parent().hasClass('expanded')== true) {
+            $.each(items, function() {
+                $('#tree1').checkboxTree('collapse',$(this));
+            });
+            $('#tree1').checkboxTree('collapse',$(this));
+        }else{
+            $.each(items, function() {
+                $('#tree1').checkboxTree('collapse',$(this));
+            });
+            $('#tree1').checkboxTree('expand',$(this).parent());
+        }
+
+
+
+    });
+    $(function(){
+        $("#tree1 li a").live("click", function(event) {
+            event.preventDefault();
+            var id = ($(this).attr('id'));
+            $("#check_"+id).attr('checked', true);
+            var items = $("#"+id+' input[type="checkbox"]')
+            var locks = $("#"+id+' div input[type="hidden"]')
+            $.each(locks, function() {
+                $(this).val(3);
+            });
+            $("#lock_"+id).val(3);
+            $.each(items, function() {
+                $(this).attr('checked', true);
+            });
+        });
+    });
+
+
+
+    /* $(document).ready(function() {
+     collapse first level li's (Chapters) on load
+     //getting all li's but not in deep(here topics)
+     items = $('#tree1 ul li ul li').not('ul li ul li ul li');
+     // then collapse all li's on load (collapsing a element not working in Chrome,using setTimepout it works)
+     var t = setTimeout ("$('#tree1').checkboxTree('collapse',items);", 10 );
+     });
+     */
+</script>

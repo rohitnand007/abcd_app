@@ -1,0 +1,74 @@
+<div id='content_header'>
+  <h1 id='main_heading'>
+    <%=@main_heading%>
+  </h1>
+</div>
+<div id='inner-tab-menu'>
+</div>
+<div id='data'>
+  <% if !@filter_group.nil? && !@groups.nil? %>
+      <form id="select-group" class="form" method="POST" action="/recent_assessments">
+        <div class="group">
+          <div class="field">
+            <div class="input select required">
+              <label class="select required label" for="">
+                Filter By Group
+              </label>
+              <select name="filter_group" onchange="$('#select-group').submit();">
+                <% if current_user.id ==1 %>
+                    <option <%= @filter_group.to_i==0 ? 'selected' : '' %> value="0">Recent</option>
+                <% end %>
+                <% @groups.each do |key,value| %>
+                    <option <%= @filter_group.to_i==key ? 'selected' : '' %> value="<%=key%>"><%=value%></option>
+                <%end%>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+  <% end %>
+  <table width='100%'>
+    <tr>
+      <td>
+        <div>
+          <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='assessments_list' width='100%'>
+            <thead>
+            <tr class='tr-head'>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <%i = 0%>
+            <% @quizzes.each do |q| %>
+                <% if i%2 == 0 %>
+                    <tr class="tr-even even">
+                <% else %>
+                    <tr class="tr-odd odd">
+                <% end %>
+                <td class='col'><%=q.quiz.name%></td>
+                <% if q.quiz.format_type==1 %>
+                    <td class='col'>Open Format</td>
+                <%else%>
+                    <td class='col'>Normal</td>
+                <%end%>
+
+                <td class='col'>
+                  <%= display_date_time(q.published_on) %>
+                </td>
+                <td class='col'>
+                  <%= link_to 'view results',recent_results_path(q) %>
+                </td>
+                </tr>
+                <%i = i+1%>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>

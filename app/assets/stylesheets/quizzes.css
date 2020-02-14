@@ -1,0 +1,14 @@
+/*show student assessments*/
+.student-attempts-heading{
+	margin-left: 20px;
+	color: #999999;
+}
+.assessment_details td.cell_field{
+	width: 12.33%;
+}
+.assessment_details td.cell_value{
+	width: 20%;
+}
+.assessment_details tr{
+	background-color: #ffffff !important;
+}

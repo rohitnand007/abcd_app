@@ -1,0 +1,12 @@
+.accordionEnvelope
+  .accordion
+    %h4= "Part of collections (#{ibook.ipacks.count})"
+
+    - ibook.ipacks.each do |ipack|
+      %ul
+        %h4
+          = ipack.name
+          %span.expand= '[+]'
+          %span.right= "#{ipack.license_sets.inject(0){|total,license_set| total+license_set.utilized}} out of #{ipack.license_sets.empty? ? 0 : ipack.license_sets.inject(0){|total,license_set| license_set.licences.present? ? total+license_set.licences : total+0 }}"
+        - ipack.license_sets.each do |license_set|
+          %li= license_set.school.name if license_set.school.present?

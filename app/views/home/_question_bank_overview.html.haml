@@ -1,0 +1,39 @@
+-unless @publisher_question_banks.empty?
+  .content_div
+    .icon_box
+      = image_tag 'question_bank_overview.png'
+    .result_box
+      %table.index_table
+        -if current_user.is?("IA")
+          %thead
+            %tr
+              %th Publisher Question Bank
+              %th Institutes
+              %th
+          %tbody
+            -@publisher_question_banks.each do |pbq|
+              %tr
+                %td= pbq.question_bank_name
+                %td= pbq.institution ? pbq.institution.name : pbq.publisher.name
+              -pbq.users.each do |user|
+                %tr
+                  %td
+                  %td= user.name
+        -elsif current_user.is?("ECP")
+          %thead
+            %tr
+              %th Publisher Question Bank
+              %th Institutes
+              %th
+          %tbody
+            -@publisher_question_banks.each do |pbq|
+              - n = 1
+              -pbq.users.each do |user|
+                %tr
+                  -if n == 1
+                    %td= pbq.question_bank_name
+                    - n = 2
+                  -else
+                    %td
+                  %td= user.name
+

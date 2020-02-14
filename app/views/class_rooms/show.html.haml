@@ -1,0 +1,27 @@
+#content_header
+  %h1#main_heading Class Rooms
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", class_rooms_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_class_room_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_class_room_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}",class_room_path
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td Teacher
+          %td.right= @class_room.teacher.name if @class_room.teacher
+        %tr.even.left
+          %td Section Name
+          %td.right= @class_room.section.fullname
+        %tr.odd.left
+          %td Subject Name
+          %td.right= @class_room.content.name
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_class_room_path(@class_room), :class => "button icon edit"
+            = link_to "Delete", class_room_path(@class_room), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+

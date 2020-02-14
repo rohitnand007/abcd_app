@@ -1,0 +1,2 @@
+$("#assessment_configuration").html("<%= escape_javascript(render 'test_configurations',test_configurations: @test_configurations) %>");
+$('html,body').animate({scrollTop: $("#assessment_configuration").offset().top},100);

@@ -1,0 +1,22 @@
+%table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+
+  %tr
+    %th store.ID
+    %th storename
+    %th Institute_id
+    %th Institute_name
+    -#%th Institution_count
+
+  - @associated_institutions.each do |st_insti|
+    %tr
+      %td= @store.id
+      %td= @store.name
+      %td= st_insti.edutorid
+      %td= st_insti.name
+      -#%td= st_ecp.ibooks.count
+
+    %br
+%br
+  %br
+
+    =link_to "View_all_Stores", {:controller => :stores, :action => :index},{:class=> "button"}

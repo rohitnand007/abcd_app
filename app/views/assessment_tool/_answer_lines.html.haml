@@ -1,0 +1,14 @@
+%tr.answer_lines{style:"display:#{display}"}
+  %td{style: "border: 1px solid #CCC; text-align: center;"}
+  %td{colspan: "2", style: "padding: 8px; border: 1px solid #CCC; text-align: left;"}
+    Number of answer lines
+    = f.number_field :answer_lines, min: 0
+    %span{style:"cursor:pointer; float:right; font-weight:bold", title:"The number of lines you wish to see in the pdf or printed question paper "}
+      ?
+%tr.actual_answer{style:"display:#{display}"}
+  %td{style: "border: 1px solid #CCC; text-align: center;"}
+    Answer:
+    = f.hidden_field :institution_id , value: current_user.institution_id.nil? ? 1 : current_user.institution_id
+    = f.hidden_field :center_id , value: current_user.center_id.nil? ? 0 :  current_user.center_id
+  %td{colspan: "2", style: "padding: 8px; border: 1px solid #CCC; text-align: left;"}
+    = f.text_area :actual_answer, placeholder:"Add actual answer here ...", class:"full_text"

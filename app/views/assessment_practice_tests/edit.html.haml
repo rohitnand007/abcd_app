@@ -1,0 +1,29 @@
+#content_header
+  %h1#main_heading assessment_practice_tests
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_practice_test_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_practice_test_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_practice_test_path
+    %li= link_to "#{t("web-app-theme.show", :default => "Show")}", assessment_practice_test_path(@assessment_practice_test)
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_practice_test_path
+      %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_practice_test_path
+      %li.active= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_assessment_practice_test_path
+  .content
+    %h2.title
+      = t("web-app-theme.edit", :default => "Edit")
+      assessment_practice_test.rb
+    .inner
+      = render "form"
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

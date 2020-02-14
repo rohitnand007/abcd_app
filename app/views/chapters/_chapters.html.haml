@@ -1,0 +1,47 @@
+:javascript
+  $(document).ready(function() {
+    $.getJSON('/chapters', function(data, status,xhr){
+      console.log("Data is ");
+      console.log(data);
+      console.log("status is: "+ status);
+    });
+    $("#chapters").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+    });
+  });
+
+%div
+  %table#chapters.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.chapter.publisher", :default => t("activerecord.labels.publisher", :default => "Publisher"))
+        %th= t("activerecord.attributes.chapter.name", :default => t("activerecord.labels.name", :default => "Name"))
+        %th= t("activerecord.attributes.chapter.board", :default => t("activerecord.labels.board", :default => "Board"))
+        %th= t("activerecord.attributes.chapter.year", :default => t("activerecord.labels.year", :default => "Content Year"))
+        %th= t("activerecord.attributes.chapter.subject", :default => t("activerecord.labels.subject", :default => "Subject"))
+
+        -#%th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @chapters.each do |chapter|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"chapter_#{chapter.id}"}
+          %td.col= chapter.publisher.fullname if chapter.publisher
+          %td.col= link_to chapter.name, chapter_path(chapter)
+          %td.col= link_to(chapter.board.name,board_path(chapter.board)) if chapter.board
+          %td.col= link_to(chapter.content_year.name ,content_year_path(chapter.content_year))if chapter.content_year
+          %td.col= link_to(chapter.subject.name,subject_path(chapter.subject))  if chapter.subject
+          -#%td.col= display_date_time(chapter.created_at)
+          %td.col
+            = link_to_show(chapter_path(chapter))
+.pagination_info= paginate @chapters unless @chapters.blank?

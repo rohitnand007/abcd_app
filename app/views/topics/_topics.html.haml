@@ -1,0 +1,43 @@
+:javascript
+  $(document).ready(function() {
+    $("#topics").dataTable({
+        "aoColumns": [
+                    null,null,null,null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+%div
+  %table#topics.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+    %thead
+      %tr.tr-head
+        %th= t("activerecord.attributes.topic.name", :default => t("activerecord.labels.name", :default => "Publisher"))
+        %th= t("activerecord.attributes.topic.code", :default => t("activerecord.labels.code", :default => "Name"))
+        %th= t("activerecord.attributes.topic.code", :default => t("activerecord.labels.code", :default => "Board"))
+        %th= t("activerecord.attributes.topic.code", :default => t("activerecord.labels.code", :default => "Content Year"))
+        %th= t("activerecord.attributes.topic.code", :default => t("activerecord.labels.code", :default => "Subject"))
+        %th= t("activerecord.attributes.topic.code", :default => t("activerecord.labels.code", :default => "Chapter"))
+        -#%th= t("web-app-theme.created_at", :default => "Created at")
+        %th &nbsp
+    %tbody
+      -#%tr.tr-blank
+      - @topics.each do |topic|
+        %tr{:class => cycle("tr-odd", "tr-even"),:id=>"topic_#{topic.id}"}
+          %td.col= topic.publisher.fullname if topic.publisher
+          %td.col= link_to topic.name, topic_path(topic)
+          %td.col= link_to(topic.board.name,board_path(topic.board)) if topic.board
+          %td.col= link_to(topic.content_year.name ,content_year_path(topic.content_year))if topic.content_year
+          %td.col= link_to(topic.subject.name,subject_path(topic.subject))  if topic.subject
+          %td.col= link_to(topic.chapter.name, chapter_path(topic.chapter))  if topic.chapter
+          -#%td.col= display_date_time(topic.created_at)
+          %td.col
+            = link_to_show(topic_path(topic))
+.pagination_info= paginate @topics unless @topics.blank?

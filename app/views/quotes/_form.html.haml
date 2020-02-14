@@ -1,0 +1,15 @@
+= simple_form_for @quote, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid quote",
+                        :message => "You'll need to fix the following fields:"
+  .inputs
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :author,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), quotes_path,:class=>'button danger icon remove'
+

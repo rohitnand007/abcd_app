@@ -1,0 +1,16 @@
+= simple_form_for @board, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Board!",
+                        :message => "You'll need to fix the following fields:"
+  .inputs
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        = f.hidden_field :vendor_id,:value=>current_user.id
+    .group
+      .field
+        = f.input :code,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}       
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), boards_path,:class=>'button danger icon remove'
+

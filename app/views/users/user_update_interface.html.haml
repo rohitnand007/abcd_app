@@ -1,0 +1,98 @@
+%h1 User Data Update Interface
+%studentssearch
+  = form_for :user,{:url=>"fetch_users", remote:true} do |f|
+    %table
+      %tr
+        %td
+          .group
+            .field
+              = f.label :institution_id, "Institution", :class=>'label'
+              %br
+              .styled-select
+                = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down institution_id"}
+        %td
+          .group
+            .field
+              #centers
+                = f.label :center_id, "Center", :class=>'label'
+                %br
+                .styled-select
+                  - if current_user.is?'CR'
+                    = f.collection_select :center_id,[current_user.center],:id,:name,{},{:class=>"drop_down center_id"}
+                  - else
+                    = f.collection_select :center_id,current_user.centers,:id,:name,{:prompt=>'Select'},{:class=>"drop_down center_id"}
+        %td
+          .group
+            .field
+              #academic_class
+                = f.label :academic_class_id, "Academic Class", :class=>'label'
+                %br
+                .styled-select
+                  = f.collection_select :academic_class_id,[],:value,:name,{:prompt=>'Select'},{:class=>"drop_down academic_class_id"}
+        %td
+          .group
+            .field
+              #sections
+                = f.label :section_id, "Section", :class=>'label'
+                %br
+                .styled-select
+                  = f.collection_select :section_id, [current_user.section].compact,:id,:name,{:prompt=>'Select'},{:class=>"drop_down section_id"}
+        %td{style:"vertical-align:bottom; padding:5px"}
+          = f.submit "go" , class:"button"
+.students_area
+:javascript
+  // ajax call after centers selection to populate academic classes drop down
+  $("#user_center_id").on("change",function(){
+    var request = "/institution/get_academic_classes/" + $("#user_institution_id").val() + "/" + $("#user_center_id").val()
+
+    var aj = $.ajax({
+        url: request,
+        type: 'get',
+        data: $(this).serialize()
+    }).done(function (data) {
+         change_academic_classes(data);//modify the majors' dropdown
+    }).fail(function (data) {
+         console.log('AJAX request has FAILED');
+    });
+
+  //modify the academic_classes dropdown' dropdown
+  function change_academic_classes(data) {
+    $("#user_academic_class_id").empty();//remove all previous classes
+        $("#user_academic_class_id").append($("<option></option>").attr("value", "select").text("Select"))
+    for(i = 0;i<data.length;i++){
+      $("#user_academic_class_id").append(//add in an option for each classes
+        $("<option></option>").attr("value", data[i].value).text(data[i].name)
+      );
+    }
+  };
+    })
+
+  // ajax call after centers selection to populate sections drop down
+
+     $("#user_academic_class_id").on("change",function(){
+    var request = "/institution/get_sections/" + $("#user_institution_id").val() + "/" + $("#user_center_id").val() + "/" + $("#user_academic_class_id").val()
+
+    var aj = $.ajax({
+        url: request,
+        type: 'get',
+        data: $(this).serialize()
+    }).done(function (data) {
+         change_sections(data);//modify the sections dropdown
+    }).fail(function (data) {
+         console.log('AJAX request has FAILED');
+    });
+
+  //modify the academic_classes dropdown' dropdown
+  function change_sections(data) {
+    $("#user_section_id").empty();//remove all previous classes
+        $("#user_section_id").append($("<option></option>").attr("value", "select").text("Select"))
+    for(i = 0;i<data.length;i++){
+      $("#user_section_id").append(//add in an option for each section
+        $("<option></option>").attr("value", data[i].value).text(data[i].name)
+      );
+    }
+  };
+    })
+
+
+

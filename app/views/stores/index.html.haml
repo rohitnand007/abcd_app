@@ -1,0 +1,28 @@
+%h1 List of Stores
+%table#ecomstore_list.listing.sort_table{align: 'center' ,width: '100%',cellpadding:10,cellspacing: 1}
+  %thead
+    %tr.tr-head
+      %th Id 
+      %th Name
+      %th Description
+      %th Url
+      %th Created
+      %th Books Count (v1 / v2)
+      %th Actions
+  - @stores.each do |store|
+    %tr{:class => cycle("tr-odd", "tr-even"), :id => "asset_#{store.id}" }
+      %td= store.id
+      %td
+        = store.name
+        = link_to 'Edit', "/stores/#{store.id}/edit"
+        = link_to 'Delete', store, :confirm => 'Store once deleted cannot be retrieved!', :method => :delete
+      %td= store.description
+      %td= store.store_url
+      %td= Time.at(store.created_at).to_formatted_s(:long)
+      %td= "#{store.v1_books_count} / #{store.v2_books_count}"
+      %td
+        = link_to 'Manage Publishers', "/stores/#{store.id}/select_ecps", class: "button", :method => :get
+        = link_to 'Manage Institutions', "/stores/#{store.id}/select_institutions", class:"button", :method=> :get       
+        = link_to 'Show',store, class:"button"
+
+= link_to "Create_Store", "/stores/new", class:"button"

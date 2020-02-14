@@ -1,0 +1,31 @@
+%h3= "You are adding Institutions to #{@store.name}"
+
+.publishers_list
+  #content_header
+    %h1#main_heading
+    %br
+= form_for @store, url: add_institutions_store_path,method: :post do |f|
+  #data
+    %table{width: '100%'}
+      %tr
+        %td
+          %div
+            %table#institutions.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+              %thead
+                %tr.tr-head
+                  %th Name
+                  %th Email_id
+                  %th Edutor Id
+                  %th Check
+            %tbody
+              - @institutions.each do |institute|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"publisher_#{institute.id}"}
+                  %td.col= institute.name
+                  %td.col= institute.email
+                  %td.col= institute.try(:edutorid)
+                  %td
+                    = check_box_tag "institute_ids[]", institute.id,@store.institution_ids.include?(institute.id) ? true : false, class: "add_institutions"
+  %br
+    %br
+  =f.submit "Add Institutions to Store", class: "button"
+%br

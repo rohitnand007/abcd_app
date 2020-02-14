@@ -1,0 +1,8 @@
+<%if (@user_powerchips+@user_ignitorchips).empty?%>
+ alert('No Powerchips Found');
+<%else%>
+$("#user_chip_details_container")
+        .html("<%= escape_javascript(render :partial => 'chips_list_to_delete', locals: {chips: @user_powerchips+@user_ignitorchips })%>");
+<%end%>
+
+

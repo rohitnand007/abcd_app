@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<title>{#googleimagesearch.title}</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="../../../jquery_1.8.3.js"></script>
+	<!--<script type="text/javascript" src="js/googleimagesearch.js"></script> -->
+	<link href="css/googleimagesearch.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <table border="0" cellpadding="0" cellspacing="0" style="vertical-align:middle;"><tr><td><input id="searchInput" type="text" size="40" style="height: 20px;" onkeydown="if (event.keyCode == 13) {makeAjaxCall(1);}"></input></td><td>&nbsp;<button class="search_button" id="searchBtn" onclick="makeAjaxCall(1)">{#googleimagesearch.dlg_search_btn_text}</button></td></tr></table>
+    <!-- <img src="img/googlesearch.jpeg" style="height:25px; width:25px;"/> -->
+
+<br/>
+<div style="float:left;"><b>{#googleimagesearch.dlg_desc}</b></div>
+<div id="totalResults" style="float:right;"></div>
+<div style="clear:both;"></div>
+<br/>
+
+<div id="search_results">
+</div>
+
+<br/>
+<div style="float:left;"><button class="search_button" id="searchBtn" onclick="makePrevAjaxCall()">Previous</button></div>
+<div style="float:right;"><button class="search_button" id="searchBtn" onclick="makeNextAjaxCall()">Next</button></div>
+<div style="clear:both;"></div>
+
+<script type="text/javascript">
+    var resultsJSON = {
+        images: [
+            {url: 'img/downloaded_images/banner-generic.png', title: 'banner-generic.png'},
+            {url: 'img/downloaded_images/carousel0.png', title: 'carousel0.png'},
+            {url: 'img/downloaded_images/carousel2.2.png', title: 'carousel2.2.png'},
+            {url: 'img/downloaded_images/carousel3.1.png', title: 'carousel3.1.png'},
+            {url: 'img/downloaded_images/developers_logo.png', title: 'developers_logo.png'},
+            {url: 'img/downloaded_images/front_teaser.png', title: 'front_teaser.png'},
+            {url: 'img/downloaded_images/images.jpg', title: 'images.jpg'},
+            {url: 'img/downloaded_images/a.jpg', title: 'A'}
+        ]
+    };
+    var startIndex = 1;
+  
+    function populateSearchResults() {
+        var imagesPerRow = 5;
+        var htmlString = '<table border="0" cellpadding="0" cellspacing="0">';
+        for (var idx=0; idx<resultsJSON.images.length; idx+=imagesPerRow) {
+            htmlString += '<tr>';
+            for (var i=0; (i<imagesPerRow) && ((i+idx)<resultsJSON.images.length); i++) {
+                htmlString += '<td><img src="' + resultsJSON.images[i+idx].url + '" alt="' + resultsJSON.images[i+idx].title + '" onclick="insertImg(this);" class="googlesearchimage_img"/></td>';
+            }
+            if ((idx+imagesPerRow)>resultsJSON.images.length) {
+                htmlString += '<td colspan="' + ((idx+imagesPerRow)-resultsJSON.images.length) + '"></td>';
+            }
+            htmlString += '</tr>';
+        }
+        htmlString += '</table>';
+        document.getElementById("search_results").innerHTML = htmlString;
+    }
+  
+    function insertImg(imgEl) {
+      // Ajax call to store image on the server      
+      var image_source = imgEl.src
+      var image_alt = imgEl.alt
+      
+      $.ajax({ //Make the Ajax Request
+        type: "GET",
+        url: "/store_google_image"+ "?image_source=" + image_source ,
+        beforeSend:  function() {
+            // append the spinner
+        },
+        success: function(data){
+          	  // remove the spinner
+              tinyMCEPopup.execCommand('mceInsertContent', false, '<img src="' + JSON.parse(data).path+ '" alt="' + image_alt + '"/>');							
+							if (tinyMCEPopup.isWindow){
+								window.focus();
+								tinyMCEPopup.editor.focus();
+								tinyMCEPopup.close();  
+							} 			
+        },
+        statusCode: {
+            404: function() {
+                alert("request failed");
+            }
+        }
+    });
+    
+							
+    }
+    
+    function makePrevAjaxCall() {
+    	if (10 < startIndex) {
+    		makeAjaxCall(startIndex - 10);
+    	}
+    }
+    
+    function makeNextAjaxCall() {
+  		makeAjaxCall(startIndex + 10);
+    }
+  
+    function makeAjaxCall(start) {
+				 //event.preventDefault();
+				 startIndex = start;
+				 
+				 $.ajax({
+						url: 'https://www.googleapis.com/customsearch/v1?searchType=image&key=AIzaSyAF4dQzhsutjNI_GdRKpNcQUbGQWjMF-cY&cx=009463181655556437977:rypf5fm7rhk&rights=cc_publicdomain&num=10&q=' + document.getElementById('searchInput').value + '&start=' + start,
+						/*data: {
+							format: 'json'
+						},
+						dataType: 'jsonp',*/
+						success: function(data) {
+						   resultsJSON.images = [];
+						   for (var i=0; i<data.items.length; i++) {
+						   		resultsJSON.images[resultsJSON.images.length] = {url: data.items[i].link, title: data.items[i].title};
+						   }
+    					 document.getElementById("search_results").style.height = '100%';
+						   document.getElementById('totalResults').innerHTML = 'Total results: ' + data.queries.request[0].totalResults + '&nbsp;&nbsp;';
+						   populateSearchResults();
+						},
+						error: function(data) {
+						   alert('Image search error : ' + JSON.stringify(data.responseText)); //.error.message
+						}
+				 });
+    }
+    
+    document.getElementById("search_results").style.height = '218px';
+    /* Ref: https://developers.google.com/custom-search/json-api/v1/reference/cse/list */
+</script>
+
+</body>
+</html>

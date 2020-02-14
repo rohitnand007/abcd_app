@@ -1,0 +1,35 @@
+#content_header
+  -#%h1#main_heading Assessment Home Works
+  #breadcrumbs
+    %ul
+      %li
+        = link_to "Home",root_path
+      %li
+        = link_to "Give HomeWork",assessment_home_works_path
+      %li
+        = link_to "New",'#',{:class=>'current'}
+
+#inner-tab-menu
+  %ul
+    %li= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_home_works_path
+    %li.inner_tab_selected= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_home_work_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = render "form"
+
+-#.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first= link_to "#{t("web-app-theme.list", :default => "List")}", assessment_home_works_path
+      %li.active= link_to "#{t("web-app-theme.new", :default => "New")}", new_assessment_home_work_path
+  .content
+    %h2.title
+      = t("web-app-theme.new", :default => "New")
+      assessment_home_works
+    .inner
+      = render "form"
+-#- content_for :sidebar, render(:partial => 'shared/sidebar')

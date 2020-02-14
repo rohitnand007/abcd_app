@@ -1,0 +1,11 @@
+= stylesheet_link_tag "video_page"
+.panel.panel-default
+  .upload
+    = form_tag '/meta_tags/create_tags_csv', :method => 'post', :multipart => true do
+      %h2 Upload CSV
+      .well
+        %h3 The csv file should be in the following format:
+        %b "Concept Name","Subject", "Academic Class",  "User Id"
+        %h4 Seperate multiple tags using ';'
+      = file_field_tag :file, required: "required"
+      = submit_tag 'Upload', disable_with: "Uploading...", class: 'btn btn-info'

@@ -1,0 +1,3 @@
+class EdutorAdmin < User
+
+end

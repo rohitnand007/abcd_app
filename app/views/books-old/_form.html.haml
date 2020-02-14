@@ -1,0 +1,46 @@
+= simple_form_for@book, :html => { :class => :form },:validate=>true do |f|
+  = f.error_messages :header_message => "Invalid Book!",
+                        :message => "You'll need to fix the following fields:"
+
+  .inputs
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :book_publisher_id, :label_html=>{:class=>"label"} do
+          = f.collection_select :book_publisher_id,BookPublisher.all,:id,:name,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    .group
+      .field
+        = f.input :isbn ,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :uid ,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :version,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :status, :label_html=>{:class=>"label"} do
+          = f.select :status,[:publish,:draft,:unpublish],:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"},:prompt=>true
+    .group
+      .field
+        = f.input :book_type,:collection=>[["Upload Book",0],["Only Keys",1]],:checked => 1,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:as => :radio
+    .group
+      .field
+        = f.fields_for :book_asset do |a|
+          = a.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Book"
+    .group
+      .field
+        = f.fields_for :book_cover do |c|
+          = c.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Upload Book Cover"
+    .group
+      .field
+        = f.fields_for :book_key do |k|
+          = k.input :attachment,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Upload Book Key"
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), books_path,:class=>'button danger icon remove'
+
+

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/jquery-confirm.css">
+    <link rel="stylesheet" href="/assets/activities/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/common.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/create_concept_map.css">
+    <link rel="stylesheet" type="text/css" href="/assets/activities/play_concept_map.css">
+    <script src="/assets/activities/konva.js"></script>
+    <script src="/assets/activities/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.3.2/tinymce.min.js"></script>
+    <script src="/assets/activities/jquery-ui.js"></script>
+    <script src="/assets/activities/jquery-confirm.js"></script>
+    <script src="/assets/activities/bootstrap.min.js"></script>
+    <script src="/assets/activities/app.js"></script>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="container" style="width:1170px;">
+        <p class="col-xs-11 no-padding" id="title-text" style="margin-top:33px;">Concept Map</p>
+                <div id="header-tabs">
+                    <ul class="nav nav-pills">
+                        <li class="active"><a href="#"  class="tabs mytab activity-tab">01 Create Template</a></li>
+                        <li class="mynaming-tab"><a href="#" class="activity-tab">02 Create Activity</a></li>
+                    </ul>
+                </div>
+        </div>
+
+<div class="form-content container">
+    <div id='create_template'>
+        <div class='col-xs-12 naming_create'>
+            <div style='padding-top:12px'>
+                <p class="information-text col-xs-5">Let's create the template before adding the question</p>
+                <button class='btn next-page pull-right'>Save & Continue</button>
+            </div>
+        </div>
+        <div class = 'naming_form col-xs-12'>
+            <form class="form-horizontal row" role="form" method="POST" style="padding-top:20px;padding-bottom:50px">
+                <div class="col-xs-9">
+                    <div class="form-group create-template-form-elements col-xs-12" style = "margin-bottom:0px">
+                        <label for="contentName" class="col-xs-4">Name of the activity</label>
+                        <div class="col-xs-8">
+                            <input type="text" name="contentName" id="contentName" class="form-control">
+                            <p class="text-warning">Please name the activity carefully, this name will be shown to the student</p>
+                        </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12" style = "margin-bottom:0px">
+                        <label for="description" class="col-xs-4">Description</label>
+                        <div class="col-xs-8">
+                            <input type="text" name="description" id="description" maxlength="350" class="form-control">
+                            <p class="text-warning">Maximum character limit is 350</p>
+                        </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                        <label for="class" class="col-xs-4">Class</label>
+                        <div class="col-xs-8 select-wrap ">
+                            <%= collection_select :tag, :class_id, @class_tags, :id, :value, {:prompt=>""}, {:name=>"class",:class=>"form-control",:id=>"className"} %>
+                        </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                        <label for="subject" class="col-xs-4">Subject</label>
+                        <div class="col-xs-8 select-wrap">
+                            <%= collection_select :tag, :class_id, @subject_tags, :id, :value, {:prompt=>""}, {:name=>"subject",:class=>"form-control",:id=>"subject"} %>                                </div>
+                    </div>
+                    <div class="form-group create-template-form-elements col-xs-12 no-padding">
+                        <label for="chapter/topicTags" class="col-xs-4">Chapter/Topic tags</label>
+                        <div class="col-xs-8 select-wrap">
+                            <%= collection_select :tag, :class_id, @concept_tags, :id, :value, {:prompt=>""}, {:name=>"topics",:class=>"form-control",:id=>"chapter"} %>                                </div>
+                    </div>
+                    <input type="hidden" name="learning_activity_type" id="learning_activity_type" value="concept_map">
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="maincontent container">
+    <div class="row head-btn">
+        <p class="text-green col-xs-2 concept-map-template">
+            Concept Map Template
+        </p>
+        <a class="btn btn-green btn-spacing pull-right col-xs-3" id="save-template">Save the Template</a>
+        <a class="btn logo-btn btn-green btn-spacing col-xs-3 pull-right" id="edit-logo"><img src="/assets/activities/ignitor_logo.png" style="width:20px;height:20px;"><span  style="margin-left:8px">Edit Logo</span> </a>
+        <input  name="Select File" type="file" accept=".jpg, .jpeg, .png" class="logo-upload" style="display:none"/>
+    </div>
+    <div class="row canvas-description">
+        <div class="col-xs-6 no-padding">
+            <div id="node-description" name="content"></div>
+        </div>
+        <div class="col-xs-6 canvas-btn">
+            <div class="row btn-row-create-concept">
+                <button class="btn btn-white btn-white-create-concept" id="add-child">Add a Node</button>
+                <button class="btn btn-white btn-white-create-concept" id="show-complete">Show Complete</button>
+                <button class="btn btn-white btn-white-create-concept" id="preview">Preview</button>
+                <button class="btn btn-white btn-white-create-concept" id="delete-element">Delete Element</button>
+                <input type="text" id="element-name" maxlength=60>
+                <button id="save-name">Save</button>
+            </div>
+            <div id="canvas-region"></div>
+        </div>
+    </div>
+    <!--Modal for Preview-->
+    <div class="modal fade fadeModal" id="ModalForPreview" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content for tag box answers-->
+            <div class="modal-content modal-content-preview no-border-radius">
+                <div class="modal-header modal-header-preview">
+                    <span class="glyphicon glyphicon-remove pull-right" style="cursor:pointer;position:relative;right:-5px" data-dismiss="modal"></span>
+                    <p class="modal-title modal-title-preview">Concept Map Editor Preview</p>
+                </div>
+                <div class="modal-body previewBody">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="content" class="hidden"></div>
+<div id="content1" class="hidden"></div>
+<div id="content2" class="hidden"></div>
+<div id="content3" class="hidden"></div>
+<script src="/assets/activities/create_concept_map.js"></script>
+<script src="/assets/activities/play_concept_map.js"></script>
+</body>
+
+</html>

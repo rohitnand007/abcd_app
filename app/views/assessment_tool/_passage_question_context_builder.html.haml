@@ -1,0 +1,185 @@
+%div{style:"color: #636363"}
+-institution_id = current_user.institution_id
+- f.object.build_context
+= f.fields_for :context  do |c|
+  %table.tagsTable
+    %tr
+      - if @boards.size > 1
+        %td
+          %label
+            Course
+            %span.red
+              *
+          %ul.course
+            .styled-select
+              = c.collection_select :board_id, @boards,:id,:name,@content_year.nil? ? {} : { selected: @board.id}, {id:'quiz1_board_id', class: 'drop_down',style:"width: 150px; padding:7px"}
+      - else
+        = c.hidden_field :board_id ,:value=>@board.id rescue 1      
+      %td
+        %label
+          Class
+          %span.red
+            *
+        %ul.course
+          .styled-select
+            = c.collection_select :content_year_id, get_user_type_group(@board,'ContentYear',nil),:id,:name,{}, {id:'quiz1_class_id',class: 'drop_down',style:"width: 150px; padding:7px"}
+      %td
+        %label
+          Subject
+          %span.red
+            *
+        %ul
+          .styled-select
+            = c.collection_select :subject_id, get_user_type_group(@board,'Subject',nil),:id,:name,{}, {id:'quiz1_subject_id', class:'drop_down',style:"width: 150px; padding:7px"}
+      %td
+        %label
+          Chapter
+        %ul.difficulty_level
+          .styled-select
+            = c.collection_select :chapter_id, get_user_type_group(@board,'Chapter',nil),:id,:name,{}, {id:'quiz1_chapter_id', class:'drop_down',style:"width: 150px; padding:7px"}
+    %tr
+      %td
+        %label
+          Topic
+        %ul.academic_class
+          .styled-select
+            = c.collection_select :topic_id, get_user_type_group(@board,'Topic',nil),:id,:name,{}, {id:'quiz1_topic_id', class:'drop_down',style:"width: 150px; padding:7px"}
+      %td
+        %label
+          Difficulty
+        %ul.concept_names
+          .styled-select
+            = f.collection_select :difficulty, {'1'=>'Easy','2'=>'medium','3'=>'difficulty'},:first,:last,{}, {class: 'drop_down',style:"width: 150px; padding:7px"}
+    %tr
+      %td
+        %label
+          Problem Solving
+        = f.check_box :prob_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Data Interpretation
+        = f.check_box :data_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Use Skill
+        = f.check_box :useofit_skill, class: "questionTagCheckBox"
+    %tr
+      %td
+        %label
+          Creativity
+        = f.check_box :creativity_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Listening
+        = f.check_box :listening_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Speaking
+        = f.check_box :speaking_skill, class: "questionTagCheckBox"
+    %tr
+      %td
+        %label
+          Grammer
+        = f.check_box :grammer_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Vocabulary
+        = f.check_box :vocab_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Formulae
+        = f.check_box :formulae_skill, class: "questionTagCheckBox"
+    %tr
+      %td
+        %label
+          Comprehension
+        = f.check_box :comprehension_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Knowledge
+        = f.check_box :knowledge_skill, class: "questionTagCheckBox"
+      %td
+        %label
+          Application
+        = f.check_box :application_skill, class: "questionTagCheckBox"
+
+%hr
+
+:javascript
+    
+    $("#quiz1_board_id").click(function() {
+          var selected_value = $('select#quiz1_board_id :selected').val();
+          var div_class_update = "#quiz1_class_id"
+          var div_chapter_update = "#quiz1_chapter_id"
+          var div_topic_update = "#quiz1_topic_id"
+          var div_subject_update = "#quiz1_subject_id"
+          var url = "/assessment_tool/get_contents/"
+          if ( selected_value != '')
+          {
+
+              get_url_Data(url,selected_value+'?name=content_year&value=board_id',div_class_update);
+
+              get_url_Data(url,selected_value+'?name=subject&value=board_id',div_subject_update);
+
+              get_url_Data(url,selected_value+'?name=chapter&value=board_id',div_chapter_update);
+
+              get_url_Data(url,selected_value+'?name=topic&value=board_id',div_topic_update);
+          }
+      });
+
+    $("#quiz1_class_id").click(function() {
+          var selected_value = $('select#quiz1_class_id :selected').val();
+          var div_chapter_update = "#quiz1_chapter_id"
+          var div_topic_update = "#quiz1_topic_id"
+          var div_subject_update = "#quiz1_subject_id"
+          var url = "/assessment_tool/get_contents/"
+          if ( selected_value != '')
+          {
+              get_url_Data(url,selected_value+'?name=subject&value=content_year_id',div_subject_update);
+
+              get_url_Data(url,selected_value+'?name=chapter&value=content_year_id',div_chapter_update);
+
+              get_url_Data(url,selected_value+'?name=topic&value=content_year_id',div_topic_update);
+          }
+      });
+
+    $("#quiz1_subject_id").change(function() {
+          var subject_value = $('select#quiz1_subject_id :selected').val();
+          var content_year_value = $('select#quiz1_class_id :selected').val();
+          var tag_ids = []
+
+          if ( content_year_value != ''){
+             tag_ids.push(content_year_value)
+           }
+          if ( subject_value != '')
+          {
+            tag_ids.push(subject_value)
+            var url = "/assessment_tool/get_contents/"
+            var div_update = "#quiz1_chapter_id"
+            var div_topic_update = "#quiz1_topic_id"
+
+            get_url_Data(url,tag_ids+'?name=chapter&value=subject_id',div_update);
+
+            get_url_Data(url,tag_ids+'?name=topic&value=subject_id',div_topic_update);
+          }
+     });
+     $("#quiz1_chapter_id").change(function() {
+           var selected_value = $('select#quiz1_chapter_id :selected').val();
+           var content_year_value = $('select#quiz1_class_id :selected').val();
+           var subject_value = $('select#quiz1_subject_id :selected').val();
+           var tag_ids = []
+
+           if (content_year_value != ''){
+              tag_ids.push(content_year_value)
+           }
+           if (subject_value != ''){
+              tag_ids.push(subject_value)
+           }
+           if ( selected_value != '')
+            {
+            tag_ids.push(selected_value)
+             var url = "/assessment_tool/get_contents/"
+             var div_update = "#quiz_topic_id"
+             get_url_Data(url,tag_ids+'?name=topic&value=chapter_id',div_update);
+            }
+     });

@@ -1,0 +1,21 @@
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td= "Windows Build Name"
+          %td.right= @windows_build.name
+        %tr.even.left
+          %td= "Institution"
+          %td.right= Institution.includes(:profile).find(@windows_build.institution_id).fullname
+        %tr.odd.left
+          %td= "Created on"
+          %td.right= display_date_time(@windows_build.created_at)
+        %tr.even.left
+          %td= "EXE uploaded"
+          %td.right
+            = link_to @windows_build.attachment_file_name , download_windows_build_path(@windows_build)
+
+
+
+

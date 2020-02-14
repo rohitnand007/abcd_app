@@ -1,0 +1,27 @@
+%h1
+  = image_tag "edutorlogo.jpg"
+.block#block-login
+  %h2 Sign in
+  .content.login
+    .flash
+      =render 'shared/flash_messages'
+    = simple_form_for(resource, :as => resource_name, :url => users_session_path, :html => { :class => "form login" }) do |f|
+      .group.wat-cf
+        .left
+          %label{:class => "label",:style=>'width:100px;padding-top:0px;'}
+            EdutorId
+        .right= f.text_field :edutorid, :class => "text_field",:style=>'width:200px;',:required=>"required"
+      .group.wat-cf
+        .left= f.label :password, :class => "label",:style=>'width:100px;padding-top:0px;'
+        .right= f.password_field :password, :class => "text_field" ,:style=>'width:200px;',:required=>"required"
+      -#- if devise_mapping.rememberable?
+        .group.wat-cf
+          .right
+            = f.check_box :remember_me, :class => "checkbox"
+            = f.label :remember_me, :class => "checkbox"
+      .group.wat-cf
+        .right
+          %button.button{ :type => "submit",'data-disable-with'=>"authenticating.."}
+            = image_tag "web-app-theme/icons/key.png"
+            Login
+    

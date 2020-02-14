@@ -1,0 +1,62 @@
+%form{action: "/home/search", style:"position:absolute; right: 220px;"}
+  .search_block
+    -#%input.search_button{:type=>"button"}
+    %input.search_input{autocomplete: "off",placeholder:"Search", name: "term", type: "text", value: params[:term]}/
+    -#%input.search_iconview{type: "submit", value: ""}/
+  #search_content
+    -#%label{style:"display:block;color:#fff;background-color:#64b4e4;width:100%;text-align:center;height:2.5em;line-height:2.5em;"}
+    -#  Filter Your Search
+    -#/ <li><input type="checkbox"/><label for="all"><strong>All Categories</strong></label></li>
+    - if current_user.is? 'EA'
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "User", style:"vertical-align: text-bottom;"}
+          Students
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Institution", style:"vertical-align: text-bottom;"}
+          Institutions
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Center", style:"vertical-align: text-bottom;"}
+          Centers
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Device", style:"vertical-align: text-bottom;"}
+          Devices
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Teacher", style:"vertical-align: text-bottom;"}
+          Teachers
+    - if current_user.is? 'IA'
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "User", style:"vertical-align: text-bottom;"}
+          Students
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Center", style:"vertical-align: text-bottom;"}
+          Centers
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Device", style:"vertical-align: text-bottom;"}
+          Devices
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Teacher", style:"vertical-align: text-bottom;"}
+          Teachers
+
+    - if current_user.is? 'CR'
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "User", style:"vertical-align: text-bottom;"}
+          Students
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "Device", style:"vertical-align: text-bottom;"}
+          Devices
+    - if current_user.is? 'ET'
+      .search_options
+        %label
+          %input{checked: params[:mode].eql?('User') ? 'checked' : '', name: "mode",type:"radio", value: "User", style:"vertical-align: text-bottom;"}
+          Students

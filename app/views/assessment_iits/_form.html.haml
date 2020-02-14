@@ -1,0 +1,70 @@
+= simple_form_for @assessment_iit, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+    .group
+      .field
+        = f.label :course_id, "Board", :class=>'label'
+        = f.collection_select :board_id, current_user.role_id == 8 ? current_user.boards : Board.all ,:id,:name,{:prompt => true},{:class=>"drop_down"}
+    .group
+      .field
+        = f.association :content_year,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.association :subject,:input_html=>{:class=>"drop_down"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.label :chapter_id, "Chapter", :class=>'label'
+        = f.collection_select :chapter_id,Chapter.all,:id,:name,{:prompt=>true},{:class=>'drop_down'}
+    .group
+      .field
+        = f.label :topic_id, "Topic", :class=>'label'
+        = f.collection_select :topic_id,Topic.all,:id,:name,{:prompt=>true},{:class=>'drop_down'}
+    .group
+      .field
+        = f.input :name,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :is_locked,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}     
+        = f.hidden_field :status,:value=>1
+    .group
+      .field
+        = f.simple_fields_for :asset do |a|
+          = render 'asset_fields', :f => a
+          = a.hidden_field :publisher_id,:value=>current_user.id
+    .group
+      .field{:align=>'center'}
+        = f.button :submit,:class=>'big primary',:value=>"Upload assessment_iit"
+        = link_to t("web-app-theme.cancel", :default => "Cancel"), assessment_iits_path,:class=>'button danger icon remove'
+
+:javascript
+  $("#assessment_iit_board_id").change(function() {
+      var selected_value = $('select#assessment_iit_board_id :selected').val();
+      var url = "/course/get_content_years/"
+      var div_update = "#assessment_iit_content_year_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_iit_content_year_id").change(function() {
+      var selected_value = $('select#assessment_iit_content_year_id :selected').val();
+      var url = "/content_years/get_subjets/"
+      var div_update = "#assessment_iit_subject_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_iit_subject_id").change(function() {
+      var selected_value = $('select#assessment_iit_subject_id :selected').val();
+      var url = "/subjects/get_chapters/"
+      var div_update = "#assessment_iit_chapter_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#assessment_iit_chapter_id").change(function() {
+      var selected_value = $('select#assessment_iit_chapter_id :selected').val();
+      var url = "/chapters/get_topics/"
+      var div_update = "#assessment_iit_topic_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+  $("#assessment_iits_topic_id").change(function() {
+      var selected_value = $('select#assessment_iit_topic_id :selected').val();
+      var url = "/topics/get_subtopics/"
+      var div_update = "#assessment_iit_sub_topic_id"
+      get_url_Data(url,selected_value,div_update);
+  });
+

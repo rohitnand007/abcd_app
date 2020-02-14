@@ -1,0 +1,37 @@
+%h1 Listing ip_tables
+
+%table
+  %tr
+    %th Institution
+    %th Center
+    %th Role
+    %th Domain
+    %th Ip address
+    %th Status
+    %th Added at
+    %th Modified at
+    %th Added by
+    %th Modified by
+    %th
+    %th
+    %th
+
+  - @ip_tables.each do |ip_table|
+    %tr
+      %td= ip_table.institution_id
+      %td= ip_table.center_id
+      %td= ip_table.role_id
+      %td= ip_table.domain
+      %td= ip_table.ip_address
+      %td= ip_table.status
+      %td= ip_table.added_at
+      %td= ip_table.modified_at
+      %td= ip_table.added_by
+      %td= ip_table.modified_by
+      %td= link_to 'Show', ip_table
+      %td= link_to 'Edit', edit_ip_table_path(ip_table)
+      %td= link_to 'Destroy', ip_table, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Ip table', new_ip_table_path

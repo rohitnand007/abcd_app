@@ -1,0 +1,34 @@
+= stylesheet_link_tag "ngi_page"
+= javascript_include_tag 'ngi_quiz'
+.row
+  %h3
+    = current_user.center.name
+  %table#myTable1.table.table-hover.tablesorter
+    %thead
+      %tr
+        %th class
+        %th Assessment Name
+        %th Published
+        %th Downloaded
+        %th Submitted
+        %th Not Submitted
+        %th
+    -data.each do |quiz_data|
+      -quiz_data[date].each do |p|
+        %tr
+          %td= p.first[0].split("_").first
+          %td{:width=>"60%"}= p.first[1][:quiz_name]
+          %td= p.first[1][:published]
+          %td= p.first[1][:downloaded]
+          %td= p.first[1][:submitted]
+          %td= p.first[1][:not_submitted]
+          %td= link_to "Download",download_datewise_quiz_data_path(date:date,class:p.first[0],quiz_name:p.first[1][:quiz_name]), class:"button"
+= link_to "back","/",class:"button"
+
+
+:javascript
+  $(document).ready(function()
+  {
+      $("#myTable1").tablesorter( {sortList: [[0,0], [1,0]]} );
+  }
+  );

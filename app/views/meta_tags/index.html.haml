@@ -1,0 +1,34 @@
+:javascript
+  $(document).ready(function() {
+    $("#tags_list").dataTable({
+                "aoColumnDefs" : [
+                                    {"bSortable":false, "aTargets":[3]},
+                                    {"bSortable":false, "aTargets":[4]}                                                                 
+                                  ],
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "iDisplayLength": 25,
+                "bInfo": false,
+                "bSortClasses": false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                //"bJQueryUI": true,
+                "bLengthChange": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": $("#tags_list").attr("data"),
+                "oLanguage": { "sProcessing": "Loading Data", "sSearch": "Search Tag :   " },
+    });
+  });
+%h1 Listing Meta Tags
+%table#tags_list.listing.sort_table{:align => "center", :cellpadding => "1", :cellspacing => "1", :data => "/meta_tags.json", :width => "100%"}
+  %thead
+    %tr.tr-head
+      %th Academic Class Tag
+      %th Subject
+      %th Concept Tag
+      %th User
+      %th
+  %tbody
+%br/
+= link_to 'New Tag', new_meta_tag_path

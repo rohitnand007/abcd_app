@@ -1,0 +1,12 @@
+= simple_form_for(@cdn_config) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :cdn_name
+    = f.input :description
+    = f.input :support_emails
+    = f.input :cdn_ip
+    = f.collection_select(:center_ids, Center.all,:id,:name,{:prompt => "Please Select a Sector"},{:multiple => true})
+    =# f.input :user_id
+  .actions
+    = f.button :submit,:class=>'big primary'

@@ -1,0 +1,20 @@
+%div{id:"update_form_wrapper_#{license_set.id.to_s}"}
+  Listing all students to whom the above collection was assigned. Press on "start" to view/update students by center
+  %br
+  %br
+  %table.occupyWidth
+    - license_set.users.each_slice(5) do |users|
+      %tr
+        - users.each do |user|
+          %td
+            = user.name
+            .edid= link_to user.edutorid, user_path(user), target:"_blank" if user.edutorid.present?
+  = image_tag "small_loading.gif",class:"loading",style:"visibility:hidden"
+%br
+%br
+= link_to 'Start', fetch_students_license_set_path(license_set), remote:true,id:"start_link_#{license_set.id.to_s}",class:"button"
+
+:javascript
+  $("#start_link_#{license_set.id.to_s}").click(function(){
+    $("#update_form_wrapper_#{license_set.id.to_s}").find(".loading").css("visibility","visible")
+  })

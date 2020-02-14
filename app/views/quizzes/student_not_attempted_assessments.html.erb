@@ -1,0 +1,107 @@
+<style>
+.ui-tabs .ui-tabs-nav li.ui-state-default {
+    border-bottom: 1px solid #cccccc
+}
+.ui-tabs-nav li.ui-state-default {
+    border-bottom: 1px solid #ffffff
+}
+.ui-tabs .ui-tabs-nav li.ui-state-default.ui-state-active {
+    border-bottom-color: white;
+    box-shadow: 0px 5px 3px #FFF;
+}
+.ui-tabs-nav {
+    border-bottom: 1px solid #cccccc
+}
+#assessments_list td a:link, #assessments_list td a:visited{
+  color: #7ac9aa;
+}
+</style>
+<div class="ui-tabs ui-widget ui-corner-all" id="tabs" >
+  <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-corner-all" id="tabsul" role="tablist" >
+    <li style="width: 5px;">&nbsp;&nbsp;</li>
+    <li class="ui-state-default ui-corner-top">
+      <a href="/quizzes/student_attempted_assessments">Attempted</a>
+    </li>
+    <li class="ui-state-default ui-corner-top ui-state-active">
+      <a href="#">Not Attempted</a>
+    </li>
+  </ul>
+</div>
+<div class='pagination_info'  style="position:absolute;right:3%;top:10px;">
+  <%= paginate @publish%>
+</div>
+<div id='data'>
+  <table width='100%'>
+    <tr>
+      <td>
+        <div>
+          <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='assessments_list' width='100%'>
+            <thead>
+              <tr class='tr-head'>
+                <th>Assessment Name</th>
+                <!--<th>Description</th>-->
+                <!--<th>Difficulty Level</th>-->
+                <!--<th>Subject</th>-->
+                <!--<th>Chapter</th>-->
+                <!--<th>Topic</th>-->
+                <!--<th>Published By</th>-->
+                <!--<th>Published On</th>-->
+                <th>No. of Questions</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Duration</th>
+                <th>Total Marks</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%i = 0%>
+              <% @publish.each do |q| %>
+                <% if i%2 == 0 %>
+                  <tr class="tr-even even">
+                  <% else %>
+                  <tr class="tr-odd odd">
+                  <% end %>
+                  <% quiz = Quiz.find_by_id(q.quiz_id)
+                  if quiz.nil?
+                    next
+                  end%>
+                  <td class='left'><%=quiz.name%></td>
+                  <!--<td class='right'><%#= quiz.intro.gsub(/<\/?[^>]*>/, "")%></td>-->
+                  <!--<td class='col'><%#= quiz.difficulty_text %></td>-->
+                  <!--<td class='col'><%#= quiz.context.subject.try(:name)%></td>-->
+                  <!--<td class='right'><%#= (quiz.context.chapter.nil?) ? '' : quiz.context.chapter.name%></td>-->
+                  <!--<td class='right'><%#= (quiz.context.topic.nil?) ? '' : quiz.context.topic.name%></td>-->
+                  <!--<td class='col'><%#= User.find(q.published_by).name %></td>-->
+                  <!--<td class='col'><%#= display_date_time(q.published_on) %> </td>-->
+                <td class='col'><%= quiz.total_questions %></td>
+                  <td class="col"><%= display_date_time(q.published_on)%></td>
+                  <td class="col"><%= display_date_time(q.timeclose)%></td>
+                  <td class='col'><%= (quiz.timelimit <= 0) ? "Unlimited" : quiz.timelimit%></td>
+                <td class='col'><%= quiz.total_marks %></td>
+                  <td class='col'><a href="/quizzes/show_student_attempts/<%=q.id%>" style="text-decoration: none !important;"><img src="/assets/view_icon_normal.png" style="vertical-align: middle"> <label style="vertical-align: middle">Details</label></a></td>
+                </tr>
+                <%i = i+1%>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<br/>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#assessments_list").dataTable({
+      "aaSorting": [],
+      "bPaginate": false,
+      "bFilter": false,
+      "aoColumns": [
+        null,null,{"bSortable": false },{"bSortable": false },null,null,
+        {"bSortable": false }
+      ]
+    });
+    addtipTip();// on ajax update recall
+  });
+</script>

@@ -1,0 +1,59 @@
+= javascript_include_tag 'jquery.leddisplay'
+- if current_user.institution_id
+  -if current_user.is?("IA") or current_user.is?("MOE") or current_user.is?("EO")
+    = render :partial=> 'abcd_moe'
+  -elsif current_user.is? ("ET")
+    = render :partial=> 'abcd_et'
+-#- else
+-#  .content
+-#    .welcome
+-#      %p
+-#        Welcome!
+-#        = current_user.name
+-#      - if current_user.is?("ET") and current_user.institution_id == 130120
+-#        %sapn{:style=>"color:#d9534f;"}
+-#          Please send email to sales@ignitorlearning.com to get detailed training document
+-#    -if current_user.is?("EA")
+-#      = render :partial => 'user_overview'
+-#    -elsif current_user.is?("IA")
+-#      = render :partial => 'institute_bi', locals:{group: @inst}
+-#      = render :partial => 'user_overview'
+-#      = render :partial => 'course_overview'
+-#      = render :partial => 'student_overview'
+-#      - if current_user.institution.user_configuration.use_tags
+-#        = render :partial => 'question_bank_overview'
+-#      -#= render :partial => 'abcd_test_main'
+-#      -#= render :partial => 'abcd_mainpage'
+-#      -#= render :partial => 'abcd_mainpage2'
+-#    -elsif (current_user.is?("CR") and User.where(id:[85869,110968]).map{|usr| usr.users.where("edutorid LIKE ?","CR-%").map(&:id)}.flatten.include? current_user.id)
+-#      = render :partial => 'ngi_cr_screen'
+-#    -elsif current_user.is?("CR")
+-#      = render :partial => 'institute_bi', locals:{group: @cent}
+-#      = render :partial => 'user_overview'
+-#      = render :partial => 'course_overview'
+-#      = render :partial => 'student_overview'
+-#    -elsif current_user.is?("ET")
+-#      = render :partial => 'teacher_dashboard'
+-#      -#= render :partial => 'user_overview'
+-#      -#= render :partial => 'course_overview'
+-#      -#= render :partial => 'student_overview'
+-#    -elsif current_user.is?("ES")
+-#      = render :partial => 'user_overview'
+-#      = render :partial => 'course_overview'
+-#      = render :partial => 'student_overview'
+-#    -elsif current_user.is?("ECP")
+-#      = render :partial => 'user_overview'
+-#      = render :partial => 'question_bank_overview'
+-#    -else
+-#      = render :partial => 'user_overview'
+-#      -#= render :partial => 'course_overview'
+-#      -#= render :partial => 'student_overview'
+:javascript
+  $(".led").css({margin:'auto',display:"block",'margin-top':10}).leddisplay({
+    pixelSize: 4,
+    enabledPixelColor: "#39B18D",
+    disabledPixelColor: "#FFF",
+    backgroundColor: "#FFF", //for canvas
+    runImmidiatly: true //can't correct spelling mistake
+  });
+

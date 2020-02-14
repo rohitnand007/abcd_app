@@ -1,0 +1,11 @@
+#launcher
+  = form_for @user_asset,:url => url_for(:controller => 'user_assets', :action => 'launcher'), method: :post , remote: true do |f|
+    - @files.each do |file|
+      = label_tag do
+        = f.radio_button "launch_file",file
+        = file
+        %br
+    = f.submit "Update", class:"button right",id:"update_launch_file", disable_with: "Updating.."
+    %br
+:javascript
+

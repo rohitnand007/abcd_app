@@ -1,0 +1,48 @@
+= form_tag '/user_powerchip_delete', :remote=>true do
+  = submit_tag "Delink", class:'button',style:'float:right'
+  - 2.times do
+    %br
+  #chipsCount
+    = "Found #{chips.size} chips"
+  %br
+  %table{style:"width:100%;text-align:center",:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+    %thead
+      %tr
+        %th
+          ID
+        %th
+          User
+        %th
+          Edutorid
+        %th
+          Chip CID
+        %th
+          chip Type
+        %th
+          = check_box_tag :selectAll , '',false,id:"selectAllChips"
+    %tbody#user_chip_details
+      - chips.each do |c|
+        %tr{id:("chip_"+c.class.to_s+c.id.to_s)}
+          %td
+            = c.id
+          %td
+            = c.user.edutorid
+          %td
+            = c.user.name if c.user.name.present?
+          %td
+            = c.powerchip.cid if c.powerchip.present?
+          %td
+            = c.class.to_s=="IgnitorUserChip" ? "USB": "SD"
+          %td
+            -#= link_to "Delink", user_device_powerchip_delete_path(c,name: c.class.to_s)  , remote:true ,:confirm => 'Do you want to unregister the chip?'
+            = check_box_tag "chips[#{c.class.to_s}][]", c.id
+
+:javascript
+  $("#selectAllChips").change(function(){
+    if ($(this).attr("checked")){
+      $("#user_chip_details").find(":checkbox").attr("checked",true)
+    }
+    else{
+      $("#user_chip_details").find(":checkbox").removeAttr("checked")
+    }
+  })

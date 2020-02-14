@@ -1,0 +1,76 @@
+= simple_form_for @publisher, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+    .group
+      .field
+        =f.simple_fields_for :profile do |p|
+          .group
+            .field
+              = p.input :surname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Surname'
+          .group
+            .field
+              = p.input :middlename,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Middle name'
+          .group
+            .field
+              = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'First name'
+          .group
+            .field
+              = p.input :address,:input_html=>{:class=>"text_area",:rows=>5},:label_html=>{:class=>"label"}
+          .group
+            .field
+              = p.input :phone,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        %span.description Email is mandatory
+    .group
+      .field
+        = f.label :password, :class => "label"
+        = f.password_field :password, :class => "text_field"
+        %span.description must be at least 6 characters and mandatory
+    .group
+      .field
+        = f.label :password_confirmation, "Re-enter Password", :class => "label"
+        = f.password_field :password_confirmation, :class => "text_field"
+  -#.group
+  -#  .field
+  -#    = f.label :board_tokens, "Assign Boards", :class => "label"
+  -#    = f.input :board_tokens,:as=>:text,:input_html=>{:rows=>4,:cols=>100,"data-pre" => f.object.boards.map(&:attributes).to_json,:class=>"text_field"},:label=>false
+
+  -#:javascript
+  -#  $(function() {
+  -#  $("#publisher_board_tokens").tokenInput("/boards.json", {
+  -#  crossDomain: false,
+  -#  preventDuplicates:true,
+  -#  prePopulate: $("#publisher_board_tokens").data("pre"),
+  -#  theme: ""
+  -#  });
+  -#  });
+  #schoolContainer{style:"overflow:auto;height:300px;cursor:move;"}
+    %table{style:"margin:auto;text-align:left"}
+      %thead
+        %tr
+          %th Institutes
+          %th Centers
+      %tbody
+        %tr
+          %td{style:"vertical-align:top"}
+            -@institutions.each do |institution|
+              %label
+                = check_box_tag "publisher[white_institution_ids][]", institution.id, @publisher.white_institutions.include?(institution)
+                = institution.name
+              %br
+          %td{style:"vertical-align:top"}
+            -@centers.each do |center|
+              %label
+                = check_box_tag "publisher[white_center_ids][]", center.id, @publisher.white_centers.include?(center)
+                = center.name
+              \,
+              = center.institution.name
+              %br
+  :javascript
+    $("#schoolContainer").dragScroll();
+  %br
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary' ,:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), publishers_path,:class=>'button danger icon remove'

@@ -1,0 +1,47 @@
+#content_header
+  %h1#main_heading Devices
+#inner-tab-menu
+  %ul
+    %li=link_to  "#{t("web-app-theme.list", :default => "List")}", devices_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}",device_path
+    -if current_user.is? 'EA'
+      %li=link_to link_to "#{t("web-app-theme.new", :default => "New")}", new_device_path
+      %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}",edit_device_path
+      %li= link_to "#{t("web-app-theme.move_devices", :default => "Move devices")}", move_devices_path
+      %li= link_to "#{t("web-app-theme.sync_device", :default => "sync device")}", device_sync_path
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.odd.left
+          %td=t("activerecord.attributes.device.model", :default => t("activerecord.labels.model", :default => "Model"))
+          %td.right= @device.model
+        %tr.even.left
+          %td= t("activerecord.attributes.device.deviceid", :default => t("activerecord.labels.deviceid", :default => "Deviceid"))
+          %td.right= @device.deviceid
+        %tr.odd.left
+          %td= t("activerecord.attributes.device.status", :default => t("activerecord.labels.status", :default => "Status"))
+          %td.right= @device.status
+        %tr.odd.left
+          %td= t("activerecord.attributes.device.device_type", :default => t("activerecord.labels.device_type", :default => "Device type"))
+          %td.right= @device.device_type
+        %tr.even.left
+          %td Institution
+          %td.right= @device.institution.try(:name)
+        %tr.odd.left
+          %td Center
+          %td.right= @device.center.try(:name)
+        %tr.odd.left
+          %td Assigned Users
+          %td.right= @device.users.map(&:name).join(',')
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            -if current_ea
+              = link_to "Edit",edit_device_path(@device), :class => "button icon edit"
+              = link_to 'Reset',reset_device_device_path(@device),:confirm=>'Do you want to reset mac and android ids of this device?',:class => "button icon edit" if !@device.is_already_reset?
+              - if !@device.status.eql?Device::DEVICE_STATUS[2]
+                = link_to 'Delete',device_path(@device), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure to change the status of this device? Assigned links will be deleted?")}"
+
+
+

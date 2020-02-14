@@ -1,0 +1,48 @@
+:javascript
+  $(document).ready(function() {
+    $("#quotes").dataTable({
+        "aoColumns": [
+                    null,null,null,
+                    { "bSortable": false }
+                     ],
+        "bAutoWidth": false,"aaSorting": [],// disable default auto sorting ex : [ 4, "desc" ] for 4th column
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bRetrieve": true,
+        "bDestroy": true,
+        "oLanguage": { "sSearch": "Search Page:" }
+
+    });
+  });
+#content_header
+  %h1#main_heading Quotes
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", quotes_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_quote_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          %table#quotes.listing.sort_table{align: 'center' ,width: '100%',cellpadding:1,cellspacing: 1}
+            %thead
+              %tr.tr-head
+                %th= t("activerecord.attributes.quote.name", :default => t("activerecord.labels.name", :default => "Name"))
+                %th= t("activerecord.attributes.quote.author", :default => t("activerecord.labels.code", :default => "Author"))
+                %th= t("web-app-theme.created_at", :default => "Created at")
+                %th &nbsp
+            %tbody
+              -#%tr.tr-blank
+              - @quotes.each do |quote|
+                %tr{:class => cycle("tr-odd", "tr-even"),:id=>"quote_#{quote.id}"}
+                  %td.col= link_to quote.name.split('###')[0], quote_path(quote)
+                  %td.col=  quote.name.split('###')[1]
+                  %td.col= display_date_time(quote.created_at)
+                  %td.col
+                    = link_to_show(quote_path(quote))
+
+        - unless @quotes.blank?
+          .pagination_info
+            = paginate @quotes

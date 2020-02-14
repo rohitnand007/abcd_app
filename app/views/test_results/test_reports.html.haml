@@ -1,0 +1,57 @@
+= stylesheet_link_tag 'fixedtable/css/960' ,'fixedtable/css/myTheme','fixedtable/css/defaultTheme'
+#content_header
+  -#%h1#main_heading Test Results
+  #breadcrumbs
+    = bread_crumb_test_reports_page
+#inner-tab-menu
+  %ul
+    -#%li= link_to "#{t("web-app-theme.list", :default => "List")}", check_usage_reports_path(current_user)
+    -#%li= link_to "#{t("web-app-theme.list", :default => "Usage Statistics")}",'/usage/reports'
+    -#%li= link_to "#{t("web-app-theme.list", :default => "List")}", assessments_path
+    %li.inner_tab_selected= link_to 'Test Reports',students_test_reports_path
+  %br
+  %br
+  #filters{:class=>'form'}
+    = label :assessment_type,"Filter By:",:class=>'label'
+    - test_types = [["Practice-Test","assessment-practice-tests"], ["Home-Work","assessment-home-work"],["Institute-Test","assessment-insti-tests"]]
+    = select_tag :assessment_type, options_for_select(test_types),{:class=>'drop_drown',:prompt=>'Select Assessment type'}
+    - selected_value = params[:group_id]+','+params[:content_id] rescue ""
+    -if current_user.is?'CR' or current_user.is? 'ET'
+      = select_tag :class_info, options_for_select(get_class_rooms.collect{ |c_room| [(c_room.class_room_group.type.eql?('AcademicClass') ? c_room.class_room_group.name + "_" + c_room.section.name : c_room.class_room_group.name), c_room.group_id.to_s+","+c_room.content_id.to_s] },:selected=>selected_value),{:class=>'drop_drown',:prompt=>"Select Section"}
+    -elsif current_user.is?'IA'
+      = select_tag :class_info, options_for_select(get_class_rooms.collect{ |c_room| [(c_room.class_room_group.type.eql?('AcademicClass') ? c_room.class_room_group.center.name + "_"+c_room.class_room_group.name + "_" + c_room.section.name : c_room.class_room_group.name), c_room.group_id.to_s+","+c_room.content_id.to_s] },:selected=>selected_value),{:class=>'drop_drown',:prompt=>"Select Section"}
+    -elsif current_user.is?'EA'
+      = select_tag :class_info, options_for_select(get_class_rooms.collect{ |c_room| [(c_room.class_room_group.type.eql?('AcademicClass') ? c_room.class_room_group.institution.name + c_room.class_room_group.center.name + "_"+c_room.class_room_group.name + "_" + c_room.section.name : c_room.class_room_group.name), c_room.group_id.to_s+","+c_room.content_id.to_s] },:selected=>selected_value),{:class=>'drop_drown',:prompt=>"Select Section"}
+#data
+  #progress-indicator.progress-indicator= image_tag('progress-indicator.gif')
+  %div#tabular_results{:class=>"container_16 divider"}
+    = render 'results'
+
+:javascript
+  $("#assessment_type,#class_info").change(function() {
+      var type = $('select#assessment_type :selected').val();
+      var class_info = $('select#class_info :selected').val();
+      var group_id =  class_info.split(',')[0];
+      var content_id = class_info.split(',')[1];
+      var user_id = "<%= params[:user_id] %>";
+      $.ajax({//Make the Ajax Request
+            type: "GET",
+            url: '/test_results/all/tests/tabular',
+            data: {type: type,group_id: group_id,content_id: content_id,user_id: "#{params[:user_id]}"},
+            beforeSend:  function() {
+            $('#progress-indicator').show();
+            },
+            success: function(html){//html = the server response html code
+              $('#progress-indicator').hide();
+            }
+        });
+
+  });
+  $(document).ready(function() {
+        $('.pagination a').bind('ajax:beforeSend', function() {
+            $("#progress-indicator").show();
+        });
+    });
+
+
+

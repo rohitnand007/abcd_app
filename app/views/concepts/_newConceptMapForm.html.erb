@@ -1,0 +1,31 @@
+<div style="top:20%;width: 100%;height: 100%;"><h1>New concept_element</h1>
+
+  <%= form_for(@concept) do |f| %>
+      <% if @concept.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@concept.errors.count, "error") %> prohibited this concept from being saved:</h2>
+
+            <ul>
+              <% @concept.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+
+      <div class="field">
+        <%= f.label :name %><br />
+        <%= f.text_field :name %>
+      </div>
+      <div class="field">
+        <%= f.label :concept %><br />
+        <%= f.text_field :concept %>
+      </div>
+      <!-- <div class="actions">
+    <%= f.submit %>
+  </div>-->
+  <% end %>
+
+<%= link_to 'Back', concept_elements_path %>
+
+</div>

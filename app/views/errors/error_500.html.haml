@@ -1,0 +1,14 @@
+#content_header
+  %h1#main_heading
+#inner-tab-menu
+  %h2 500
+  %div
+    %h3 We're sorry
+    %p
+      The content that you requested could not be found.
+    %p
+      You tried to access '#{@error.message}', which is not a valid page.
+    %p
+      Want to
+      %a{href: root_path} go back to our home page
+      and try again?

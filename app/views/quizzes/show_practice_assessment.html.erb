@@ -1,0 +1,238 @@
+<style>
+    #data > .progress-indicator {
+        top: 65%;
+        left: 58%;
+    }
+</style>
+<div id="content_header">
+  <h1 id="main_heading">Assessment Results </h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessment Home", :controller => "quizzes", :action => "show",:id=>@quiz.id %></li>
+  </ul>
+</div>
+<div id="data">
+<div id='application-list'>
+  <table align='center' class='details' width='700px'>
+    <tbody>
+    <tr class='odd left'>
+      <td>Assessment Name</td>
+      <td class='right'><%= @quiz.name%></td>
+    </tr>
+    <tr class='even left'>
+      <td>Assessment Institute Id</td>
+      <td class='right'><%= @quiz.institute_test_id%></td>
+    </tr>
+    <tr class='odd left'>
+      <td>Description</td>
+      <td class='right'><%= @quiz.intro.gsub(/<\/?[^>]*>/, "")%></td>
+    </tr>
+    <tr class='even left'>
+      <td>Board</td>
+      <td class='right'><%= @quiz.context.board.try(:name)%></td>
+    </tr>
+    <tr class='odd left'>
+      <td>Class</td>
+      <td class='right'><%= @quiz.context.content_year.try(:name)%></td>
+    </tr>
+    <tr class='even left'>
+      <td>Subject</td>
+      <td class='right'><%= @quiz.context.subject.try(:name)%></td>
+    </tr>
+    <tr class='odd left'>
+      <td>Chapter</td>
+      <td class='right'><%= (@quiz.context.chapter.nil?) ? '' : @quiz.context.chapter.name%></td>
+    </tr>
+    <tr class='odd left'>
+      <td>Topic</td>
+      <td class='right'><%= (@quiz.context.topic.nil?) ? '' : @quiz.context.topic.name%></td>
+    </tr>
+    <tr class='odd left'>
+      <td>Created By</td>
+      <td class='right'><%= @quiz.user.profile.firstname%> <%= @quiz.user.profile.surname%></td>
+    </tr>
+
+    <tr class='odd left'>
+      <td>Date Created</td>
+      <td class='right'><%= display_date_time(@quiz.timecreated)%></td>
+    </tr>
+    <tr class='odd left'>
+      <td>Total Questions</td>
+      <td class='right'><%= @quiz.questions.count%></td>
+    </tr>
+    <tr class='even left'>
+      <td>Total Marks</td>
+      <td class='right'><%= @quiz.quiz_question_instances.sum(:grade)%></td>
+    </tr>
+
+    <tr class='odd left'>
+      <td>Difficulty Level</td>
+      <%difficulty = 'Easy'%>
+      <%if @quiz.difficulty ==1%>
+          <% difficulty = 'Medium' %>
+      <%end%>
+      <%if @quiz.difficulty ==2%>
+          <% difficulty = 'Hard' %>
+      <%end%>
+      <td class='right'><%= difficulty%></td>
+    </tr>
+    <tr class='tr-blank'></tr>
+    </tbody>
+  </table>
+</div>
+    <div>
+      <table width='100%' class="attempts">
+        <tr>
+          <td id='publish_list' valign='top'>
+            <table cellpadding='1' cellspacing='1'>
+              <table align='center' cellpadding='1' cellspacing='1' class='listing sort_table' id='student-attempts' width='100%'>
+                <thead>
+                <tr class='tr-head'>
+                  <th>Edutor Id</th>
+                  <th>Student Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Correct</th>
+                  <th>Wrong</th>
+                  <th>Marks</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <%i=0%>
+                <%  @attempts.each do |t| %>
+                    <% if i%2 == 0 %>
+                        <tr class="tr-even even">
+                    <% else %>
+                        <tr class="tr-odd odd">
+                    <% end %>
+                    <td class='col'>
+                      <%=User.find(t.user_id).edutorid%>
+                    </td>
+                    <td class='col'>
+                      <%=link_to User.find(t.user_id).name,user_path(t.user_id)%>
+                    </td>
+                    <td class="col"><%= display_date_time(t.timestart)%></td>
+                    <td class="col"><%= display_date_time(t.timefinish)%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>true).count%></td>
+                    <td class="col"><%= t.quiz_question_attempts.where(:correct=>false).count%></td>
+                    <td class="col"><%= t.sumgrades%>/<%=@total_marks%></td>
+                    <td>
+                      <%=link_to "View Details", :controller => "quizzes", :action => "show_question_attempts",:id=>t.id ,:target=>'_blank'%></td>
+                    </tr>
+                    <%i = i+1%>
+                <%end%>
+                </tbody>
+              </table>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+ </div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#student-attempts").dataTable({
+            "aaSorting": [[ 5, "desc" ]],
+            "bPaginate": false,
+            "bFilter": false,
+            "aoColumns": [
+                null,null,null,null,null,null,null,
+                {"bSortable": false }
+            ]
+        });
+        $("#student-attempts1").dataTable({
+            "aaSorting": [[ 5, "desc" ]],
+            "bPaginate": false,
+            "bFilter": false,
+            "aoColumns": [
+                null,null,null,null,null,null,null,null,
+                {"bSortable": false }
+            ]
+        });
+        $("#student-attempts2").dataTable({
+            "aaSorting": [[ 5, "desc" ]],
+            "bPaginate": false,
+            "bFilter": false,
+            "aoColumns": [
+                null,null,null,null,null,null,null,null,null,
+                {"bSortable": false }
+            ]
+        });
+        $("#student-attempts3").dataTable({
+            "aaSorting": [[ 5, "desc" ]],
+            "bPaginate": false,
+            "bFilter": false,
+            "aoColumns": [
+                null,null,null,null,null,null,null,
+                {"bSortable": false }
+            ]
+        });
+        addtipTip();// on ajax update recall
+    });
+    $("#select_all").click(function()
+    {
+        var checked_status = this.checked;
+
+        $("input[name=report]").each(function()
+        {
+            this.checked = checked_status;
+        });
+
+    });
+    function send_quiz_report_parent(type,quiz,publish){
+        var values = $("input:checked[name=report]").map(function() {
+            return $(this).val();
+        }).get().join();
+        if (values.length == 0) {
+            alert("please select");
+            return false;
+        }
+        var select_all = $("#select_all").is(":checked");
+
+        $.ajax({//Make the Ajax Request
+            type: "POST",
+            url: '/quiz/send_parent_report',
+            data: {type:type,attempt_ids: values,quiz:quiz,publish:publish,select_all:select_all},
+            beforeSend:  function() {
+
+                $(this).button("disable");
+
+                $('#progress-indicator').show();
+                $("#data").css('opacity',0.6);
+                $("#data :input").attr("disabled", true);
+            },
+            success: function(html){//html = the server response html code
+                $('#progress-indicator').hide();
+                $("#data").css('opacity','');
+                $(this).button("enable")
+                $("#data :input").attr("disabled", false);
+            }
+
+        });
+    }
+    function download_reports(quiz,publish){
+        $.ajax({//Make the Ajax Request
+            type: "POST",
+            url: '/quiz/send_parent_report',
+            data: {quiz:quiz,publish:publish},
+            beforeSend:  function() {
+
+                $(this).button("disable");
+
+                $('#progress-indicator').show();
+                $("#data").css('opacity',0.6);
+                $("#data :input").attr("disabled", true);
+            },
+            success: function(html){//html = the server response html code
+                $('#progress-indicator').hide();
+                $("#data").css('opacity','');
+                $(this).button("enable")
+                $("#data :input").attr("disabled", false);
+            }
+
+        });
+
+    }
+</script>

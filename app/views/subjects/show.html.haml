@@ -1,0 +1,40 @@
+#content_header
+  %h1#main_heading Subjects
+#inner-tab-menu
+  %ul
+    %li= link_to  "#{t("web-app-theme.list", :default => "List")}", subjects_path
+    %li= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_subject_path
+    %li= link_to link_to "#{t("web-app-theme.new", :default => "New")}",new_subject_path
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.show", :default => "Show")}", subject_path(@subject)
+#data
+  #application-list
+    %table.details{width: '700px',align: 'center'}
+      %tbody
+        %tr.even.left
+          %td= t("activerecord.attributes.subject.name", :default => t("activerecord.labels.name", :default => "Name"))
+          %td.right= @subject.name
+        %tr.odd.left
+          %td Code
+          %td.right= @subject.code
+        %tr.even.left
+          %td Board
+          %td.right=link_to(@subject.board.name,board_path(@subject.board)) if @subject.board
+        %tr.odd.left
+          %td Content Year
+          %td.right= link_to(@subject.content_year.name,content_year_path(@subject.content_year)) if @subject.content_year
+        %tr.even.left
+          %td=t("web-app-theme.created_at", :default => "Created at")
+          %td.right= display_date_time(@subject.created_at)
+
+        %tr.tr-blank
+        %tr
+          %td{:colspan=>'2'}
+            = link_to "Edit",edit_subject_path(@subject), :class => "button icon edit"
+            = link_to "Delete", subject_path(@subject), :method => "delete", :class => "button danger icon remove", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}"
+    .heading.hr
+      Chapters
+      .right
+        = link_to "Add Chapter" ,new_chapter_path(board_id: @subject.board.try(:id),
+                 content_year_id: @subject.content_year.try(:id),subject_id: @subject.id),
+                :class=>'button icon add'
+    = render 'chapters/chapters'

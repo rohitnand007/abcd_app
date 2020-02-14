@@ -1,0 +1,17 @@
+= simple_form_for(@ip_table_override) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :institution_id
+    = f.input :center_id
+    = f.input :user_id
+    = f.input :domain
+    = f.input :ip
+    = f.input :status
+    = f.input :added_at
+    = f.input :modified_at
+    = f.input :added_by
+    = f.input :modified_by
+
+  .actions
+    = f.button :submit,:class=>'big primary'

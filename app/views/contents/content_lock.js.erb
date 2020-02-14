@@ -1,0 +1,5 @@
+<% params[:ids].each do |id| %>
+   dom_id = "#content_lock_<%=id%>"
+   $(dom_id).html("<%= escape_javascript(content_lock(1)) %>");
+<% end %>
+$("#result").html("<%= escape_javascript render 'shared/flash_messages' %>").show("slide", { direction: 'left' });

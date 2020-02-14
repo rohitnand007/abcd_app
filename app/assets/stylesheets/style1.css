@@ -1,0 +1,89 @@
+html 
+{
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	width: 160%;
+	height: 160%;
+	max-width: 400%;
+	max-height: 400%;
+	font-size:100%;
+}
+body
+{
+	margin: 0;
+	font-size: 100%;
+	line-height: 1.231;
+	width: 160%;
+	height: 160%;
+	max-width: 400%;
+	max-height: 400%;
+	background-color: white;
+	font-size:100%;
+}
+#map .canvas_map 
+{
+	text-align: center;
+	position:relative;
+	z-index: 10;
+}
+#anim_map .anim_map
+{
+	text-align: center;
+	position:relative;
+	z-index: 1;
+}
+#map 
+{
+	background-color: white;
+	width: 160%;
+	height: 160%;
+	max-width: 400%;
+	max-height: 400%;
+	z-index: 9;
+}
+#aside {	
+		width:30%; margin:0;
+	        right: 1px;
+	        top: 0px; height:100%;overflow:auto;position:fixed;
+		
+	-webkit-box-shadow:0 0 2px 0px #aaa;
+	   -moz-box-shadow:0 0 2px 0px #aaa;
+	        box-shadow:0 0 2px 0px #aaa;
+		-webkit-transition: -webkit-transform 0ms; 
+		-webkit-transform-origin: 0px 0px;
+		-webkit-transform: translate(0px, 0px) scale(1) translateZ(0px);
+	        z-index: 19;
+			color: black;
+			background: white;
+			border-top: 15px solid white;/*orange theme*/
+			border-left: 5px solid white;/*orange theme*/
+}
+#footer
+{
+}
+/* Hide for both screenreaders and browsers: */
+.hidden { display: none; visibility: hidden; }
+.invisible { visibility: hidden; }
+
+.fixedclass{
+	        position: fixed;	       	
+	-webkit-box-shadow:0 0 5px 7px #aaa;
+	   -moz-box-shadow:0 0 5px 7px #aaa;
+	        box-shadow:0 0 5px 7px #aaa;
+	        right: 10px;
+	        top: 0px;
+	        bottom: 5px;
+	        height:100%;
+	        width: 30%;
+	        z-index: 19;
+			color: black;
+			display:block;
+			padding:0px 0px 0px;
+			background: white;
+			border-top: 15px solid white;/*orange theme*/
+			border-left: 10px solid white;/*orange theme*/
+			
+			overflow-x: hidden;
+			overflow-y: hidden;
+}

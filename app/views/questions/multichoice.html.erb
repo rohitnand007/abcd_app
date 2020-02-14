@@ -1,0 +1,437 @@
+<!--<script type="text/javascript" src="/javascripts/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>-->
+<!--<script language="javascript" type="text/javascript">-->
+<!--//  tinyMCE.init({-->
+<!--//    theme : "advanced",-->
+<!--//    mode : "textareas",-->
+<!--//    plugins : "safari,table,paste,tabfocus,fmath_formula,legacyoutput",-->
+<!--//    paste_convert_headers_to_strong : true,-->
+<!--//    paste_convert_middot_lists : true,-->
+<!--//    relative_urls : true, // Default value-->
+<!--//        //document_base_url : 'http://localhost:3000/question_images/',-->
+<!--//        document_base_url : 'http://www.myedutor.com/question_images/',-->
+<!--//    paste_remove_spans : true,-->
+<!--//    paste_remove_styles : true,-->
+<!--//    paste_strip_class_attributes : true,-->
+<!--//    theme_advanced_toolbar_align : "left",-->
+<!--//    theme_advanced_toolbar_location : "top",-->
+<!--//    theme_advanced_buttons1 : "fmath_formula,undo,redo,cut,copy,paste,pastetext,|,bold,italic,underline,strikethrough,blockquote,charmap,bullist,numlist,removeformat,|,link,unlink,image,|,fontsizeselect,code",-->
+<!--//    valid_elements : "a[href|title],blockquote[cite],br,caption,cite,code,dl,dt,dd,em,i,img[src|alt|title|width|height|align],li,ol,p,pre,q[cite],small,strike,strong/b,sub,sup,u,ul",-->
+<!--//      formats: {-->
+<!--//          underline : {inline : 'u',  exact : true}-->
+<!--//        }-->
+<!--//  });-->
+<!--</script>-->
+<!--<script type="text/javascript" src="/javascripts/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>-->
+<script type="text/javascript">
+    tinyMCE.init({
+        mode:'textareas',
+        plugins:"fmath_formula,uploadimage,table,advhr,advimage,advlink,insertdatetime,media,preview,safari,table,paste,tabfocus,fmath_formula,legacyoutput",
+        theme:'advanced',
+        theme_advanced_buttons1:"fmath_formula,bold,italic,underline,separator,bullist,numlist,separator,undo,redo,|,forecolor,backcolor, |, justifyleft, justifycenter, justifyright, justifyfull",
+        theme_advanced_buttons2:"styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons3:"tablecontrols,|,charmap,iespell,media,advhr",
+        theme_advanced_buttons4:"hr,removeformat,visualaid,|,sub,sup,|,insertdate,inserttime,preview,uploadimage,|,link,unlink,code",
+        theme_advanced_toolbar_location:"top",
+        theme_advanced_toolbar_align:"left", theme_advanced_statusbar_location:"none",
+        relative_urls:true,
+        document_base_url : 'http://www.myedutor.com/question_images/',
+        skin : "o2k7",
+        skin_variant : "silver",
+        width:"500",
+        height : "250"
+    })
+    ;
+    tinyMCE.addI18n('en.uploadimage', {
+        desc:'Insert an image from your computer'
+    });
+
+</script>
+<div id="content_header">
+  <h1 id="main_heading"><%= @qtype %></h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Question Bank", :controller => "questions", :action => "index" %></li>
+    <li><%=link_to "My Questions", :controller => "questions", :action => "myquestions" %></li>
+    <li><%=link_to "My Draft Questions", :controller => "questions", :action => "mydraftedquestions" %></li>
+  </ul>
+</div>
+<div id="data">
+  <%= form_for @question,:html => { :class => :form }, :url => { :action => @action } do |q| %>
+    <%=q.error_messages%>
+    <div class='group'>
+      <div class='field'>
+        <div class="input select required">
+          <label class="select required  label" for="question_contexts_board_id">
+            <abbr title="required">*</abbr> Board</label>
+          <select class="select required drop_down" data-validate="true" id="question_context_attributes_board_id" name="question[context_attributes][board_id]">
+            <option value="">Please select</option>
+            <% @boards.each do |b| %>
+              <option <%=(@question.context.board_id==b.id) ? 'selected' : ''%> value="<%=b.id%>"><%=b.name%></option>
+            <% end  %></select></div>
+      </div>
+    </div>
+    <%= q.fields_for :context do |c| %>
+      <%=c.error_messages%>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Class
+            </label>
+            <%= c.collection_select("content_year_id",@question.context.board.try(:content_years).to_a,:id,:name,:prompt => true,:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Subject
+            </label>
+            <%= c.collection_select("subject_id",@question.context.content_year.try(:subjects).to_a,:id,:name,:prompt => true,:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              <abbr title="required">*</abbr>
+              Chapter
+            </label>
+            <%= c.collection_select("chapter_id",@question.context.subject.try(:chapters).to_a ,:id,:name,:prompt => true,:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input select required">
+            <label class="select required label" for="">
+              Topic
+            </label>
+            <%= c.collection_select("topic_id",@question.context.chapter.try(:topics).to_a ,:id,:name,:prompt => true,:class=>'select required drop_down') %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <!--<div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Name
+          </label>
+    <%= q.text_field :name,:class=>"string required text_field" %>
+        </div>
+      </div>
+    </div>-->
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Default Marks
+          </label>
+          <%= q.text_field :defaultmark,:class=>"string required text_field", :default=>'1'%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Default Penalty<br/>
+            <span style="font-size:12px">Positive number</span>
+          </label>
+          <%= q.text_field :penalty,:class=>"string required text_field" , :default=>'0.33333'%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Difficulty Level
+          </label>
+          <%= q.select :difficulty,options_for_select(q.object.get_difficulty_options,q.object.difficulty),:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Course
+          </label>
+          <% options_course=[["Regular",0],["IIT",1],["Olympiad",2]] %>
+          <%= q.select :course,options_for_select(options_course,q.object.course),:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class='label heading hr' style="font-size:20px">Select the associated skills
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Problem Solving
+          </label>
+          <%= q.check_box :prob_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Data Interpretation
+          </label>
+          <%= q.check_box :data_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Use Skill
+          </label>
+          <%= q.check_box :useofit_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Creativity
+          </label>
+          <%= q.check_box :creativity_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Listening
+          </label>
+          <%= q.check_box :listening_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Speaking
+          </label>
+          <%= q.check_box :speaking_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Grammer
+          </label>
+          <%= q.check_box :grammer_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Vocabulary
+          </label>
+          <%= q.check_box :vocab_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Formulae
+          </label>
+          <%= q.check_box :formulae_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Comprehension
+          </label>
+          <%= q.check_box :comprehension_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Knowledge
+          </label>
+          <%= q.check_box :knowledge_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string required">
+          <label class="string required label" for="">
+            <abbr title="required">*</abbr>
+            Application
+          </label>
+          <%= q.check_box :application_skill,:class=>"string required text_field"%>
+        </div>
+      </div>
+    </div>
+    <div class='label heading hr'>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input text required">
+          <label class="text required label" for="">
+            <abbr title="required">*</abbr>
+            Question Text
+          </label>
+          <%= q.text_area :questiontext,:class=>"text required text_area" %>
+          <!--<br/><a href="/questions/image_upload" target="_blank"><span style="font-size: 16px">Upload Image</span></a>-->
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Feedback for Students
+          </label>
+          <%= q.text_area :generalfeedback,:class=>"text required text_area",:size=>"4x5" %>
+        </div>
+      </div>
+    </div>
+    <%= q.hidden_field :qtype %>
+    <% i = 1 %>
+    <%= q.fields_for :question_answers do |c| %>
+      <div class='label heading hr'>
+      </div>
+      <div class="group">
+        <div class="field">
+          <div class="input text required">
+            <label class="text required label" for="">
+              <abbr title="required">*</abbr>
+              Choice <%=i%> Text
+            </label>
+            <%= c.text_area :answer,:class=>"text required text_area",:size=>"2x5" %>
+          </div>
+        </div>
+      </div>
+      <!--<div class="group">
+        <div class="field">
+          <div class="input text optional">
+            <label class="text optional label" for="">
+              Feedback
+            </label>
+      <%= c.text_area :feedback,:class=>"text optional text_area",:size=>"4x5" %>
+          </div>
+        </div>
+      </div>-->
+      <div class="group">
+        <div class="field">
+          <div class="input string">
+            <label class="string label" for="">
+              Select if Correct Answer
+            </label>
+            <%= c.check_box(:fraction) %>
+          </div>
+        </div>
+      </div>
+      <% i = i+1 %>
+    <% end %>
+    <br/>
+    <div class='label heading hr'>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input text optional">
+          <label class="text optional label" for="">
+            Tags (comma-separated)
+          </label>
+          <%= q.text_area :tags,:class=>"text optional text_area",:size=>"4x5" %>
+        </div>
+      </div>
+    </div>
+    <div class='label heading hr'>
+    </div>
+    <div class="group">
+      <div class="field">
+        <div class="input string">
+          <label class="string label" for="">
+            Save as Draft<br/>
+            <span style="font-size:12px">If selected, question will be invisible to others. You can find the question in My Draft Questions and edit it later.</span>
+          </label>
+          <%= q.check_box(:hidden) %>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      <div align="center" class="field">
+        <input class="button big primary" data-disable-with="Creating..." name="commit" type="submit" value="Save Question"/>
+        <a href="/questionbank" class="button danger icon remove">Cancel</a>
+      </div>
+    </div>
+  <% end %>
+</div>
+<script>
+  //<![CDATA[
+  $("#question_context_attributes_board_id").change(function() {
+    var selected_value = $('select#question_context_attributes_board_id :selected').val();
+    var url = "/course/get_content_years/"
+    var div_update = "#question_context_attributes_content_year_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#question_context_attributes_content_year_id").change(function() {
+    var selected_value = $('select#question_context_attributes_content_year_id :selected').val();
+    var url = "/content_years/get_subjets/"
+    var div_update = "#question_context_attributes_subject_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#question_context_attributes_subject_id").change(function() {
+    var selected_value = $('select#question_context_attributes_subject_id :selected').val();
+    var url = "/subjects/get_chapters/"
+    var div_update = "#question_context_attributes_chapter_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+
+  $("#question_context_attributes_chapter_id").change(function() {
+    var selected_value = $('select#question_context_attributes_chapter_id :selected').val();
+    var url = "/chapters/get_topics/"
+    var div_update = "#question_context_attributes_topic_id"
+    get_url_Data(url,selected_value,div_update);
+  });
+  //]]>
+</script>

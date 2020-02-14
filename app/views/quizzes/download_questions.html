@@ -1,0 +1,165 @@
+<style>
+    #listing{
+        background: #F3F3F3;
+        border-radius:10px;
+        -moz-border-radius:10px;
+        -webkit-border-radius:10px;
+        padding:20px 20px 20px; margin-bottom:5px;
+    }
+    .odd{
+        height:auto;
+        font: bold 1em/1.5em arial,helvetica,sans-serif;
+        background: #e1ebf4;
+        margin-right:5px;
+    }
+    .odd td{
+        font-weight:bold;
+        padding:10px 10px 10px 10px;
+    }
+    .right{
+        width: 450px;
+        text-align: left;
+    }
+    .left{
+        width: 17px;
+        text-align: right;
+    }
+    .even{
+        height:auto;
+        background: #c7d9e9;
+        margin-right:5px;
+    }
+    .even td{
+        font: bold 1em/1.5em arial,helvetica,sans-serif;
+        padding:10px 10px 10px 10px;
+    }
+    #profile{
+        font: bold 24px arial,helvetica,sans-serif;
+        color: #FFFFFF;
+        text-align: left;
+        padding:0 0 0 20px
+
+    }
+    .img{
+        margin-left: 10px;
+        padding:5px;
+        width: auto;
+        height: auto;
+    }
+    .answer {
+        text-align:left;
+        padding:10px;
+    }
+    .page-break {
+        display:block; clear:both; page-break-after:always;
+    }
+
+</style>
+<table id="listing" align="center" width="800" height="150"cellpadding="1" cellspacing="1" style="background:#99cc00">
+    <tbody>
+    <tr><td width="15%"  class="img">
+        <% if @quiz.user.institution %>
+        <%= wicked_pdf_paperclip_image_tag @quiz.user.institution.profile.photo(:small) %>
+        <%else%>
+        <%= wicked_pdf_paperclip_image_tag "rails.png"%>
+        <%end%>
+    </td>
+        <td width="85%" id="profile">
+            <table with="100%">
+                <tr>
+                     <td><b>Institution:</b></td>
+                     <td><span><%=@quiz.user.try(:institution).try(:name)%></span></td>
+                    <td><b>Center:</b></td>
+                    <td><span><%=@quiz.user.try(:center).try(:name)%></span></td>
+                </tr>
+                <tr>
+                    <td><b>TestPaper:</b></td>
+                    <td><%=@quiz.name%></td>
+                </tr>
+                <tr>
+                    <td><b>Class:</b></td>
+                    <td><span><%=@quiz.context.content_year.try(:name)%></span></td>
+
+                    <td><b>Subject:</b></td>
+                    <td><span><%=@quiz.context.subject.try(:name)%></span></td>
+                </tr>
+                <tr>
+                    <td><b>Chapter:</b></td>
+                    <td><span><%=@quiz.context.chapter.try(:name)%></span></td>
+                    <td><b>Topic:</b></td>
+                    <td><span><%=@quiz.context.topic.try(:name)%></span></td>
+                </tr>
+                <tr>
+                    <td><b>Created By:</b></td>
+                    <td><span><%=@quiz.user.name%></span></td>
+                    <td><b>Date:</b></td>
+                    <td><span><%=Time.at(@quiz.timecreated).to_time.strftime("%b/%d/%Y")%></span></td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table align="center" width="750">
+    <% i = 1 %>
+    <% @questions.each do |q| %>
+     <tr>
+         <td>
+             <%= q.id %>.&nbsp;
+              <%= q.pdf_questiontext_format.gsub("<p>","").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+         </td>
+     </tr>
+    <tr>
+         <td style="padding-left:25px;">
+            <table width="100%">
+                        <% a = ("a".."z").to_a  %>
+                        <% n = 0 %>
+                       <% q.question_answers.each do |c| %>
+                <tr>
+                       <td class="left" align="left">
+                           <%= a[n] %>. &nbsp;
+                       </td>
+                       <td class="right" align="left" valign="middle">
+                          <%= c.pdf_answer_format.gsub("<p>","").gsub("</p>","").force_encoding('utf-8').encode.html_safe %>
+                          <% (c.fraction==1)? "(Answer)":""%>
+                       </td>
+                       <% n= n+1 %>
+                </tr>
+                       <%end%>
+
+       </table>
+         </td>
+     </tr>
+    <%i = i+1 %>
+    <%end%>
+
+</table>
+<div class="page-break"></div>
+        <h1>Key</h1>
+<table border="1px solid">
+      <thead>
+      <th>
+          Question No
+      </th>
+      <th>
+          Answer
+      </th>
+      </thead>
+       <%i = 1%>
+       <%  @questions.each do |q| %>
+        <tr>
+        <td align="center" style="width:100px;"><%= i %></td>
+            <% a = ("a".."z").to_a  %>
+            <% n = 0 %>
+        <% q.question_answers.each do |c| %>
+            <% if c.fraction==1 %>
+            <td  align="center" style="width:100px;"><%= a[n] %></td>
+            <%end%>
+        <% n = n+1 %>
+        <%end%>
+        </tr>
+     <% i = i+1 %>
+       <%end%>
+    </tr>
+</table>

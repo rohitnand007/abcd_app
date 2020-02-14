@@ -1,0 +1,19 @@
+  <div id='content_header'>
+  <h1 id='main_heading'>
+    <%=@quiz.name%>
+  </h1>
+</div>
+<div id="inner-tab-menu">
+  <ul>
+    <li><%=link_to "Assessments Home", :controller => "quizzes", :action => "student_not_attempted_assessments" %></li>
+  </ul>
+</div>
+<div id='data'>
+    <div class="group">
+      <div align="center" class="field">
+        Assessment can only be taken after : <%=display_date_time(@publish.timeopen)%>
+        <a href="/quizzes/student_not_attempted_assessments" class="button big primary">Go Back</a>
+      </div>
+    </div>
+</div>
+

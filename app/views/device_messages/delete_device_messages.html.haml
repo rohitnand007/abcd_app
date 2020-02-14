@@ -1,0 +1,40 @@
+#content_header
+#inner-tab-menu
+  %ul
+    -#%li=  link_to "#{t("web-app-theme.list", :default => "Inbox")}", messages_path+user_path(current_user)
+    -#%li= link_to "#{t("web-app-theme.new", :default => "Sent")}", sent_message_path(current_user)
+    -#%li.inner_tab_selected= link_to "#{t("web-app-theme.new", :default => "New")}", new_message_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        %div
+          #application-list
+            = simple_form_for :device_message ,:url=>delete_device_messages_path,:html => { :class => :form,:multipart => true } do |f|
+              .inputs
+                .group#recipient
+                  .field
+                    = f.input :multiple_ids,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>"Add Device Numbers"
+                .group
+                  .field{:align=>'center'}
+                    = f.button :submit,'Delete Messages',:class=>'big primary' ,:disable_with=>'Deleting..'
+                    = link_to t("web-app-theme.cancel", :default => "Cancel"), device_messages_path,:class=>'button danger icon remove'
+
+
+
+
+:javascript
+  $(document).ready(function(){
+    $(function() {
+      $("#device_message_multiple_ids").tokenInput("/device_ids.json", {
+      queryParam: 'term',
+      minChars: '4',
+      hintText: 'Type 4-letters of users deviceid',
+      crossDomain: false,
+      preventDuplicates:true,
+      prePopulate: $("#device_message_multiple_recipient_ids").data("pre"),
+      theme: ""
+      });
+    });
+
+  });

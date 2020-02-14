@@ -1,0 +1,37 @@
+.report_box{style:"width: 100%"}
+  .reportsblock_chart_title
+    Live responses chart
+  .reportsblock_chart_rowhead
+    .reportsblock_chart_cell
+      .left_aligner Class/Group
+    .reportsblock_chart_cell
+      .left_aligner Name of student
+    .reportsblock_chart_cell Downloaded
+    .reportsblock_chart_cell Taken Test
+    .reportsblock_chart_cell Score
+  - student_wise_quicktest_status(quicktest).each do |student|
+    .reportsblock_chart_row
+      .reportsblock_chart_cell
+        .left_aligner
+          = student[:class_group]
+      .reportsblock_chart_cell
+        .left_aligner
+          = student[:student_name]
+          = image_tag("star_blue.png") if student[:marks] == @highest_score
+          = image_tag("star_violet.png") if student[:marks] == @lowest_score
+      .reportsblock_chart_cell
+        - if student[:downloaded] == "Y"
+          .bublleY
+            Y
+        - else
+          .bublleN
+            N
+      .reportsblock_chart_cell
+        - if student[:attempted] == "Y"
+          .bublleY
+            Y
+        - else
+          .bublleN
+            N
+      .reportsblock_chart_cell
+        = student[:marks]

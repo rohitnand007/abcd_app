@@ -1,0 +1,66 @@
+.content_div
+  .icon_box
+    = image_tag 'course_overview.png'
+  .result_box
+    %table.index_table
+      -if current_user.is?("IA")
+        %thead
+          %tr
+            %th Centers
+            %th Academic Course
+            %th No. of Sections
+        %tbody
+          -@cents.each do |cent|
+            - n = 1
+            -cent.academic_classes.each do |cla|
+              %tr
+                -if n == 1
+                  %td= link_to cent.name, center_path(cent)
+                  - n = 2
+                -else
+                  %td
+                %td= link_to cla.name, academic_class_path(cla)
+                %td= cla.sections.count
+      -elsif current_user.is?("CR")
+        %thead
+          %tr
+            %th Center
+            %th Academic Course
+            %th No. of Sections
+        %tbody
+          -n = 1
+          -@cent.academic_classes.each do |cla|
+            %tr
+              -if n == 1
+                %td= link_to @cent.name, center_path(@cent)
+                -n = 2
+              -else
+                %td
+              %td= link_to cla.name, academic_class_path(cla)
+              %td= cla.sections.count
+      -elsif current_user.is?("ET")
+        %thead
+          %tr
+            %th Academic Course
+            %th Section
+            %th No. of Students
+        %tbody
+          -current_user.sections.each do |cla_room_sec|
+            %tr
+              %td= @a_class.name
+              %td= cla_room_sec.name
+              %td= cla_room_sec.students.count
+        -elsif current_user.is?("ES")
+          %thead
+            %tr
+              %th Academic Course
+              %th Section
+              %th Fellow Students count
+          %tbody
+            %tr
+              %td{:style => "text-align:center;padding-top:40px;font-size:16px;"}
+                = @a_class.name
+              %td{:style => "text-align:center;padding-top:40px;font-size:16px;"}
+                = @sec.name if @sec.present?
+              %td{:style => "text-align:center;padding-top:40px;font-size:16px;"}
+                = @sec.students.count if @sec.present?

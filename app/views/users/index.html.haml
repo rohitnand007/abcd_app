@@ -1,0 +1,27 @@
+:css
+  #data > .progress-indicator {
+      top: 65%;
+      left: 58%;
+    }
+  #main_heading {
+      z-index: -1;
+  }
+#content_header
+  %h1#main_heading Students
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "Back")}", users_path
+    -#%li= link_to "#{t("web-app-theme.new", :default => "New")}", new_user_path
+
+#data
+
+  #progress-indicator.progress-indicator
+    = image_tag('progress-indicator.gif')
+  %table{width: '100%'}
+    %tr
+      %td{valign: 'top'}
+        =render 'shared/filters'
+      %td#users_list{valign: 'top'}
+        = render 'users/users'
+
+

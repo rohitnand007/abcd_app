@@ -1,0 +1,194 @@
+
+= simple_form_for(@content_delivery, html: {style: "display: table;"}) do |f|
+  = f.error_notification
+  %div{style: "display: inline;"}
+    = hidden_field_tag "book_id", @ibook.id
+
+  %br
+  %div.chapters
+    %h1.toc_font Chapters (#{@chapter_arr.count})
+    %div{style: "overflow: auto; max-height: 380px; padding-left: 5px;"}
+      -@chapter_arr.each_with_index do |chapter, index|
+        %div.sidelist
+          - @chap = chapter[0] if index==0
+          = label_tag do
+            = radio_button_tag "uri1", chapter[1], (index==0), id: "#{chapter[0]}", onclick: "buttonID(this.id);"
+            = chapter[0]
+  %div.section
+    %h1.toc_font Topics
+    %div.toc_section#topics
+    %div.publish_info#publish_info{style: "padding: 32px 95px;"}
+      %div{style: "width: 390px;border: 1px solid (171, 160, 160);"}
+      = text_field_tag :name,"", placeholder: "Display name",value: "#{@user_asset.asset_name}",class: "text_box", title:"Display Name will be visible on the student's tab. Please provide appropriate text"
+      %a.cleartext#clear{href: "name/clear"}X
+      -#= link_to "+ Add New Asset","#",class: "button short" , id: 'createNewAsset'
+      -#= link_to "+ Available Assets","#",class: "button right" , id: 'AvailableAssets'
+      %br
+      %div#asset
+        - if @user_asset.new_record?
+        - else
+          = label_tag do
+            = hidden_field_tag 'asset_id', @user_asset.id
+            -#= @user_asset.asset_name.titleize
+      %br
+      = select_tag "class_type",options_for_select(@class_type), {class: "text_box", prompt: "Select Asset Type" }
+      %br
+      %a Publish To:
+      = label_tag do
+        = radio_button_tag :message_to, 'individual',:input_html=>{:class=>"text_field"},:label=>"Individual"
+        = 'Individual'
+      = label_tag do
+        = radio_button_tag :message_to, 'group',"true",:input_html=>{:class=>"text_field",},:label=>"Group"
+        = 'Group'
+      %br
+      #group.content_publish_input_block_row
+        .content_publish_input_block_col1 Select Group:
+        .content_publish_input_block_col2
+          %select.text_box{name: "group_id"}
+            - asign_groups(current_user).each do |g|
+              %option{value: g.user_id}
+                = g.try(:section_name).encode('UTF-8', :invalid => :replace, :undef => :replace)
+      #recipient.content_publish_input_block_row{style:"height:50px;"}
+        .content_publish_input_block_col1 Individual:
+        .content_publish_input_block_col2
+          = text_field :message, :multiple_recipient_ids,:label=>"To:"
+          %br
+            %br
+      %br
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible under 'my books' on students' tab", style: "background-image: none !important;" do
+        = check_box_tag "is_content?",1, true
+        = "Content".humanize
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible under 'my tests' on students' tab", style: "background-image: none !important;" do
+        = check_box_tag "is_assessment?"
+        = "Assessment".humanize
+      -#= label_tag do
+      -#  = check_box_tag "is_homework?"
+      -#  = "is_homework?".humanize
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible directly on the book page on students' tab", style: "background-image: none !important;" do
+        = check_box_tag "show_in_live_page", "accepted",false, disabled: true
+        = "Show_on book".humanize
+      = label_tag "", class: "tiptipClass", title: "Checking this will ensure the asset is visible on the book ToC on students' tab", style: "background-image: none !important;" do
+        = check_box_tag "show_in_toc", 1, true
+        = "Show_in_toc".humanize
+      %br
+        %br
+      = link_to "Publish","#",:class=>'button right',id: "form_submit"
+:javascript
+  $(".inception").hide();
+    $("input[name$='message_to']").click(function(){
+      var radio_value = $(this).val();
+      if(radio_value=='individual') {
+        $("#to_group").val("0");
+        $("#recipient").show("slow");
+        $("#group").hide();
+      }
+      else if(radio_value=='group') {
+        $("#to_group").val("1");
+        $("#message_multiple_recipient_ids").tokenInput('clear');
+        $(".token-input-dropdown").remove();
+        $(".token-input-list").remove();
+        $("#token-input-multiple_recipient_ids").remove();
+        $(function() {
+          $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_ids").data("pre"),
+            theme: ""
+          });
+        });
+        $("#group").show("slow");
+        $("#recipient").hide();
+    }
+    });
+    $("#recipient").hide();
+    $("#group").show();
+
+    $(function() {
+        $("#message_multiple_recipient_ids").tokenInput("/profile_users.json", {
+            queryParam: 'term',
+            minChars: '3',
+            hintText: 'Type first 3-letters of users surname/firstname/roll number',
+            crossDomain: false,
+            preventDuplicates:true,
+            prePopulate: $("#message_multiple_recipient_ids").data("pre"),
+            theme: ""
+        });
+    });
+     var topic_json = #{@topic_arr.to_json};
+     var sub_json = #{@sub_arr.to_json};
+     var new_id = "#{"input[id='"+@chap+"']"}"
+     $(new_id).click();
+     function buttonID(id){
+     $("#topics").html("");
+        var obj1 = topic_json[id];
+        for(var i in obj1){
+         text1 = "<label><input id=\"" +i+"\" name=\"uri2\" type=\"radio\" value=\""+obj1[i]+"\">"+i+"</label>"
+         $("#topics").append(text1);
+         var obj2 = sub_json[i];
+           for(var j in obj2){
+             text2 = "<label style= \"padding-left: 30px;display: inline-block;width: 280px;height: 30px;\"><input id=\"" +j+"\" name=\"uri2\" onclick=\"subsubID(this.id);\" type=\"radio\" value=\""+obj2[j]+"\">"+j+"</label>"
+             $("#topics").append(text2);
+           }
+       $("#topics").append("<hr/>")}
+     }
+     function subID(id){
+        $("#subtopics").html("");
+           var obj = sub_json[id];
+           for(var i in obj){
+             text = "<label><input id=\"" +i+"\" name=\"uri2\" onclick=\"subsubID(this.id);\" type=\"radio\" value=\""+obj[i]+"\">"+i+"</label>"
+            $("#subtopics").append(text);
+           }
+          }
+     $(".user_asset").show();
+         $("#available_assets").hide();
+         $("#ImportContent").click(function () {
+             $(".inception").dialog({title: "Upload a new Asset",
+              dialogClass: 'createNewAsset',
+              width: "auto",
+              resizable: false,
+              draggable: true,
+              modal: true});
+                 });
+     $(".publish_info").hide();
+     $(".toc_font").show();
+       $("#AssetPublish").click(function(){
+         $(".publish_info").dialog({title: "Publish Information",
+                   dialogClass: 'PubInfo',
+                   width: "600px",
+                   resizable: false,
+                   draggable: false,
+                   modal: true});
+                   });
+
+     $("#form_submit").click(function(){
+     var ele = $(".publish_info")
+     $("#new_content_delivery").append(ele)
+     $("#new_content_delivery").submit();
+     $(".PubInfo").hide();
+     });
+    $("#clear").click(function(evt){
+        evt.preventDefault();
+        $("#name").val("").focus();
+        });
+  $("#AssetPublishh").hide();
+  $("#ImportContent").click(function(){
+  $("#AssetPublishh").show();
+  $("#AssetPublishh").removeAttr('class')
+  $("#AssetPublishh").attr('class','button tablebuttonn');
+  });
+
+  $("#AssetPublishh").click(function(){
+         $(".publish_info").dialog({title: "Publish Information",
+                   dialogClass: 'PubInfo',
+                   width: "600px",
+                   resizable: false,
+                   draggable: false,
+                   modal: true});
+                   });
+
+
+
+

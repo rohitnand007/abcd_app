@@ -1,0 +1,13 @@
+$("[data-id='<%= @ibook.id %>']").find(".extendedDetail").html("<%= j render partial:'extended_detail',locals:{ibook:@ibook} %>")
+
+$('#loading_overlay').hide();
+
+$(".tocTogglerHeader").toggle(function () {
+    $(this).find(".tocToggler").text("▼");
+    $(this).closest(".contentsWrapper").find(".contents").show();
+}, function () {
+    $(this).find(".tocToggler").text("►");
+    $(this).closest(".contentsWrapper").find(".contents").hide();
+});
+
+beautify_toc();

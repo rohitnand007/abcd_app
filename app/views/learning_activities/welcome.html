@@ -1,0 +1,33 @@
+<html>
+<head>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/main.css"/>
+<meta charset="ISO-8859-1">
+<title>Ignitor File Upload</title>
+</head>
+<body>
+
+	<form id="file_upload">
+		<input type="file" name="file"></input>
+		<input type="submit" value="Upload image">
+		<br /> 
+	</form>
+	<div id='file-upload-success'></div> <div id='file-upload-error'></div> <br />
+	
+	<form id="url_upload">
+		<input id="web-url" type="text" name="url" placeholder="Enter image URL">
+		<input type="submit" id="image-upload-url" value="Upload image">
+		<br /> 
+	</form>
+	<div id='url-upload-success'></div> <div id='url-upload-error'></div> <br />
+	
+	<form id="image_download">
+		<input id="file-path" type="text" name="name" placeholder="Enter image Path">
+		<input type="submit" id="image-download" value="Download image"> <br /> <br />
+	</form>
+	
+	<div id="download-success"></div>
+	
+<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>

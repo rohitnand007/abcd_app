@@ -1,0 +1,17 @@
+%h1 Listing zip_uploads
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - @zip_uploads.each do |zip_upload|
+    %tr
+      %td= zip_upload.asset_file_name
+      %td= link_to 'Show', zip_upload
+      %td= link_to 'Edit', edit_zip_upload_path(zip_upload)
+      %td= link_to 'Destroy', zip_upload, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Zip upload', new_zip_upload_path

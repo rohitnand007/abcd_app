@@ -1,0 +1,11 @@
+#content_header
+  %h1#main_heading Sub Topics
+#inner-tab-menu
+  %ul
+    %li.inner_tab_selected=  link_to "#{t("web-app-theme.list", :default => "List")}", sub_topics_path
+    %li= link_to "#{t("web-app-theme.new", :default => "New")}", new_sub_topic_path
+#data
+  %table{width: '100%'}
+    %tr
+      %td
+        = render 'sub_topics/sub_topics'

@@ -1,0 +1,44 @@
+= simple_form_for @center_admin, :html => { :class => :form },:validate=>true do |f|
+  .inputs
+    - if current_user.is?'EA'
+      .group
+        .field
+          = f.label :institution_id, "Institution", :class=>'label'
+          = f.collection_select :institution_id,Institution.includes(:profile),:id,:name,{:include_blank => true},{:class=>"drop_down", :enabled=>false}
+    -elsif current_user.is?'IA'
+      .group
+        .field
+          = f.label :institution_id, "Institution", :class=>'label'
+          = f.collection_select :institution_id,[current_user.institution],:id,:name,{},{:class=>"drop_down", :enabled=>false}
+  .group
+    .field
+      =f.simple_fields_for :profile do |p|
+        .group
+          .field
+            = p.input :firstname,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Name'
+        .group
+          .field
+            = p.input :address,:input_html=>{:class=>"text_area", :rows=>5},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :website,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :phone,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+        .group
+          .field
+            = p.input :photo,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"},:label=>'Logo'
+    .group
+      .field
+        = f.input :email,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :password,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+    .group
+      .field
+        = f.input :password_confirmation,:input_html=>{:class=>"text_field"},:label_html=>{:class=>"label"}
+      %br
+  .group
+    .field{:align=>'center'}
+      = f.button :submit,:class=>'big primary',:disable_with=>disable_with_text(f)
+      = link_to t("web-app-theme.cancel", :default => "Cancel"), institutions_path,:class=>'button danger icon remove'

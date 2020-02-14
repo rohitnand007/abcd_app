@@ -1,0 +1,127 @@
+<input name="Check All" id="checkall" value="check all" type="submit">
+<input name="UnCheck All" id="uncheckall" value="un check all" type="submit">
+<div class="block">
+	<div class="content">
+		<div class="inner">
+			 <div id="tree1">
+        		<% @contents.each do |subject| %>
+				<ul id="<%= subject.type%>_<%= subject.id%>">
+					<li id="<%= subject.type%>_<%= subject.name%>_<%= subject.id%>"><%= check_box_tag "content[]" %>
+						<%= subject.name %>
+						<ul id="<%= subject.type%>_<%= subject.id%>">
+						<% subject.chapters.order("order_position asc").each do |chapter|%>
+						
+							<li id="<%= chapter.type%>_<%= chapter.name%>_<%= chapter.id%>"><%= check_box_tag "content[]" %>
+								<%= chapter.name %><%= content_lock(chapter.is_locked)%>
+							</li>
+						<%end%>
+						</ul>
+					</li>
+				</ul>
+				<%end%>
+    		 </div>
+            </div>
+		</div>
+	</div>
+<input name="toArray" id="toArray" value="To array" type="submit">
+<input name="tolock" class="clicked" id="tolock" value="lock" type="submit">
+<input name="to unlock" class="clicked" id="tolock" value="unlock" type="submit">
+
+<div id="sidebar">
+	<%= content_for :sidebar, render(:partial => 'shared/sidebar') %>
+</div>		
+<script type="text/javascript">
+	 $('#tree1').checkboxTree({
+	 	onCheck: { ancestors: 'checkIfFull', descendants: 'check' },
+		onUncheck: { ancestors: 'uncheck' }
+	 });
+	 
+	 $('#checkall').click(function(){ $('#tree1').checkboxTree('checkAll'); }); 
+	 $('#uncheckall').click(function(){ $('#tree1').checkboxTree('uncheckAll'); });
+	 
+	 
+	 $('#tree1 li').sortable({ 
+	 	placeholder: "ui-state-highlight",
+		tolerance:'intersect',
+		cursor:'pointer',
+		items:'li',
+		placeholder:'placeholder',
+		nested:'ul'
+	 });
+	$('#toArray').click(function(e){
+ 	var order = $("#tree1 li").sortable('toArray');
+	var subject = new Array();
+	$("#tree1 li[id^=Subject]").each(function() { 
+	  //subject.push($(this).attr('id'));
+	  var a = $(this).attr('id');
+	 // alert(a);
+	  var s = $("#"+a+" li");
+	  var childs= "";
+      for(var i=0; i<s.length; i++){
+	  	//alert($(s[i]).attr('id'));
+	  childs = childs + ($(s[i]).attr('id').split("_")[2]) + ',';
+		//subject.push($(i).attr('id'));
+	  }
+	  subject.push(a+":"+childs);
+	 });
+	 //alert(subject[0]);
+	 //alert(subject[1]);
+    
+
+	
+	
+	//order = order.join(",");
+  	$.post("/content/position_update",{subject : subject},
+		 function(data){
+		 	success: var url = "http://localhost:3000/content/manage";
+		 	$(location).attr('href', url);
+		 });
+   
+         //alert((order.length));
+		
+   // var parent = $('#test1').parent().attr('id');
+      //  alert(parent);
+    
+}); 
+$('.clicked').click(function(e){
+	var values = new Array();
+	$.each($("input[name='content[]']:checked"), function() {
+  	values.push($(this).parent().attr('id').split("_")[2]);
+	});
+	alert(values.length);
+	var a = $(this).attr('value');
+    if (a == "lock"){
+		var url = "/content/lock"
+	}
+	else {
+		var url = "/content/unlock"
+	}    
+	if (values.length != 0) {
+		
+		$.post(url,{ids : values},
+		  function(data) {
+		   success: 
+		   	var url = "http://localhost:3000/content/manage";
+		   	$(location).attr('href', url);
+		   
+		 });
+		
+	}
+	else{
+		alert('select item to lock or unlock')
+	}
+	//for (var x= 0; x<values.length; x++){
+	//	alert(values[x]);
+	//}
+
+});	
+	 
+</script>
+<style>
+	#tree1 {
+		padding:0;
+		margin:0;
+	}
+	#tree1 li{
+		border:1px solid thin red;	}
+</style>

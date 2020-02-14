@@ -1,0 +1,23 @@
+= link_to "ALL_Ignitor_times_Page", ignitor_times_path, class:"button"
+= link_to "Edit", edit_ignitor_time_path(@ignitor_time) ,class:"button"
+%h2
+  = @ignitor_time.name
+%h4
+  = @ignitor_time.ignitor_web_url
+%br
+%h1 Assigned Institutions
+%table{:border=> "1px", :cellpadding => "10", :cellspacing => "0"}
+
+  %tr
+    %th IgnitorTime Name
+    %th Ignitor web url
+    %th Institute_id
+    %th Institute_name
+  -#%th Institution_count
+
+  - @associated_institutions.each do |st_insti|
+    %tr
+      %td= @ignitor_time.name
+      %td= @ignitor_time.ignitor_web_url
+      %td= st_insti.edutorid
+      %td= st_insti.name
